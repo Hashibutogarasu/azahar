@@ -1883,6 +1883,36 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     R.string.use_black_backgrounds_description
                 )
             )
+
+            val appLanguage: AbstractStringSetting = object : AbstractStringSetting {
+                override var string: String
+                    get() = preferences.getString(Settings.PREF_APP_LANGUAGE, "")!!
+                    set(value) {
+                        preferences.edit()
+                            .putString(Settings.PREF_APP_LANGUAGE, value)
+                            .apply()
+                        settingsActivity.recreate()
+                    }
+                override val key: String? = null
+                override val section: String? = null
+                override val isRuntimeEditable: Boolean = false
+                override val valueAsString: String
+                    get() = preferences.getString(Settings.PREF_APP_LANGUAGE, "")!!
+                override val defaultValue: Any = ""
+            }
+
+            val appLanguages = settingsActivity.resources.getStringArray(R.array.app_languages)
+            val appLanguageValues = settingsActivity.resources.getStringArray(R.array.app_language_values)
+
+            add(
+                StringSingleChoiceSetting(
+                    appLanguage,
+                    R.string.app_language,
+                    R.string.app_language_description,
+                    appLanguages,
+                    appLanguageValues
+                )
+            )
         }
     }
 }

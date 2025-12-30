@@ -5,6 +5,7 @@
 package org.citra.citra_emu.ui.main
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -250,6 +251,10 @@ class MainActivity : AppCompatActivity(), ThemeProvider {
     fun finishSetup(navController: NavController) {
         navController.navigate(R.id.action_firstTimeSetupFragment_to_gamesFragment)
         (binding.navigationView as NavigationBarView).setupWithNavController(navController)
+    }
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(org.citra.citra_emu.utils.LocaleUtil.applyLocalizedContext(base))
     }
 
     private fun setUpNavigation(navController: NavController) {

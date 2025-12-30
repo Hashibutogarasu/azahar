@@ -679,6 +679,24 @@
     <string name="use_black_backgrounds">Black Backgrounds</string>
     <string name="use_black_backgrounds_description">When using the dark theme, apply black backgrounds.</string>
 
+    <!-- App Language -->
+    <string name="app_language">App Language</string>
+    <string name="app_language_description">Select the language for the application interface.</string>
+    <string-array name="app_languages">
+        <item>System Default</item>
+        <item>English</item>
+        <item>Japanese</item>
+        <item>Spanish</item>
+        <item>Chinese (Simplified)</item>
+    </string-array>
+    <string-array name="app_language_values">
+        <item></item>
+        <item>en</item>
+        <item>ja</item>
+        <item>es</item>
+        <item>zh</item>
+    </string-array>
+
     <!-- Region names -->
     <string name="system_region_jpn">JPN</string>
     <string name="system_region_usa">USA</string>
