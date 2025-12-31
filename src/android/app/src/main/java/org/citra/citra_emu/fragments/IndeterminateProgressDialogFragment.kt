@@ -1,7 +1,6 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.app.Dialog
@@ -26,26 +25,20 @@ import org.citra.citra_emu.viewmodel.TaskViewModel
 
 class IndeterminateProgressDialogFragment : DialogFragment() {
     private val taskViewModel: TaskViewModel by activityViewModels()
-
     private lateinit var binding: DialogProgressBarBinding
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val titleId = requireArguments().getInt(TITLE)
         val cancellable = requireArguments().getBoolean(CANCELLABLE)
-
         binding = DialogProgressBarBinding.inflate(layoutInflater)
         binding.progressBar.isIndeterminate = true
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle(titleId)
             .setView(binding.root)
-
         if (cancellable) {
             dialog.setNegativeButton(android.R.string.cancel, null)
         }
-
         val alertDialog = dialog.create()
         alertDialog.setCanceledOnTouchOutside(false)
-
         if (!taskViewModel.isRunning.value) {
             taskViewModel.runTask()
         }
@@ -115,10 +108,8 @@ class IndeterminateProgressDialogFragment : DialogFragment() {
 
     companion object {
         const val TAG = "IndeterminateProgressDialogFragment"
-
         private const val TITLE = "Title"
         private const val CANCELLABLE = "Cancellable"
-
         fun newInstance(
             activity: FragmentActivity,
             titleId: Int,

@@ -1,15 +1,12 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.utils
-
 import java.io.IOException
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 import java.io.InputStream
-
 class GpuDriverMetadata {
     /**
      * Tries to get driver metadata information from a meta.json [File]
@@ -20,7 +17,6 @@ class GpuDriverMetadata {
         if (metadataFile.length() > MAX_META_SIZE_BYTES) {
             return
         }
-
         try {
             val json = JSONObject(FileUtil.getStringFromFile(metadataFile))
             name = json.getString("name")
@@ -36,7 +32,6 @@ class GpuDriverMetadata {
             // File is inaccessible, ignore and treat as unsupported metadata.
         }
     }
-
     /**
      * Tries to get driver metadata information from an input stream that's intended to be
      * from a zip file
@@ -48,7 +43,6 @@ class GpuDriverMetadata {
         if (size > MAX_META_SIZE_BYTES) {
             return
         }
-
         try {
             val json = JSONObject(FileUtil.getStringFromInputStream(metadataStream, size))
             name = json.getString("name")
@@ -64,17 +58,14 @@ class GpuDriverMetadata {
             // File is inaccessible, ignore and treat as unsupported metadata.
         }
     }
-
     /**
      * Creates an empty metadata instance
      */
     constructor()
-
     override fun equals(other: Any?): Boolean {
         if (other !is GpuDriverMetadata) {
             return false
         }
-
         return other.name == name &&
                 other.description == description &&
                 other.author == author &&
@@ -83,7 +74,6 @@ class GpuDriverMetadata {
                 other.minApi == minApi &&
                 other.libraryName == libraryName
     }
-
     override fun hashCode(): Int {
         var result = name?.hashCode() ?: 0
         result = 31 * result + (description?.hashCode() ?: 0)
@@ -94,7 +84,6 @@ class GpuDriverMetadata {
         result = 31 * result + (libraryName?.hashCode() ?: 0)
         return result
     }
-
     override fun toString(): String =
         """
             Name - $name
@@ -105,7 +94,6 @@ class GpuDriverMetadata {
             Min API - $minApi
             Library Name - $libraryName
         """.trimMargin().trimIndent()
-
     var name: String? = null
     var description: String? = null
     var author: String? = null
@@ -113,7 +101,6 @@ class GpuDriverMetadata {
     var version: String? = null
     var minApi = 0
     var libraryName: String? = null
-
     companion object {
         private const val MAX_META_SIZE_BYTES = 500000
     }

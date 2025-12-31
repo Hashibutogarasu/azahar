@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.activities
-
 import android.Manifest.permission
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -51,19 +49,16 @@ import org.citra.citra_emu.utils.Log
 import org.citra.citra_emu.utils.RefreshRateUtil
 import org.citra.citra_emu.utils.ThemeUtil
 import org.citra.citra_emu.viewmodel.EmulationViewModel
-
 class EmulationActivity : AppCompatActivity() {
     private val preferences: SharedPreferences
         get() = PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
     var isActivityRecreated = false
     private val emulationViewModel: EmulationViewModel by viewModels()
     val settingsViewModel: SettingsViewModel by viewModels()
-
     private lateinit var binding: ActivityEmulationBinding
     private lateinit var screenAdjustmentUtil: ScreenAdjustmentUtil
     private lateinit var hotkeyUtility: HotkeyUtility
     private lateinit var secondaryDisplay: SecondaryDisplay
-
     private val onShutdown = Runnable {
         if (intent.getBooleanExtra("launched_from_shortcut", false)) {
             finishAffinity()
@@ -71,55 +66,41 @@ class EmulationActivity : AppCompatActivity() {
             this.finish()
         }
     }
-
     private val emulationFragment: EmulationFragment
         get() {
             val navHostFragment =
                 supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
             return navHostFragment.getChildFragmentManager().fragments.last() as EmulationFragment
         }
-
     private var isEmulationRunning: Boolean = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-
         RefreshRateUtil.enforceRefreshRate(this, sixtyHz = true)
-
         ThemeUtil.setTheme(this)
         settingsViewModel.settings.loadSettings()
         super.onCreate(savedInstanceState)
         secondaryDisplay = SecondaryDisplay(this)
         secondaryDisplay.updateDisplay()
-
         binding = ActivityEmulationBinding.inflate(layoutInflater)
         screenAdjustmentUtil = ScreenAdjustmentUtil(this, windowManager, settingsViewModel.settings)
         hotkeyUtility = HotkeyUtility(screenAdjustmentUtil, this)
         setContentView(binding.root)
-
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         val navController = navHostFragment.navController
         navController.setGraph(R.navigation.emulation_navigation, intent.extras)
-
         isActivityRecreated = savedInstanceState != null
-
         // Set these options now so that the SurfaceView the game renders into is the right size.
         enableFullscreenImmersive()
-
         // Override Citra core INI with the one set by our in game menu
         NativeLibrary.swapScreens(
             EmulationMenuSettings.swapScreens,
             windowManager.defaultDisplay.rotation
         )
-
         EmulationLifecycleUtil.addShutdownHook(onShutdown)
-
         isEmulationRunning = true
         instance = this
-
         applyOrientationSettings() // Check for orientation settings at startup
-
         val game = try {
             intent.extras?.let { extras ->
                 BundleCompat.getParcelable(extras, "game", Game::class.java)
@@ -131,10 +112,8 @@ class EmulationActivity : AppCompatActivity() {
             Log.error("[EmulationActivity] Failed to retrieve game data: ${e.message}")
             return
         }
-
         NativeLibrary.playTimeManagerStart(game.titleId)
     }
-
     // On some devices, the system bars will not disappear on first boot or after some
     // rotations. Here we set full screen immersive repeatedly in onResume and in
     // onWindowFocusChanged to prevent the unwanted status bar state.
@@ -143,33 +122,27 @@ class EmulationActivity : AppCompatActivity() {
         enableFullscreenImmersive()
         applyOrientationSettings() // Check for orientation settings changes on runtime
     }
-
     override fun onStop() {
         secondaryDisplay.releasePresentation()
         super.onStop()
     }
-
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         enableFullscreenImmersive()
     }
-
     public override fun onRestart() {
         super.onRestart()
         secondaryDisplay.updateDisplay()
         NativeLibrary.reloadCameraDevices()
     }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean("isEmulationRunning", isEmulationRunning)
     }
-
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         isEmulationRunning = savedInstanceState.getBoolean("isEmulationRunning", false)
     }
-
     override fun onDestroy() {
         EmulationLifecycleUtil.removeHook(onShutdown)
         NativeLibrary.playTimeManagerStop()
@@ -177,10 +150,8 @@ class EmulationActivity : AppCompatActivity() {
         instance = null
         secondaryDisplay.releasePresentation()
         secondaryDisplay.releaseVD()
-
         super.onDestroy()
     }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -200,7 +171,6 @@ class EmulationActivity : AppCompatActivity() {
                     grantResults[0] == PackageManager.PERMISSION_GRANTED
                 )
             }
-
             NativeLibrary.REQUEST_CODE_NATIVE_MIC -> {
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED &&
                     shouldShowRequestPermissionRationale(permission.RECORD_AUDIO)
@@ -214,11 +184,9 @@ class EmulationActivity : AppCompatActivity() {
                     grantResults[0] == PackageManager.PERMISSION_GRANTED
                 )
             }
-
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
-
     fun onEmulationStarted() {
         emulationViewModel.setEmulationStarted(true)
         Toast.makeText(
@@ -227,33 +195,26 @@ class EmulationActivity : AppCompatActivity() {
             Toast.LENGTH_LONG
         ).show()
     }
-
     private fun enableFullscreenImmersive() {
         val attributes = window.attributes
-
         attributes.layoutInDisplayCutoutMode =
             if (BooleanSetting.EXPAND_TO_CUTOUT_AREA.boolean) {
                 WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
             } else {
                 WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER
             }
-
         window.attributes = attributes
-
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
         WindowInsetsControllerCompat(window, window.decorView).let { controller ->
             controller.hide(WindowInsetsCompat.Type.systemBars())
             controller.systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
     }
-
     private fun applyOrientationSettings() {
         val orientationOption = IntSetting.ORIENTATION_OPTION.int
         screenAdjustmentUtil.changeActivityOrientation(orientationOption)
     }
-
     // Gets button presses
     @Suppress("DEPRECATION")
     @SuppressLint("GestureBackNavigation")
@@ -262,17 +223,14 @@ class EmulationActivity : AppCompatActivity() {
         if (!NativeLibrary.isRunning()) {
             return false
         }
-
         if (emulationFragment.isDrawerOpen()) {
             return super.dispatchKeyEvent(event)
         }
-
         val button =
             preferences.getInt(InputBindingSetting.getInputButtonKey(event.keyCode), event.keyCode)
         val action: Int = when (event.action) {
             KeyEvent.ACTION_DOWN -> {
                 hotkeyUtility.handleHotkey(button)
-
                 // On some devices, the back gesture / button press is not intercepted by androidx
                 // and fails to open the emulation menu. So we're stuck running deprecated code to
                 // cover for either a fault on androidx's side or in OEM skins (MIUI at least)
@@ -282,11 +240,9 @@ class EmulationActivity : AppCompatActivity() {
                         onBackPressed()
                     }
                 }
-
                 // Normal key events.
                 NativeLibrary.ButtonState.PRESSED
             }
-
             KeyEvent.ACTION_UP -> {
                 hotkeyUtility.HotkeyIsPressed = false
                 NativeLibrary.ButtonState.RELEASED
@@ -298,7 +254,6 @@ class EmulationActivity : AppCompatActivity() {
             return false
         return NativeLibrary.onGamePadEvent(input.descriptor, button, action)
     }
-
     private fun onAmiiboSelected(selectedFile: String) {
         val success = NativeLibrary.loadAmiibo(selectedFile)
         if (!success) {
@@ -308,7 +263,6 @@ class EmulationActivity : AppCompatActivity() {
             ).show(supportFragmentManager, MessageDialogFragment.TAG)
         }
     }
-
     override fun dispatchGenericMotionEvent(event: MotionEvent): Boolean {
         // TODO: Move this check into native code - prevents crash if input pressed before starting emulation
         if (!NativeLibrary.isRunning() ||
@@ -316,7 +270,6 @@ class EmulationActivity : AppCompatActivity() {
             emulationFragment.isDrawerOpen()) {
             return super.dispatchGenericMotionEvent(event)
         }
-
         // Don't attempt to do anything if we are disconnecting a device.
         if (event.actionMasked == MotionEvent.ACTION_CANCEL) {
             return true
@@ -354,37 +307,30 @@ class EmulationActivity : AppCompatActivity() {
                 NativeLibrary.ButtonType.STICK_LEFT -> {
                     axisValuesCirclePad[guestOrientation] = value
                 }
-
                 NativeLibrary.ButtonType.STICK_C -> {
                     axisValuesCStick[guestOrientation] = value
                 }
-
                 NativeLibrary.ButtonType.DPAD -> {
                     axisValuesDPad[guestOrientation] = value
                 }
-
                 NativeLibrary.ButtonType.TRIGGER_L -> {
                     isTriggerPressedLMapped = true
                     isTriggerPressedL = value != 0f
                 }
-
                 NativeLibrary.ButtonType.TRIGGER_R -> {
                     isTriggerPressedRMapped = true
                     isTriggerPressedR = value != 0f
                 }
-
                 NativeLibrary.ButtonType.BUTTON_ZL -> {
                     isTriggerPressedZLMapped = true
                     isTriggerPressedZL = value != 0f
                 }
-
                 NativeLibrary.ButtonType.BUTTON_ZR -> {
                     isTriggerPressedZRMapped = true
                     isTriggerPressedZR = value != 0f
                 }
             }
         }
-
         // Circle-Pad and C-Stick status
         NativeLibrary.onGamePadMoveEvent(
             input.descriptor,
@@ -398,7 +344,6 @@ class EmulationActivity : AppCompatActivity() {
             axisValuesCStick[0],
             axisValuesCStick[1]
         )
-
         // Triggers L/R and ZL/ZR
         if (isTriggerPressedLMapped) {
             NativeLibrary.onGamePadEvent(
@@ -444,7 +389,6 @@ class EmulationActivity : AppCompatActivity() {
                 }
             )
         }
-
         // Work-around to allow D-pad axis to be bound to emulated buttons
         if (axisValuesDPad[0] == 0f) {
             NativeLibrary.onGamePadEvent(
@@ -520,7 +464,6 @@ class EmulationActivity : AppCompatActivity() {
         }
         return true
     }
-
     val openFileLauncher =
         registerForActivityResult(OpenFileResultContract()) { result: Intent? ->
             if (result == null) return@registerForActivityResult
@@ -529,19 +472,15 @@ class EmulationActivity : AppCompatActivity() {
             ) ?: return@registerForActivityResult
             onAmiiboSelected(selectedFiles[0])
         }
-
     val openImageLauncher =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { result: Uri? ->
             if (result == null) {
                 return@registerForActivityResult
             }
-
             OnFilePickerResult(result.toString())
         }
-
     companion object {
         private var instance: EmulationActivity? = null
-
         fun isRunning(): Boolean {
             return instance?.isEmulationRunning ?: false
         }

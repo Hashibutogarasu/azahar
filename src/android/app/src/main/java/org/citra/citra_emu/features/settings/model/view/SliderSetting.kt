@@ -1,16 +1,13 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.features.settings.model.view
-
 import org.citra.citra_emu.features.settings.model.AbstractFloatSetting
 import org.citra.citra_emu.features.settings.model.AbstractIntSetting
 import org.citra.citra_emu.features.settings.model.AbstractSetting
 import org.citra.citra_emu.features.settings.model.FloatSetting
 import org.citra.citra_emu.features.settings.model.ScaledFloatSetting
 import org.citra.citra_emu.utils.Log
-
 class SliderSetting(
     setting: AbstractSetting?,
     titleId: Int,
@@ -26,7 +23,6 @@ class SliderSetting(
     val selectedFloat: Float
         get() {
             val setting = setting ?: return defaultValue!!.toFloat()
-
             val ret = when (setting) {
                 is AbstractIntSetting -> setting.int.toFloat()
                 is FloatSetting -> setting.float
@@ -50,7 +46,6 @@ class SliderSetting(
         intSetting.int = selection
         return intSetting
     }
-
     /**
      * Write a value to the backing float. If that float was previously null,
      * initializes a new one and returns it, so it can be added to the Hashmap.

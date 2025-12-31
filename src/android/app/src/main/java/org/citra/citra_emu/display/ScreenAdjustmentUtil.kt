@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.display
-
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.app.Activity
@@ -15,7 +13,6 @@ import org.citra.citra_emu.features.settings.model.IntSetting
 import org.citra.citra_emu.features.settings.model.Settings
 import org.citra.citra_emu.features.settings.utils.SettingsFile
 import org.citra.citra_emu.utils.EmulationMenuSettings
-
 class ScreenAdjustmentUtil(
     private val context: Context,
     private val windowManager: WindowManager,
@@ -34,7 +31,6 @@ class ScreenAdjustmentUtil(
     fun cycleLayouts() {
         val landscapeValues = context.resources.getIntArray(R.array.landscapeValues)
         val portraitValues = context.resources.getIntArray(R.array.portraitValues)
-
         if (NativeLibrary.isPortraitMode) {
             val currentLayout = IntSetting.PORTRAIT_SCREEN_LAYOUT.int
             val pos = portraitValues.indexOf(currentLayout)
@@ -47,34 +43,29 @@ class ScreenAdjustmentUtil(
             changeScreenOrientation(layoutOption)
         }
     }
-
     fun changePortraitOrientation(layoutOption: Int) {
         IntSetting.PORTRAIT_SCREEN_LAYOUT.int = layoutOption
         settings.saveSetting(IntSetting.PORTRAIT_SCREEN_LAYOUT, SettingsFile.FILE_NAME_CONFIG)
         NativeLibrary.reloadSettings()
         NativeLibrary.updateFramebuffer(NativeLibrary.isPortraitMode)
     }
-
     fun changeScreenOrientation(layoutOption: Int) {
         IntSetting.SCREEN_LAYOUT.int = layoutOption
         settings.saveSetting(IntSetting.SCREEN_LAYOUT, SettingsFile.FILE_NAME_CONFIG)
         NativeLibrary.reloadSettings()
         NativeLibrary.updateFramebuffer(NativeLibrary.isPortraitMode)
     }
-
     fun changeActivityOrientation(orientationOption: Int) {
         val activity = context as? Activity ?: return
         IntSetting.ORIENTATION_OPTION.int = orientationOption
         settings.saveSetting(IntSetting.ORIENTATION_OPTION, SettingsFile.FILE_NAME_CONFIG)
         activity.requestedOrientation = orientationOption
     }
-
     fun toggleScreenUpright() {
         val uprightBoolean = BooleanSetting.UPRIGHT_SCREEN.boolean
         BooleanSetting.UPRIGHT_SCREEN.boolean = !uprightBoolean
         settings.saveSetting(BooleanSetting.UPRIGHT_SCREEN, SettingsFile.FILE_NAME_CONFIG)
         NativeLibrary.reloadSettings()
         NativeLibrary.updateFramebuffer(NativeLibrary.isPortraitMode)
-
     }
 }

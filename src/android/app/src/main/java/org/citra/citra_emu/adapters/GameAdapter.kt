@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.adapters
-
 import android.graphics.drawable.Icon
 import android.content.Intent
 import android.net.Uri
@@ -56,14 +54,12 @@ import org.citra.citra_emu.model.Game
 import org.citra.citra_emu.utils.FileUtil
 import org.citra.citra_emu.utils.GameIconUtils
 import org.citra.citra_emu.viewmodel.GamesViewModel
-
 class GameAdapter(private val activity: AppCompatActivity, private val inflater: LayoutInflater,  private val openImageLauncher: ActivityResultLauncher<String>?) :
     ListAdapter<Game, GameViewHolder>(AsyncDifferConfig.Builder(DiffCallback()).build()),
     View.OnClickListener, View.OnLongClickListener {
     private var lastClickTime = 0L
     private var imagePath: String? = null
     private var dialogShortcutBinding: DialogShortcutBinding? = null
-
     fun handleShortcutImageResult(uri: Uri?) {
         val path = uri?.toString()
         if (path != null) {
@@ -72,23 +68,18 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
             refreshShortcutDialogIcon()
         }
     }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
         // Create a new view.
         val binding = CardGameBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         binding.cardGame.setOnClickListener(this)
         binding.cardGame.setOnLongClickListener(this)
-
         // Use that view to create a ViewHolder.
         return GameViewHolder(binding)
     }
-
     override fun onBindViewHolder(holder: GameViewHolder, position: Int) {
         holder.bind(currentList[position])
     }
-
     override fun getItemCount(): Int = currentList.size
-
     /**
      * Launches the game that was clicked on.
      *
@@ -100,10 +91,8 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
             return
         }
         lastClickTime = SystemClock.elapsedRealtime()
-
         val holder = view.tag as GameViewHolder
         gameExists(holder)
-
         val preferences =
             PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
         preferences.edit()
@@ -112,11 +101,9 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
                 System.currentTimeMillis()
             )
             .apply()
-
         val action = HomeNavigationDirections.actionGlobalEmulationActivity(holder.game)
         view.findNavController().navigate(action)
     }
-
     /**
      * Opens the about game dialog for the game that was clicked on.
      *
@@ -126,7 +113,6 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
         val context = view.context
         val holder = view.tag as GameViewHolder
         gameExists(holder)
-
         if (holder.game.titleId == 0L) {
             MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.properties)
@@ -138,13 +124,11 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
         }
         return true
     }
-
     // Triggers a library refresh if the user clicks on stale data
     private fun gameExists(holder: GameViewHolder): Boolean {
         if (holder.game.isInstalled) {
             return true
         }
-
         val gameExists = DocumentFile.fromSingleUri(
             CitraApplication.appContext,
             Uri.parse(holder.game.path)
@@ -155,28 +139,22 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
                 R.string.loader_error_file_not_found,
                 Toast.LENGTH_LONG
             ).show()
-
             ViewModelProvider(activity)[GamesViewModel::class.java].reloadGames(true)
             false
         } else {
             true
         }
     }
-
     inner class GameViewHolder(val binding: CardGameBinding) :
         RecyclerView.ViewHolder(binding.root) {
         lateinit var game: Game
-
         init {
             binding.cardGame.tag = this
         }
-
         fun bind(game: Game) {
             this.game = game
-
             binding.imageGameScreen.scaleType = ImageView.ScaleType.CENTER_CROP
             GameIconUtils.loadGameIcon(activity, game, binding.imageGameScreen)
-
             binding.textGameTitle.visibility = if (game.title.isEmpty()) {
                 View.GONE
             } else {
@@ -187,11 +165,9 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
             } else {
                 View.VISIBLE
             }
-
             binding.textGameTitle.text = game.title
             binding.textCompany.text = game.company
             binding.textGameRegion.text = game.regions
-
             val backgroundColorId =
                 if (
                     isValidGame(game.filename.substring(game.filename.lastIndexOf(".") + 1).lowercase())
@@ -206,15 +182,12 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
                     backgroundColorId
                 )
             )
-
             binding.textGameTitle.postDelayed(
                 {
                     binding.textGameTitle.ellipsize = TextUtils.TruncateAt.MARQUEE
                     binding.textGameTitle.isSelected = true
-
                     binding.textCompany.ellipsize = TextUtils.TruncateAt.MARQUEE
                     binding.textCompany.isSelected = true
-
                     binding.textGameRegion.ellipsize = TextUtils.TruncateAt.MARQUEE
                     binding.textGameRegion.isSelected = true
                 },
@@ -222,7 +195,6 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
             )
         }
     }
-
     private data class GameDirectories(
         val gameDir: String,
         val saveDir: String,
@@ -246,10 +218,8 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
             extraDir = basePath + "/extdata/00000000/${String.format("%016X", game.titleId).substring(8, 14).padStart(8, '0')}"
         )
     }
-
     private fun showOpenContextMenu(view: View, game: Game) {
         val dirs = getGameDirectories(game)
-
         val popup = PopupMenu(view.context, view).apply {
             menuInflater.inflate(R.menu.game_context_menu_open, menu)
             listOf(
@@ -265,13 +235,11 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
                     } ?: false
             }
         }
-
         popup.setOnMenuItemClickListener { menuItem ->
             val intent = Intent(Intent.ACTION_VIEW)
                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .setType("*/*")
-
             val uri = when (menuItem.itemId) {
                 R.id.game_context_open_app -> CitraApplication.documentsTree.folderUriHelper(dirs.appDir)
                 R.id.game_context_open_save_dir -> CitraApplication.documentsTree.folderUriHelper(dirs.saveDir)
@@ -282,17 +250,14 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
                 R.id.game_context_open_mods -> CitraApplication.documentsTree.folderUriHelper(dirs.modsDir, true)
                 else -> null
             }
-
             uri?.let {
                 intent.data = it
                 view.context.startActivity(intent)
                 true
             } ?: false
         }
-
         popup.show()
     }
-
     private fun showUninstallContextMenu(view: View, game: Game, bottomSheetDialog: BottomSheetDialog) {
         val dirs = getGameDirectories(game)
         val popup = PopupMenu(view.context, view).apply {
@@ -308,7 +273,6 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
                     } ?: false
             }
         }
-
         popup.setOnMenuItemClickListener { menuItem ->
             val uninstallAction: () -> Unit = {
                 when (menuItem.itemId) {
@@ -321,7 +285,6 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
                 ViewModelProvider(activity)[GamesViewModel::class.java].reloadGames(true)
                 bottomSheetDialog.dismiss()
             }
-
             if (menuItem.itemId in listOf(R.id.game_context_uninstall, R.id.game_context_uninstall_dlc, R.id.game_context_uninstall_updates)) {
                 IndeterminateProgressDialogFragment.newInstance(activity, R.string.uninstalling, false, uninstallAction)
                     .show(activity.supportFragmentManager, IndeterminateProgressDialogFragment.TAG)
@@ -330,16 +293,12 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
                 false
             }
         }
-
         popup.show()
     }
-
     private fun showAboutGameDialog(context: Context, game: Game, holder: GameViewHolder, view: View) {
         val bottomSheetView = inflater.inflate(R.layout.dialog_about_game, null)
-
         val bottomSheetDialog = BottomSheetDialog(context)
         bottomSheetDialog.setContentView(bottomSheetView)
-
         bottomSheetView.findViewById<TextView>(R.id.about_game_title).text = game.title
         bottomSheetView.findViewById<TextView>(R.id.about_game_company).text = game.company
         bottomSheetView.findViewById<TextView>(R.id.about_game_region).text = game.regions
@@ -347,33 +306,26 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
         bottomSheetView.findViewById<TextView>(R.id.about_game_filename).text = context.getString(R.string.game_context_file) + " " + game.filename
         bottomSheetView.findViewById<TextView>(R.id.about_game_filetype).text = context.getString(R.string.game_context_type) + " " + game.fileType
         GameIconUtils.loadGameIcon(activity, game, bottomSheetView.findViewById(R.id.game_icon))
-
         bottomSheetView.findViewById<MaterialButton>(R.id.about_game_play).setOnClickListener {
             val action = HomeNavigationDirections.actionGlobalEmulationActivity(holder.game)
             view.findNavController().navigate(action)
         }
-
         bottomSheetView.findViewById<TextView>(R.id.about_game_playtime).text =
             buildString {
                 val playTimeSeconds = NativeLibrary.playTimeManagerGetPlayTime(game.titleId)
-
                 val hours = playTimeSeconds / 3600
                 val minutes = (playTimeSeconds % 3600) / 60
                 val seconds = playTimeSeconds % 60
-
                 val readablePlayTime = when {
                     hours > 0 -> "${hours}h ${minutes}m ${seconds}s"
                     minutes > 0 -> "${minutes}m ${seconds}s"
                     else -> "${seconds}s"
                 }
-
                 append("Playtime: ")
                 append(readablePlayTime)
             }
-
         bottomSheetView.findViewById<MaterialButton>(R.id.game_shortcut).setOnClickListener {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-
             // Default to false for zoomed in shortcut icons
             preferences.edit() {
                 putBoolean(
@@ -381,16 +333,12 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
                     false
                 )
             }
-
             dialogShortcutBinding = DialogShortcutBinding.inflate(activity.layoutInflater)
-
             dialogShortcutBinding!!.shortcutNameInput.setText(game.title)
             GameIconUtils.loadGameIcon(activity, game, dialogShortcutBinding!!.shortcutIcon)
-
             dialogShortcutBinding!!.shortcutIcon.setOnClickListener {
                 openImageLauncher?.launch("image/*")
             }
-
             dialogShortcutBinding!!.imageScaleSwitch.setOnCheckedChangeListener { _, isChecked ->
                 preferences.edit {
                     putBoolean(
@@ -400,7 +348,6 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
                 }
                 refreshShortcutDialogIcon()
             }
-
             MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.create_shortcut)
                 .setView(dialogShortcutBinding!!.root)
@@ -412,7 +359,6 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
                     }
                     val iconBitmap = (dialogShortcutBinding!!.shortcutIcon.drawable as BitmapDrawable).bitmap
                     val shortcutManager = activity.getSystemService(ShortcutManager::class.java)
-
                     CoroutineScope(Dispatchers.IO).launch {
                         val icon = Icon.createWithBitmap(iconBitmap)
                         val shortcut = ShortcutInfo.Builder(context, shortcutName)
@@ -422,7 +368,6 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
                                 putExtra("launchedFromShortcut", true)
                             })
                             .build()
-
                         shortcutManager?.requestPinShortcut(shortcut, null)
                         imagePath = null
                     }
@@ -431,31 +376,24 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
                     imagePath = null
                 }
                 .show()
-
             bottomSheetDialog.dismiss()
         }
-
         bottomSheetView.findViewById<MaterialButton>(R.id.cheats).setOnClickListener {
             val action = CheatsFragmentDirections.actionGlobalCheatsFragment(holder.game.titleId)
             view.findNavController().navigate(action)
             bottomSheetDialog.dismiss()
         }
-
         bottomSheetView.findViewById<MaterialButton>(R.id.menu_button_open).setOnClickListener {
             showOpenContextMenu(it, game)
         }
-
         bottomSheetView.findViewById<MaterialButton>(R.id.menu_button_uninstall).setOnClickListener {
             showUninstallContextMenu(it, game, bottomSheetDialog)
         }
-
         val bottomSheetBehavior = bottomSheetDialog.getBehavior()
         bottomSheetBehavior.skipCollapsed = true
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-
         bottomSheetDialog.show()
     }
-
     private fun refreshShortcutDialogIcon() {
         if (imagePath != null) {
             val originalBitmap = BitmapFactory.decodeStream(
@@ -474,20 +412,17 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
                     val width = originalBitmap.width
                     val height = originalBitmap.height
                     val targetSize = 108
-
                     if (width > height) {
                         // Landscape orientation
                         val scaleFactor = targetSize.toFloat() / height
                         val scaledWidth = (width * scaleFactor).toInt()
                         val scaledBmp = originalBitmap.scale(scaledWidth, targetSize)
-
                         val startX = (scaledWidth - targetSize) / 2
                         Bitmap.createBitmap(scaledBmp, startX, 0, targetSize, targetSize)
                     } else {
                         val scaleFactor = targetSize.toFloat() / width
                         val scaledHeight = (height * scaleFactor).toInt()
                         val scaledBmp = originalBitmap.scale(targetSize, scaledHeight)
-
                         val startY = (scaledHeight - targetSize) / 2
                         Bitmap.createBitmap(scaledBmp, 0, startY, targetSize, targetSize)
                     }
@@ -496,17 +431,14 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
             dialogShortcutBinding!!.shortcutIcon.setImageBitmap(scaledBitmap)
         }
     }
-
     private fun isValidGame(extension: String): Boolean {
         return Game.badExtensions.stream()
             .noneMatch { extension == it.lowercase() }
     }
-
     private class DiffCallback : DiffUtil.ItemCallback<Game>() {
         override fun areItemsTheSame(oldItem: Game, newItem: Game): Boolean {
             return oldItem.titleId == newItem.titleId
         }
-
         override fun areContentsTheSame(oldItem: Game, newItem: Game): Boolean {
             return oldItem == newItem
         }

@@ -1,9 +1,7 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.features.cheats.ui
-
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
@@ -31,25 +29,19 @@ import org.citra.citra_emu.features.cheats.model.CheatsViewModel
 import org.citra.citra_emu.ui.TwoPaneOnBackPressedCallback
 import org.citra.citra_emu.ui.main.MainActivity
 import org.citra.citra_emu.viewmodel.HomeViewModel
-
 class CheatsFragment : Fragment(), SlidingPaneLayout.PanelSlideListener {
     private var cheatListLastFocus: View? = null
     private var cheatDetailsLastFocus: View? = null
-
     private var _binding: FragmentCheatsBinding? = null
     private val binding get() = _binding!!
-
     private val cheatsViewModel: CheatsViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
-
     private val args by navArgs<CheatsFragmentArgs>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
     }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -58,17 +50,13 @@ class CheatsFragment : Fragment(), SlidingPaneLayout.PanelSlideListener {
         _binding = FragmentCheatsBinding.inflate(inflater)
         return binding.root
     }
-
     // This is using the correct scope, lint is just acting up
     @SuppressLint("UnsafeRepeatOnLifecycleDetector")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         homeViewModel.setNavigationVisibility(visible = false, animated = true)
         homeViewModel.setStatusBarShadeVisibility(visible = false)
-
         cheatsViewModel.initialize(args.titleId)
-
         cheatListLastFocus = binding.cheatListContainer
         cheatDetailsLastFocus = binding.cheatDetailsContainer
         binding.slidingPaneLayout.addPanelSlideListener(this)
@@ -92,7 +80,6 @@ class CheatsFragment : Fragment(), SlidingPaneLayout.PanelSlideListener {
                 }
             }
         )
-
         viewLifecycleOwner.lifecycleScope.apply {
             launch {
                 repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -125,37 +112,30 @@ class CheatsFragment : Fragment(), SlidingPaneLayout.PanelSlideListener {
                 }
             }
         }
-
         setInsets()
     }
-
     override fun onStop() {
         super.onStop()
         cheatsViewModel.saveIfNeeded()
     }
-
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
-
     override fun onPanelSlide(panel: View, slideOffset: Float) {}
     override fun onPanelOpened(panel: View) {
         val rtl = ViewCompat.getLayoutDirection(panel) == ViewCompat.LAYOUT_DIRECTION_RTL
         cheatDetailsLastFocus!!.requestFocus(if (rtl) View.FOCUS_LEFT else View.FOCUS_RIGHT)
     }
-
     override fun onPanelClosed(panel: View) {
         val rtl = ViewCompat.getLayoutDirection(panel) == ViewCompat.LAYOUT_DIRECTION_RTL
         cheatListLastFocus!!.requestFocus(if (rtl) View.FOCUS_RIGHT else View.FOCUS_LEFT)
     }
-
     private fun onIsEditingChanged(isEditing: Boolean) {
         if (isEditing) {
             binding.slidingPaneLayout.lockMode = SlidingPaneLayout.LOCK_MODE_UNLOCKED
         }
     }
-
     private fun onSelectedCheatChanged(selectedCheat: Cheat?) {
         val cheatSelected = selectedCheat != null || cheatsViewModel.isEditing.value!!
         if (!cheatSelected && binding.slidingPaneLayout.isOpen) {
@@ -164,7 +144,6 @@ class CheatsFragment : Fragment(), SlidingPaneLayout.PanelSlideListener {
         binding.slidingPaneLayout.lockMode =
             if (cheatSelected) SlidingPaneLayout.LOCK_MODE_UNLOCKED else SlidingPaneLayout.LOCK_MODE_LOCKED_CLOSED
     }
-
     fun onListViewFocusChange(hasFocus: Boolean) {
         if (hasFocus) {
             cheatListLastFocus = binding.cheatListContainer.findFocus()
@@ -172,7 +151,6 @@ class CheatsFragment : Fragment(), SlidingPaneLayout.PanelSlideListener {
             binding.slidingPaneLayout.close()
         }
     }
-
     fun onDetailsViewFocusChange(hasFocus: Boolean) {
         if (hasFocus) {
             cheatDetailsLastFocus = binding.cheatDetailsContainer.findFocus()
@@ -182,26 +160,22 @@ class CheatsFragment : Fragment(), SlidingPaneLayout.PanelSlideListener {
             binding.slidingPaneLayout.open()
         }
     }
-
     private fun openDetailsView(open: Boolean) {
         if (open) {
             binding.slidingPaneLayout.open()
         }
     }
-
     private fun closeDetailsView(close: Boolean) {
         if (close) {
             binding.slidingPaneLayout.close()
         }
     }
-
     private fun setInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(
             binding.slidingPaneLayout
         ) { _: View?, windowInsets: WindowInsetsCompat ->
             val barInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             val keyboardInsets = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
-
             // Set keyboard insets if the system supports smooth keyboard animations
             val mlpDetails = binding.cheatDetailsContainer.layoutParams as ViewGroup.MarginLayoutParams
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
@@ -218,7 +192,6 @@ class CheatsFragment : Fragment(), SlidingPaneLayout.PanelSlideListener {
             binding.cheatDetailsContainer.layoutParams = mlpDetails
             windowInsets
         }
-
         // Update the layout for every frame that the keyboard animates in
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             ViewCompat.setWindowInsetsAnimationCallback(

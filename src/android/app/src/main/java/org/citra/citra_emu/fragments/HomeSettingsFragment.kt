@@ -1,7 +1,3 @@
-// Copyright Citra Emulator Project / Azahar Emulator Project
-// Licensed under GPLv2 or any later version
-// Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.content.Intent
@@ -9,54 +5,48 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.widget.doOnTextChanged
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.findNavController
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.transition.MaterialSharedAxis
 import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.HomeNavigationDirections
 import org.citra.citra_emu.R
-import org.citra.citra_emu.adapters.HomeSettingAdapter
 import org.citra.citra_emu.databinding.DialogSoftwareKeyboardBinding
-import org.citra.citra_emu.databinding.FragmentHomeSettingsBinding
 import org.citra.citra_emu.features.settings.model.Settings
-import org.citra.citra_emu.features.settings.model.StringSetting
+import org.citra.citra_emu.features.settings.ui.SettingsEvent
+import org.citra.citra_emu.features.settings.ui.SettingsViewModel
 import org.citra.citra_emu.features.settings.ui.SettingsActivity
 import org.citra.citra_emu.features.settings.utils.SettingsFile
-import org.citra.citra_emu.model.Game
-import org.citra.citra_emu.model.HomeSetting
 import org.citra.citra_emu.ui.main.MainActivity
+import org.citra.citra_emu.ui.settings.SettingsScreen
+import org.citra.citra_emu.ui.theme.CitraTheme
 import org.citra.citra_emu.utils.GameHelper
-import org.citra.citra_emu.utils.PermissionsHandler
-import org.citra.citra_emu.viewmodel.HomeViewModel
 import org.citra.citra_emu.utils.GpuDriverHelper
 import org.citra.citra_emu.utils.Log
+import org.citra.citra_emu.utils.PermissionsHandler
 import org.citra.citra_emu.viewmodel.DriverViewModel
+import org.citra.citra_emu.viewmodel.HomeViewModel
 
 class HomeSettingsFragment : Fragment() {
-    private var _binding: FragmentHomeSettingsBinding? = null
-    private val binding get() = _binding!!
-
     private lateinit var mainActivity: MainActivity
-
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val driverViewModel: DriverViewModel by activityViewModels()
-
-    private val preferences get() =
-        PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
+    private val settingsViewModel: SettingsViewModel by viewModels()
+    private val preferences
+        get() =
+            PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,150 +58,107 @@ class HomeSettingsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHomeSettingsBinding.inflate(layoutInflater)
-        return binding.root
+        mainActivity = requireActivity() as MainActivity
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                CitraTheme {
+                    val userDir by homeViewModel.userDir.collectAsState()
+                    val gamesDir by homeViewModel.gamesDir.collectAsState()
+                    val driverMetadata by driverViewModel.selectedDriverMetadata.collectAsState()
+                    SettingsScreen(
+                        viewModel = settingsViewModel,
+                        userDir = userDir,
+                        gamesDir = gamesDir,
+                        driverName = driverMetadata,
+                        onEvent = { event -> handleEvent(event) }
+                    )
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        mainActivity = requireActivity() as MainActivity
-
-        val optionsList = listOf(
-            HomeSetting(
-                R.string.grid_menu_core_settings,
-                R.string.settings_description,
-                R.drawable.ic_settings,
-                { SettingsActivity.launch(requireContext(), SettingsFile.FILE_NAME_CONFIG, "") }
-            ),
-            HomeSetting(
-                R.string.artic_base_connect,
-                R.string.artic_base_connect_description,
-                R.drawable.ic_network,
-                {
-                    val inflater = LayoutInflater.from(context)
-                    val inputBinding = DialogSoftwareKeyboardBinding.inflate(inflater)
-                    var textInputValue: String = preferences.getString("last_artic_base_addr", "")!!
-
-                    inputBinding.editTextInput.setText(textInputValue)
-                    inputBinding.editTextInput.doOnTextChanged { text, _, _, _ ->
-                        textInputValue = text.toString()
-                    }
-
-                    val dialog = context?.let {
-                        MaterialAlertDialogBuilder(it)
-                            .setView(inputBinding.root)
-                            .setTitle(getString(R.string.artic_base_enter_address))
-                            .setPositiveButton(android.R.string.ok) { _, _ ->
-                                if (textInputValue.isNotEmpty()) {
-                                    preferences.edit()
-                                        .putString("last_artic_base_addr", textInputValue)
-                                        .apply()
-                                    val menu = Game(
-                                        title = getString(R.string.artic_base),
-                                        path = "articbase://$textInputValue",
-                                        filename = ""
-                                    )
-                                    val action =
-                                        HomeNavigationDirections.actionGlobalEmulationActivity(menu)
-                                    binding.root.findNavController().navigate(action)
-                                }
-                            }
-                            .setNegativeButton(android.R.string.cancel) {_, _ -> }
-                            .show()
-                    }
-                }
-            ),
-            HomeSetting(
-                R.string.install_game_content,
-                R.string.install_game_content_description,
-                R.drawable.ic_install,
-                { mainActivity.ciaFileInstaller.launch(true) }
-            ),
-            HomeSetting(
-                R.string.setup_system_files,
-                R.string.setup_system_files_description,
-                R.drawable.ic_system_update,
-                {
-                    exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
-                    parentFragmentManager.primaryNavigationFragment?.findNavController()
-                        ?.navigate(R.id.action_homeSettingsFragment_to_systemFilesFragment)
-                }
-            ),
-            HomeSetting(
-                R.string.share_log,
-                R.string.share_log_description,
-                R.drawable.ic_share,
-                { shareLog() }
-            ),
-            HomeSetting(
-                R.string.gpu_driver_manager,
-                R.string.install_gpu_driver_description,
-                R.drawable.ic_install_driver,
-                {
-                    binding.root.findNavController()
-                        .navigate(R.id.action_homeSettingsFragment_to_driverManagerFragment)
-                },
-                { GpuDriverHelper.supportsCustomDriverLoading() },
-                R.string.custom_driver_not_supported,
-                R.string.custom_driver_not_supported_description,
-                driverViewModel.selectedDriverMetadata
-            ),
-            HomeSetting(
-                R.string.select_citra_user_folder,
-                R.string.select_citra_user_folder_home_description,
-                R.drawable.ic_home,
-                { PermissionsHandler.compatibleSelectDirectory(mainActivity.openCitraDirectory) },
-                details = homeViewModel.userDir
-            ),
-            HomeSetting(
-                R.string.select_games_folder,
-                R.string.select_games_folder_description,
-                R.drawable.ic_add,
-                { getGamesDirectory.launch(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).data) },
-                details = homeViewModel.gamesDir
-            ),
-            HomeSetting(
-                R.string.preferences_theme,
-                R.string.theme_and_color_description,
-                R.drawable.ic_palette,
-                { SettingsActivity.launch(requireContext(), Settings.SECTION_THEME, "") }
-            ),
-            HomeSetting(
-                R.string.about,
-                R.string.about_description,
-                R.drawable.ic_info_outline,
-                {
-                    exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
-                    parentFragmentManager.primaryNavigationFragment?.findNavController()
-                        ?.navigate(R.id.action_homeSettingsFragment_to_aboutFragment)
-                }
-            )
-        )
-
-        binding.homeSettingsList.apply {
-            layoutManager = GridLayoutManager(
-                requireContext(),
-                resources.getInteger(R.integer.game_grid_columns)
-            )
-            adapter = HomeSettingAdapter(
-                requireActivity() as AppCompatActivity,
-                viewLifecycleOwner,
-                optionsList
-            )
-        }
-
-        setInsets()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        exitTransition = null
+        super.onViewCreated(view, savedInstanceState)
+        // Ensure UI elements are visible
         homeViewModel.setNavigationVisibility(visible = true, animated = true)
         homeViewModel.setStatusBarShadeVisibility(visible = true)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun handleEvent(event: SettingsEvent) {
+        when (event) {
+            SettingsEvent.NavigateToCoreSettings -> SettingsActivity.launch(
+                requireContext(),
+                SettingsFile.FILE_NAME_CONFIG,
+                ""
+            )
+
+            SettingsEvent.OpenArcticBaseDialog -> showArcticBaseDialog()
+            is SettingsEvent.NavigateToEmulationActivity -> {
+                val action = HomeNavigationDirections.actionGlobalEmulationActivity(event.game)
+                findNavController().navigate(action)
+            }
+
+            SettingsEvent.LaunchCiaInstaller -> mainActivity.ciaFileInstaller.launch(true)
+            SettingsEvent.NavigateToSystemFiles -> {
+                exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
+                findNavController().navigate(R.id.action_homeSettingsFragment_to_systemFilesFragment)
+            }
+
+            SettingsEvent.ShareLog -> shareLog()
+            SettingsEvent.NavigateToDriverManager -> {
+                if (GpuDriverHelper.supportsCustomDriverLoading()) {
+                    findNavController().navigate(R.id.action_homeSettingsFragment_to_driverManagerFragment)
+                } else {
+                    Toast.makeText(
+                        context,
+                        R.string.custom_driver_not_supported,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            SettingsEvent.SelectUserFolder -> PermissionsHandler.compatibleSelectDirectory(
+                mainActivity.openCitraDirectory
+            )
+
+            SettingsEvent.SelectGamesFolder -> getGamesDirectory.launch(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).data)
+            SettingsEvent.NavigateToThemeSettings -> SettingsActivity.launch(
+                requireContext(),
+                Settings.SECTION_THEME,
+                ""
+            )
+
+            SettingsEvent.NavigateToAbout -> {
+                exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
+                findNavController().navigate(R.id.action_homeSettingsFragment_to_aboutFragment)
+            }
+        }
+    }
+
+    private fun showArcticBaseDialog() {
+        val inflater = LayoutInflater.from(context)
+        val inputBinding = DialogSoftwareKeyboardBinding.inflate(inflater)
+        var textInputValue: String = preferences.getString("last_artic_base_addr", "")!!
+        inputBinding.editTextInput.setText(textInputValue)
+        inputBinding.editTextInput.doOnTextChanged { text, _, _, _ ->
+            textInputValue = text.toString()
+        }
+        context?.let { ctx ->
+            MaterialAlertDialogBuilder(ctx)
+                .setView(inputBinding.root)
+                .setTitle(getString(R.string.artic_base_enter_address))
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    if (textInputValue.isNotEmpty()) {
+                        preferences.edit()
+                            .putString("last_artic_base_addr", textInputValue)
+                            .apply()
+                        settingsViewModel.onArcticBaseAddressEntered(textInputValue)
+                    }
+                }
+                .setNegativeButton(android.R.string.cancel) { _, _ -> }
+                .show()
+        }
     }
 
     private val getGamesDirectory =
@@ -219,24 +166,18 @@ class HomeSettingsFragment : Fragment() {
             if (result == null) {
                 return@registerForActivityResult
             }
-
             requireContext().contentResolver.takePersistableUriPermission(
                 result,
                 Intent.FLAG_GRANT_READ_URI_PERMISSION
             )
-
-            // When a new directory is picked, we currently will reset the existing games
-            // database. This effectively means that only one game directory is supported.
             preferences.edit()
                 .putString(GameHelper.KEY_GAME_PATH, result.toString())
                 .apply()
-
             Toast.makeText(
                 CitraApplication.appContext,
                 R.string.games_dir_selected,
                 Toast.LENGTH_LONG
             ).show()
-
             homeViewModel.setGamesDir(requireActivity(), result.path!!)
         }
 
@@ -247,7 +188,6 @@ class HomeSettingsFragment : Fragment() {
         )?.findFile("log")
         val currentLog = logDirectory?.findFile("azahar_log.txt")
         val oldLog = logDirectory?.findFile("azahar_log.old.txt")
-
         val intent = Intent().apply {
             action = Intent.ACTION_SEND
             type = "text/plain"
@@ -266,38 +206,4 @@ class HomeSettingsFragment : Fragment() {
             ).show()
         }
     }
-
-    private fun setInsets() =
-        ViewCompat.setOnApplyWindowInsetsListener(
-            binding.root
-        ) { view: View, windowInsets: WindowInsetsCompat ->
-            val barInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val cutoutInsets = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
-            val spacingNavigation = resources.getDimensionPixelSize(R.dimen.spacing_navigation)
-            val spacingNavigationRail =
-                resources.getDimensionPixelSize(R.dimen.spacing_navigation_rail)
-
-            val leftInsets = barInsets.left + cutoutInsets.left
-            val rightInsets = barInsets.right + cutoutInsets.right
-
-            binding.scrollViewSettings.updatePadding(
-                top = barInsets.top,
-                bottom = barInsets.bottom
-            )
-
-            val mlpScrollSettings = binding.scrollViewSettings.layoutParams as MarginLayoutParams
-            mlpScrollSettings.leftMargin = leftInsets
-            mlpScrollSettings.rightMargin = rightInsets
-            binding.scrollViewSettings.layoutParams = mlpScrollSettings
-
-            binding.linearLayoutSettings.updatePadding(bottom = spacingNavigation)
-
-            if (ViewCompat.getLayoutDirection(view) == ViewCompat.LAYOUT_DIRECTION_LTR) {
-                binding.linearLayoutSettings.updatePadding(left = spacingNavigationRail)
-            } else {
-                binding.linearLayoutSettings.updatePadding(right = spacingNavigationRail)
-            }
-
-            windowInsets
-        }
 }

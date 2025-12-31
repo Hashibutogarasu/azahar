@@ -1,7 +1,6 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.os.Bundle
@@ -17,7 +16,6 @@ import org.citra.citra_emu.utils.SerializableHelper.parcelable
 class LicenseBottomSheetDialogFragment : BottomSheetDialogFragment() {
     private var _binding: DialogLicenseBinding? = null
     private val binding get() = _binding!!
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -31,9 +29,7 @@ class LicenseBottomSheetDialogFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         BottomSheetBehavior.from<View>(view.parent as View).state =
             BottomSheetBehavior.STATE_HALF_EXPANDED
-
         val license = requireArguments().parcelable<License>(LICENSE)!!
-
         binding.apply {
             textTitle.setText(license.titleId)
             textLink.setText(license.linkId)
@@ -54,9 +50,7 @@ class LicenseBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     companion object {
         const val TAG = "LicenseBottomSheetDialogFragment"
-
         const val LICENSE = "License"
-
         fun newInstance(
             license: License
         ): LicenseBottomSheetDialogFragment {

@@ -1,9 +1,7 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.utils
-
 import android.app.NotificationManager
 import android.content.Context
 import android.net.Uri
@@ -15,7 +13,6 @@ import androidx.work.WorkerParameters
 import org.citra.citra_emu.NativeLibrary.InstallStatus
 import org.citra.citra_emu.R
 import org.citra.citra_emu.utils.FileUtil.getFilename
-
 class CiaInstallWorker(
     val context: Context,
     params: WorkerParameters
@@ -25,7 +22,6 @@ class CiaInstallWorker(
     private val SUMMARY_NOTIFICATION_ID = 0xC1A0000
     private val PROGRESS_NOTIFICATION_ID = SUMMARY_NOTIFICATION_ID + 1
     private var statusNotificationId = SUMMARY_NOTIFICATION_ID + 2
-
     private val notificationManager = context.getSystemService(NotificationManager::class.java)
     private val installProgressBuilder = NotificationCompat.Builder(
         context,
@@ -49,7 +45,6 @@ class CiaInstallWorker(
         .setGroup(GROUP_KEY_CIA_INSTALL_STATUS)
         .setGroupSummary(true)
         .build()
-
     private fun notifyInstallStatus(filename: String, status: InstallStatus) {
         when (status) {
             InstallStatus.Success -> {
@@ -60,7 +55,6 @@ class CiaInstallWorker(
                     context.getString(R.string.cia_install_success, filename)
                 )
             }
-
             InstallStatus.ErrorAborted -> {
                 installStatusBuilder.setContentTitle(
                     context.getString(R.string.cia_install_notification_error_title)
@@ -70,7 +64,6 @@ class CiaInstallWorker(
                         .bigText(context.getString(R.string.cia_install_error_aborted, filename))
                 )
             }
-
             InstallStatus.ErrorInvalid -> {
                 installStatusBuilder.setContentTitle(
                     context.getString(R.string.cia_install_notification_error_title)
@@ -79,7 +72,6 @@ class CiaInstallWorker(
                     context.getString(R.string.cia_install_error_invalid, filename)
                 )
             }
-
             InstallStatus.ErrorEncrypted -> {
                 installStatusBuilder.setContentTitle(
                     context.getString(R.string.cia_install_notification_error_title)
@@ -89,7 +81,6 @@ class CiaInstallWorker(
                         .bigText(context.getString(R.string.cia_install_error_encrypted, filename))
                 )
             }
-
             InstallStatus.ErrorFailedToOpenFile, InstallStatus.ErrorFileNotFound -> {
                 installStatusBuilder.setContentTitle(
                     context.getString(R.string.cia_install_notification_error_title)
@@ -99,7 +90,6 @@ class CiaInstallWorker(
                         .bigText(context.getString(R.string.cia_install_error_unknown, filename))
                 )
             }
-
             else -> {
                 installStatusBuilder.setContentTitle(
                     context.getString(R.string.cia_install_notification_error_title)
@@ -110,13 +100,11 @@ class CiaInstallWorker(
                 )
             }
         }
-
         // Even if newer versions of Android don't show the group summary text that you design,
         // you always need to manually set a summary to enable grouped notifications.
         notificationManager.notify(SUMMARY_NOTIFICATION_ID, summaryNotification)
         notificationManager.notify(statusNotificationId++, installStatusBuilder.build())
     }
-
     override fun doWork(): Result {
         val selectedFiles = inputData.getStringArray("CIA_FILES")!!
         val toastText: CharSequence = context.resources.getQuantityString(
@@ -126,7 +114,6 @@ class CiaInstallWorker(
         context.mainExecutor.execute {
             Toast.makeText(context, toastText, Toast.LENGTH_LONG).show()
         }
-
         // Issue the initial notification with zero progress
         installProgressBuilder.setOngoing(true)
         setProgressCallback(100, 0)
@@ -146,7 +133,6 @@ class CiaInstallWorker(
         notificationManager.cancel(PROGRESS_NOTIFICATION_ID)
         return Result.success()
     }
-
     fun setProgressCallback(max: Int, progress: Int) {
         val currentTime = System.currentTimeMillis()
         // Android applies a rate limit when updating a notification.
@@ -160,9 +146,7 @@ class CiaInstallWorker(
         installProgressBuilder.setProgress(max, progress, false)
         notificationManager.notify(PROGRESS_NOTIFICATION_ID, installProgressBuilder.build())
     }
-
     override fun getForegroundInfo(): ForegroundInfo =
         ForegroundInfo(PROGRESS_NOTIFICATION_ID, installProgressBuilder.build())
-
     private external fun installCIA(path: String): InstallStatus
 }

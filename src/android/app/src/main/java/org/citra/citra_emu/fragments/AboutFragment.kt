@@ -1,7 +1,6 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.content.ClipData
@@ -31,9 +30,7 @@ import org.citra.citra_emu.viewmodel.HomeViewModel
 class AboutFragment : Fragment() {
     private var _binding: FragmentAboutBinding? = null
     private val binding get() = _binding!!
-
     private val homeViewModel: HomeViewModel by activityViewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
@@ -53,11 +50,9 @@ class AboutFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         homeViewModel.setNavigationVisibility(visible = false, animated = true)
         homeViewModel.setStatusBarShadeVisibility(visible = false)
-
         binding.toolbarAbout.setNavigationOnClickListener {
             binding.root.findNavController().popBackStack()
         }
-
         binding.buttonContributors.setOnClickListener {
             openLink(
                 getString(R.string.contributors_link)
@@ -67,14 +62,12 @@ class AboutFragment : Fragment() {
             exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
             binding.root.findNavController().navigate(R.id.action_aboutFragment_to_licensesFragment)
         }
-
         binding.textBuildHash.text = BuildConfig.VERSION_NAME
         binding.buttonBuildHash.setOnClickListener {
             val clipBoard =
                 requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText(getString(R.string.build), BuildConfig.GIT_HASH)
             clipBoard.setPrimaryClip(clip)
-
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
                 Toast.makeText(
                     requireContext(),
@@ -83,11 +76,9 @@ class AboutFragment : Fragment() {
                 ).show()
             }
         }
-
         binding.buttonDiscord.setOnClickListener { openLink(getString(R.string.support_link)) }
         binding.buttonWebsite.setOnClickListener { openLink(getString(R.string.website_link)) }
         binding.buttonGithub.setOnClickListener { openLink(getString(R.string.github_link)) }
-
         setInsets()
     }
 
@@ -102,22 +93,17 @@ class AboutFragment : Fragment() {
         ) { _: View, windowInsets: WindowInsetsCompat ->
             val barInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             val cutoutInsets = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
-
             val leftInsets = barInsets.left + cutoutInsets.left
             val rightInsets = barInsets.right + cutoutInsets.right
-
             val mlpAppBar = binding.toolbarAbout.layoutParams as MarginLayoutParams
             mlpAppBar.leftMargin = leftInsets
             mlpAppBar.rightMargin = rightInsets
             binding.toolbarAbout.layoutParams = mlpAppBar
-
             val mlpScrollAbout = binding.scrollAbout.layoutParams as MarginLayoutParams
             mlpScrollAbout.leftMargin = leftInsets
             mlpScrollAbout.rightMargin = rightInsets
             binding.scrollAbout.layoutParams = mlpScrollAbout
-
             binding.contentAbout.updatePadding(bottom = barInsets.bottom)
-
             windowInsets
         }
 }

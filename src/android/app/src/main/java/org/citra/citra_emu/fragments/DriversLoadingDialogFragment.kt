@@ -1,7 +1,6 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.app.Dialog
@@ -22,15 +21,11 @@ import org.citra.citra_emu.viewmodel.DriverViewModel
 
 class DriversLoadingDialogFragment : DialogFragment() {
     private val driverViewModel: DriverViewModel by activityViewModels()
-
     private lateinit var binding: DialogProgressBarBinding
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         binding = DialogProgressBarBinding.inflate(layoutInflater)
         binding.progressBar.isIndeterminate = true
-
         isCancelable = false
-
         return MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.loading)
             .setView(binding.root)

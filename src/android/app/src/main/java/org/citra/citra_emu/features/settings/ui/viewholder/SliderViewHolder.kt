@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.features.settings.ui.viewholder
-
 import android.view.View
 import org.citra.citra_emu.databinding.ListItemSettingBinding
 import org.citra.citra_emu.features.settings.model.AbstractFloatSetting
@@ -13,11 +11,9 @@ import org.citra.citra_emu.features.settings.model.ScaledFloatSetting
 import org.citra.citra_emu.features.settings.model.view.SettingsItem
 import org.citra.citra_emu.features.settings.model.view.SliderSetting
 import org.citra.citra_emu.features.settings.ui.SettingsAdapter
-
 class SliderViewHolder(val binding: ListItemSettingBinding, adapter: SettingsAdapter) :
     SettingViewHolder(binding.root, adapter) {
     private lateinit var setting: SliderSetting
-
     override fun bind(item: SettingsItem) {
         setting = item as SliderSetting
         binding.textSettingName.setText(item.nameId)
@@ -34,7 +30,6 @@ class SliderViewHolder(val binding: ListItemSettingBinding, adapter: SettingsAda
             is FloatSetting -> "${(setting.setting as AbstractFloatSetting).float}${setting.units}"
             else -> "${(setting.setting as AbstractIntSetting).int}${setting.units}"
         }
-
         if (setting.isActive) {
             binding.textSettingName.alpha = 1f
             binding.textSettingDescription.alpha = 1f
@@ -45,7 +40,6 @@ class SliderViewHolder(val binding: ListItemSettingBinding, adapter: SettingsAda
             binding.textSettingValue.alpha = 0.5f
         }
     }
-
     override fun onClick(clicked: View) {
         if (setting.isActive) {
             adapter.onSliderClick(setting, bindingAdapterPosition)
@@ -53,7 +47,6 @@ class SliderViewHolder(val binding: ListItemSettingBinding, adapter: SettingsAda
             adapter.onClickDisabledSetting(!setting.isEditable)
         }
     }
-
     override fun onLongClick(clicked: View): Boolean {
         if (setting.isActive) {
             return adapter.onLongClick(setting.setting!!, bindingAdapterPosition)

@@ -1,7 +1,6 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.app.Dialog
@@ -35,12 +34,9 @@ import org.citra.citra_emu.viewmodel.HomeViewModel
 class CopyDirProgressDialog : DialogFragment() {
     private var _binding: DialogCopyDirBinding? = null
     private val binding get() = _binding!!
-
     private val homeViewModel: HomeViewModel by activityViewModels()
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogCopyDirBinding.inflate(layoutInflater)
-
         isCancelable = false
         return MaterialAlertDialogBuilder(requireContext())
             .setView(binding.root)
@@ -58,7 +54,6 @@ class CopyDirProgressDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewLifecycleOwner.lifecycleScope.apply {
             launch {
                 repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -103,7 +98,6 @@ class CopyDirProgressDialog : DialogFragment() {
 
     companion object {
         const val TAG = "CopyDirProgressDialog"
-
         fun newInstance(
             activity: FragmentActivity,
             previous: Uri,
@@ -116,7 +110,6 @@ class CopyDirProgressDialog : DialogFragment() {
             }
             viewModel.clearCopyInfo()
             viewModel.copyInProgress = true
-
             activity.lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     FileUtil.copyDir(

@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu
-
 import android.annotation.SuppressLint
 import android.app.Application
 import android.app.NotificationChannel
@@ -16,7 +14,6 @@ import org.citra.citra_emu.utils.GpuDriverHelper
 import org.citra.citra_emu.utils.PermissionsHandler
 import org.citra.citra_emu.utils.Log
 import org.citra.citra_emu.utils.MemoryUtil
-
 class CitraApplication : Application() {
     private fun createNotificationChannel() {
         with(getSystemService(NotificationManager::class.java)) {
@@ -32,7 +29,6 @@ class CitraApplication : Application() {
             generalChannel.setSound(null, null)
             generalChannel.vibrationPattern = null
             createNotificationChannel(generalChannel)
-
             // CIA Install notifications
             val ciaChannel = NotificationChannel(
                 getString(R.string.cia_install_notification_channel_id),
@@ -46,7 +42,6 @@ class CitraApplication : Application() {
             createNotificationChannel(ciaChannel)
         }
     }
-
     override fun onCreate() {
         super.onCreate()
         application = this
@@ -54,13 +49,11 @@ class CitraApplication : Application() {
         if (PermissionsHandler.hasWriteAccess(applicationContext)) {
             DirectoryInitialization.start()
         }
-
         NativeLibrary.logDeviceInfo()
         logDeviceInfo()
         createNotificationChannel()
         NativeLibrary.playTimeManagerInit()
     }
-
     fun logDeviceInfo() {
         Log.info("Device Manufacturer - ${Build.MANUFACTURER}")
         Log.info("Device Model - ${Build.MODEL}")
@@ -70,12 +63,9 @@ class CitraApplication : Application() {
         }
         Log.info("Total System Memory - ${MemoryUtil.getDeviceRAM()}")
     }
-
     companion object {
         private var application: CitraApplication? = null
-
         val appContext: Context get() = application!!.applicationContext
-
         @SuppressLint("StaticFieldLeak")
         lateinit var documentsTree: DocumentsTree
     }

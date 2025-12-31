@@ -1,9 +1,7 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.utils
-
 import android.graphics.Bitmap
 import android.widget.ImageView
 import androidx.core.graphics.drawable.toDrawable
@@ -21,7 +19,6 @@ import coil.transform.RoundedCornersTransformation
 import org.citra.citra_emu.R
 import org.citra.citra_emu.model.Game
 import java.nio.IntBuffer
-
 class GameIconFetcher(
     private val game: Game,
     private val options: Options
@@ -33,23 +30,19 @@ class GameIconFetcher(
             dataSource = DataSource.DISK
         )
     }
-
     private fun getGameIcon(vector: IntArray?): Bitmap? {
         val bitmap = Bitmap.createBitmap(48, 48, Bitmap.Config.RGB_565)
         bitmap.copyPixelsFromBuffer(IntBuffer.wrap(vector))
         return bitmap
     }
-
     class Factory : Fetcher.Factory<Game> {
         override fun create(data: Game, options: Options, imageLoader: ImageLoader): Fetcher =
             GameIconFetcher(data, options)
     }
 }
-
 class GameIconKeyer : Keyer<Game> {
     override fun key(data: Game, options: Options): String = data.path
 }
-
 object GameIconUtils {
     fun loadGameIcon(activity: FragmentActivity, game: Game, imageView: ImageView) {
         val imageLoader = ImageLoader.Builder(activity)
@@ -63,7 +56,6 @@ object GameIconUtils {
                     .build()
             }
             .build()
-
         val request = ImageRequest.Builder(activity)
             .data(game)
             .target(imageView)

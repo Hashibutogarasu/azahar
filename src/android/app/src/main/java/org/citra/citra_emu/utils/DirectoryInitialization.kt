@@ -1,9 +1,7 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.utils
-
 import android.content.Context
 import android.net.Uri
 import androidx.preference.PreferenceManager
@@ -17,29 +15,24 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.concurrent.atomic.AtomicBoolean
-
 /**
  * A service that spawns its own thread in order to copy several binary and shader files
  * from the Citra APK to the external file system.
  */
 object DirectoryInitialization {
     private const val SYS_DIR_VERSION = "sysDirectoryVersion"
-
     @Volatile
     private var directoryState: DirectoryInitializationState? = null
     var userPath: String? = null
     val internalUserPath
         get() = CitraApplication.appContext.getExternalFilesDir(null)!!.canonicalPath
     private val isCitraDirectoryInitializationRunning = AtomicBoolean(false)
-
     val context: Context get() = CitraApplication.appContext
-
     @JvmStatic
     fun start(): DirectoryInitializationState? {
         if (!isCitraDirectoryInitializationRunning.compareAndSet(false, true)) {
             return null
         }
-
         if (directoryState != DirectoryInitializationState.CITRA_DIRECTORIES_INITIALIZED) {
             directoryState = if (hasWriteAccess(context)) {
                 if (setCitraUserDirectory()) {
@@ -59,7 +52,6 @@ object DirectoryInitialization {
         isCitraDirectoryInitializationRunning.set(false)
         return directoryState
     }
-
     private fun deleteDirectoryRecursively(file: File) {
         if (file.isDirectory) {
             for (child in file.listFiles()!!) {
@@ -68,17 +60,14 @@ object DirectoryInitialization {
         }
         file.delete()
     }
-
     @JvmStatic
     fun areCitraDirectoriesReady(): Boolean {
         return directoryState == DirectoryInitializationState.CITRA_DIRECTORIES_INITIALIZED
     }
-
     fun resetCitraDirectoryState() {
         directoryState = null
         isCitraDirectoryInitializationRunning.compareAndSet(true, false)
     }
-
     val userDirectory: String?
         get() {
             checkNotNull(directoryState) {
@@ -89,7 +78,6 @@ object DirectoryInitialization {
             }
             return userPath
         }
-
     fun setCitraUserDirectory(): Boolean {
         val dataPath = PermissionsHandler.citraDirectory
         if (dataPath.toString().isNotEmpty()) {
@@ -99,7 +87,6 @@ object DirectoryInitialization {
         }
         return false
     }
-
     private fun copyAsset(asset: String, output: File, overwrite: Boolean, context: Context) {
         Log.debug("[DirectoryInitialization] Copying File $asset to $output")
         try {
@@ -114,7 +101,6 @@ object DirectoryInitialization {
             Log.error("[DirectoryInitialization] Failed to copy asset file: $asset" + e.message)
         }
     }
-
     private fun copyAssetFolder(
         assetFolder: String,
         outputFolder: File,
@@ -145,7 +131,6 @@ object DirectoryInitialization {
             )
         }
     }
-
     @Throws(IOException::class)
     private fun copyFile(inputStream: InputStream, outputStream: OutputStream) {
         val buffer = ByteArray(1024)
@@ -154,7 +139,6 @@ object DirectoryInitialization {
             outputStream.write(buffer, 0, read)
         }
     }
-
     enum class DirectoryInitializationState {
         CITRA_DIRECTORIES_INITIALIZED,
         EXTERNAL_STORAGE_PERMISSION_NEEDED,

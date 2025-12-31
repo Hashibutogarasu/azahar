@@ -1,9 +1,7 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.viewmodel
-
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,38 +16,28 @@ import org.citra.citra_emu.R
 import org.citra.citra_emu.utils.FileUtil.asDocumentFile
 import org.citra.citra_emu.utils.GpuDriverMetadata
 import org.citra.citra_emu.utils.GpuDriverHelper
-
 class DriverViewModel : ViewModel() {
     val areDriversLoading get() = _areDriversLoading.asStateFlow()
     private val _areDriversLoading = MutableStateFlow(false)
-
     val isDriverReady get() = _isDriverReady.asStateFlow()
     private val _isDriverReady = MutableStateFlow(true)
-
     val isDeletingDrivers get() = _isDeletingDrivers.asStateFlow()
     private val _isDeletingDrivers = MutableStateFlow(false)
-
     val driverList get() = _driverList.asStateFlow()
     private val _driverList = MutableStateFlow(mutableListOf<Pair<Uri, GpuDriverMetadata>>())
-
     var previouslySelectedDriver = 0
     var selectedDriver = -1
-
     private val _selectedDriverMetadata =
         MutableStateFlow(
             GpuDriverHelper.customDriverData.name
                 ?: CitraApplication.appContext.getString(R.string.system_gpu_driver)
         )
     val selectedDriverMetadata: StateFlow<String> get() = _selectedDriverMetadata
-
     private val _newDriverInstalled = MutableStateFlow(false)
     val newDriverInstalled: StateFlow<Boolean> get() = _newDriverInstalled
-
     val driversToDelete = mutableListOf<Uri>()
-
     val isInteractionAllowed
         get() = !areDriversLoading.value && isDriverReady.value && !isDeletingDrivers.value
-
     init {
         _areDriversLoading.value = true
         viewModelScope.launch {
@@ -62,24 +50,20 @@ class DriverViewModel : ViewModel() {
                         break
                     }
                 }
-
                 _driverList.value = drivers
                 _areDriversLoading.value = false
             }
         }
     }
-
     fun setSelectedDriverIndex(value: Int) {
         if (selectedDriver != -1) {
             previouslySelectedDriver = selectedDriver
         }
         selectedDriver = value
     }
-
     fun setNewDriverInstalled(value: Boolean) {
         _newDriverInstalled.value = value
     }
-
     fun addDriver(driverData: Pair<Uri, GpuDriverMetadata>) {
         val driverIndex = _driverList.value.indexOfFirst { it == driverData }
         if (driverIndex == -1) {
@@ -91,11 +75,9 @@ class DriverViewModel : ViewModel() {
             setSelectedDriverIndex(driverIndex)
         }
     }
-
     fun removeDriver(driverData: Pair<Uri, GpuDriverMetadata>) {
         _driverList.value.remove(driverData)
     }
-
     fun onCloseDriverManager() {
         _isDeletingDrivers.value = true
         viewModelScope.launch {
@@ -110,11 +92,9 @@ class DriverViewModel : ViewModel() {
                 _isDeletingDrivers.value = false
             }
         }
-
         if (GpuDriverHelper.customDriverData == driverList.value[selectedDriver].second) {
             return
         }
-
         _isDriverReady.value = false
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -123,13 +103,11 @@ class DriverViewModel : ViewModel() {
                     setDriverReady()
                     return@withContext
                 }
-
                 val driverToInstall = driverList.value[selectedDriver].first.asDocumentFile()
                 if (driverToInstall == null) {
                     GpuDriverHelper.installDefaultDriver()
                     return@withContext
                 }
-
                 if (driverToInstall.exists()) {
                     if (!GpuDriverHelper.installCustomDriverPartial(driverToInstall.uri)) {
                         return@withContext
@@ -141,7 +119,6 @@ class DriverViewModel : ViewModel() {
             }
         }
     }
-
     private fun setDriverReady() {
         _isDriverReady.value = true
         _selectedDriverMetadata.value = GpuDriverHelper.customDriverData.name

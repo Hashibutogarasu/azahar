@@ -1,7 +1,6 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.app.Dialog
@@ -17,28 +16,21 @@ import org.citra.citra_emu.utils.SerializableHelper.serializable
 
 class KeyboardDialogFragment : DialogFragment() {
     private lateinit var config: SoftwareKeyboard.KeyboardConfig
-
     private var _binding: DialogSoftwareKeyboardBinding? = null
     private val binding get() = _binding!!
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogSoftwareKeyboardBinding.inflate(layoutInflater)
-
         config = requireArguments().serializable<SoftwareKeyboard.KeyboardConfig>(CONFIG)!!
-
         binding.apply {
             editText.hint = config.hintText
             editTextInput.isSingleLine = !config.multilineMode
             editTextInput.filters =
                 arrayOf(SoftwareKeyboard.Filter(), InputFilter.LengthFilter(config.maxTextLength))
         }
-
         val builder = MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.software_keyboard)
             .setView(binding.root)
-
         isCancelable = false
-
         when (config.buttonConfig) {
             SoftwareKeyboard.ButtonConfig.Triple -> {
                 val negativeText =
@@ -63,7 +55,6 @@ class KeyboardDialogFragment : DialogFragment() {
                 builder.setPositiveButton(positiveText, null)
             }
         }
-
         // This overrides the default alert dialog behavior to prevent dismissing the keyboard
         // dialog while we show an error message
         val alertDialog = builder.create()
@@ -95,15 +86,12 @@ class KeyboardDialogFragment : DialogFragment() {
                 synchronized(SoftwareKeyboard.finishLock) { SoftwareKeyboard.finishLock.notifyAll() }
             }
         }
-
         return alertDialog
     }
 
     companion object {
         const val TAG = "KeyboardDialogFragment"
-
         const val CONFIG = "config"
-
         fun newInstance(config: SoftwareKeyboard.KeyboardConfig): KeyboardDialogFragment {
             val frag = KeyboardDialogFragment()
             val args = Bundle()

@@ -1,7 +1,6 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.Manifest
@@ -56,16 +55,11 @@ import org.citra.citra_emu.viewmodel.HomeViewModel
 class SetupFragment : Fragment() {
     private var _binding: FragmentSetupBinding? = null
     private val binding get() = _binding!!
-
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val gamesViewModel: GamesViewModel by activityViewModels()
-
     private lateinit var mainActivity: MainActivity
-
     private lateinit var hasBeenWarned: BooleanArray
-
     private lateinit var pages: MutableList<SetupPage>
-
     private val preferences: SharedPreferences
         get() = PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
 
@@ -91,9 +85,7 @@ class SetupFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mainActivity = requireActivity() as MainActivity
-
         homeViewModel.setNavigationVisibility(visible = false, animated = false)
-
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
@@ -106,10 +98,8 @@ class SetupFragment : Fragment() {
                 }
             }
         )
-
         requireActivity().window.navigationBarColor =
             ContextCompat.getColor(requireContext(), android.R.color.transparent)
-
         pages = mutableListOf()
         pages.apply {
             add(
@@ -137,7 +127,6 @@ class SetupFragment : Fragment() {
                     }
                 )
             )
-
             add(
                 SetupPage(
                     R.drawable.ic_permission,
@@ -275,14 +264,14 @@ class SetupFragment : Fragment() {
                             requireContext(),
                             Manifest.permission.RECORD_AUDIO
                         ) == PackageManager.PERMISSION_GRANTED &&
-                        // Camera
-                        ContextCompat.checkSelfPermission(
-                            requireContext(),
-                            Manifest.permission.CAMERA
-                        ) == PackageManager.PERMISSION_GRANTED &&
-                        // Notifications
-                        NotificationManagerCompat.from(requireContext())
-                            .areNotificationsEnabled()
+                                // Camera
+                                ContextCompat.checkSelfPermission(
+                                    requireContext(),
+                                    Manifest.permission.CAMERA
+                                ) == PackageManager.PERMISSION_GRANTED &&
+                                // Notifications
+                                NotificationManagerCompat.from(requireContext())
+                                    .areNotificationsEnabled()
                     // External Storage
                     @Suppress("KotlinConstantConditions", "SimplifyBooleanWithConstants")
                     if (BuildConfig.FLAVOR != "googlePlay") {
@@ -297,7 +286,6 @@ class SetupFragment : Fragment() {
                                 ) == PackageManager.PERMISSION_GRANTED)
                         }
                     }
-
                     if (permissionsComplete) {
                         PageState.PAGE_STEPS_COMPLETE
                     } else {
@@ -305,7 +293,6 @@ class SetupFragment : Fragment() {
                     }
                 }
             )
-
             add(
                 SetupPage(
                     R.drawable.ic_folder,
@@ -336,7 +323,6 @@ class SetupFragment : Fragment() {
                                 R.string.cannot_skip,
                                 R.string.cannot_skip_directory_description,
                                 R.string.cannot_skip_directory_help
-
                             )
                         )
                         add(
@@ -344,14 +330,16 @@ class SetupFragment : Fragment() {
                                 R.drawable.ic_controller,
                                 R.string.games,
                                 R.string.games_description,
-                                buttonAction =  {
+                                buttonAction = {
                                     pageButtonCallback = it
                                     getGamesDirectory.launch(
                                         Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).data
                                     )
                                 },
                                 buttonState = {
-                                    if (preferences.getString(GameHelper.KEY_GAME_PATH, "")!!.isNotEmpty()) {
+                                    if (preferences.getString(GameHelper.KEY_GAME_PATH, "")!!
+                                            .isNotEmpty()
+                                    ) {
                                         ButtonState.BUTTON_ACTION_COMPLETE
                                     } else {
                                         ButtonState.BUTTON_ACTION_INCOMPLETE
@@ -370,13 +358,11 @@ class SetupFragment : Fragment() {
                         preferences.getString(GameHelper.KEY_GAME_PATH, "")!!.isNotEmpty()
                     ) {
                         PageState.PAGE_STEPS_COMPLETE
-
                     } else {
                         PageState.PAGE_STEPS_INCOMPLETE
                     }
                 }
             )
-
             add(
                 SetupPage(
                     R.drawable.ic_check,
@@ -403,19 +389,15 @@ class SetupFragment : Fragment() {
                 )
             )
         }
-
         binding.viewPager2.apply {
             adapter = SetupAdapter(requireActivity() as AppCompatActivity, pages)
             offscreenPageLimit = 2
             isUserInputEnabled = false
         }
-
         binding.viewPager2.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             var previousPosition: Int = 0
-
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-
                 if (position == 1 && previousPosition == 0) {
                     ViewUtils.showView(binding.buttonNext)
                     ViewUtils.showView(binding.buttonBack)
@@ -427,26 +409,21 @@ class SetupFragment : Fragment() {
                 } else if (position == pages.size - 2 && previousPosition == pages.size - 1) {
                     ViewUtils.showView(binding.buttonNext)
                 }
-
                 previousPosition = position
             }
         })
-
         binding.buttonNext.setOnClickListener {
             val index = binding.viewPager2.currentItem
             val currentPage = pages[index]
-
             // This allows multiple sets of warning messages to be displayed on the same dialog if necessary
             val warningMessages =
                 mutableListOf<Triple<Int, Int, Int>>() // title, description, helpLink
-
             currentPage.pageButtons?.forEach { button ->
                 if (button.hasWarning || button.isUnskippable) {
                     val buttonState = button.buttonState()
                     if (buttonState == ButtonState.BUTTON_ACTION_COMPLETE) {
                         return@forEach
                     }
-
                     if (button.isUnskippable) {
                         MessageDialogFragment.newInstance(
                             button.warningTitleId,
@@ -455,7 +432,6 @@ class SetupFragment : Fragment() {
                         ).show(childFragmentManager, MessageDialogFragment.TAG)
                         return@setOnClickListener
                     }
-
                     if (!hasBeenWarned[index]) {
                         warningMessages.add(
                             Triple(
@@ -467,7 +443,6 @@ class SetupFragment : Fragment() {
                     }
                 }
             }
-
             if (warningMessages.isNotEmpty()) {
                 SetupWarningDialogFragment.newInstance(
                     warningMessages.map { it.first }.toIntArray(),
@@ -480,12 +455,10 @@ class SetupFragment : Fragment() {
             pageForward()
         }
         binding.buttonBack.setOnClickListener { pageBackward() }
-
         if (savedInstanceState != null) {
             val nextIsVisible = savedInstanceState.getBoolean(KEY_NEXT_VISIBILITY)
             val backIsVisible = savedInstanceState.getBoolean(KEY_BACK_VISIBILITY)
             hasBeenWarned = savedInstanceState.getBooleanArray(KEY_HAS_BEEN_WARNED)!!
-
             if (nextIsVisible) {
                 binding.buttonNext.visibility = View.VISIBLE
             }
@@ -495,7 +468,6 @@ class SetupFragment : Fragment() {
         } else {
             hasBeenWarned = BooleanArray(pages.size)
         }
-
         setInsets()
     }
 
@@ -518,7 +490,6 @@ class SetupFragment : Fragment() {
             if (it.buttonState() == ButtonState.BUTTON_ACTION_COMPLETE) {
                 pageButtonCallback.onStepCompleted(it.titleId, pageFullyCompleted = false)
             }
-
             if (page.pageSteps() == PageState.PAGE_STEPS_COMPLETE) {
                 pageButtonCallback.onStepCompleted(0, pageFullyCompleted = true)
             }
@@ -544,7 +515,6 @@ class SetupFragment : Fragment() {
                 checkForButtonState.invoke()
                 return@registerForActivityResult
             }
-
             showPermissionDeniedSnackbar()
         }
 
@@ -557,17 +527,14 @@ class SetupFragment : Fragment() {
                 checkForButtonState.invoke()
                 return@registerForActivityResult
             }
-
             showPermissionDeniedSnackbar()
         }
-
     private val openCitraDirectory = registerForActivityResult<Uri, Uri>(
         ActivityResultContracts.OpenDocumentTree()
     ) { result: Uri? ->
         if (result == null) {
             return@registerForActivityResult
         }
-
         if (NativeLibrary.getUserDirectory(result) == "") {
             SelectUserDirectoryDialogFragment.newInstance(
                 mainActivity,
@@ -576,29 +543,27 @@ class SetupFragment : Fragment() {
             ).show(mainActivity.supportFragmentManager, SelectUserDirectoryDialogFragment.TAG)
             return@registerForActivityResult
         }
-
-        CitraDirectoryHelper(requireActivity(), true).showCitraDirectoryDialog(result, pageButtonCallback, checkForButtonState)
+        CitraDirectoryHelper(requireActivity(), true).showCitraDirectoryDialog(
+            result,
+            pageButtonCallback,
+            checkForButtonState
+        )
     }
-
     private val getGamesDirectory =
         registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { result ->
             if (result == null) {
                 return@registerForActivityResult
             }
-
             requireActivity().contentResolver.takePersistableUriPermission(
                 result,
                 Intent.FLAG_GRANT_READ_URI_PERMISSION
             )
-
             // When a new directory is picked, we currently will reset the existing games
             // database. This effectively means that only one game directory is supported.
             preferences.edit()
                 .putString(GameHelper.KEY_GAME_PATH, result.toString())
                 .apply()
-
             homeViewModel.setGamesDir(requireActivity(), result.path!!)
-
             checkForButtonState.invoke()
         }
 
@@ -627,12 +592,10 @@ class SetupFragment : Fragment() {
         ) { _: View, windowInsets: WindowInsetsCompat ->
             val barInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             val cutoutInsets = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
-
             val leftPadding = barInsets.left + cutoutInsets.left
             val topPadding = barInsets.top + cutoutInsets.top
             val rightPadding = barInsets.right + cutoutInsets.right
             val bottomPadding = barInsets.bottom + cutoutInsets.bottom
-
             if (resources.getBoolean(R.bool.small_layout)) {
                 binding.viewPager2
                     .updatePadding(left = leftPadding, top = topPadding, right = rightPadding)

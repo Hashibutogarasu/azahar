@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.ui.main
-
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -45,7 +43,8 @@ import org.citra.citra_emu.BuildConfig
 import org.citra.citra_emu.NativeLibrary
 import org.citra.citra_emu.R
 import org.citra.citra_emu.contracts.OpenFileResultContract
-import org.citra.citra_emu.databinding.ActivityMainBinding
+import androidx.activity.compose.setContent
+import org.citra.citra_emu.databinding.ContentMainBinding
 import org.citra.citra_emu.features.settings.model.Settings
 import org.citra.citra_emu.features.settings.model.SettingsViewModel
 import org.citra.citra_emu.features.settings.ui.SettingsActivity
@@ -64,19 +63,28 @@ import org.citra.citra_emu.utils.PermissionsHandler
 import org.citra.citra_emu.utils.ThemeUtil
 import org.citra.citra_emu.viewmodel.GamesViewModel
 import org.citra.citra_emu.viewmodel.HomeViewModel
-
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import org.citra.citra_emu.ui.components.AppDrawer
+import org.citra.citra_emu.ui.components.DrawerDestination
+import org.citra.citra_emu.ui.theme.CitraTheme
 class MainActivity : AppCompatActivity(), ThemeProvider {
-    private lateinit var binding: ActivityMainBinding
-
+    var drawerOpener: (() -> Unit)? = null
     private val homeViewModel: HomeViewModel by viewModels()
     private val gamesViewModel: GamesViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
-
     override var themeId: Int = 0
-
+    fun openDrawer() {
+        drawerOpener?.invoke()
+    }
+    fun onSettingsReselected() {
+        SettingsActivity.launch(
+            this,
+            SettingsFile.FILE_NAME_CONFIG,
+            ""
+        )
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         RefreshRateUtil.enforceRefreshRate(this)
-
         val splashScreen = installSplashScreen()
         CitraDirectoryUtils.attemptAutomaticUpdateDirectory()
         splashScreen.setKeepOnScreenCondition {
@@ -84,128 +92,54 @@ class MainActivity : AppCompatActivity(), ThemeProvider {
                     PermissionsHandler.hasWriteAccess(this) &&
                     !CitraDirectoryUtils.needToUpdateManually()
         }
-
-
         if (PermissionsHandler.hasWriteAccess(applicationContext) &&
             DirectoryInitialization.areCitraDirectoriesReady() &&
             !CitraDirectoryUtils.needToUpdateManually()) {
             settingsViewModel.settings.loadSettings()
         }
-
         ThemeUtil.ThemeChangeListener(this)
         ThemeUtil.setTheme(this)
         super.onCreate(savedInstanceState)
-
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+        setContent {
+            CitraTheme {
+                MainScreen(
+                    homeViewModel = homeViewModel,
+                    onNavControllerReady = { navController ->
+                        setUpNavigation(navController)
+                    }
+                )
+            }
+        }
         WindowCompat.setDecorFitsSystemWindows(window, false)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
-
         window.statusBarColor =
             ContextCompat.getColor(applicationContext, android.R.color.transparent)
         window.navigationBarColor =
             ContextCompat.getColor(applicationContext, android.R.color.transparent)
-
-        binding.statusBarShade.setBackgroundColor(
-            ThemeUtil.getColorWithOpacity(
-                MaterialColors.getColor(
-                    binding.root,
-                    com.google.android.material.R.attr.colorSurface
-                ),
-                ThemeUtil.SYSTEM_BAR_ALPHA
-            )
-        )
-        if (InsetsHelper.getSystemGestureType(applicationContext) !=
-            InsetsHelper.GESTURE_NAVIGATION
-        ) {
-            binding.navigationBarShade.setBackgroundColor(
-                ThemeUtil.getColorWithOpacity(
-                    MaterialColors.getColor(
-                        binding.root,
-                        com.google.android.material.R.attr.colorSurface
-                    ),
-                    ThemeUtil.SYSTEM_BAR_ALPHA
-                )
-            )
-        }
-
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
-        setUpNavigation(navHostFragment.navController)
-        (binding.navigationView as NavigationBarView).setOnItemReselectedListener {
-            when (it.itemId) {
-                R.id.gamesFragment -> gamesViewModel.setShouldScrollToTop(true)
-                R.id.searchFragment -> gamesViewModel.setSearchFocused(true)
-                R.id.homeSettingsFragment -> SettingsActivity.launch(
-                    this,
-                    SettingsFile.FILE_NAME_CONFIG,
-                    ""
-                )
-            }
-        }
-
-        // Prevents navigation from being drawn for a short time on recreation if set to hidden
-        if (!homeViewModel.navigationVisible.value.first) {
-            binding.navigationView.visibility = View.INVISIBLE
-            binding.statusBarShade.visibility = View.INVISIBLE
-        }
-
-        lifecycleScope.apply {
-            launch {
-                repeatOnLifecycle(Lifecycle.State.CREATED) {
-                    homeViewModel.navigationVisible.collect {
-                        showNavigation(it.first, it.second)
-                    }
-                }
-            }
-            launch {
-                repeatOnLifecycle(Lifecycle.State.CREATED) {
-                    homeViewModel.statusBarShadeVisible.collect {
-                        showStatusBarShade(it)
-                    }
-                }
-            }
-            launch {
-                repeatOnLifecycle(Lifecycle.State.CREATED) {
-                    homeViewModel.isPickingUserDir.collect { checkUserPermissions() }
-                }
-            }
-        }
-
-        setInsets()
     }
-
     override fun onResume() {
         checkUserPermissions()
-
         ThemeUtil.setCorrectTheme(this)
         super.onResume()
     }
-
     override fun onDestroy() {
         super.onDestroy()
     }
-
     override fun setTheme(resId: Int) {
         super.setTheme(resId)
         themeId = resId
     }
-
     private fun checkUserPermissions() {
         val firstTimeSetup = PreferenceManager.getDefaultSharedPreferences(applicationContext)
             .getBoolean(Settings.PREF_FIRST_APP_LAUNCH, true)
-
         if (firstTimeSetup) {
             return
         }
-
         @Suppress("KotlinConstantConditions", "SimplifyBooleanWithConstants")
         if (BuildConfig.FLAVOR != "googlePlay") {
             fun requestMissingFilesystemPermission() =
                 GrantMissingFilesystemPermissionFragment.newInstance()
                     .show(supportFragmentManager, GrantMissingFilesystemPermissionFragment.TAG)
-
             if (supportFragmentManager.findFragmentByTag(GrantMissingFilesystemPermissionFragment.TAG) == null) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     if (!Environment.isExternalStorageManager()) {
@@ -222,11 +156,9 @@ class MainActivity : AppCompatActivity(), ThemeProvider {
                 }
             }
         }
-
         if (homeViewModel.isPickingUserDir.value) {
             return
         }
-
         if (!PermissionsHandler.hasWriteAccess(this)) {
             SelectUserDirectoryDialogFragment.newInstance(this)
                 .show(supportFragmentManager, SelectUserDirectoryDialogFragment.TAG)
@@ -236,7 +168,6 @@ class MainActivity : AppCompatActivity(), ThemeProvider {
                 .show(supportFragmentManager,UpdateUserDirectoryDialogFragment.TAG)
             return
         }
-
         @Suppress("KotlinConstantConditions", "SimplifyBooleanWithConstants")
         if (BuildConfig.FLAVOR != "googlePlay") {
             if (supportFragmentManager.findFragmentByTag(SelectUserDirectoryDialogFragment.TAG) == null) {
@@ -247,123 +178,20 @@ class MainActivity : AppCompatActivity(), ThemeProvider {
             }
         }
     }
-
     fun finishSetup(navController: NavController) {
         navController.navigate(R.id.action_firstTimeSetupFragment_to_gamesFragment)
-        (binding.navigationView as NavigationBarView).setupWithNavController(navController)
     }
-
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(org.citra.citra_emu.utils.LocaleUtil.applyLocalizedContext(base))
     }
-
     private fun setUpNavigation(navController: NavController) {
         val firstTimeSetup = PreferenceManager.getDefaultSharedPreferences(applicationContext)
             .getBoolean(Settings.PREF_FIRST_APP_LAUNCH, true)
-
         if (firstTimeSetup && !homeViewModel.navigatedToSetup) {
             navController.navigate(R.id.firstTimeSetupFragment)
             homeViewModel.navigatedToSetup = true
-        } else {
-            (binding.navigationView as NavigationBarView).setupWithNavController(navController)
         }
     }
-
-    private fun showNavigation(visible: Boolean, animated: Boolean) {
-        if (!animated) {
-            if (visible) {
-                binding.navigationView.visibility = View.VISIBLE
-            } else {
-                binding.navigationView.visibility = View.INVISIBLE
-            }
-            return
-        }
-
-        val smallLayout = resources.getBoolean(R.bool.small_layout)
-        binding.navigationView.animate().apply {
-            if (visible) {
-                binding.navigationView.visibility = View.VISIBLE
-                duration = 300
-                interpolator = PathInterpolator(0.05f, 0.7f, 0.1f, 1f)
-
-                if (smallLayout) {
-                    binding.navigationView.translationY =
-                        binding.navigationView.height.toFloat() * 2
-                    translationY(0f)
-                } else {
-                    if (ViewCompat.getLayoutDirection(binding.navigationView) ==
-                        ViewCompat.LAYOUT_DIRECTION_LTR
-                    ) {
-                        binding.navigationView.translationX =
-                            binding.navigationView.width.toFloat() * -2
-                        translationX(0f)
-                    } else {
-                        binding.navigationView.translationX =
-                            binding.navigationView.width.toFloat() * 2
-                        translationX(0f)
-                    }
-                }
-            } else {
-                duration = 300
-                interpolator = PathInterpolator(0.3f, 0f, 0.8f, 0.15f)
-
-                if (smallLayout) {
-                    translationY(binding.navigationView.height.toFloat() * 2)
-                } else {
-                    if (ViewCompat.getLayoutDirection(binding.navigationView) ==
-                        ViewCompat.LAYOUT_DIRECTION_LTR
-                    ) {
-                        translationX(binding.navigationView.width.toFloat() * -2)
-                    } else {
-                        translationX(binding.navigationView.width.toFloat() * 2)
-                    }
-                }
-            }
-        }.withEndAction {
-            if (!visible) {
-                binding.navigationView.visibility = View.INVISIBLE
-            }
-        }.start()
-    }
-
-    private fun showStatusBarShade(visible: Boolean) {
-        binding.statusBarShade.animate().apply {
-            if (visible) {
-                binding.statusBarShade.visibility = View.VISIBLE
-                binding.statusBarShade.translationY = binding.statusBarShade.height.toFloat() * -2
-                duration = 300
-                translationY(0f)
-                interpolator = PathInterpolator(0.05f, 0.7f, 0.1f, 1f)
-            } else {
-                duration = 300
-                translationY(binding.navigationView.height.toFloat() * -2)
-                interpolator = PathInterpolator(0.3f, 0f, 0.8f, 0.15f)
-            }
-        }.withEndAction {
-            if (!visible) {
-                binding.statusBarShade.visibility = View.INVISIBLE
-            }
-        }.start()
-    }
-
-    private fun setInsets() =
-        ViewCompat.setOnApplyWindowInsetsListener(
-            binding.root
-        ) { _: View, windowInsets: WindowInsetsCompat ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val mlpStatusShade = binding.statusBarShade.layoutParams as MarginLayoutParams
-            mlpStatusShade.height = insets.top
-            binding.statusBarShade.layoutParams = mlpStatusShade
-
-            // The only situation where we care to have a nav bar shade is when it's at the bottom
-            // of the screen where scrolling list elements can go behind it.
-            val mlpNavShade = binding.navigationBarShade.layoutParams as MarginLayoutParams
-            mlpNavShade.height = insets.bottom
-            binding.navigationBarShade.layoutParams = mlpNavShade
-
-            windowInsets
-        }
-
     private fun createOpenCitraDirectoryLauncher(
         permissionsLost: Boolean
     ): ActivityResultLauncher<Uri?> {
@@ -371,7 +199,6 @@ class MainActivity : AppCompatActivity(), ThemeProvider {
             if (result == null) {
                 return@registerForActivityResult
             }
-
             if (NativeLibrary.getUserDirectory(result) == "") {
                 SelectUserDirectoryDialogFragment.newInstance(
                     this,
@@ -380,22 +207,18 @@ class MainActivity : AppCompatActivity(), ThemeProvider {
                 ).show(supportFragmentManager, SelectUserDirectoryDialogFragment.TAG)
                 return@registerForActivityResult
             }
-
             CitraDirectoryHelper(this@MainActivity, permissionsLost)
                 .showCitraDirectoryDialog(result, buttonState = {})
         }
     }
-
     val openCitraDirectory = createOpenCitraDirectoryLauncher(permissionsLost = false)
     val openCitraDirectoryLostPermission = createOpenCitraDirectoryLauncher(permissionsLost = true)
-
     val ciaFileInstaller = registerForActivityResult(
         OpenFileResultContract()
     ) { result: Intent? ->
         if (result == null) {
             return@registerForActivityResult
         }
-
         val selectedFiles =
             FileBrowserHelper.getSelectedFiles(result, applicationContext, listOf("cia", "zcia"))
         if (selectedFiles == null) {
@@ -403,7 +226,6 @@ class MainActivity : AppCompatActivity(), ThemeProvider {
                 .show()
             return@registerForActivityResult
         }
-
         val workManager = WorkManager.getInstance(applicationContext)
         workManager.enqueueUniqueWork(
             "installCiaWork", ExistingWorkPolicy.APPEND_OR_REPLACE,

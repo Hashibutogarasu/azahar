@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.overlay
-
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -13,20 +11,16 @@ import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import org.citra.citra_emu.NativeLibrary
 import org.citra.citra_emu.utils.EmulationMenuSettings
-
 enum class ButtonSlidingMode(val int: Int) {
     // Disabled, buttons can only be triggered by pressing them directly.
     Disabled(0),
-
     // Additionally to pressing buttons directly, they can be activated and released by sliding into
     // and out of their area.
     Enabled(1),
-
     // The first button is kept activated until released, further buttons use the simple button
     // sliding method.
     Alternative(2)
 }
-
 /**
  * Custom [BitmapDrawable] that is capable
  * of storing it's own ID.
@@ -44,9 +38,7 @@ class InputOverlayDrawableButton(
     val opacity: Int
 ) {
     var trackId: Int
-
     private var isMotionFirstButton = false // mark the first activated button with the current motion
-
     private var previousTouchX = 0
     private var previousTouchY = 0
     private var controlPositionX = 0
@@ -56,7 +48,6 @@ class InputOverlayDrawableButton(
     private val defaultStateBitmap: BitmapDrawable
     private val pressedStateBitmap: BitmapDrawable
     private var pressedState = false
-
     init {
         this.defaultStateBitmap = BitmapDrawable(res, defaultStateBitmap)
         this.pressedStateBitmap = BitmapDrawable(res, pressedStateBitmap)
@@ -64,7 +55,6 @@ class InputOverlayDrawableButton(
         width = this.defaultStateBitmap.intrinsicWidth
         height = this.defaultStateBitmap.intrinsicHeight
     }
-
     /**
      * Updates button status based on the motion event.
      *
@@ -94,7 +84,6 @@ class InputOverlayDrawableButton(
             buttonUp(overlay, false)
             return true
         }
-
         val isActionMoving = motionEvent == MotionEvent.ACTION_MOVE
         if (buttonSliding != ButtonSlidingMode.Disabled.int && isActionMoving) {
             val inside = bounds.contains(xPosition, yPosition)
@@ -104,12 +93,10 @@ class InputOverlayDrawableButton(
                 if (inside || trackId != pointerId) {
                     return false
                 }
-
                 // prevent the first (directly pressed) button to deactivate when sliding off
                 if (buttonSliding == ButtonSlidingMode.Alternative.int && isMotionFirstButton) {
                     return false
                 }
-
                 val preserveTrackId = (buttonSliding != ButtonSlidingMode.Disabled.int)
                 buttonUp(overlay, preserveTrackId)
                 return true
@@ -123,17 +110,14 @@ class InputOverlayDrawableButton(
                 return true
             }
         }
-
         return false
     }
-
     private fun buttonDown(firstBtn: Boolean, pointerId: Int, overlay: InputOverlay) {
         pressedState = true
         isMotionFirstButton = firstBtn
         trackId = pointerId
         overlay.hapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
     }
-
     private fun buttonUp(overlay: InputOverlay, preserveTrackId: Boolean) {
         pressedState = false
         isMotionFirstButton = false
@@ -142,7 +126,6 @@ class InputOverlayDrawableButton(
         }
         overlay.hapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY_RELEASE)
     }
-
     fun onConfigureTouch(event: MotionEvent): Boolean {
         val pointerIndex = event.actionIndex
         val fingerPositionX = event.getX(pointerIndex).toInt()
@@ -152,7 +135,6 @@ class InputOverlayDrawableButton(
                 previousTouchX = fingerPositionX
                 previousTouchY = fingerPositionY
             }
-
             MotionEvent.ACTION_MOVE -> {
                 controlPositionX += fingerPositionX - previousTouchX
                 controlPositionY += fingerPositionY - previousTouchY
@@ -168,26 +150,21 @@ class InputOverlayDrawableButton(
         }
         return true
     }
-
     fun setPosition(x: Int, y: Int) {
         controlPositionX = x
         controlPositionY = y
     }
-
     fun draw(canvas: Canvas) {
         val bitmapDrawable: BitmapDrawable = currentStateBitmapDrawable
         bitmapDrawable.alpha = opacity
         bitmapDrawable.draw(canvas)
     }
-
     private val currentStateBitmapDrawable: BitmapDrawable
         get() = if (pressedState) pressedStateBitmap else defaultStateBitmap
-
     fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
         defaultStateBitmap.setBounds(left, top, right, bottom)
         pressedStateBitmap.setBounds(left, top, right, bottom)
     }
-
     val status: Int
         get() = if (pressedState) NativeLibrary.ButtonState.PRESSED else NativeLibrary.ButtonState.RELEASED
     val bounds: Rect

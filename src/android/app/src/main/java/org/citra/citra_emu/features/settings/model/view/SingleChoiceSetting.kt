@@ -1,13 +1,10 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.features.settings.model.view
-
 import org.citra.citra_emu.features.settings.model.AbstractIntSetting
 import org.citra.citra_emu.features.settings.model.AbstractSetting
 import org.citra.citra_emu.features.settings.model.AbstractShortSetting
-
 class SingleChoiceSetting(
     setting: AbstractSetting?,
     titleId: Int,
@@ -19,28 +16,23 @@ class SingleChoiceSetting(
     override var isEnabled: Boolean = true
 ) : SettingsItem(setting, titleId, descriptionId) {
     override val type = TYPE_SINGLE_CHOICE
-
     val selectedValue: Int
         get() {
             if (setting == null) {
                 return defaultValue!!
             }
-
             try {
                 val setting = setting as AbstractIntSetting
                 return setting.int
             } catch (_: ClassCastException) {
             }
-
             try {
                 val setting = setting as AbstractShortSetting
                 return setting.short.toInt()
             } catch (_: ClassCastException) {
             }
-
             return defaultValue!!
         }
-
     /**
      * Write a value to the backing int. If that int was previously null,
      * initializes a new one and returns it, so it can be added to the Hashmap.
@@ -53,7 +45,6 @@ class SingleChoiceSetting(
         intSetting.int = selection
         return intSetting
     }
-
     fun setSelectedValue(selection: Short): AbstractShortSetting {
         val shortSetting = setting as AbstractShortSetting
         shortSetting.short = selection

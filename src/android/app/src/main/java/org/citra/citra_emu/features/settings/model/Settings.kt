@@ -1,21 +1,16 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.features.settings.model
-
 import android.text.TextUtils
 import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.R
 import org.citra.citra_emu.features.settings.ui.SettingsActivityView
 import org.citra.citra_emu.features.settings.utils.SettingsFile
 import java.util.TreeMap
-
 class Settings {
     private var gameId: String? = null
-
     var isLoaded = false
-
     /**
      * A HashMap<String></String>, SettingSection> that constructs a new SettingSection instead of returning null
      * when getting a key not already in the map
@@ -30,16 +25,12 @@ class Settings {
             return super.get(key)
         }
     }
-
     var sections: HashMap<String, SettingSection?> = SettingsSectionMap()
-
     fun getSection(sectionName: String): SettingSection? {
         return sections[sectionName]
     }
-
     val isEmpty: Boolean
         get() = sections.isEmpty()
-
     fun loadSettings(view: SettingsActivityView? = null) {
         sections = SettingsSectionMap()
         loadCitraSettings(view)
@@ -48,18 +39,15 @@ class Settings {
         }
         isLoaded = true
     }
-
     private fun loadCitraSettings(view: SettingsActivityView?) {
         for ((fileName) in configFileSectionsMap) {
             sections.putAll(SettingsFile.readFile(fileName, view))
         }
     }
-
     private fun loadCustomGameSettings(gameId: String, view: SettingsActivityView?) {
         // Custom game settings
         mergeSections(SettingsFile.readCustomGameSettings(gameId, view))
     }
-
     private fun mergeSections(updatedSections: HashMap<String, SettingSection?>) {
         for ((key, updatedSection) in updatedSections) {
             if (sections.containsKey(key)) {
@@ -70,12 +58,10 @@ class Settings {
             }
         }
     }
-
     fun loadSettings(gameId: String, view: SettingsActivityView) {
         this.gameId = gameId
         loadSettings(view)
     }
-
     fun saveSettings(view: SettingsActivityView) {
         if (TextUtils.isEmpty(gameId)) {
             view.showToastMessage(
@@ -93,11 +79,9 @@ class Settings {
             // TODO: Implement per game settings
         }
     }
-
     fun saveSetting(setting: AbstractSetting, filename: String) {
         SettingsFile.saveFile(filename, setting)
     }
-
     companion object {
         const val SECTION_CORE = "Core"
         const val SECTION_SYSTEM = "System"
@@ -113,7 +97,6 @@ class Settings {
         const val SECTION_CUSTOM_PORTRAIT = "Custom Portrait Layout"
         const val SECTION_PERFORMANCE_OVERLAY = "Performance Overlay"
         const val SECTION_STORAGE = "Storage"
-
         const val KEY_BUTTON_A = "button_a"
         const val KEY_BUTTON_B = "button_b"
         const val KEY_BUTTON_X = "button_x"
@@ -142,7 +125,6 @@ class Settings {
         const val HOTKEY_QUICKSAVE = "hotkey_quickload"
         const val HOTKEY_QUICKlOAD = "hotkey_quickpause"
         const val HOTKEY_TURBO_LIMIT = "hotkey_turbo_limit"
-
         val buttonKeys = listOf(
             KEY_BUTTON_A,
             KEY_BUTTON_B,
@@ -219,7 +201,6 @@ class Settings {
             R.string.emulation_quickload,
             R.string.turbo_limit_hotkey
         )
-
         const val PREF_FIRST_APP_LAUNCH = "FirstApplicationLaunch"
         const val PREF_MATERIAL_YOU = "MaterialYouTheme"
         const val PREF_THEME_MODE = "ThemeMode"
@@ -227,9 +208,7 @@ class Settings {
         const val PREF_SHOW_HOME_APPS = "ShowHomeApps"
         const val PREF_STATIC_THEME_COLOR = "StaticThemeColor"
         const val PREF_APP_LANGUAGE = "AppLanguage"
-
         private val configFileSectionsMap: MutableMap<String, List<String>> = HashMap()
-
         init {
             configFileSectionsMap[SettingsFile.FILE_NAME_CONFIG] =
                 listOf(

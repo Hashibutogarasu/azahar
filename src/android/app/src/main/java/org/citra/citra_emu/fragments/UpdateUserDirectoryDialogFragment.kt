@@ -1,7 +1,6 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.app.Dialog
@@ -30,47 +29,38 @@ import org.citra.citra_emu.viewmodel.HomeViewModel
 
 class UpdateUserDirectoryDialogFragment : DialogFragment() {
     private lateinit var mainActivity: MainActivity
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         mainActivity = requireActivity() as MainActivity
-
         isCancelable = false
         val preferences: SharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
-        val ld = preferences.getString("LIME3DS_DIRECTORY","")
-        val cd = preferences.getString("CITRA_DIRECTORY","")
+        val ld = preferences.getString("LIME3DS_DIRECTORY", "")
+        val cd = preferences.getString("CITRA_DIRECTORY", "")
         val dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_select_which_directory, null)
-
         val radioGroup = dialogView.findViewById<RadioGroup>(R.id.radioGroup)
-
         val choices = listOf(
             getString(R.string.keep_current_azahar_directory) to Uri.parse(cd).path,
             getString(R.string.use_prior_lime3ds_directory) to Uri.parse(ld).path
         )
         var selected = -1 // 0 = current, 1 = prior, -1 = no selection
-
         choices.forEachIndexed { index, (label, subtext) ->
             val container = LinearLayout(requireContext()).apply {
                 orientation = LinearLayout.VERTICAL
                 setPadding(0, 16, 0, 16)
             }
-
             val radioButton = RadioButton(requireContext()).apply {
                 text = label
                 id = View.generateViewId()
             }
-
             val subTextView = TextView(requireContext()).apply {
                 text = subtext
                 setPadding(64, 4, 0, 0) // indent for visual hierarchy
                 setTextAppearance(android.R.style.TextAppearance_Small)
             }
-
             container.addView(radioButton)
             container.addView(subTextView)
             radioGroup.addView(container)
-
             // RadioGroup expects RadioButtons directly, so we need to manage selection ourselves
             radioButton.setOnClickListener {
                 selected = index
@@ -82,7 +72,6 @@ class UpdateUserDirectoryDialogFragment : DialogFragment() {
                 }
             }
         }
-
         return MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.select_citra_user_folder)
             .setView(dialogView)
@@ -95,16 +84,17 @@ class UpdateUserDirectoryDialogFragment : DialogFragment() {
                     DirectoryInitialization.resetCitraDirectoryState()
                     DirectoryInitialization.start()
                 }
-
                 ViewModelProvider(mainActivity)[HomeViewModel::class.java].setPickingUserDir(false)
-                ViewModelProvider(mainActivity)[HomeViewModel::class.java].setUserDir(this.requireActivity(),PermissionsHandler.citraDirectory.path!!)
+                ViewModelProvider(mainActivity)[HomeViewModel::class.java].setUserDir(
+                    this.requireActivity(),
+                    PermissionsHandler.citraDirectory.path!!
+                )
             }
             .show()
     }
 
     companion object {
         const val TAG = "UpdateUserDirectoryDialogFragment"
-
         fun newInstance(activity: FragmentActivity): UpdateUserDirectoryDialogFragment {
             ViewModelProvider(activity)[HomeViewModel::class.java].setPickingUserDir(true)
             return UpdateUserDirectoryDialogFragment()

@@ -1,9 +1,7 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.features.cheats.ui
-
 import android.os.Bundle
 import android.view.View
 import android.view.View.OnFocusChangeListener
@@ -16,18 +14,13 @@ import org.citra.citra_emu.R
 import org.citra.citra_emu.databinding.ActivityCheatsBinding
 import org.citra.citra_emu.utils.InsetsHelper
 import org.citra.citra_emu.utils.ThemeUtil
-
 class CheatsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCheatsBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeUtil.setTheme(this)
-
         super.onCreate(savedInstanceState)
-
         binding = ActivityCheatsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         WindowCompat.setDecorFitsSystemWindows(window, false)
         if (InsetsHelper.getSystemGestureType(applicationContext) !=
             InsetsHelper.GESTURE_NAVIGATION
@@ -42,13 +35,11 @@ class CheatsActivity : AppCompatActivity() {
                 )
             )
         }
-
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         val navController = navHostFragment.navController
         navController.setGraph(R.navigation.cheats_navigation, intent.extras)
     }
-
     companion object {
         fun setOnFocusChangeListenerRecursively(view: View, listener: OnFocusChangeListener?) {
             view.onFocusChangeListener = listener

@@ -1,12 +1,9 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.model
-
 import android.net.Uri
 import android.provider.DocumentsContract
-
 /**
  * A struct that is much more "cheaper" than DocumentFile.
  * Only contains the information we needed.

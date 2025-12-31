@@ -1,8 +1,6 @@
 // SPDX-FileCopyrightText: 2023 yuzu Emulator Project
 // SPDX-License-Identifier: GPL-2.0-or-later
-
 package org.citra.citra_emu.utils
-
 import android.app.ActivityManager
 import android.content.Context
 import android.os.Build
@@ -10,20 +8,16 @@ import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.R
 import java.util.Locale
 import kotlin.math.ceil
-
 object MemoryUtil {
     private val context get() = CitraApplication.appContext
-
     private val Float.hundredths: String
         get() = String.format(Locale.ROOT, "%.2f", this)
-
     const val Kb: Float = 1024F
     const val Mb = Kb * 1024
     const val Gb = Mb * 1024
     const val Tb = Gb * 1024
     const val Pb = Tb * 1024
     const val Eb = Pb * 1024
-
     fun bytesToSizeUnit(size: Float, roundUp: Boolean = false): String =
         when {
             size < Kb -> {
@@ -76,21 +70,18 @@ object MemoryUtil {
                 )
             }
         }
-
     val totalMemory: Float
         get() {
             val memInfo = ActivityManager.MemoryInfo()
             with(context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager) {
                 getMemoryInfo(memInfo)
             }
-
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                 memInfo.advertisedMem.toFloat()
             } else {
                 memInfo.totalMem.toFloat()
             }
         }
-
     fun isLessThan(minimum: Int, size: Float): Boolean =
         when (size) {
             Kb -> totalMemory < Mb && totalMemory < minimum
@@ -101,7 +92,6 @@ object MemoryUtil {
             Eb -> totalMemory / Eb < minimum
             else -> totalMemory < Kb && totalMemory < minimum
         }
-
     // Devices are unlikely to have 0.5GB increments of memory so we'll just round up to account for
     // the potential error created by memInfo.totalMem
     fun getDeviceRAM(): String = bytesToSizeUnit(totalMemory, true)

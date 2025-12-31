@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.features.settings.model
-
 enum class IntSetting(
     override val key: String,
     override val section: String,
@@ -54,12 +52,9 @@ enum class IntSetting(
     TURBO_LIMIT("turbo_limit", Settings.SECTION_CORE, 200),
     PERFORMANCE_OVERLAY_POSITION("performance_overlay_position", Settings.SECTION_LAYOUT, 0),
     ASPECT_RATIO("aspect_ratio", Settings.SECTION_LAYOUT, 0);
-
     override var int: Int = defaultValue
-
     override val valueAsString: String
         get() = int.toString()
-
     override val isRuntimeEditable: Boolean
         get() {
             for (setting in NOT_RUNTIME_EDITABLE) {
@@ -69,7 +64,6 @@ enum class IntSetting(
             }
             return true
         }
-
     companion object {
         private val NOT_RUNTIME_EDITABLE = listOf(
             EMULATED_REGION,
@@ -77,9 +71,7 @@ enum class IntSetting(
             GRAPHICS_API,
             AUDIO_INPUT_TYPE,
         )
-
         fun from(key: String): IntSetting? = IntSetting.values().firstOrNull { it.key == key }
-
         fun clear() = IntSetting.values().forEach { it.int = it.defaultValue }
     }
 }

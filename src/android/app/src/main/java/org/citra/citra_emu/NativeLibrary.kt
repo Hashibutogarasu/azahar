@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu
-
 import android.Manifest.permission
 import android.app.Dialog
 import android.content.DialogInterface
@@ -30,7 +28,6 @@ import org.citra.citra_emu.utils.Log
 import org.citra.citra_emu.utils.RemovableStorageHelper
 import java.lang.ref.WeakReference
 import java.util.Date
-
 /**
  * Class which contains methods that interact
  * with the native side of the Citra code.
@@ -40,12 +37,10 @@ object NativeLibrary {
      * Default touchscreen device
      */
     const val TouchScreenDevice = "Touchscreen"
-
     @JvmField
     var sEmulationActivity = WeakReference<EmulationActivity?>(null)
     private var alertResult = false
     val alertLock = Object()
-
     init {
         try {
             System.loadLibrary("citra-android")
@@ -53,7 +48,6 @@ object NativeLibrary {
             Log.error("[NativeLibrary] $ex")
         }
     }
-
     /**
      * Handles button press events for a gamepad.
      *
@@ -63,7 +57,6 @@ object NativeLibrary {
      * @return If we handled the button press.
      */
     external fun onGamePadEvent(device: String, button: Int, action: Int): Boolean
-
     /**
      * Handles gamepad movement events.
      *
@@ -73,7 +66,6 @@ object NativeLibrary {
      * @param yAxis The value of the y-axis represented by the given ID
      */
     external fun onGamePadMoveEvent(device: String, axis: Int, xAxis: Float, yAxis: Float): Boolean
-
     /**
      * Handles gamepad movement events.
      *
@@ -82,7 +74,6 @@ object NativeLibrary {
      * @param axisVal The value of the axis represented by the given ID.
      */
     external fun onGamePadAxisEvent(device: String?, axisId: Int, axisVal: Float): Boolean
-
     /**
      * Handles touch events.
      *
@@ -92,7 +83,6 @@ object NativeLibrary {
      * @return true if the pointer is within the touchscreen
      */
     external fun onTouchEvent(xAxis: Float, yAxis: Float, pressed: Boolean): Boolean
-
     /**
      * Handles touch movement.
      *
@@ -100,7 +90,6 @@ object NativeLibrary {
      * @param yAxis The value of the instantaneous y-axis.
      */
     external fun onTouchMoved(xAxis: Float, yAxis: Float)
-
     /**
      * Handles touch events on the secondary display.
      *
@@ -110,7 +99,6 @@ object NativeLibrary {
      * @return true if the pointer is within the touchscreen
      */
     external fun onSecondaryTouchEvent(xAxis: Float, yAxis: Float, pressed: Boolean): Boolean
-
     /**
      * Handles touch movement on the secondary display.
      *
@@ -118,113 +106,84 @@ object NativeLibrary {
      * @param yAxis The value of the instantaneous y-axis.
      */
     external fun onSecondaryTouchMoved(xAxis: Float, yAxis: Float)
-
     external fun reloadSettings()
-
     external fun getTitleId(filename: String): Long
-
     external fun getIsSystemTitle(path: String): Boolean
-
     /**
      * Sets the current working user directory
      * If not set, it auto-detects a location
      */
     external fun setUserDirectory(directory: String)
     external fun getInstalledGamePaths(): Array<String?>
-
     // Create the config.ini file.
     external fun createConfigFile()
     external fun createLogFile()
     external fun logUserDirectory(directory: String)
-
     /**
      * Begins emulation.
      */
     external fun run(path: String)
-
     // Surface Handling
     external fun surfaceChanged(surf: Surface)
     external fun surfaceDestroyed()
     external fun doFrame()
-
     // Second window
     external fun secondarySurfaceChanged(secondary_surface: Surface)
     external fun secondarySurfaceDestroyed()
-
     /**
      * Unpauses emulation from a paused state.
      */
     external fun unPauseEmulation()
-
     /**
      * Pauses emulation.
      */
     external fun pauseEmulation()
-
     /**
      * Stops emulation.
      */
     external fun stopEmulation()
-
     /**
      * Returns true if emulation is running (or is paused).
      */
     external fun isRunning(): Boolean
-
     /**
      * Returns the title ID of the currently running title, or 0 on failure.
      */
     external fun getRunningTitleId(): Long
-
     /**
      * Returns the performance stats for the current game
      */
     external fun getPerfStats(): DoubleArray
-
     /**
      * Notifies the core emulation that the layout should be updated
      */
     external fun updateFramebuffer(isPortrait: Boolean)
-
     /**
      * Swaps the top and bottom screens.
      */
     external fun swapScreens(swapScreens: Boolean, rotation: Int)
-
     external fun initializeGpuDriver(
         hookLibDir: String?,
         customDriverDir: String?,
         customDriverName: String?,
         fileRedirectDir: String?
     )
-
     external fun areKeysAvailable(): Boolean
-
     external fun getHomeMenuPath(region: Int): String
-
     external fun getSystemTitleIds(systemType: Int, region: Int): LongArray
-
     external fun areSystemTitlesInstalled(): BooleanArray
-
     external fun uninstallSystemFiles(old3DS: Boolean)
-
     external fun isFullConsoleLinked(): Boolean
-
     external fun unlinkConsole()
-
     external fun setTemporaryFrameLimit(speed: Double)
-
     external fun disableTemporaryFrameLimit()
-
     external fun playTimeManagerInit()
     external fun playTimeManagerStart(titleId: Long)
     external fun playTimeManagerStop()
     external fun playTimeManagerGetPlayTime(titleId: Long): Long
     external fun playTimeManagerGetCurrentTitleId(): Long
-
     private var coreErrorAlertResult = false
     private val coreErrorAlertLock = Object()
-
     private fun onCoreErrorImpl(title: String, message: String, canContinue: Boolean) {
         val emulationActivity = sEmulationActivity.get()
         if (emulationActivity == null) {
@@ -234,7 +193,6 @@ object NativeLibrary {
         val fragment = CoreErrorDialogFragment.newInstance(title, message, canContinue)
         fragment.show(emulationActivity.supportFragmentManager, CoreErrorDialogFragment.TAG)
     }
-
     /**
      * Handles a core error.
      * @return true: continue; false: abort
@@ -259,39 +217,32 @@ object NativeLibrary {
                 )
                 canContinue = true
             }
-
             CoreError.ErrorSavestate -> {
                 title = emulationActivity.getString(R.string.save_load_error)
                 message = details
                 canContinue = true
             }
-
             CoreError.ErrorArticDisconnected -> {
                 title = emulationActivity.getString(R.string.artic_base)
                 message = emulationActivity.getString(R.string.artic_server_comm_error)
                 canContinue = false
             }
-
             CoreError.ErrorN3DSApplication -> {
                 title = emulationActivity.getString(R.string.invalid_system_mode)
                 message = emulationActivity.getString(R.string.invalid_system_mode_message)
                 canContinue = false
             }
-
             CoreError.ErrorUnknown -> {
                 title = emulationActivity.getString(R.string.fatal_error)
                 message = emulationActivity.getString(R.string.fatal_error_message)
                 canContinue = true
             }
-
             else -> {
                 return true
             }
         }
-
         // Show the AlertDialog on the main thread.
         emulationActivity.runOnUiThread(Runnable { onCoreErrorImpl(title, message, canContinue) })
-
         // Wait for the lock to notify that it is complete.
         synchronized(coreErrorAlertLock) {
             try {
@@ -301,13 +252,11 @@ object NativeLibrary {
         }
         return coreErrorAlertResult
     }
-
     @get:Keep
     @get:JvmStatic
     val isPortraitMode: Boolean
         get() = CitraApplication.appContext.resources.configuration.orientation ==
                 Configuration.ORIENTATION_PORTRAIT
-
     @Keep
     @JvmStatic
     fun displayAlertMsg(title: String, message: String, yesNo: Boolean): Boolean {
@@ -324,7 +273,6 @@ object NativeLibrary {
                     AlertMessageDialogFragment.TAG
                 )
             }
-
             // Wait for the lock to notify that it is complete.
             synchronized(alertLock) {
                 try {
@@ -336,14 +284,12 @@ object NativeLibrary {
         }
         return result
     }
-
     class AlertMessageDialogFragment : DialogFragment() {
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
             // Create object used for waiting.
             val builder = MaterialAlertDialogBuilder(requireContext())
                 .setTitle(requireArguments().getString(TITLE))
                 .setMessage(requireArguments().getString(MESSAGE))
-
             // If not yes/no dialog just have one button that dismisses modal,
             // otherwise have a yes and no button that sets alertResult accordingly.
             if (!requireArguments().getBoolean(YES_NO)) {
@@ -364,17 +310,13 @@ object NativeLibrary {
                         synchronized(alertLock) { alertLock.notify() }
                     }
             }
-
             return builder.show()
         }
-
         companion object {
             const val TAG = "AlertMessageDialogFragment"
-
             const val TITLE = "title"
             const val MESSAGE = "message"
             const val YES_NO = "yesNo"
-
             fun newInstance(
                 title: String,
                 message: String,
@@ -390,7 +332,6 @@ object NativeLibrary {
             }
         }
     }
-
     @Keep
     @JvmStatic
     fun exitEmulationActivity(resultCode: Int) {
@@ -399,12 +340,10 @@ object NativeLibrary {
             Log.warning("[NativeLibrary] EmulationActivity is null, can't exit.")
             return
         }
-
         if (resultCode == EmulationErrorDialogFragment.ShutdownRequested) {
             emulationActivity.finish()
             return
         }
-
         emulationActivity.runOnUiThread {
             EmulationErrorDialogFragment.newInstance(resultCode).showNow(
                 emulationActivity.supportFragmentManager,
@@ -412,13 +351,10 @@ object NativeLibrary {
             )
         }
     }
-
     class EmulationErrorDialogFragment : DialogFragment() {
         private lateinit var emulationActivity: EmulationActivity
-
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
             emulationActivity = requireActivity() as EmulationActivity
-
             var captionId = R.string.loader_error_invalid_format
             val result = requireArguments().getInt(RESULT_CODE)
             if (result == ErrorLoader_ErrorEncrypted) {
@@ -427,7 +363,6 @@ object NativeLibrary {
             if (result == ErrorArticDisconnected) {
                 captionId = R.string.artic_base
             }
-
             val alert = MaterialAlertDialogBuilder(requireContext())
                 .setTitle(captionId)
                 .setMessage(
@@ -444,19 +379,14 @@ object NativeLibrary {
                 }
                 .create()
             alert.show()
-
             val alertMessage = alert.findViewById<View>(android.R.id.message) as TextView
             alertMessage.movementMethod = LinkMovementMethod.getInstance()
-
             isCancelable = false
             return alert
         }
-
         companion object {
             const val TAG = "EmulationErrorDialogFragment"
-
             const val RESULT_CODE = "resultcode"
-
             const val Success = 0
             const val ErrorNotInitialized = 1
             const val ErrorGetLoader = 2
@@ -470,7 +400,6 @@ object NativeLibrary {
             const val ErrorArticDisconnected = 10
             const val ShutdownRequested = 11
             const val ErrorUnknown = 12
-
             fun newInstance(resultCode: Int): EmulationErrorDialogFragment {
                 val args = Bundle()
                 args.putInt(RESULT_CODE, resultCode)
@@ -480,21 +409,17 @@ object NativeLibrary {
             }
         }
     }
-
     fun setEmulationActivity(emulationActivity: EmulationActivity?) {
         Log.debug("[NativeLibrary] Registering EmulationActivity.")
         sEmulationActivity = WeakReference(emulationActivity)
     }
-
     fun clearEmulationActivity() {
         Log.debug("[NativeLibrary] Unregistering EmulationActivity.")
         sEmulationActivity.clear()
     }
-
     private val cameraPermissionLock = Object()
     private var cameraPermissionGranted = false
     const val REQUEST_CODE_NATIVE_CAMERA = 800
-
     @Keep
     @JvmStatic
     fun requestCameraPermission(): Boolean {
@@ -510,7 +435,6 @@ object NativeLibrary {
             return true
         }
         emulationActivity.requestPermissions(arrayOf(permission.CAMERA), REQUEST_CODE_NATIVE_CAMERA)
-
         // Wait until result is returned
         synchronized(cameraPermissionLock) {
             try {
@@ -520,16 +444,13 @@ object NativeLibrary {
         }
         return cameraPermissionGranted
     }
-
     fun cameraPermissionResult(granted: Boolean) {
         cameraPermissionGranted = granted
         synchronized(cameraPermissionLock) { cameraPermissionLock.notify() }
     }
-
     private val micPermissionLock = Object()
     private var micPermissionGranted = false
     const val REQUEST_CODE_NATIVE_MIC = 900
-
     @Keep
     @JvmStatic
     fun requestMicPermission(): Boolean {
@@ -548,7 +469,6 @@ object NativeLibrary {
             arrayOf(permission.RECORD_AUDIO),
             REQUEST_CODE_NATIVE_MIC
         )
-
         // Wait until result is returned
         synchronized(micPermissionLock) {
             try {
@@ -558,26 +478,18 @@ object NativeLibrary {
         }
         return micPermissionGranted
     }
-
     fun micPermissionResult(granted: Boolean) {
         micPermissionGranted = granted
         synchronized(micPermissionLock) { micPermissionLock.notify() }
     }
-
     // Notifies that the activity is now in foreground and camera devices can now be reloaded
     external fun reloadCameraDevices()
-
     external fun loadAmiibo(path: String?): Boolean
-
     external fun removeAmiibo()
-
     const val SAVESTATE_SLOT_COUNT = 11
     const val QUICKSAVE_SLOT = 0
-
     external fun getSavestateInfo(): Array<SaveStateInfo>?
-
     external fun saveState(slot: Int)
-
     fun loadStateIfAvailable(slot: Int): Boolean {
         var available = false
         getSavestateInfo()?.forEach {
@@ -592,14 +504,11 @@ object NativeLibrary {
         }
         return false
     }
-
     external fun loadState(slot: Int)
-
     /**
      * Logs the Citra version, Android version and, CPU.
      */
     external fun logDeviceInfo()
-
     @Keep
     @JvmStatic
     fun createFile(directory: String, filename: String): Boolean =
@@ -608,7 +517,6 @@ object NativeLibrary {
         } else {
             FileUtil.createFile(directory, filename) != null
         }
-
     @Keep
     @JvmStatic
     fun createDir(directory: String, directoryName: String): Boolean =
@@ -621,7 +529,6 @@ object NativeLibrary {
         } else {
             FileUtil.createDir(directory, directoryName) != null
         }
-
     @Keep
     @JvmStatic
     fun openContentUri(path: String, openMode: String): Int =
@@ -630,7 +537,6 @@ object NativeLibrary {
         } else {
             FileUtil.openContentUri(path, openMode)
         }
-
     @Keep
     @JvmStatic
     fun getFilesName(path: String): Array<String?> =
@@ -639,26 +545,22 @@ object NativeLibrary {
         } else {
             FileUtil.getFilesName(path)
         }
-
     @Keep
     @JvmStatic
     fun getUserDirectory(uriOverride: Uri? = null): String {
         val preferences: SharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
-
         val dirSep = "/"
         val udUri = uriOverride ?:
                     preferences.getString("CITRA_DIRECTORY", "")!!.toUri()
         val udPathSegment = udUri.lastPathSegment!!
         val udVirtualPath = udPathSegment.substringAfter(":")
-
         if (udPathSegment.startsWith("primary:")) { // User directory is located in primary storage
             val primaryStoragePath = Environment.getExternalStorageDirectory().absolutePath
             return primaryStoragePath + dirSep + udVirtualPath + dirSep
         } else { // User directory probably located on a removable storage device
             val storageIdString = udPathSegment.substringBefore(":")
             val udRemovablePath = RemovableStorageHelper.getRemovableStoragePath(storageIdString)
-
             if (udRemovablePath == null) {
                 android.util.Log.e("NativeLibrary",
                     "Unknown mount location for storage device '$storageIdString' (URI: $udUri)"
@@ -667,9 +569,7 @@ object NativeLibrary {
             }
             return udRemovablePath + dirSep + udVirtualPath + dirSep
         }
-
     }
-
     @Keep
     @JvmStatic
     fun getSize(path: String): Long =
@@ -678,11 +578,9 @@ object NativeLibrary {
         } else {
             FileUtil.getFileSize(path)
         }
-
     @Keep
     @JvmStatic
     fun getBuildFlavor(): String = BuildConfig.FLAVOR
-
     @Keep
     @JvmStatic
     fun fileExists(path: String): Boolean =
@@ -691,7 +589,6 @@ object NativeLibrary {
         } else {
             FileUtil.exists(path)
         }
-
     @Keep
     @JvmStatic
     fun isDirectory(path: String): Boolean =
@@ -700,7 +597,6 @@ object NativeLibrary {
         } else {
             FileUtil.isDirectory(path)
         }
-
     @Keep
     @JvmStatic
     fun copyFile(
@@ -720,7 +616,6 @@ object NativeLibrary {
                 destinationFilename
             )
         }
-
     @Keep
     @JvmStatic
     fun renameFile(path: String, destinationFilename: String): Boolean =
@@ -733,12 +628,10 @@ object NativeLibrary {
         } else {
             FileUtil.renameFile(path, destinationFilename)
         }
-
     @Keep
     @JvmStatic
     fun updateDocumentLocation(sourcePath: String, destinationPath: String): Boolean =
         CitraApplication.documentsTree.updateDocumentLocation(sourcePath, destinationPath)
-
     @Keep
     @JvmStatic
     fun moveFile(filename: String, sourceDirPath: String, destinationDirPath: String): Boolean =
@@ -751,7 +644,6 @@ object NativeLibrary {
         } else {
             FileUtil.moveFile(filename, sourceDirPath, destinationDirPath)
         }
-
     @Keep
     @JvmStatic
     fun deleteDocument(path: String): Boolean =
@@ -760,7 +652,6 @@ object NativeLibrary {
         } else {
             FileUtil.deleteDocument(path)
         }
-
     enum class CoreError {
         ErrorSystemFiles,
         ErrorSavestate,
@@ -768,7 +659,6 @@ object NativeLibrary {
         ErrorN3DSApplication,
         ErrorUnknown
     }
-
     enum class InstallStatus {
         Success,
         ErrorFailedToOpenFile,
@@ -778,7 +668,6 @@ object NativeLibrary {
         ErrorEncrypted,
         Cancelled
     }
-
     class CoreErrorDialogFragment : DialogFragment() {
         private var userChosen = false
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -800,7 +689,6 @@ object NativeLibrary {
             }
             return dialog.show()
         }
-
         override fun onDismiss(dialog: DialogInterface) {
             super.onDismiss(dialog)
             val canContinue = requireArguments().getBoolean(CAN_CONTINUE)
@@ -809,14 +697,11 @@ object NativeLibrary {
             }
             synchronized(coreErrorAlertLock) { coreErrorAlertLock.notify() }
         }
-
         companion object {
             const val TAG = "CoreErrorDialogFragment"
-
             const val TITLE = "title"
             const val MESSAGE = "message"
             const val CAN_CONTINUE = "canContinue"
-
             fun newInstance(title: String, message: String, canContinue: Boolean): CoreErrorDialogFragment {
                 val frag = CoreErrorDialogFragment()
                 val args = Bundle()
@@ -828,13 +713,11 @@ object NativeLibrary {
             }
         }
     }
-
     @Keep
     class SaveStateInfo {
         var slot = 0
         var time: Date? = null
     }
-
     /**
      * Button type for use in onTouchEvent
      */
@@ -870,7 +753,6 @@ object NativeLibrary {
         const val BUTTON_SWAP = 800
         const val BUTTON_TURBO = 801
     }
-
     /**
      * Button states
      */

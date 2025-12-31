@@ -1,7 +1,6 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.content.DialogInterface
@@ -23,15 +22,12 @@ import kotlin.math.abs
 class MotionBottomSheetDialogFragment : BottomSheetDialogFragment() {
     private var _binding: DialogInputBinding? = null
     private val binding get() = _binding!!
-
     private var setting: InputBindingSetting? = null
     private var onCancel: (() -> Unit)? = null
     private var onDismiss: (() -> Unit)? = null
-
     private val previousValues = ArrayList<Float>()
     private var prevDeviceId = 0
     private var waitingForEvent = true
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (setting == null) {
@@ -52,7 +48,6 @@ class MotionBottomSheetDialogFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         BottomSheetBehavior.from<View>(view.parent as View).state =
             BottomSheetBehavior.STATE_EXPANDED
-
         isCancelable = false
         view.requestFocus()
         view.setOnFocusChangeListener { v, hasFocus -> if (!hasFocus) v.requestFocus() }
@@ -62,7 +57,6 @@ class MotionBottomSheetDialogFragment : BottomSheetDialogFragment() {
         if (setting!!.isAxisMappingSupported()) {
             binding.root.setOnGenericMotionListener { _, event -> onMotionEvent(event) }
         }
-
         val inputTypeId = when {
             setting!!.isCirclePad() -> R.string.controller_circlepad
             setting!!.isCStick() -> R.string.controller_c
@@ -76,7 +70,6 @@ class MotionBottomSheetDialogFragment : BottomSheetDialogFragment() {
                 getString(inputTypeId),
                 getString(setting!!.nameId)
             )
-
         var messageResId: Int = R.string.input_dialog_description
         if (setting!!.isAxisMappingSupported() && !setting!!.isTrigger()) {
             // Use specialized message for axis left/right or up/down
@@ -87,7 +80,6 @@ class MotionBottomSheetDialogFragment : BottomSheetDialogFragment() {
             }
         }
         binding.textMessage.text = getString(messageResId)
-
         binding.buttonClear.setOnClickListener {
             setting?.removeOldMapping()
             dismiss()
@@ -126,17 +118,13 @@ class MotionBottomSheetDialogFragment : BottomSheetDialogFragment() {
         Log.debug("[MotionBottomSheetDialogFragment] Received motion event: " + event.action)
         if (event.source and InputDevice.SOURCE_CLASS_JOYSTICK == 0) return false
         if (event.action != MotionEvent.ACTION_MOVE) return false
-
         val input = event.device
-
         val motionRanges = input.motionRanges
-
         if (input.id != prevDeviceId) {
             previousValues.clear()
         }
         prevDeviceId = input.id
         val firstEvent = previousValues.isEmpty()
-
         var numMovedAxis = 0
         var axisMoveValue = 0.0f
         var lastMovedRange: InputDevice.MotionRange? = null
@@ -150,7 +138,6 @@ class MotionBottomSheetDialogFragment : BottomSheetDialogFragment() {
                     previousValues.add(origValue)
                 } else {
                     val previousValue = previousValues[i]
-
                     // Only handle the axes that are not neutral (more than 0.5)
                     // but ignore any axis that has a constant value (e.g. always 1)
                     if (abs(origValue) > 0.5f && origValue != previousValue) {
@@ -177,7 +164,6 @@ class MotionBottomSheetDialogFragment : BottomSheetDialogFragment() {
                 }
                 previousValues[i] = origValue
             }
-
             // If only one axis moved, that's the winner.
             if (numMovedAxis == 1) {
                 waitingForEvent = false
@@ -190,7 +176,6 @@ class MotionBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     companion object {
         const val TAG = "MotionBottomSheetDialogFragment"
-
         fun newInstance(
             setting: InputBindingSetting,
             onCancel: () -> Unit,

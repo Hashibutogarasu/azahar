@@ -1,13 +1,10 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.utils
-
 import android.view.InputDevice
 import android.view.KeyEvent
 import android.view.MotionEvent
-
 /**
  * Some controllers have incorrect mappings. This class has special-case fixes for them.
  */
@@ -22,7 +19,6 @@ object ControllerMappingHelper {
             keyCode == KeyEvent.KEYCODE_BUTTON_L2 || keyCode == KeyEvent.KEYCODE_BUTTON_R2
         } else false
     }
-
     /**
      * Scale an axis to be zero-centered with a proper range.
      */
@@ -51,17 +47,14 @@ object ControllerMappingHelper {
         }
         return value
     }
-
     private fun isDualShock4(inputDevice: InputDevice): Boolean {
         // Sony DualShock 4 controller
         return inputDevice.vendorId == 0x54c && inputDevice.productId == 0x9cc
     }
-
     private fun isXboxOneWireless(inputDevice: InputDevice): Boolean {
         // Microsoft Xbox One controller
         return inputDevice.vendorId == 0x45e && inputDevice.productId == 0x2e0
     }
-
     private fun isMogaPro2Hid(inputDevice: InputDevice): Boolean {
         // Moga Pro 2 HID
         return inputDevice.vendorId == 0x20d6 && inputDevice.productId == 0x6271

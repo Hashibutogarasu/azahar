@@ -1,18 +1,14 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.utils
-
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.preference.PreferenceManager
 import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.overlay.ButtonSlidingMode
-
 object EmulationMenuSettings {
     private val preferences =
         PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
-
     var joystickRelCenter: Boolean
         get() = preferences.getBoolean("EmulationMenuSettings_JoystickRelCenter", true)
         set(value) {
@@ -34,7 +30,6 @@ object EmulationMenuSettings {
                 .putInt("EmulationMenuSettings_ButtonSlideMode", value)
                 .apply()
         }
-
     var hapticFeedback: Boolean
         get() = preferences.getBoolean("EmulationMenuSettings_HapticFeedback", true)
         set(value) {

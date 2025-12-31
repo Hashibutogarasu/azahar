@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.features.settings.model.view
-
 import android.content.Context
 import android.content.SharedPreferences
 import android.view.InputDevice
@@ -18,7 +16,6 @@ import org.citra.citra_emu.features.hotkeys.Hotkey
 import org.citra.citra_emu.features.settings.model.AbstractSetting
 import org.citra.citra_emu.features.settings.model.AbstractStringSetting
 import org.citra.citra_emu.features.settings.model.Settings
-
 class InputBindingSetting(
     val abstractSetting: AbstractSetting,
     titleId: Int
@@ -26,7 +23,6 @@ class InputBindingSetting(
     private val context: Context get() = CitraApplication.appContext
     private val preferences: SharedPreferences
         get() = PreferenceManager.getDefaultSharedPreferences(context)
-
     var value: String
         get() = preferences.getString(abstractSetting.key, "")!!
         set(string) {
@@ -34,7 +30,6 @@ class InputBindingSetting(
                 .putString(abstractSetting.key, string)
                 .apply()
         }
-
     /**
      * Returns true if this key is for the 3DS Circle Pad
      */
@@ -42,10 +37,8 @@ class InputBindingSetting(
         when (abstractSetting.key) {
             Settings.KEY_CIRCLEPAD_AXIS_HORIZONTAL,
             Settings.KEY_CIRCLEPAD_AXIS_VERTICAL -> true
-
             else -> false
         }
-
     /**
      * Returns true if this key is for a horizontal axis for a 3DS analog stick or D-pad
      */
@@ -54,10 +47,8 @@ class InputBindingSetting(
             Settings.KEY_CIRCLEPAD_AXIS_HORIZONTAL,
             Settings.KEY_CSTICK_AXIS_HORIZONTAL,
             Settings.KEY_DPAD_AXIS_HORIZONTAL -> true
-
             else -> false
         }
-
     /**
      * Returns true if this key is for the 3DS C-Stick
      */
@@ -65,10 +56,8 @@ class InputBindingSetting(
         when (abstractSetting.key) {
             Settings.KEY_CSTICK_AXIS_HORIZONTAL,
             Settings.KEY_CSTICK_AXIS_VERTICAL -> true
-
             else -> false
         }
-
     /**
      * Returns true if this key is for the 3DS D-Pad
      */
@@ -76,7 +65,6 @@ class InputBindingSetting(
         when (abstractSetting.key) {
             Settings.KEY_DPAD_AXIS_HORIZONTAL,
             Settings.KEY_DPAD_AXIS_VERTICAL -> true
-
             else -> false
         }
     /**
@@ -89,24 +77,20 @@ class InputBindingSetting(
             Settings.KEY_BUTTON_R,
             Settings.KEY_BUTTON_ZL,
             Settings.KEY_BUTTON_ZR -> true
-
             else -> false
         }
-
     /**
      * Returns true if a gamepad axis can be used to map this key.
      */
     fun isAxisMappingSupported(): Boolean {
         return isCirclePad() || isCStick() || isDPad() || isTrigger()
     }
-
     /**
      * Returns true if a gamepad button can be used to map this key.
      */
     fun isButtonMappingSupported(): Boolean {
         return !isAxisMappingSupported() || isTrigger()
     }
-
     /**
      * Returns the Citra button code for the settings key.
      */
@@ -137,7 +121,6 @@ class InputBindingSetting(
                 Settings.HOTKEY_TURBO_LIMIT -> Hotkey.TURBO_LIMIT.button
                 else -> -1
             }
-
     /**
      * Returns the key used to lookup the reverse mapping for this key, which is used to cleanup old
      * settings on re-mapping or clearing of a setting.
@@ -155,7 +138,6 @@ class InputBindingSetting(
             }
             return reverseKey
         }
-
     /**
      * Removes the old mapping for this key from the settings, e.g. on user clearing the setting.
      */
@@ -172,40 +154,32 @@ class InputBindingSetting(
                 .apply()
         }
     }
-
     /**
      * Helper function to write a gamepad button mapping for the setting.
      */
     private fun writeButtonMapping(key: String) {
         val editor = preferences.edit()
-
         // Remove mapping for another setting using this input
         val oldButtonCode = preferences.getInt(key, -1)
         if (oldButtonCode != -1) {
             val oldKey = getButtonKey(oldButtonCode)
             editor.remove(oldKey) // Only need to remove UI text setting, others will be overwritten
         }
-
         // Cleanup old mapping for this setting
         removeOldMapping()
-
         // Write new mapping
         editor.putInt(key, buttonCode)
-
         // Write next reverse mapping for future cleanup
         editor.putString(reverseKey, key)
-
         // Apply changes
         editor.apply()
     }
-
     /**
      * Helper function to write a gamepad axis mapping for the setting.
      */
     private fun writeAxisMapping(axis: Int, value: Int) {
         // Cleanup old mapping
         removeOldMapping()
-
         // Write new mapping
         preferences.edit()
             .putInt(getInputAxisOrientationKey(axis), if (isHorizontalOrientation()) 0 else 1)
@@ -214,7 +188,6 @@ class InputBindingSetting(
             .putString(reverseKey, getInputAxisKey(axis))
             .apply()
     }
-
     /**
      * Saves the provided key input setting as an Android preference.
      *
@@ -225,13 +198,11 @@ class InputBindingSetting(
             Toast.makeText(context, R.string.input_message_analog_only, Toast.LENGTH_LONG).show()
             return
         }
-
         val code = translateEventToKeyId(keyEvent)
         writeButtonMapping(getInputButtonKey(code))
         val uiString = "${keyEvent.device.name}: Button $code"
         value = uiString
     }
-
     /**
      * Saves the provided motion input setting as an Android preference.
      *
@@ -257,12 +228,9 @@ class InputBindingSetting(
         val uiString = "${device.name}: Axis ${motionRange.axis}"
         value = uiString
     }
-
     override val type = TYPE_INPUT_BINDING
-
     companion object {
         private const val INPUT_MAPPING_PREFIX = "InputMapping"
-
         /**
          * Returns the settings key for the specified Citra button code.
          */
@@ -285,37 +253,30 @@ class InputBindingSetting(
                 NativeLibrary.ButtonType.DPAD_RIGHT -> Settings.KEY_BUTTON_RIGHT
                 else -> ""
             }
-
         /**
          * Helper function to get the settings key for an gamepad button.
          *
          */
         @Deprecated("Use the new getInputButtonKey(keyEvent) method to handle unknown keys")
         fun getInputButtonKey(keyCode: Int): String = "${INPUT_MAPPING_PREFIX}_HostAxis_${keyCode}"
-
         /**
          * Helper function to get the settings key for an gamepad button.
          *
          */
         fun getInputButtonKey(event: KeyEvent): String = "${INPUT_MAPPING_PREFIX}_HostAxis_${translateEventToKeyId(event)}"
-
         /**
          * Helper function to get the settings key for an gamepad axis.
          */
         fun getInputAxisKey(axis: Int): String = "${INPUT_MAPPING_PREFIX}_HostAxis_${axis}"
-
         /**
          * Helper function to get the settings key for an gamepad axis button (stick or trigger).
          */
         fun getInputAxisButtonKey(axis: Int): String = "${getInputAxisKey(axis)}_GuestButton"
-
         /**
          * Helper function to get the settings key for an gamepad axis orientation.
          */
         fun getInputAxisOrientationKey(axis: Int): String =
             "${getInputAxisKey(axis)}_GuestOrientation"
-
-
         /**
          * This function translates a keyEvent into an "keyid"
          * This key id is either the keyCode from the event, or

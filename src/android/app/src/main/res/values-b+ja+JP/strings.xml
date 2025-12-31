@@ -14,6 +14,10 @@
     <string name="home_options">オプション</string>
     <string name="home_search">検索</string>
     <string name="home_games">アプリケーション</string>
+    <string name="drawer_hidden_apps">非表示にした項目</string>
+    <string name="menu_hide_app">アイテムを非表示にする</string>
+    <string name="menu_unhide_app">アイテムを再表示する</string>
+    <string name="no_hidden_apps_found">非表示の項目は見つかりませんでした。</string>
     <string name="settings_description">エミュレータ設定を構成</string>
     <string name="install_game_content">CIAファイルをインストール</string>
     <string name="install_game_content_description">アプリケーション、アップデート、DLCをインストール</string>
@@ -925,4 +929,5 @@
     <string name="emulation_quickload">クイックロード</string>
     <string name="emulation_occupied_quicksave_slot">クイックセーブ - %1$tF %1$tR</string>
     <string name="quickload_not_found">クイックロードが見つかりません。</string>
+    <string name="loader_game_does_not_exist">ゲームファイルが見つかりません</string>
 </resources>

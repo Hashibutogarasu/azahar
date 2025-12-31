@@ -1,7 +1,6 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.app.Dialog
@@ -18,23 +17,19 @@ class MessageDialogFragment : DialogFragment() {
         val descriptionId = requireArguments().getInt(DESCRIPTION_ID)
         val descriptionString = requireArguments().getString(DESCRIPTION_STRING) ?: ""
         val helpLinkId = requireArguments().getInt(HELP_LINK)
-
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setPositiveButton(R.string.close, null)
             .setTitle(titleId)
-
         if (descriptionString.isNotEmpty()) {
             dialog.setMessage(descriptionString)
         } else if (descriptionId != 0) {
             dialog.setMessage(descriptionId)
         }
-
         if (helpLinkId != 0) {
             dialog.setNeutralButton(R.string.learn_more) { _, _ ->
                 openLink(getString(helpLinkId))
             }
         }
-
         return dialog.show()
     }
 
@@ -45,12 +40,10 @@ class MessageDialogFragment : DialogFragment() {
 
     companion object {
         const val TAG = "MessageDialogFragment"
-
         private const val TITLE_ID = "Title"
         private const val DESCRIPTION_ID = "Description"
         private const val DESCRIPTION_STRING = "Description_string"
         private const val HELP_LINK = "Link"
-
         fun newInstance(
             titleId: Int,
             descriptionId: Int,

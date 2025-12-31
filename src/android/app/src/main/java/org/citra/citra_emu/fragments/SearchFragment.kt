@@ -1,7 +1,6 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.annotation.SuppressLint
@@ -39,20 +38,22 @@ import java.util.Locale
 import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContracts
 
+/**
+ * @deprecated This fragment is deprecated. Search functionality has been integrated into
+ * the MainHeader of GamesScreen. This fragment will be removed in a future version.
+ */
+@Deprecated("Search functionality has been integrated into GamesScreen's MainHeader")
 class SearchFragment : Fragment() {
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
-
     private val gamesViewModel: GamesViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
     private lateinit var gameAdapter: GameAdapter
-
     private val openImageLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         gameAdapter.handleShortcutImageResult(uri)
     }
-
     private lateinit var preferences: SharedPreferences
 
     companion object {
@@ -73,21 +74,16 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         homeViewModel.setNavigationVisibility(visible = true, animated = true)
         homeViewModel.setStatusBarShadeVisibility(visible = true)
-
         preferences = PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
-
         if (savedInstanceState != null) {
             binding.searchText.setText(savedInstanceState.getString(SEARCH_TEXT))
         }
-
         val inflater = LayoutInflater.from(requireContext())
-
         gameAdapter = GameAdapter(
             requireActivity() as AppCompatActivity,
             inflater,
             openImageLauncher
         )
-
         binding.gridGamesSearch.apply {
             layoutManager = GridLayoutManager(
                 requireContext(),
@@ -95,9 +91,7 @@ class SearchFragment : Fragment() {
             )
             adapter = this@SearchFragment.gameAdapter
         }
-
         binding.chipGroup.setOnCheckedStateChangeListener { _, _ -> filterAndSearch() }
-
         binding.searchText.doOnTextChanged { text: CharSequence?, _: Int, _: Int, _: Int ->
             if (text.toString().isNotEmpty()) {
                 binding.clearButton.visibility = View.VISIBLE
@@ -106,7 +100,6 @@ class SearchFragment : Fragment() {
             }
             filterAndSearch()
         }
-
         viewLifecycleOwner.lifecycleScope.apply {
             launch {
                 repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -136,11 +129,8 @@ class SearchFragment : Fragment() {
                 }
             }
         }
-
         binding.clearButton.setOnClickListener { binding.searchText.setText("") }
-
         binding.searchBackground.setOnClickListener { focusSearch() }
-
         setInsets()
         filterAndSearch()
     }
@@ -160,7 +150,6 @@ class SearchFragment : Fragment() {
             gamesViewModel.setSearchedGames(emptyList())
             return
         }
-
         val baseList = gamesViewModel.games.value
         val filteredList: List<Game> = when (binding.chipGroup.checkedChipId) {
             R.id.chip_recently_played -> {
@@ -178,17 +167,14 @@ class SearchFragment : Fragment() {
             }
 
             R.id.chip_installed -> baseList.filter { it.isInstalled }
-
             else -> baseList
         }
-
         if (binding.searchText.text.toString().isEmpty() &&
             binding.chipGroup.checkedChipId != View.NO_ID
         ) {
             gamesViewModel.setSearchedGames(filteredList)
             return
         }
-
         val searchTerm = binding.searchText.text.toString().lowercase(Locale.getDefault())
         val searchAlgorithm = if (searchTerm.length > 1) Jaccard(2) else JaroWinkler()
         val sortedList: List<Game> = filteredList.mapNotNull { game ->
@@ -235,19 +221,16 @@ class SearchFragment : Fragment() {
             val spacingNavigationRail =
                 resources.getDimensionPixelSize(R.dimen.spacing_navigation_rail)
             val chipSpacing = resources.getDimensionPixelSize(R.dimen.spacing_chip)
-
             binding.constraintSearch.updatePadding(
                 left = barInsets.left + cutoutInsets.left,
                 top = barInsets.top,
                 right = barInsets.right + cutoutInsets.right
             )
-
             binding.gridGamesSearch.updatePadding(
                 top = extraListSpacing,
                 bottom = barInsets.bottom + spacingNavigation + extraListSpacing
             )
             binding.noResultsView.updatePadding(bottom = spacingNavigation + barInsets.bottom)
-
             val mlpDivider = binding.divider.layoutParams as ViewGroup.MarginLayoutParams
             if (ViewCompat.getLayoutDirection(view) == ViewCompat.LAYOUT_DIRECTION_LTR) {
                 binding.frameSearch.updatePadding(left = spacingNavigationRail)
@@ -271,7 +254,6 @@ class SearchFragment : Fragment() {
                 mlpDivider.rightMargin = chipSpacing + spacingNavigationRail
             }
             binding.divider.layoutParams = mlpDivider
-
             windowInsets
         }
 }

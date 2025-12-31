@@ -1,7 +1,6 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.content.DialogInterface
@@ -47,16 +46,12 @@ import org.citra.citra_emu.viewmodel.HomeViewModel
 class SystemFilesFragment : Fragment() {
     private var _binding: FragmentSystemFilesBinding? = null
     private val binding get() = _binding!!
-
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val gamesViewModel: GamesViewModel by activityViewModels()
-
     private val REGION_START = "RegionStart"
-
     private val homeMenuMap: MutableMap<String, String> = mutableMapOf()
     private var setupStateCached: BooleanArray? = null
     private lateinit var regionValues: IntArray
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
@@ -76,11 +71,9 @@ class SystemFilesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         homeViewModel.setNavigationVisibility(visible = false, animated = true)
         homeViewModel.setStatusBarShadeVisibility(visible = false)
-
         // TODO: Remove workaround for text filtering issue in material components when fixed
         // https://github.com/material-components/material-components-android/issues/1464
         binding.dropdownSystemRegionStart.isSaveEnabled = false
-
         reloadUi()
         if (savedInstanceState != null) {
             binding.dropdownSystemRegionStart
@@ -113,11 +106,9 @@ class SystemFilesFragment : Fragment() {
                 setMargins(50, 50, 50, 50) // Add margins (left, top, right, bottom)
             }
         }
-
         val pleaseWaitText = MaterialTextView(context).apply {
             text = main_text
         }
-
         val container = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
@@ -125,7 +116,6 @@ class SystemFilesFragment : Fragment() {
             addView(pleaseWaitText)
             addView(progressIndicator)
         }
-
         return MaterialAlertDialogBuilder(context)
             .setTitle(main_title)
             .setView(container)
@@ -135,12 +125,10 @@ class SystemFilesFragment : Fragment() {
 
     private fun reloadUi() {
         val preferences = PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
-
         binding.switchRunSystemSetup.isChecked = SystemSaveGame.getIsSystemSetupNeeded()
         binding.switchRunSystemSetup.setOnCheckedChangeListener { _, isChecked ->
             SystemSaveGame.setSystemSetupNeeded(isChecked)
         }
-
         val showHomeApps = preferences.getBoolean(Settings.PREF_SHOW_HOME_APPS, false)
         binding.switchShowApps.isChecked = showHomeApps
         binding.switchShowApps.setOnCheckedChangeListener { _, isChecked ->
@@ -149,7 +137,6 @@ class SystemFilesFragment : Fragment() {
                 .apply()
             gamesViewModel.setShouldSwapData(true)
         }
-
         binding.setupSystemFilesDescription?.apply {
             text = HtmlCompat.fromHtml(
                 context.getString(R.string.setup_system_files_preamble),
@@ -157,15 +144,16 @@ class SystemFilesFragment : Fragment() {
             )
             movementMethod = LinkMovementMethod.getInstance()
         }
-
         binding.buttonUnlinkConsoleData.isEnabled = NativeLibrary.isFullConsoleLinked()
         binding.buttonUnlinkConsoleData.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.delete_system_files)
-                .setMessage(HtmlCompat.fromHtml(
-                    requireContext().getString(R.string.delete_system_files_description),
-                    HtmlCompat.FROM_HTML_MODE_COMPACT
-                ))
+                .setMessage(
+                    HtmlCompat.fromHtml(
+                        requireContext().getString(R.string.delete_system_files_description),
+                        HtmlCompat.FROM_HTML_MODE_COMPACT
+                    )
+                )
                 .setPositiveButton(android.R.string.ok) { _: DialogInterface, _: Int ->
                     NativeLibrary.unlinkConsole()
                     binding.buttonUnlinkConsoleData.isEnabled = NativeLibrary.isFullConsoleLinked()
@@ -173,64 +161,50 @@ class SystemFilesFragment : Fragment() {
                 .setNegativeButton(android.R.string.cancel, null)
                 .show()
         }
-
         binding.buttonSetUpSystemFiles.setOnClickListener {
             val inflater = LayoutInflater.from(context)
             val inputBinding = DialogSoftwareKeyboardBinding.inflate(inflater)
             var textInputValue: String = preferences.getString("last_artic_base_addr", "")!!
-
             val progressDialog = showProgressDialog(
                 getText(R.string.setup_system_files),
                 getString(R.string.setup_system_files_detect)
             )
-
             CoroutineScope(Dispatchers.IO).launch {
                 val setupState = setupStateCached ?: NativeLibrary.areSystemTitlesInstalled().also {
                     setupStateCached = it
                 }
-
                 withContext(Dispatchers.Main) {
                     progressDialog?.dismiss()
-
                     inputBinding.editTextInput.setText(textInputValue)
                     inputBinding.editTextInput.doOnTextChanged { text, _, _, _ ->
                         textInputValue = text.toString()
                     }
-
                     val buttonGroup = context?.let { it1 -> RadioGroup(it1) }!!
-
                     val buttonO3ds = context?.let { it1 ->
                         RadioButton(it1).apply {
                             text = context.getString(R.string.setup_system_files_o3ds)
                             isChecked = false
                         }
                     }!!
-
                     val buttonN3ds = context?.let { it1 ->
                         RadioButton(it1).apply {
                             text = context.getString(R.string.setup_system_files_n3ds)
                             isChecked = false
                         }
                     }!!
-
                     val textO3ds: String
                     val textN3ds: String
-
                     val colorO3ds: Int
                     val colorN3ds: Int
-
                     if (!setupStateCached!![0]) {
                         textO3ds = getString(R.string.setup_system_files_possible)
                         colorO3ds = R.color.citra_primary_blue
-
                         textN3ds = getString(R.string.setup_system_files_o3ds_needed)
                         colorN3ds = R.color.citra_primary_yellow
-
                         buttonN3ds.isEnabled = false
                     } else {
                         textO3ds = getString(R.string.setup_system_files_completed)
                         colorO3ds = R.color.citra_primary_green
-
                         if (!setupStateCached!![1]) {
                             textN3ds = getString(R.string.setup_system_files_possible)
                             colorN3ds = R.color.citra_primary_blue
@@ -239,7 +213,6 @@ class SystemFilesFragment : Fragment() {
                             colorN3ds = R.color.citra_primary_green
                         }
                     }
-
                     val tooltipO3ds = context?.let { it1 ->
                         MaterialTextView(it1).apply {
                             text = textO3ds
@@ -247,7 +220,6 @@ class SystemFilesFragment : Fragment() {
                             setTextColor(ContextCompat.getColor(requireContext(), colorO3ds))
                         }
                     }
-
                     val tooltipN3ds = context?.let { it1 ->
                         MaterialTextView(it1).apply {
                             text = textN3ds
@@ -255,18 +227,15 @@ class SystemFilesFragment : Fragment() {
                             setTextColor(ContextCompat.getColor(requireContext(), colorN3ds))
                         }
                     }
-
                     buttonGroup.apply {
                         addView(buttonO3ds)
                         addView(tooltipO3ds)
                         addView(buttonN3ds)
                         addView(tooltipN3ds)
                     }
-
                     inputBinding.root.apply {
                         addView(buttonGroup)
                     }
-
                     val dialog = context?.let {
                         MaterialAlertDialogBuilder(it)
                             .setView(inputBinding.root)
@@ -291,7 +260,6 @@ class SystemFilesFragment : Fragment() {
                                             R.string.setup_system_files_preparing
                                         )
                                     )
-
                                     CoroutineScope(Dispatchers.IO).launch {
                                         NativeLibrary.uninstallSystemFiles(buttonO3ds.isChecked)
                                         withContext(Dispatchers.Main) {
@@ -312,7 +280,6 @@ class SystemFilesFragment : Fragment() {
                 }
             }
         }
-
         populateHomeMenuOptions()
         binding.buttonStartHomeMenu.setOnClickListener {
             val menuPath = homeMenuMap[binding.dropdownSystemRegionStart.text.toString()]!!
@@ -334,12 +301,10 @@ class SystemFilesFragment : Fragment() {
             val regionPath = NativeLibrary.getHomeMenuPath(region)
             homeMenuMap[regionString] = regionPath
         }
-
         val availableMenus = homeMenuMap.filter { it.value != "" }
         if (availableMenus.isNotEmpty()) {
             binding.systemRegionStart.isEnabled = true
             binding.buttonStartHomeMenu.isEnabled = true
-
             binding.dropdownSystemRegionStart.setAdapter(
                 ArrayAdapter(
                     requireContext(),

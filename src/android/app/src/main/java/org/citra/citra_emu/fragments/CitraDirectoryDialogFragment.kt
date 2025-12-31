@@ -1,7 +1,6 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.app.Dialog
@@ -22,7 +21,6 @@ import org.citra.citra_emu.viewmodel.HomeViewModel
 
 class CitraDirectoryDialogFragment : DialogFragment() {
     private lateinit var binding: DialogCitraDirectoryBinding
-
     private val homeViewModel: HomeViewModel by activityViewModels()
 
     fun interface Listener {
@@ -31,9 +29,7 @@ class CitraDirectoryDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         binding = DialogCitraDirectoryBinding.inflate(layoutInflater)
-
         val path = Uri.parse(requireArguments().getString(PATH))
-
         binding.checkBox.isChecked = savedInstanceState?.getBoolean(MOVE_DATE_ENABLE) ?: false
         val oldPath = PermissionsHandler.citraDirectory
         if (!PermissionsHandler.hasWriteAccess(requireActivity()) ||
@@ -43,7 +39,6 @@ class CitraDirectoryDialogFragment : DialogFragment() {
         }
         binding.path.text = path.path
         binding.path.isSelected = true
-
         isCancelable = false
         return MaterialAlertDialogBuilder(requireContext())
             .setView(binding.root)
@@ -75,7 +70,6 @@ class CitraDirectoryDialogFragment : DialogFragment() {
         const val TAG = "citra_directory_dialog_fragment"
         private const val MOVE_DATE_ENABLE = "IS_MODE_DATA_ENABLE"
         private const val PATH = "path"
-
         fun newInstance(
             activity: FragmentActivity,
             path: String,

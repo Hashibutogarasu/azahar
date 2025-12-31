@@ -1,7 +1,6 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.app.Dialog
@@ -16,7 +15,6 @@ import org.citra.citra_emu.utils.SerializableHelper.serializable
 class MiiSelectorDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val config = requireArguments().serializable<MiiSelector.MiiSelectorConfig>(CONFIG)!!
-
         // Note: we intentionally leave out the Standard Mii in the native code so that
         // the string can get translated
         val list = mutableListOf<String>()
@@ -27,7 +25,10 @@ class MiiSelectorDialogFragment : DialogFragment() {
         MiiSelector.data.index = initialIndex
         val builder = MaterialAlertDialogBuilder(requireActivity())
             .setTitle(if (config.title!!.isEmpty()) getString(R.string.mii_selector) else config.title)
-            .setSingleChoiceItems(list.toTypedArray(), initialIndex) { _: DialogInterface?, which: Int ->
+            .setSingleChoiceItems(
+                list.toTypedArray(),
+                initialIndex
+            ) { _: DialogInterface?, which: Int ->
                 MiiSelector.data.index = which
             }
             .setPositiveButton(android.R.string.ok) { _: DialogInterface?, _: Int ->
@@ -46,9 +47,7 @@ class MiiSelectorDialogFragment : DialogFragment() {
 
     companion object {
         const val TAG = "MiiSelectorDialogFragment"
-
         const val CONFIG = "config"
-
         fun newInstance(config: MiiSelector.MiiSelectorConfig): MiiSelectorDialogFragment {
             val frag = MiiSelectorDialogFragment()
             val args = Bundle()

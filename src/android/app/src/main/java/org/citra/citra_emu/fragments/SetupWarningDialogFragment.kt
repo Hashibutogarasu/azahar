@@ -1,7 +1,6 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.app.Dialog
@@ -18,16 +17,13 @@ class SetupWarningDialogFragment : DialogFragment() {
     private var descriptionIds: IntArray = intArrayOf()
     private var helpLinkIds: IntArray = intArrayOf()
     private var page: Int = 0
-
     private lateinit var setupFragment: SetupFragment
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         titleIds = requireArguments().getIntArray(TITLES) ?: intArrayOf()
         descriptionIds = requireArguments().getIntArray(DESCRIPTIONS) ?: intArrayOf()
         helpLinkIds = requireArguments().getIntArray(HELP_LINKS) ?: intArrayOf()
         page = requireArguments().getInt(PAGE)
-
         setupFragment = requireParentFragment() as SetupFragment
     }
 
@@ -38,7 +34,6 @@ class SetupWarningDialogFragment : DialogFragment() {
                 setupFragment.setPageWarned(page)
             }
             .setNegativeButton(R.string.warning_cancel, null)
-
         // Message builder to build multiple strings into one
         val messageBuilder = StringBuilder()
         for (i in titleIds.indices) {
@@ -49,10 +44,8 @@ class SetupWarningDialogFragment : DialogFragment() {
                 messageBuilder.append(getString(descriptionIds[i])).append("\n\n")
             }
         }
-
         builder.setTitle("Warning")
         builder.setMessage(messageBuilder.toString().trim())
-
         if (helpLinkIds.any { it != 0 }) {
             builder.setNeutralButton(R.string.warning_help) { _: DialogInterface?, _: Int ->
                 val helpLinkId = helpLinkIds.first { it != 0 }
@@ -61,18 +54,15 @@ class SetupWarningDialogFragment : DialogFragment() {
                 startActivity(intent)
             }
         }
-
         return builder.show()
     }
 
     companion object {
         const val TAG = "SetupWarningDialogFragment"
-
         private const val TITLES = "Titles"
         private const val DESCRIPTIONS = "Descriptions"
         private const val HELP_LINKS = "HelpLinks"
         private const val PAGE = "Page"
-
         fun newInstance(
             titleIds: IntArray,
             descriptionIds: IntArray,

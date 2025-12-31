@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.utils
-
 import android.net.Uri
 import android.provider.DocumentsContract
 import androidx.core.net.toUri
@@ -14,7 +12,6 @@ import java.net.URLDecoder
 import java.nio.file.Paths
 import java.util.StringTokenizer
 import java.util.concurrent.ConcurrentHashMap
-
 /**
  * A cached document tree for Citra user directory.
  * For every filepath which is not startsWith "content://" will need to use this class to traverse.
@@ -25,14 +22,12 @@ import java.util.concurrent.ConcurrentHashMap
 class DocumentsTree {
     private var root: DocumentsNode? = null
     private val context get() = CitraApplication.appContext
-
     fun setRoot(rootUri: Uri?) {
         root = null
         root = DocumentsNode()
         root!!.uri = rootUri
         root!!.isDirectory = true
     }
-
     @Synchronized
     fun createFile(filepath: String, name: String): Boolean {
         val node = resolvePath(filepath) ?: return false
@@ -50,7 +45,6 @@ class DocumentsTree {
             error("[DocumentsTree]: Cannot create file, error: " + e.message)
         }
     }
-
     @Synchronized
     fun createDir(filepath: String, name: String): Boolean {
         val node = resolvePath(filepath) ?: return false
@@ -68,19 +62,16 @@ class DocumentsTree {
             error("[DocumentsTree]: Cannot create file, error: " + e.message)
         }
     }
-
     @Synchronized
     fun openContentUri(filepath: String, openMode: String): Int {
         val node = resolvePath(filepath) ?: return -1
         return FileUtil.openContentUri(node.uri.toString(), openMode)
     }
-
     @Synchronized
     fun getFilename(filepath: String): String {
         val node = resolvePath(filepath) ?: return ""
         return node.name
     }
-
     @Synchronized
     fun getFilesName(filepath: String): Array<String?> {
         val node = resolvePath(filepath)
@@ -91,7 +82,6 @@ class DocumentsTree {
         if (!node.loaded) structTree(node)
         return node.getChildNames()
     }
-
     @Synchronized
     fun getFileSize(filepath: String): Long {
         val node = resolvePath(filepath)
@@ -101,26 +91,21 @@ class DocumentsTree {
             FileUtil.getFileSize(node.uri.toString())
         }
     }
-
     @Synchronized
     fun getUri(filepath: String): Uri {
         val node = resolvePath(filepath) ?: return Uri.EMPTY
         return node.uri ?: return Uri.EMPTY
     }
-
     @Synchronized
     fun folderUriHelper(path: String, createIfNotExists: Boolean = false): Uri? {
         root ?: return null
         val components = path.split(DELIMITER).filter { it.isNotEmpty() }
         var current = root
-
         for (component in components) {
             if (!current!!.loaded) {
                 structTree(current)
             }
-
             var child = current.findChild(component)
-
             // Create directory if it doesn't exist and creation is enabled
             if (child == null && createIfNotExists) {
                 try {
@@ -136,23 +121,19 @@ class DocumentsTree {
             } else if (child == null) {
                 return null
             }
-
             current = child
         }
         return current?.uri
     }
-
     @Synchronized
     fun isDirectory(filepath: String): Boolean {
         val node = resolvePath(filepath) ?: return false
         return node.isDirectory
     }
-
     @Synchronized
     fun exists(filepath: String): Boolean {
         return resolvePath(filepath) != null
     }
-
     @Synchronized
     fun copyFile(
         sourcePath: String,
@@ -191,7 +172,6 @@ class DocumentsTree {
             error("[DocumentsTree]: Cannot copy file, error: " + e.message)
         }
     }
-
     @Synchronized
     fun renameFile(filepath: String, destinationFilename: String): Boolean {
         val node = resolvePath(filepath) ?: return false
@@ -204,7 +184,6 @@ class DocumentsTree {
             error("[DocumentsTree]: Cannot rename file, error: " + e.message)
         }
     }
-
     @Synchronized
     fun moveFile(filename: String, sourceDirPath: String, destDirPath: String): Boolean {
         val sourceFileNode = resolvePath(sourceDirPath + "/" + filename) ?: return false
@@ -218,7 +197,6 @@ class DocumentsTree {
             error("[DocumentsTree]: Cannot move file, error: " + e.message)
         }
     }
-
     @Synchronized
     fun deleteDocument(filepath: String): Boolean {
         val node = resolvePath(filepath) ?: return false
@@ -234,7 +212,6 @@ class DocumentsTree {
             error("[DocumentsTree]: Cannot rename file, error: " + e.message)
         }
     }
-
     @Synchronized
     fun updateDocumentLocation(sourcePath: String, destinationPath: String): Boolean {
         val sourceNode = resolvePath(sourcePath)
@@ -242,22 +219,16 @@ class DocumentsTree {
         val parentPath = Paths.get(destinationPath).parent.toString()
         val newParent = resolvePath(parentPath)
         val newUri = (getUri(parentPath).toString() + "%2F$newName").toUri() // <- Is there a better way?
-
         if (sourceNode == null || newParent == null) {
             return false
         }
-
         sourceNode.parent!!.removeChild(sourceNode)
-
         sourceNode.name = newName
         sourceNode.parent = newParent
         sourceNode.uri = newUri
-
         newParent.addChild(sourceNode)
-
         return true
     }
-
     @Synchronized
     private fun resolvePath(filepath: String): DocumentsNode? {
         root ?: return null
@@ -271,7 +242,6 @@ class DocumentsTree {
         }
         return iterator
     }
-
     @Synchronized
     private fun find(parent: DocumentsNode, filename: String): DocumentsNode? {
         if (parent.isDirectory && !parent.loaded) {
@@ -279,7 +249,6 @@ class DocumentsTree {
         }
         return parent.findChild(filename)
     }
-
     /**
      * Construct current level directory tree
      *
@@ -295,23 +264,19 @@ class DocumentsTree {
         }
         parent.loaded = true
     }
-
     private class DocumentsNode {
         @get:Synchronized
         @set:Synchronized
         var parent: DocumentsNode? = null
         val children: MutableMap<String?, DocumentsNode?> = ConcurrentHashMap()
         lateinit var name: String
-
         @get:Synchronized
         @set:Synchronized
         var uri: Uri? = null
-
         @get:Synchronized
         @set:Synchronized
         var loaded = false
         var isDirectory = false
-
         constructor()
         constructor(document: CheapDocument) {
             name = document.filename
@@ -319,14 +284,12 @@ class DocumentsTree {
             isDirectory = document.isDirectory
             loaded = !isDirectory
         }
-
         constructor(document: DocumentFile, isCreateDir: Boolean) {
             name = document.name!!
             uri = document.uri
             isDirectory = isCreateDir
             loaded = true
         }
-
         @Synchronized
         fun rename(name: String, uri: Uri?) {
             parent ?: return
@@ -335,20 +298,15 @@ class DocumentsTree {
             this.uri = uri
             parent!!.addChild(this)
         }
-
         fun addChild(node: DocumentsNode) {
             children[node.name.lowercase()] = node
         }
-
         fun removeChild(node: DocumentsNode) = children.remove(node.name.lowercase())
-
         fun findChild(filename: String) = children[filename.lowercase()]
-
         @Synchronized
         fun getChildNames(): Array<String?> =
             children.mapNotNull { it.value!!.name }.toTypedArray()
     }
-
     companion object {
         const val DELIMITER = "/"
     }

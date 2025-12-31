@@ -1,20 +1,16 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.features.settings.ui.viewholder
-
 import android.view.View
 import org.citra.citra_emu.databinding.ListItemSettingBinding
 import org.citra.citra_emu.features.settings.model.view.SettingsItem
 import org.citra.citra_emu.features.settings.model.view.SingleChoiceSetting
 import org.citra.citra_emu.features.settings.model.view.StringSingleChoiceSetting
 import org.citra.citra_emu.features.settings.ui.SettingsAdapter
-
 class SingleChoiceViewHolder(val binding: ListItemSettingBinding, adapter: SettingsAdapter) :
     SettingViewHolder(binding.root, adapter) {
     private lateinit var setting: SettingsItem
-
     override fun bind(item: SettingsItem) {
         setting = item
         binding.textSettingName.setText(item.nameId)
@@ -26,7 +22,6 @@ class SingleChoiceViewHolder(val binding: ListItemSettingBinding, adapter: Setti
         }
         binding.textSettingValue.visibility = View.VISIBLE
         binding.textSettingValue.text = getTextSetting()
-
         if (setting.isActive) {
             binding.textSettingName.alpha = 1f
             binding.textSettingDescription.alpha = 1f
@@ -37,7 +32,6 @@ class SingleChoiceViewHolder(val binding: ListItemSettingBinding, adapter: Setti
             binding.textSettingValue.alpha = 0.5f
         }
     }
-
     private fun getTextSetting(): String {
         when (val item = setting) {
             is SingleChoiceSetting -> {
@@ -50,7 +44,6 @@ class SingleChoiceViewHolder(val binding: ListItemSettingBinding, adapter: Setti
                 }
                 return ""
             }
-
             is StringSingleChoiceSetting -> {
                 item.values?.forEachIndexed { i: Int, value: String ->
                     if (value == item.selectedValue) {
@@ -59,17 +52,14 @@ class SingleChoiceViewHolder(val binding: ListItemSettingBinding, adapter: Setti
                 }
                 return ""
             }
-
             else -> return ""
         }
     }
-
     override fun onClick(clicked: View) {
         if (!setting.isEditable || !setting.isEnabled) {
             adapter.onClickDisabledSetting(!setting.isEditable)
             return
         }
-
         if (setting is SingleChoiceSetting) {
             adapter.onSingleChoiceClick(
                 (setting as SingleChoiceSetting),
@@ -82,7 +72,6 @@ class SingleChoiceViewHolder(val binding: ListItemSettingBinding, adapter: Setti
             )
         }
     }
-
     override fun onLongClick(clicked: View): Boolean {
         if (setting.isActive) {
             return adapter.onLongClick(setting.setting!!, bindingAdapterPosition)

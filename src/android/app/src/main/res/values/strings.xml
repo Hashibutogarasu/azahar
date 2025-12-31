@@ -15,6 +15,10 @@
     <string name="home_options">Options</string>
     <string name="home_search">Search</string>
     <string name="home_games">Applications</string>
+    <string name="drawer_hidden_apps">Hidden Items</string>
+    <string name="menu_hide_app">Hide Item</string>
+    <string name="menu_unhide_app">Unhide Item</string>
+    <string name="no_hidden_apps_found">No hidden items found.</string>
     <string name="settings_description">Configure emulator settings</string>
     <string name="install_game_content">Install CIA file</string>
     <string name="install_game_content_description">Install applications, updates or DLC</string>
@@ -343,7 +347,7 @@
     <string name="shader_jit">Enable Shader JIT</string>
     <string name="shader_jit_description">Use the JIT engine instead of the interpreter for software shader emulation.</string>
 
-  <!-- Layout settings strings -->
+    <!-- Layout settings strings -->
     <string name="layout_screen_orientation">Screen Orientation</string>
     <string name="layout_screen_orientation_auto_sensor">Automatic</string>
     <string name="layout_screen_orientation_landscape">Landscape</string>
@@ -590,6 +594,8 @@
     <string name="game_context_id">ID:</string>
     <string name="game_context_file">File:</string>
     <string name="game_context_type">Type:</string>
+    <string name="game_context_playtime">Playtime:</string>
+    <string name="uninstall">Uninstall</string>
 
     <!-- Performance Overlay settings -->
     <string name="performance_overlay_show">Show Performance Overlay</string>
@@ -930,4 +936,5 @@
     <string name="emulation_occupied_quicksave_slot">Quicksave - %1$tF %1$tR</string>
     <string name="quickload_not_found">No Quicksave available.</string>
 
+    <string name="loader_game_does_not_exist">Game file does not exist</string>
 </resources>

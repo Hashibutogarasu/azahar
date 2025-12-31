@@ -1,9 +1,7 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.features.settings.utils
-
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
@@ -27,16 +25,12 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStreamReader
 import java.util.TreeMap
-
-
 /**
  * Contains static methods for interacting with .ini files in which settings are stored.
  */
 object SettingsFile {
     const val FILE_NAME_CONFIG = "config"
-
     private var sectionsMap = BiMap<String?, String?>()
-
     /**
      * Reads a given .ini file from disk and returns it as a HashMap of Settings, themselves
      * effectively a HashMap of key/value settings. If unsuccessful, outputs an error telling why it
@@ -88,13 +82,10 @@ object SettingsFile {
         }
         return sections
     }
-
     fun readFile(fileName: String, view: SettingsActivityView?): HashMap<String, SettingSection?> {
         return readFile(getSettingsFile(fileName), false, view)
     }
-
     fun readFile(fileName: String): HashMap<String, SettingSection?> = readFile(fileName, null)
-
     /**
      * Reads a given .ini file from disk and returns it as a HashMap of SettingSections, themselves
      * effectively a HashMap of key/value settings. If unsuccessful, outputs an error telling why it
@@ -109,7 +100,6 @@ object SettingsFile {
     ): HashMap<String, SettingSection?> {
         return readFile(getCustomGameSettingsFile(gameId), true, view)
     }
-
     /**
      * Saves a Settings HashMap to a given .ini file on disk. If unsuccessful, outputs an error
      * telling why it failed.
@@ -146,7 +136,6 @@ object SettingsFile {
             )
         }
     }
-
     fun saveFile(
         fileName: String,
         setting: AbstractSetting
@@ -166,7 +155,6 @@ object SettingsFile {
             Log.error("[SettingsFile] File not found: $fileName.ini: ${e.message}")
         }
     }
-
     private fun mapSectionNameFromIni(generalSectionName: String): String? {
         return if (sectionsMap.getForward(generalSectionName) != null) {
             sectionsMap.getForward(generalSectionName)
@@ -174,7 +162,6 @@ object SettingsFile {
             generalSectionName
         }
     }
-
     private fun mapSectionNameToIni(generalSectionName: String): String {
         return if (sectionsMap.getBackward(generalSectionName) != null) {
             sectionsMap.getBackward(generalSectionName).toString()
@@ -182,19 +169,16 @@ object SettingsFile {
             generalSectionName
         }
     }
-
     fun getSettingsFile(fileName: String): DocumentFile {
         val root = DocumentFile.fromTreeUri(CitraApplication.appContext, Uri.parse(userDirectory))
         val configDirectory = root!!.findFile("config")
         return configDirectory!!.findFile("$fileName.ini")!!
     }
-
     private fun getCustomGameSettingsFile(gameId: String): DocumentFile {
         val root = DocumentFile.fromTreeUri(CitraApplication.appContext, Uri.parse(userDirectory))
         val configDirectory = root!!.findFile("GameSettings")
         return configDirectory!!.findFile("$gameId.ini")!!
     }
-
     private fun sectionFromLine(line: String, isCustomGame: Boolean): SettingSection {
         var sectionName: String = line.substring(1, line.length - 1)
         if (isCustomGame) {
@@ -202,7 +186,6 @@ object SettingsFile {
         }
         return SettingSection(sectionName)
     }
-
     /**
      * For a line of text, determines what type of data is being represented, and returns
      * a Setting object containing this data.
@@ -220,13 +203,11 @@ object SettingsFile {
         if (value.isEmpty()) {
             return null
         }
-
         val booleanSetting = BooleanSetting.from(key)
         if (booleanSetting != null) {
             booleanSetting.boolean = value.toBoolean()
             return booleanSetting
         }
-
         val intSetting = IntSetting.from(key)
         if (intSetting != null) {
             try {
@@ -236,28 +217,23 @@ object SettingsFile {
             }
             return intSetting
         }
-
         val scaledFloatSetting = ScaledFloatSetting.from(key)
         if (scaledFloatSetting != null) {
             scaledFloatSetting.float = value.toFloat() * scaledFloatSetting.scale
             return scaledFloatSetting
         }
-
         val floatSetting = FloatSetting.from(key)
         if (floatSetting != null) {
             floatSetting.float = value.toFloat()
             return floatSetting
         }
-
         val stringSetting = StringSetting.from(key)
         if (stringSetting != null) {
             stringSetting.string = value
             return stringSetting
         }
-
         return null
     }
-
     /**
      * Writes the contents of a Section HashMap to disk.
      *
@@ -267,7 +243,6 @@ object SettingsFile {
     private fun writeSection(parser: Wini, section: SettingSection) {
         // Write the section header.
         val header = section.name
-
         // Write this section's values.
         val settings = section.settings
         val keySet: Set<String> = settings.keys

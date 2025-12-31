@@ -1,7 +1,6 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.app.Dialog
@@ -16,17 +15,18 @@ import org.citra.citra_emu.ui.main.MainActivity
 import org.citra.citra_emu.utils.PermissionsHandler
 import org.citra.citra_emu.viewmodel.HomeViewModel
 
-class SelectUserDirectoryDialogFragment(titleOverride: Int? = null, descriptionOverride: Int? = null) : DialogFragment() {
+class SelectUserDirectoryDialogFragment(
+    titleOverride: Int? = null,
+    descriptionOverride: Int? = null
+) : DialogFragment() {
     private lateinit var mainActivity: MainActivity
-
     private val title = titleOverride ?: R.string.select_citra_user_folder
-    private val description = descriptionOverride ?: R.string.selecting_user_directory_without_write_permissions
+    private val description =
+        descriptionOverride ?: R.string.selecting_user_directory_without_write_permissions
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         mainActivity = requireActivity() as MainActivity
-
         isCancelable = false
-
         return MaterialAlertDialogBuilder(requireContext())
             .setTitle(title)
             .setMessage(description)
@@ -38,8 +38,11 @@ class SelectUserDirectoryDialogFragment(titleOverride: Int? = null, descriptionO
 
     companion object {
         const val TAG = "SelectUserDirectoryDialogFragment"
-
-        fun newInstance(activity: FragmentActivity, titleOverride: Int? = null, descriptionOverride: Int? = null):
+        fun newInstance(
+            activity: FragmentActivity,
+            titleOverride: Int? = null,
+            descriptionOverride: Int? = null
+        ):
                 SelectUserDirectoryDialogFragment {
             ViewModelProvider(activity)[HomeViewModel::class.java].setPickingUserDir(true)
             return SelectUserDirectoryDialogFragment(titleOverride, descriptionOverride)

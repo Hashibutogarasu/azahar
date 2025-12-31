@@ -28,10 +28,10 @@
         app:suffixText="%">
 
         <com.google.android.material.textfield.TextInputEditText
-        android:layout_width="match_parent"
-        android:inputType="number"
-        android:layout_height="wrap_content"
-        tools:text="75"
+            android:layout_width="match_parent"
+            android:inputType="number"
+            android:layout_height="wrap_content"
+            tools:text="75"
             android:id="@+id/text_value"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"

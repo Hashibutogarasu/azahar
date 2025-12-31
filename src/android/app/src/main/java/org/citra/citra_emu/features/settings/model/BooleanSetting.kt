@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.features.settings.model
-
 enum class BooleanSetting(
     override val key: String,
     override val section: String,
@@ -53,12 +51,9 @@ enum class BooleanSetting(
     COMPRESS_INSTALLED_CIA_CONTENT("compress_cia_installs", Settings.SECTION_STORAGE, false),
     ANDROID_HIDE_IMAGES("android_hide_images", Settings.SECTION_CORE, false),
     APPLY_REGION_FREE_PATCH("apply_region_free_patch", Settings.SECTION_SYSTEM, true);
-
     override var boolean: Boolean = defaultValue
-
     override val valueAsString: String
         get() = boolean.toString()
-
     override val isRuntimeEditable: Boolean
         get() {
             for (setting in NOT_RUNTIME_EDITABLE) {
@@ -68,11 +63,10 @@ enum class BooleanSetting(
             }
             return true
         }
-
     companion object {
         private val NOT_RUNTIME_EDITABLE = listOf(
             PLUGIN_LOADER,
-            ALLOW_PLUGIN_LOADER, 
+            ALLOW_PLUGIN_LOADER,
             ASYNC_SHADERS,
             DELAY_START_LLE_MODULES,
             DETERMINISTIC_ASYNC_OPERATIONS,
@@ -89,10 +83,8 @@ enum class BooleanSetting(
             ANDROID_HIDE_IMAGES,
             PERF_OVERLAY_ENABLE // Works in overlay options, but not from the settings menu
         )
-
         fun from(key: String): BooleanSetting? =
             BooleanSetting.values().firstOrNull { it.key == key }
-
         fun clear() = BooleanSetting.values().forEach { it.boolean = it.defaultValue }
     }
 }

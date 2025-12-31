@@ -1,9 +1,7 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.utils
-
 import android.net.Uri
 import android.os.Build
 import androidx.documentfile.provider.DocumentFile
@@ -19,13 +17,11 @@ import java.lang.IllegalStateException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipException
 import java.util.zip.ZipInputStream
-
 object GpuDriverHelper {
     private const val META_JSON_FILENAME = "meta.json"
     private var fileRedirectionPath: String? = null
     var driverInstallationPath: String? = null
     private var hookLibPath: String? = null
-
     val driverStoragePath: DocumentFile
         get() {
             // Bypass directory initialization checks
@@ -39,26 +35,21 @@ object GpuDriverHelper {
             }
             return driverDirectory!!
         }
-
     fun initializeDriverParameters() {
         try {
             // Initialize the file redirection directory.
             fileRedirectionPath =
                 DirectoryInitialization.internalUserPath + "/gpu/vk_file_redirect/"
-
             // Initialize the driver installation directory.
             driverInstallationPath = CitraApplication.appContext
                 .filesDir.canonicalPath + "/gpu_driver/"
         } catch (e: IOException) {
             throw RuntimeException(e)
         }
-
         // Initialize directories.
         initializeDirectories()
-
         // Initialize hook libraries directory.
         hookLibPath = CitraApplication.appContext.applicationInfo.nativeLibraryDir + "/"
-
         // Initialize GPU driver.
         NativeLibrary.initializeGpuDriver(
             hookLibPath,
@@ -67,7 +58,6 @@ object GpuDriverHelper {
             fileRedirectionPath
         )
     }
-
     fun getDrivers(): MutableList<Pair<Uri, GpuDriverMetadata>> {
         val driverZips = driverStoragePath.listFiles()
         val drivers: MutableList<Pair<Uri, GpuDriverMetadata>> =
@@ -79,40 +69,33 @@ object GpuDriverHelper {
                 .sortedByDescending { it: Pair<Uri, GpuDriverMetadata> -> it.second.name }
                 .distinct()
                 .toMutableList()
-
         // TODO: Get system driver information
         drivers.add(0, Pair(Uri.EMPTY, GpuDriverMetadata()))
         return drivers
     }
-
     fun installDefaultDriver() {
         // Removing the installed driver will result in the backend using the default system driver.
         File(driverInstallationPath!!).deleteRecursively()
         initializeDriverParameters()
     }
-
     fun copyDriverToExternalStorage(driverUri: Uri): DocumentFile? {
         // Ensure we have directories.
         initializeDirectories()
-
         // Copy the zip file URI to user data
         val copiedFile =
             FileUtil.copyToExternalStorage(driverUri, driverStoragePath) ?: return null
-
         // Validate driver
         val metadata = getMetadataFromZip(copiedFile.inputStream())
         if (metadata.name == null) {
             copiedFile.delete()
             return null
         }
-
         if (metadata.minApi > Build.VERSION.SDK_INT) {
             copiedFile.delete()
             return null
         }
         return copiedFile
     }
-
     /**
      * Copies driver zip into user data directory so that it can be exported along with
      * other user data and also unzipped into the installation directory
@@ -120,26 +103,21 @@ object GpuDriverHelper {
     fun installCustomDriverComplete(driverUri: Uri): Boolean {
         // Revert to system default in the event the specified driver is bad.
         installDefaultDriver()
-
         // Ensure we have directories.
         initializeDirectories()
-
         // Copy the zip file URI to user data
         val copiedFile =
             FileUtil.copyToExternalStorage(driverUri, driverStoragePath) ?: return false
-
         // Validate driver
         val metadata = getMetadataFromZip(copiedFile.inputStream())
         if (metadata.name == null) {
             copiedFile.delete()
             return false
         }
-
         if (metadata.minApi > Build.VERSION.SDK_INT) {
             copiedFile.delete()
             return false
         }
-
         // Unzip the driver.
         try {
             FileUtil.unzipToInternalStorage(
@@ -149,30 +127,24 @@ object GpuDriverHelper {
         } catch (e: SecurityException) {
             return false
         }
-
         // Initialize the driver parameters.
         initializeDriverParameters()
-
         return true
     }
-
     /**
      * Unzips driver into private installation directory
      */
     fun installCustomDriverPartial(driver: Uri): Boolean {
         // Revert to system default in the event the specified driver is bad.
         installDefaultDriver()
-
         // Ensure we have directories.
         initializeDirectories()
-
         // Validate driver
         val metadata = getMetadataFromZip(driver.inputStream())
         if (metadata.name == null) {
             driver.asDocumentFile()?.delete()
             return false
         }
-
         // Unzip the driver to the private installation directory
         try {
             FileUtil.unzipToInternalStorage(
@@ -182,13 +154,10 @@ object GpuDriverHelper {
         } catch (e: SecurityException) {
             return false
         }
-
         // Initialize the driver parameters.
         initializeDriverParameters()
-
         return true
     }
-
     /**
      * Takes in a zip file and reads the meta.json file for presentation to the UI
      *
@@ -211,13 +180,10 @@ object GpuDriverHelper {
         }
         return GpuDriverMetadata()
     }
-
     external fun supportsCustomDriverLoading(): Boolean
-
     // Parse the custom driver metadata to retrieve the name.
     val customDriverData: GpuDriverMetadata
         get() = GpuDriverMetadata(File(driverInstallationPath + META_JSON_FILENAME))
-
     fun initializeDirectories() {
         // Ensure the file redirection directory exists.
         val fileRedirectionDir = File(fileRedirectionPath!!)

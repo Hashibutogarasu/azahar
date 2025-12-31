@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.utils
-
 import okio.ByteString.Companion.readByteString
 import android.content.Context
 import android.database.Cursor
@@ -25,15 +23,12 @@ import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
-
 object FileUtil {
     const val PATH_TREE = "tree"
     const val DECODE_METHOD = "UTF-8"
     const val APPLICATION_OCTET_STREAM = "application/octet-stream"
     const val TEXT_PLAIN = "text/plain"
-
     val context: Context get() = CitraApplication.appContext
-
     /**
      * Create a file from directory with filename.
      *
@@ -49,17 +44,14 @@ object FileUtil {
                 ?: return null
             val decodedFilename = URLDecoder.decode(filename, DECODE_METHOD)
             val extensionPosition = decodedFilename.lastIndexOf('.')
-
             var extension = ""
             if (extensionPosition > 0) {
                 extension = decodedFilename.substring(extensionPosition)
             }
-
             var mimeType = APPLICATION_OCTET_STREAM
             if (extension == ".txt") {
                 mimeType = TEXT_PLAIN
             }
-
             val exists = parent.findFile(decodedFilename)
             return exists ?: parent.createFile(mimeType, decodedFilename)
         } catch (e: Exception) {
@@ -67,7 +59,6 @@ object FileUtil {
             return null
         }
     }
-
     /**
      * Create a directory from directory with filename.
      *
@@ -90,7 +81,6 @@ object FileUtil {
             return null
         }
     }
-
     /**
      * Open content uri and return file descriptor to JNI.
      *
@@ -116,7 +106,6 @@ object FileUtil {
             return -1
         }
     }
-
     /**
      * Reference:  https://stackoverflow.com/questions/42186820/documentfile-is-very-slow
      * This function will be faster than DocumentFile.listFiles
@@ -139,7 +128,6 @@ object FileUtil {
             } else {
                 DocumentsContract.getDocumentId(uri)
             }
-
             val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(uri, docId)
             c = context.contentResolver.query(childrenUri, columns, null, null, null)
             while (c!!.moveToNext()) {
@@ -157,7 +145,6 @@ object FileUtil {
         }
         return results.toTypedArray<CheapDocument>()
     }
-
     /**
      * Check whether given path exists.
      *
@@ -185,7 +172,6 @@ object FileUtil {
         }
         return false
     }
-
     /**
      * Check whether given path is a directory
      *
@@ -210,7 +196,6 @@ object FileUtil {
         }
         return isDirectory
     }
-
     /**
      * Get file display name from given path
      *
@@ -239,7 +224,6 @@ object FileUtil {
         }
         return filename
     }
-
     @JvmStatic
     fun getFilesName(path: String): Array<String?> {
         val uri = Uri.parse(path)
@@ -247,7 +231,6 @@ object FileUtil {
         listFiles(uri).forEach { files.add(it.filename) }
         return files.toTypedArray<String?>()
     }
-
     /**
      * Get file size from given path.
      *
@@ -277,7 +260,6 @@ object FileUtil {
         }
         return size
     }
-
     @JvmStatic
     fun copyFile(
         sourceUri: Uri,
@@ -296,7 +278,6 @@ object FileUtil {
             if (destination == null) {
                 return false
             }
-
             val input = context.contentResolver.openInputStream(sourceUri)
             val output = context.contentResolver.openOutputStream(destination.uri, "wt")
             val buffer = ByteArray(1024)
@@ -313,7 +294,6 @@ object FileUtil {
         }
         return false
     }
-
     fun copyUriToInternalStorage(
         sourceUri: Uri?,
         destinationParentPath: String,
@@ -351,7 +331,6 @@ object FileUtil {
         }
         return false
     }
-
     fun copyDir(
         sourcePath: String,
         destinationPath: String,
@@ -363,7 +342,6 @@ object FileUtil {
             val files: MutableList<Pair<CheapDocument, DocumentFile>> = ArrayList()
             val dirs: MutableList<Pair<Uri, Uri>> = ArrayList()
             dirs.add(Pair(sourceUri, destinationUri))
-
             // Searching all files which need to be copied and struct the directory in destination
             while (dirs.isNotEmpty()) {
                 val fromDir = DocumentFile.fromTreeUri(context, dirs[0].first)
@@ -371,7 +349,6 @@ object FileUtil {
                 if (fromDir == null || toDir == null) {
                     continue
                 }
-
                 val fromUri = fromDir.uri
                 listener?.onSearchProgress(fromUri.path ?: "")
                 val documents = listFiles(fromUri)
@@ -380,7 +357,6 @@ object FileUtil {
                     if (document.filename == toDir.name) {
                         continue
                     }
-
                     val filename = document.filename
                     if (document.isDirectory) {
                         var target = toDir.findFile(filename)
@@ -390,7 +366,6 @@ object FileUtil {
                         if (target == null) {
                             continue
                         }
-
                         dirs.add(Pair(document.uri, target.uri))
                     } else {
                         var target = toDir.findFile(filename)
@@ -400,13 +375,11 @@ object FileUtil {
                         if (target == null) {
                             continue
                         }
-
                         files.add(Pair(document, target))
                     }
                 }
                 dirs.removeAt(0)
             }
-
             var progress = 0
             for (file in files) {
                 val to = file.second
@@ -422,7 +395,6 @@ object FileUtil {
             Log.error("[FileUtil]: Cannot copy directory, error: " + e.message)
         }
     }
-
     @JvmStatic
     fun renameFile(path: String, destinationFilename: String): Boolean {
         try {
@@ -434,7 +406,6 @@ object FileUtil {
         }
         return false
     }
-
     @JvmStatic
     fun moveFile(filename: String, sourceDirUriString: String, destDirUriString: String): Boolean {
         try {
@@ -448,7 +419,6 @@ object FileUtil {
         }
         return false
     }
-
     @JvmStatic
     fun deleteDocument(path: String): Boolean {
         try {
@@ -460,20 +430,16 @@ object FileUtil {
         }
         return false
     }
-
     @Throws(IOException::class)
     fun getBytesFromFile(file: DocumentFile): ByteArray {
         val uri = file.uri
         val length = getFileSize(uri.toString())
-
         // You cannot create an array using a long type.
         if (length > Int.MAX_VALUE) {
             // File is too large
             throw IOException("File is too large!")
         }
-
         val bytes = ByteArray(length.toInt())
-
         var offset = 0
         var numRead = 0
         context.contentResolver.openInputStream(uri).use { inputStream ->
@@ -483,15 +449,12 @@ object FileUtil {
                 offset += numRead
             }
         }
-
         // Ensure all the bytes have been read in
         if (offset < bytes.size) {
             throw IOException("Could not completely read file " + file.name)
         }
-
         return bytes
     }
-
     /**
      * Extracts the given zip file into the given directory.
      */
@@ -502,15 +465,12 @@ object FileUtil {
             while (entry != null) {
                 val newFile = File(destDir, entry.name)
                 val destinationDirectory = if (entry.isDirectory) newFile else newFile.parentFile
-
                 if (!newFile.canonicalPath.startsWith(destDir.canonicalPath + File.separator)) {
                     throw SecurityException("Zip file attempted path traversal! ${entry.name}")
                 }
-
                 if (!destinationDirectory.isDirectory && !destinationDirectory.mkdirs()) {
                     throw IOException("Failed to create directory $destinationDirectory")
                 }
-
                 if (!entry.isDirectory) {
                     newFile.outputStream().use { fos -> zis.copyTo(fos) }
                 }
@@ -518,7 +478,6 @@ object FileUtil {
             }
         }
     }
-
     fun copyToExternalStorage(
         sourceFile: Uri,
         destinationDir: DocumentFile
@@ -530,12 +489,10 @@ object FileUtil {
         }
         return destinationDir.findFile(filename)
     }
-
     fun isRootTreeUri(uri: Uri): Boolean {
         val paths = uri.pathSegments
         return paths.size == 2 && PATH_TREE == paths[0]
     }
-
     @JvmStatic
     fun isNativePath(path: String): Boolean =
         try {
@@ -544,7 +501,6 @@ object FileUtil {
             Log.error("[FileUtil] Cannot determine the string is native path or not.")
             false
         }
-
     fun getFreeSpace(context: Context, uri: Uri?): Double =
         try {
             val docTreeUri = DocumentsContract.buildDocumentUriUsingTree(
@@ -560,7 +516,6 @@ object FileUtil {
             Log.error("[FileUtil] Cannot get storage size.")
             0.0
         }
-
     fun closeQuietly(closeable: AutoCloseable?) {
         if (closeable != null) {
             try {
@@ -571,17 +526,14 @@ object FileUtil {
             }
         }
     }
-
     fun getExtension(uri: Uri): String {
         val fileName = getFilename(uri)
         return fileName.substring(fileName.lastIndexOf(".") + 1)
             .lowercase()
     }
-
     @Throws(IOException::class)
     fun getStringFromFile(file: File): String =
         String(file.readBytes(), StandardCharsets.UTF_8)
-
     @Throws(IOException::class)
     fun getStringFromInputStream(stream: InputStream, length: Long = 0L): String =
         if (length == 0L) {
@@ -589,22 +541,16 @@ object FileUtil {
         } else {
             String(stream.readByteString(length.toInt()).toByteArray(), StandardCharsets.UTF_8)
         }
-
     fun DocumentFile.inputStream(): InputStream =
         CitraApplication.appContext.contentResolver.openInputStream(uri)!!
-
     fun DocumentFile.outputStream(): OutputStream =
         CitraApplication.appContext.contentResolver.openOutputStream(uri)!!
-
     fun Uri.inputStream(): InputStream =
         CitraApplication.appContext.contentResolver.openInputStream(this)!!
-
     fun Uri.outputStream(): OutputStream =
         CitraApplication.appContext.contentResolver.openOutputStream(this)!!
-
     fun Uri.asDocumentFile(): DocumentFile? =
         DocumentFile.fromSingleUri(CitraApplication.appContext, this)
-
     interface CopyDirListener {
         fun onSearchProgress(directoryName: String)
         fun onCopyProgress(filename: String, progress: Int, max: Int)

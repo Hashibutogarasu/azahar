@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.model
-
 import android.os.Parcelable
 import android.content.Intent
 import android.net.Uri
@@ -12,7 +10,6 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.activities.EmulationActivity
-
 @Parcelize
 @Serializable
 class Game(
@@ -31,7 +28,6 @@ class Game(
 ) : Parcelable {
     val keyAddedToLibraryTime get() = "${filename}_AddedToLibraryTime"
     val keyLastPlayedTime get() = "${filename}_LastPlayed"
-
     val launchIntent: Intent
         get() = Intent(CitraApplication.appContext, EmulationActivity::class.java).apply {
             action = Intent.ACTION_VIEW
@@ -41,15 +37,12 @@ class Game(
                 Uri.parse(path)
             }
         }
-
     override fun equals(other: Any?): Boolean {
         if (other !is Game) {
             return false
         }
-
         return hashCode() == other.hashCode()
     }
-
     override fun hashCode(): Int {
         var result = title.hashCode()
         result = 31 * result + description.hashCode()
@@ -59,14 +52,11 @@ class Game(
         result = 31 * result + company.hashCode()
         return result
     }
-
     companion object {
         val allExtensions: Set<String> get() = extensions + badExtensions
-
         val extensions: Set<String> = HashSet(
             listOf("3dsx", "app", "axf", "cci", "cxi", "elf", "z3dsx", "zcci", "zcxi")
         )
-
         val badExtensions: Set<String> = HashSet(
             listOf("rar", "zip", "7z", "torrent", "tar", "gz")
         )

@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.features.settings.ui
-
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Resources
@@ -45,40 +43,32 @@ import org.citra.citra_emu.utils.Log
 import org.citra.citra_emu.utils.SystemSaveGame
 import org.citra.citra_emu.utils.ThemeUtil
 import org.citra.citra_emu.utils.EmulationMenuSettings
-
 class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) {
     private var menuTag: String? = null
     private lateinit var gameId: String
     private var settingsList: ArrayList<SettingsItem>? = null
-
     private val settingsActivity get() = fragmentView.activityView as SettingsActivity
     private val settings get() = fragmentView.activityView!!.settings
     private lateinit var settingsAdapter: SettingsAdapter
-
     private lateinit var preferences: SharedPreferences
-
     fun onCreate(menuTag: String, gameId: String) {
         this.gameId = gameId
         this.menuTag = menuTag
     }
-
     fun onViewCreated(settingsAdapter: SettingsAdapter) {
         this.settingsAdapter = settingsAdapter
         preferences = PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
         loadSettingsList()
     }
-
     fun putSetting(setting: AbstractSetting) {
         if (setting.section == null || setting.key == null) {
             return
         }
-
         val section = settings.getSection(setting.section!!)!!
         if (section.getSetting(setting.key!!) == null) {
             section.putSetting(setting)
         }
     }
-
     fun loadSettingsList() {
         if (!TextUtils.isEmpty(gameId)) {
             settingsActivity.setToolbarTitle("Application Settings: $gameId")
@@ -109,7 +99,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
         settingsList = sl
         fragmentView.showSettingsList(settingsList!!)
     }
-
     /** Returns the portrait mode width */
     private fun getWidth(): Int {
         val dm = Resources.getSystem().displayMetrics;
@@ -118,7 +107,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
         else
             dm.heightPixels
     }
-
     private fun getHeight(): Int {
         val dm = Resources.getSystem().displayMetrics;
         return if (dm.widthPixels < dm.heightPixels)
@@ -126,7 +114,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
         else
             dm.widthPixels
     }
-
     private fun addConfigSettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.preferences_settings))
         sl.apply {
@@ -194,7 +181,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     Settings.SECTION_DEBUG
                 )
             )
-
             add(
                 RunnableSetting(
                     R.string.reset_to_default,
@@ -211,7 +197,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
             )
         }
     }
-
     private fun addGeneralSettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.preferences_general))
         sl.apply {
@@ -259,9 +244,7 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
             )
         }
     }
-
     private var countryCompatibilityChanged = true
-
     private fun checkCountryCompatibility() {
         if (countryCompatibilityChanged) {
             countryCompatibilityChanged = false
@@ -283,7 +266,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
             }
         }
     }
-
     @OptIn(ExperimentalStdlibApi::class)
     private fun addSystemSettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.preferences_system))
@@ -476,7 +458,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     { SystemSaveGame.getMac() }
                 )
             )
-
             add(HeaderSetting(R.string.birthday))
             val systemBirthdayMonthSetting = object : AbstractShortSetting {
                 override var short: Short
@@ -506,7 +487,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     R.array.monthValues
                 )
             )
-
             val systemBirthdayDaySetting = object : AbstractShortSetting {
                 override var short: Short
                     get() = SystemSaveGame.getBirthday()[1]
@@ -538,7 +518,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     dayArray
                 )
             )
-
             add(HeaderSetting(R.string.clock))
             add(
                 SingleChoiceSetting(
@@ -560,7 +539,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     StringSetting.INIT_TIME.defaultValue
                 )
             )
-
             add(HeaderSetting(R.string.plugin_loader))
             add(
                 SwitchSetting(
@@ -592,10 +570,8 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
             )
         }
     }
-
     private fun addCameraSettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.camera))
-
         // Get the camera IDs
         val cameraManager =
             settingsActivity.getSystemService(Context.CAMERA_SERVICE) as CameraManager?
@@ -616,10 +592,8 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     when (facing) {
                         CameraCharacteristics.LENS_FACING_FRONT -> stringId =
                             R.string.camera_facing_front
-
                         CameraCharacteristics.LENS_FACING_BACK -> stringId =
                             R.string.camera_facing_back
-
                         CameraCharacteristics.LENS_FACING_EXTERNAL -> stringId =
                             R.string.camera_facing_external
                     }
@@ -632,7 +606,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                 e.printStackTrace()
             }
         }
-
         // Create the names and values for display
         val cameraDeviceNameList =
             settingsActivity.resources.getStringArray(R.array.cameraDeviceNames).toMutableList()
@@ -640,9 +613,7 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
         val cameraDeviceValueList =
             settingsActivity.resources.getStringArray(R.array.cameraDeviceValues).toMutableList()
         cameraDeviceValueList.addAll(supportedCameraIdList)
-
         val haveCameraDevices = supportedCameraIdList.isNotEmpty()
-
         val imageSourceNames =
             settingsActivity.resources.getStringArray(R.array.cameraImageSourceNames)
         val imageSourceValues =
@@ -652,7 +623,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
             imageSourceNames.copyOfRange(0, imageSourceNames.size - 1)
             imageSourceValues.copyOfRange(0, imageSourceValues.size - 1)
         }
-
         sl.apply {
             add(HeaderSetting(R.string.inner_camera))
             add(
@@ -690,7 +660,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     IntSetting.CAMERA_INNER_FLIP.defaultValue
                 )
             )
-
             add(HeaderSetting(R.string.outer_left_camera))
             add(
                 StringSingleChoiceSetting(
@@ -727,7 +696,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     IntSetting.CAMERA_OUTER_LEFT_FLIP.defaultValue
                 )
             )
-
             add(HeaderSetting(R.string.outer_right_camera))
             add(
                 StringSingleChoiceSetting(
@@ -766,7 +734,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
             )
         }
     }
-
     private fun addControlsSettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.preferences_controls))
         sl.apply {
@@ -775,19 +742,16 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                 val button = getInputObject(key)
                 add(InputBindingSetting(button, Settings.buttonTitles[i]))
             }
-
             add(HeaderSetting(R.string.controller_circlepad))
             Settings.circlePadKeys.forEachIndexed { i: Int, key: String ->
                 val button = getInputObject(key)
                 add(InputBindingSetting(button, Settings.axisTitles[i]))
             }
-
             add(HeaderSetting(R.string.controller_c))
             Settings.cStickKeys.forEachIndexed { i: Int, key: String ->
                 val button = getInputObject(key)
                 add(InputBindingSetting(button, Settings.axisTitles[i]))
             }
-
             add(HeaderSetting(R.string.controller_dpad_axis,R.string.controller_dpad_axis_description))
             Settings.dPadAxisKeys.forEachIndexed { i: Int, key: String ->
                 val button = getInputObject(key)
@@ -798,13 +762,11 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                 val button = getInputObject(key)
                 add(InputBindingSetting(button, Settings.dPadTitles[i]))
             }
-
             add(HeaderSetting(R.string.controller_triggers))
             Settings.triggerKeys.forEachIndexed { i: Int, key: String ->
                 val button = getInputObject(key)
                 add(InputBindingSetting(button, Settings.triggerTitles[i]))
             }
-
             add(HeaderSetting(R.string.controller_hotkeys))
             Settings.hotKeys.forEachIndexed { i: Int, key: String ->
                 val button = getInputObject(key)
@@ -822,7 +784,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
             )
         }
     }
-
     private fun getInputObject(key: String): AbstractStringSetting {
         return object : AbstractStringSetting {
             override var string: String
@@ -839,7 +800,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
             override val defaultValue = ""
         }
     }
-
     private fun addGraphicsSettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.preferences_graphics))
         sl.apply {
@@ -943,7 +903,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     IntSetting.DELAY_RENDER_THREAD_US.defaultValue.toFloat()
                 )
             )
-
             add(HeaderSetting(R.string.stereoscopy))
             add(
                 SingleChoiceSetting(
@@ -977,7 +936,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     BooleanSetting.DISABLE_RIGHT_EYE_RENDER.defaultValue
                 )
             )
-
             add(HeaderSetting(R.string.cardboard_vr))
             add(
                 SliderSetting(
@@ -1015,7 +973,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     IntSetting.CARDBOARD_Y_SHIFT.defaultValue.toFloat()
                 )
             )
-
             add(HeaderSetting(R.string.utility))
             add(
                 SwitchSetting(
@@ -1044,7 +1001,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     BooleanSetting.ASYNC_CUSTOM_LOADING.defaultValue
                 )
             )
-
             add(HeaderSetting(R.string.advanced))
             add(
                 SingleChoiceSetting(
@@ -1057,7 +1013,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     IntSetting.TEXTURE_SAMPLING.defaultValue
                 )
             )
-
             // Disabled until custom texture implementation gets rewrite, current one overloads RAM
             // and crashes Citra.
             // add(
@@ -1071,7 +1026,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
             // )
         }
     }
-
     private fun addLayoutSettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.preferences_layout))
         sl.apply {
@@ -1293,13 +1247,10 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
             )
         }
     }
-
     private fun addPerformanceOverlaySettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.performance_overlay_options))
         sl.apply {
-
             add(HeaderSetting(R.string.visibility))
-
             add(
                 SwitchSetting(
                     BooleanSetting.PERF_OVERLAY_ENABLE,
@@ -1309,7 +1260,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     BooleanSetting.PERF_OVERLAY_ENABLE.defaultValue
                 )
             )
-
             add(
                 SwitchSetting(
                     BooleanSetting.PERF_OVERLAY_BACKGROUND,
@@ -1319,7 +1269,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     BooleanSetting.PERF_OVERLAY_BACKGROUND.defaultValue
                 )
             )
-
             add(
                 SingleChoiceSetting(
                     IntSetting.PERFORMANCE_OVERLAY_POSITION,
@@ -1329,10 +1278,7 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     R.array.statsPositionValues,
                 )
             )
-
-
             add(HeaderSetting(R.string.information))
-
             add(
                 SwitchSetting(
                     BooleanSetting.PERF_OVERLAY_SHOW_FPS,
@@ -1342,7 +1288,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     BooleanSetting.PERF_OVERLAY_SHOW_FPS.defaultValue
                 )
             )
-
             add(
                 SwitchSetting(
                     BooleanSetting.PERF_OVERLAY_SHOW_FRAMETIME,
@@ -1352,7 +1297,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     BooleanSetting.PERF_OVERLAY_SHOW_FRAMETIME.defaultValue
                 )
             )
-
             add(
                 SwitchSetting(
                     BooleanSetting.PERF_OVERLAY_SHOW_SPEED,
@@ -1362,7 +1306,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     BooleanSetting.PERF_OVERLAY_SHOW_SPEED.defaultValue
                 )
             )
-
             add(
                 SwitchSetting(
                     BooleanSetting.PERF_OVERLAY_SHOW_APP_RAM_USAGE,
@@ -1372,7 +1315,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     BooleanSetting.PERF_OVERLAY_SHOW_APP_RAM_USAGE.defaultValue
                 )
             )
-
             add(
                 SwitchSetting(
                     BooleanSetting.PERF_OVERLAY_SHOW_AVAILABLE_RAM,
@@ -1382,7 +1324,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     BooleanSetting.PERF_OVERLAY_SHOW_AVAILABLE_RAM.defaultValue
                 )
             )
-
             add(
                 SwitchSetting(
                     BooleanSetting.PERF_OVERLAY_SHOW_BATTERY_TEMP,
@@ -1394,7 +1335,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
             )
         }
     }
-
     private fun addCustomLandscapeSettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.emulation_landscape_custom_layout))
         sl.apply {
@@ -1497,9 +1437,7 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                 )
             )
         }
-
     }
-
     private fun addCustomPortraitSettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.emulation_portrait_custom_layout))
         sl.apply {
@@ -1602,9 +1540,7 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                 )
             )
         }
-
     }
-
     private fun addAudioSettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.preferences_audio))
         sl.apply {
@@ -1649,7 +1585,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     IntSetting.AUDIO_INPUT_TYPE.defaultValue
                 )
             )
-
             val soundOutputModeSetting = object : AbstractIntSetting {
                 override var int: Int
                     get() = SystemSaveGame.getSoundOutputMode()
@@ -1671,7 +1606,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
             )
         }
     }
-
     private fun addDebugSettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.preferences_debug))
         sl.apply {
@@ -1769,10 +1703,8 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     BooleanSetting.DETERMINISTIC_ASYNC_OPERATIONS.defaultValue
                 )
             )
-
         }
     }
-
     private fun addThemeSettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.preferences_theme))
         sl.apply {
@@ -1792,7 +1724,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     get() = preferences.getBoolean(Settings.PREF_MATERIAL_YOU, false).toString()
                 override val defaultValue = false
             }
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 add(
                     SwitchSetting(
@@ -1802,7 +1733,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     )
                 )
             }
-
             val staticThemeColor: AbstractIntSetting = object : AbstractIntSetting {
                 override var int: Int
                     get() = preferences.getInt(Settings.PREF_STATIC_THEME_COLOR, 0)
@@ -1819,7 +1749,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     get() = preferences.getInt(Settings.PREF_STATIC_THEME_COLOR, 0).toString()
                 override val defaultValue: Any = 0
             }
-
             add(
                 SingleChoiceSetting(
                     staticThemeColor,
@@ -1829,7 +1758,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     R.array.staticThemeValues
                 )
             )
-
             val themeMode: AbstractIntSetting = object : AbstractIntSetting {
                 override var int: Int
                     get() = preferences.getInt(Settings.PREF_THEME_MODE, -1)
@@ -1847,7 +1775,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     get() = preferences.getInt(Settings.PREF_THEME_MODE, -1).toString()
                 override val defaultValue: Any = -1
             }
-
             add(
                 SingleChoiceSetting(
                     themeMode,
@@ -1857,7 +1784,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     R.array.themeModeValues
                 )
             )
-
             val blackBackgrounds: AbstractBooleanSetting = object : AbstractBooleanSetting {
                 override var boolean: Boolean
                     get() = preferences.getBoolean(Settings.PREF_BLACK_BACKGROUNDS, false)
@@ -1875,7 +1801,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                         .toString()
                 override val defaultValue: Any = false
             }
-
             add(
                 SwitchSetting(
                     blackBackgrounds,
@@ -1883,7 +1808,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     R.string.use_black_backgrounds_description
                 )
             )
-
             val appLanguage: AbstractStringSetting = object : AbstractStringSetting {
                 override var string: String
                     get() = preferences.getString(Settings.PREF_APP_LANGUAGE, "")!!
@@ -1900,10 +1824,8 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     get() = preferences.getString(Settings.PREF_APP_LANGUAGE, "")!!
                 override val defaultValue: Any = ""
             }
-
             val appLanguages = settingsActivity.resources.getStringArray(R.array.app_languages)
             val appLanguageValues = settingsActivity.resources.getStringArray(R.array.app_language_values)
-
             add(
                 StringSingleChoiceSetting(
                     appLanguage,

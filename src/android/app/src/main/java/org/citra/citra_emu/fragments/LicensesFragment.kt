@@ -1,7 +1,6 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.os.Bundle
@@ -27,9 +26,7 @@ import org.citra.citra_emu.viewmodel.HomeViewModel
 class LicensesFragment : Fragment() {
     private var _binding: FragmentLicensesBinding? = null
     private val binding get() = _binding!!
-
     private val homeViewModel: HomeViewModel by activityViewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
@@ -48,11 +45,9 @@ class LicensesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         homeViewModel.setNavigationVisibility(visible = false, animated = true)
         homeViewModel.setStatusBarShadeVisibility(visible = false)
-
         binding.toolbarLicenses.setNavigationOnClickListener {
             binding.root.findNavController().popBackStack()
         }
-
         val licenses = listOf(
             License(
                 R.string.license_adreno_tools,
@@ -165,12 +160,10 @@ class LicensesFragment : Fragment() {
                 R.string.license_zstd_text
             )
         )
-
         binding.listLicenses.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = LicenseAdapter(requireActivity() as AppCompatActivity, licenses)
         }
-
         setInsets()
     }
 
@@ -180,22 +173,17 @@ class LicensesFragment : Fragment() {
         ) { _: View, windowInsets: WindowInsetsCompat ->
             val barInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             val cutoutInsets = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
-
             val leftInsets = barInsets.left + cutoutInsets.left
             val rightInsets = barInsets.right + cutoutInsets.right
-
             val mlpAppBar = binding.toolbarLicenses.layoutParams as MarginLayoutParams
             mlpAppBar.leftMargin = leftInsets
             mlpAppBar.rightMargin = rightInsets
             binding.toolbarLicenses.layoutParams = mlpAppBar
-
             val mlpScrollAbout = binding.listLicenses.layoutParams as MarginLayoutParams
             mlpScrollAbout.leftMargin = leftInsets
             mlpScrollAbout.rightMargin = rightInsets
             binding.listLicenses.layoutParams = mlpScrollAbout
-
             binding.listLicenses.updatePadding(bottom = barInsets.bottom)
-
             windowInsets
         }
 }

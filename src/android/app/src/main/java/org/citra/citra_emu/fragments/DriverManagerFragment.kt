@@ -1,7 +1,6 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.os.Bundle
@@ -34,10 +33,8 @@ import java.io.IOException
 class DriverManagerFragment : Fragment() {
     private var _binding: FragmentDriverManagerBinding? = null
     private val binding get() = _binding!!
-
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val driverViewModel: DriverViewModel by activityViewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
@@ -58,22 +55,18 @@ class DriverManagerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         homeViewModel.setNavigationVisibility(visible = false, animated = true)
         homeViewModel.setStatusBarShadeVisibility(visible = false)
-
         if (!driverViewModel.isInteractionAllowed) {
             DriversLoadingDialogFragment().show(
                 childFragmentManager,
                 DriversLoadingDialogFragment.TAG
             )
         }
-
         binding.toolbarDrivers.setNavigationOnClickListener {
             binding.root.findNavController().popBackStack()
         }
-
         binding.buttonInstall.setOnClickListener {
             getDriver.launch(arrayOf("application/zip"))
         }
-
         binding.listDrivers.apply {
             layoutManager = GridLayoutManager(
                 requireContext(),
@@ -81,7 +74,6 @@ class DriverManagerFragment : Fragment() {
             )
             adapter = DriverAdapter(driverViewModel)
         }
-
         viewLifecycleOwner.lifecycleScope.apply {
             launch {
                 driverViewModel.driverList.collectLatest {
@@ -100,7 +92,6 @@ class DriverManagerFragment : Fragment() {
                 }
             }
         }
-
         setInsets()
     }
 
@@ -116,20 +107,16 @@ class DriverManagerFragment : Fragment() {
         ) { _: View, windowInsets: WindowInsetsCompat ->
             val barInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             val cutoutInsets = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
-
             val leftInsets = barInsets.left + cutoutInsets.left
             val rightInsets = barInsets.right + cutoutInsets.right
-
             val mlpAppBar = binding.toolbarDrivers.layoutParams as ViewGroup.MarginLayoutParams
             mlpAppBar.leftMargin = leftInsets
             mlpAppBar.rightMargin = rightInsets
             binding.toolbarDrivers.layoutParams = mlpAppBar
-
             val mlplistDrivers = binding.listDrivers.layoutParams as ViewGroup.MarginLayoutParams
             mlplistDrivers.leftMargin = leftInsets
             mlplistDrivers.rightMargin = rightInsets
             binding.listDrivers.layoutParams = mlplistDrivers
-
             val fabSpacing = resources.getDimensionPixelSize(R.dimen.spacing_fab)
             val mlpFab =
                 binding.buttonInstall.layoutParams as ViewGroup.MarginLayoutParams
@@ -137,12 +124,10 @@ class DriverManagerFragment : Fragment() {
             mlpFab.rightMargin = rightInsets + fabSpacing
             mlpFab.bottomMargin = barInsets.bottom + fabSpacing
             binding.buttonInstall.layoutParams = mlpFab
-
             binding.listDrivers.updatePadding(
                 bottom = barInsets.bottom +
                         resources.getDimensionPixelSize(R.dimen.spacing_bottom_list_fab)
             )
-
             windowInsets
         }
 
@@ -151,7 +136,6 @@ class DriverManagerFragment : Fragment() {
             if (result == null) {
                 return@registerForActivityResult
             }
-
             IndeterminateProgressDialogFragment.newInstance(
                 requireActivity(),
                 R.string.installing_driver,
@@ -165,7 +149,6 @@ class DriverManagerFragment : Fragment() {
                 } catch (_: IOException) {
                     return@newInstance getString(R.string.select_gpu_driver_error)
                 }
-
                 val driverData = GpuDriverHelper.getMetadataFromZip(driverFile.inputStream())
                 val driverInList =
                     driverViewModel.driverList.value.firstOrNull { it.second == driverData }

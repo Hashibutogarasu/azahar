@@ -1,9 +1,7 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.adapters
-
 import android.net.Uri
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -18,7 +16,6 @@ import org.citra.citra_emu.databinding.CardDriverOptionBinding
 import org.citra.citra_emu.utils.GpuDriverMetadata
 import org.citra.citra_emu.viewmodel.DriverViewModel
 import org.citra.citra_emu.utils.GpuDriverHelper
-
 class DriverAdapter(private val driverViewModel: DriverViewModel) :
     ListAdapter<Pair<Uri, GpuDriverMetadata>, DriverAdapter.DriverViewHolder>(
         AsyncDifferConfig.Builder(DiffCallback()).build()
@@ -28,18 +25,14 @@ class DriverAdapter(private val driverViewModel: DriverViewModel) :
             CardDriverOptionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return DriverViewHolder(binding)
     }
-
     override fun getItemCount(): Int = currentList.size
-
     override fun onBindViewHolder(holder: DriverViewHolder, position: Int) =
         holder.bind(currentList[position])
-
     private fun onSelectDriver(position: Int) {
         driverViewModel.setSelectedDriverIndex(position)
         notifyItemChanged(driverViewModel.previouslySelectedDriver)
         notifyItemChanged(driverViewModel.selectedDriver)
     }
-
     private fun onDeleteDriver(driverData: Pair<Uri, GpuDriverMetadata>, position: Int) {
         if (driverViewModel.selectedDriver > position) {
             driverViewModel.setSelectedDriverIndex(driverViewModel.selectedDriver - 1)
@@ -52,15 +45,12 @@ class DriverAdapter(private val driverViewModel: DriverViewModel) :
         notifyItemRemoved(position)
         notifyItemChanged(driverViewModel.selectedDriver)
     }
-
     inner class DriverViewHolder(val binding: CardDriverOptionBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private lateinit var driverData: Pair<Uri, GpuDriverMetadata>
-
         fun bind(driverData: Pair<Uri, GpuDriverMetadata>) {
             this.driverData = driverData
             val driver = driverData.second
-
             binding.apply {
                 radioButton.isChecked = driverViewModel.selectedDriver == bindingAdapterPosition
                 root.setOnClickListener {
@@ -69,7 +59,6 @@ class DriverAdapter(private val driverViewModel: DriverViewModel) :
                 buttonDelete.setOnClickListener {
                     onDeleteDriver(driverData, bindingAdapterPosition)
                 }
-
                 // Delay marquee by 3s
                 title.postDelayed(
                     {
@@ -100,7 +89,6 @@ class DriverAdapter(private val driverViewModel: DriverViewModel) :
             }
         }
     }
-
     private class DiffCallback : DiffUtil.ItemCallback<Pair<Uri, GpuDriverMetadata>>() {
         override fun areItemsTheSame(
             oldItem: Pair<Uri, GpuDriverMetadata>,
@@ -108,7 +96,6 @@ class DriverAdapter(private val driverViewModel: DriverViewModel) :
         ): Boolean {
             return oldItem.first == newItem.first
         }
-
         override fun areContentsTheSame(
             oldItem: Pair<Uri, GpuDriverMetadata>,
             newItem: Pair<Uri, GpuDriverMetadata>

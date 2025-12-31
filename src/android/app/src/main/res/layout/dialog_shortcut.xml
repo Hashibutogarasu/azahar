@@ -19,7 +19,7 @@
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"/>
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium" />
 
         <ImageView
             android:layout_width="42dp"
@@ -30,7 +30,7 @@
             android:contentDescription="@string/edit_icon"
             app:tint="?attr/colorAccent"
             android:background="@drawable/shortcut_edit_background"
-            android:alpha="0.8"/>
+            android:alpha="0.8" />
 
     </FrameLayout>
 
@@ -41,7 +41,7 @@
         android:layout_marginTop="16dp"
         android:layout_gravity="center_horizontal"
         android:enabled="false"
-        android:text="@string/shortcut_image_stretch_toggle"/>
+        android:text="@string/shortcut_image_stretch_toggle" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
@@ -54,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:maxLines="1"/>
+            android:maxLines="1" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

@@ -1,13 +1,10 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.utils
-
 import android.content.Context
 import android.content.Intent
 import androidx.documentfile.provider.DocumentFile
-
 object FileBrowserHelper {
     fun getSelectedFiles(
         result: Intent,

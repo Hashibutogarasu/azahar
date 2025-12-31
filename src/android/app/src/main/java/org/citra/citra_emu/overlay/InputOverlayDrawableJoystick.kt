@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.overlay
-
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -17,7 +15,6 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
-
 /**
  * Custom [BitmapDrawable] that is capable
  * of storing it's own ID.
@@ -59,13 +56,11 @@ class InputOverlayDrawableJoystick(
     private val pressedStateInnerBitmap: BitmapDrawable
     private val boundsBoxBitmap: BitmapDrawable
     private var pressedState = false
-
     var bounds: Rect
         get() = outerBitmap.bounds
         set(bounds) {
             outerBitmap.bounds = bounds
         }
-
     init {
         outerBitmap = BitmapDrawable(res, bitmapOuter)
         defaultStateInnerBitmap = BitmapDrawable(res, bitmapInnerDefault)
@@ -85,14 +80,12 @@ class InputOverlayDrawableJoystick(
         pressedStateInnerBitmap.alpha = opacity
         outerBitmap.alpha = opacity
     }
-
     fun draw(canvas: Canvas?) {
         outerBitmap.draw(canvas!!)
         boundsBoxBitmap.draw(canvas)
         currentStateBitmapDrawable.alpha = opacity
         currentStateBitmapDrawable.draw(canvas)
     }
-
     fun updateStatus(event: MotionEvent, pointerIndex: Int, hasActiveButtons: Boolean, overlay: InputOverlay): Boolean {
         val xPosition = event.getX(pointerIndex).toInt()
         val yPosition = event.getY(pointerIndex).toInt()
@@ -103,7 +96,6 @@ class InputOverlayDrawableJoystick(
         if (!isActionDown && EmulationMenuSettings.buttonSlide != ButtonSlidingMode.Disabled.int) {
             isActionDown = motionEvent == MotionEvent.ACTION_MOVE && !hasActiveButtons
         }
-
         val isActionUp =
             motionEvent == MotionEvent.ACTION_UP || motionEvent == MotionEvent.ACTION_POINTER_UP
         if (isActionDown) {
@@ -160,7 +152,6 @@ class InputOverlayDrawableJoystick(
             val oldYAxis = this.yAxis
             val oldAngle = this.angle
             val oldRadius = this.radius
-
             // Clamp the circle pad input to a circle
             val angle = atan2(yAxis.toDouble(), xAxis.toDouble()).toFloat()
             var radius = sqrt((xAxis * xAxis + yAxis * yAxis).toDouble()).toFloat()
@@ -170,20 +161,16 @@ class InputOverlayDrawableJoystick(
             this.xAxis = cos(angle.toDouble()).toFloat() * radius
             this.yAxis = sin(angle.toDouble()).toFloat() * radius
             setInnerBounds()
-
             if (kotlin.math.abs(oldRadius - radius) > .34f
                     || radius > .5f && kotlin.math.abs(oldAngle - angle) > kotlin.math.PI / 8) {
                 this.radius = radius
                 this.angle = angle
-
                 overlay.hapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
             }
-
             return oldXAxis != this.xAxis && oldYAxis != this.yAxis
         }
         return false
     }
-
     fun onConfigureTouch(event: MotionEvent): Boolean {
         val pointerIndex = event.actionIndex
         val fingerPositionX = event.getX(pointerIndex).toInt()
@@ -198,7 +185,6 @@ class InputOverlayDrawableJoystick(
                 previousTouchX = fingerPositionX
                 previousTouchY = fingerPositionY
             }
-
             MotionEvent.ACTION_MOVE -> {
                 val deltaX = fingerPositionX - previousTouchX
                 val deltaY = fingerPositionY - previousTouchY
@@ -233,7 +219,6 @@ class InputOverlayDrawableJoystick(
         }
         return true
     }
-
     private fun setInnerBounds() {
         var x = virtBounds.centerX() + (xAxis * (virtBounds.width() / 2)).toInt()
         var y = virtBounds.centerY() + (yAxis * (virtBounds.height() / 2)).toInt()
@@ -250,15 +235,12 @@ class InputOverlayDrawableJoystick(
         defaultStateInnerBitmap.setBounds(x - width, y - height, x + width, y + height)
         pressedStateInnerBitmap.bounds = defaultStateInnerBitmap.bounds
     }
-
     fun setPosition(x: Int, y: Int) {
         controlPositionX = x
         controlPositionY = y
     }
-
     private val currentStateBitmapDrawable: BitmapDrawable
         get() = if (pressedState) pressedStateInnerBitmap else defaultStateInnerBitmap
-
     private fun setOrigBounds(bounds: Rect) {
         origBounds = bounds
     }

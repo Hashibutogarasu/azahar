@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.overlay
-
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -13,7 +11,6 @@ import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import org.citra.citra_emu.NativeLibrary
 import org.citra.citra_emu.utils.EmulationMenuSettings
-
 /**
  * Custom [BitmapDrawable] that is capable
  * of storing it's own ID.
@@ -53,7 +50,6 @@ class InputOverlayDrawableDpad(
     private var downButtonState = false
     private var leftButtonState = false
     private var rightButtonState = false
-
     init {
         this.defaultStateBitmap = BitmapDrawable(res, defaultStateBitmap)
         this.pressedOneDirectionStateBitmap = BitmapDrawable(res, pressedOneDirectionStateBitmap)
@@ -62,7 +58,6 @@ class InputOverlayDrawableDpad(
         height = this.defaultStateBitmap.intrinsicHeight
         trackId = -1
     }
-
     fun updateStatus(event: MotionEvent, pointerIndex: Int, hasActiveButtons: Boolean, dpadSlide: Boolean, overlay: InputOverlay): Boolean {
         var isDown = false
         val xPosition = event.getX(pointerIndex).toInt()
@@ -74,7 +69,6 @@ class InputOverlayDrawableDpad(
         if (!isActionDown && EmulationMenuSettings.buttonSlide != ButtonSlidingMode.Disabled.int) {
             isActionDown = motionEvent == MotionEvent.ACTION_MOVE && !hasActiveButtons
         }
-
         val isActionUp =
             motionEvent == MotionEvent.ACTION_UP || motionEvent == MotionEvent.ACTION_POINTER_UP
         if (isActionDown) {
@@ -124,30 +118,24 @@ class InputOverlayDrawableDpad(
             downButtonState = yAxis > VIRT_AXIS_DEADZONE
             leftButtonState = xAxis < -VIRT_AXIS_DEADZONE
             rightButtonState = xAxis > VIRT_AXIS_DEADZONE
-
             val stateChanged = upState != upButtonState || downState != downButtonState || leftState != leftButtonState || rightState != rightButtonState
-
             if(stateChanged)
                 overlay.hapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
             else if(isDown)
                 overlay.hapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
-
             return stateChanged
         }
         return false
     }
-
     fun draw(canvas: Canvas) {
         val px = controlPositionX + width / 2
         val py = controlPositionY + height / 2
-
         // Pressed up
         if (upButtonState && !leftButtonState && !rightButtonState) {
             pressedOneDirectionStateBitmap.alpha = opacity
             pressedOneDirectionStateBitmap.draw(canvas)
             return
         }
-
         // Pressed down
         if (downButtonState && !leftButtonState && !rightButtonState) {
             canvas.save()
@@ -157,7 +145,6 @@ class InputOverlayDrawableDpad(
             canvas.restore()
             return
         }
-
         // Pressed left
         if (leftButtonState && !upButtonState && !downButtonState) {
             canvas.save()
@@ -167,7 +154,6 @@ class InputOverlayDrawableDpad(
             canvas.restore()
             return
         }
-
         // Pressed right
         if (rightButtonState && !upButtonState && !downButtonState) {
             canvas.save()
@@ -177,14 +163,12 @@ class InputOverlayDrawableDpad(
             canvas.restore()
             return
         }
-
         // Pressed up left
         if (upButtonState && leftButtonState && !rightButtonState) {
             pressedTwoDirectionsStateBitmap.alpha = opacity
             pressedTwoDirectionsStateBitmap.draw(canvas)
             return
         }
-
         // Pressed up right
         if (upButtonState && !leftButtonState && rightButtonState) {
             canvas.save()
@@ -194,7 +178,6 @@ class InputOverlayDrawableDpad(
             canvas.restore()
             return
         }
-
         // Pressed down left
         if (downButtonState && leftButtonState && !rightButtonState) {
             canvas.save()
@@ -204,7 +187,6 @@ class InputOverlayDrawableDpad(
             canvas.restore()
             return
         }
-
         // Pressed down right
         if (downButtonState && !leftButtonState && rightButtonState) {
             canvas.save()
@@ -214,12 +196,10 @@ class InputOverlayDrawableDpad(
             canvas.restore()
             return
         }
-
         // Not pressed
         defaultStateBitmap.alpha = opacity
         defaultStateBitmap.draw(canvas)
     }
-
     val upStatus: Int
         get() = if (upButtonState) {
             NativeLibrary.ButtonState.PRESSED
@@ -244,7 +224,6 @@ class InputOverlayDrawableDpad(
         } else {
             NativeLibrary.ButtonState.RELEASED
         }
-
     fun onConfigureTouch(event: MotionEvent): Boolean {
         val pointerIndex = event.actionIndex
         val fingerPositionX = event.getX(pointerIndex).toInt()
@@ -254,7 +233,6 @@ class InputOverlayDrawableDpad(
                 previousTouchX = fingerPositionX
                 previousTouchY = fingerPositionY
             }
-
             MotionEvent.ACTION_MOVE -> {
                 controlPositionX += fingerPositionX - previousTouchX
                 controlPositionY += fingerPositionY - previousTouchY
@@ -268,21 +246,17 @@ class InputOverlayDrawableDpad(
         }
         return true
     }
-
     fun setPosition(x: Int, y: Int) {
         controlPositionX = x
         controlPositionY = y
     }
-
     fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
         defaultStateBitmap.setBounds(left, top, right, bottom)
         pressedOneDirectionStateBitmap.setBounds(left, top, right, bottom)
         pressedTwoDirectionsStateBitmap.setBounds(left, top, right, bottom)
     }
-
     val bounds: Rect
         get() = defaultStateBitmap.bounds
-
     companion object {
         private const val VIRT_AXIS_DEADZONE = 0.5f
     }

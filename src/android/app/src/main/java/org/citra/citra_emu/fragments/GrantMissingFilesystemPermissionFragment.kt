@@ -1,7 +1,6 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.fragments
 
 import android.Manifest
@@ -23,13 +22,10 @@ import org.citra.citra_emu.utils.BuildUtil
 
 class GrantMissingFilesystemPermissionFragment : DialogFragment() {
     private lateinit var mainActivity: MainActivity
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         BuildUtil.assertNotGooglePlay()
         mainActivity = requireActivity() as MainActivity
-
         isCancelable = false
-
         val requestPermissionFunction =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 {
@@ -43,9 +39,6 @@ class GrantMissingFilesystemPermissionFragment : DialogFragment() {
             } else {
                 { permissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE) }
             }
-
-
-
         return MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.filesystem_permission_warning)
             .setMessage(R.string.filesystem_permission_lost)
@@ -62,7 +55,6 @@ class GrantMissingFilesystemPermissionFragment : DialogFragment() {
                 return@registerForActivityResult
             }
         }
-
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
@@ -72,7 +64,6 @@ class GrantMissingFilesystemPermissionFragment : DialogFragment() {
 
     companion object {
         const val TAG = "GrantMissingFilesystemPermissionFragment"
-
         fun newInstance(): GrantMissingFilesystemPermissionFragment {
             BuildUtil.assertNotGooglePlay()
             return GrantMissingFilesystemPermissionFragment()

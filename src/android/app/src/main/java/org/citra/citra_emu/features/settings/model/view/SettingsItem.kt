@@ -1,13 +1,10 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.features.settings.model.view
-
 import org.citra.citra_emu.NativeLibrary
 import org.citra.citra_emu.activities.EmulationActivity
 import org.citra.citra_emu.features.settings.model.AbstractSetting
-
 /**
  * ViewModel abstraction for an Item in the RecyclerView powering SettingsFragments.
  * Each one corresponds to a [AbstractSetting] object, so this class's subclasses
@@ -21,20 +18,16 @@ abstract class SettingsItem(
     val descriptionId: Int
 ) {
     abstract val type: Int
-
     val isEditable: Boolean
         get() {
             if (!EmulationActivity.isRunning()) return true
             return setting?.isRuntimeEditable ?: false
         }
-
     open var isEnabled: Boolean = true
-
     val isActive: Boolean
         get() {
             return this.isEditable && this.isEnabled
         }
-
     companion object {
         const val TYPE_HEADER = 0
         const val TYPE_SWITCH = 1

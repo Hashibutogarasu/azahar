@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Azahar Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.features.settings.ui.viewholder
-
 import android.annotation.SuppressLint
 import android.view.View
 import org.citra.citra_emu.databinding.ListItemSettingBinding
@@ -16,11 +14,9 @@ import org.citra.citra_emu.features.settings.model.view.DateTimeSetting
 import org.citra.citra_emu.features.settings.model.view.SettingsItem
 import org.citra.citra_emu.features.settings.ui.SettingsAdapter
 import java.text.SimpleDateFormat
-
 class DateTimeViewHolder(val binding: ListItemSettingBinding, adapter: SettingsAdapter) :
     SettingViewHolder(binding.root, adapter) {
     private lateinit var setting: DateTimeSetting
-
     @SuppressLint("SimpleDateFormat")
     override fun bind(item: SettingsItem) {
         setting = item as DateTimeSetting
@@ -37,7 +33,6 @@ class DateTimeViewHolder(val binding: ListItemSettingBinding, adapter: SettingsA
         } catch (e: NumberFormatException) {
             val date = setting.value.substringBefore(" ")
             val time = setting.value.substringAfter(" ")
-
             val formatter = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZZZZ")
             val gmt = formatter.parse("${date}T${time}+0000")
             gmt!!.time / 1000
@@ -46,7 +41,6 @@ class DateTimeViewHolder(val binding: ListItemSettingBinding, adapter: SettingsA
         val zonedTime = ZonedDateTime.ofInstant(instant, ZoneId.of("UTC"))
         val dateFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
         binding.textSettingValue.text = dateFormatter.format(zonedTime)
-
         if (setting.isActive) {
             binding.textSettingName.alpha = 1f
             binding.textSettingDescription.alpha = 1f
@@ -57,7 +51,6 @@ class DateTimeViewHolder(val binding: ListItemSettingBinding, adapter: SettingsA
             binding.textSettingValue.alpha = 0.5f
         }
     }
-
     override fun onClick(clicked: View) {
         if (setting.isActive) {
             adapter.onDateTimeClick(setting, bindingAdapterPosition)
@@ -65,7 +58,6 @@ class DateTimeViewHolder(val binding: ListItemSettingBinding, adapter: SettingsA
             adapter.onClickDisabledSetting(!setting.isEditable)
         }
     }
-
     override fun onLongClick(clicked: View): Boolean {
         if (setting.isActive) {
             return adapter.onLongClick(setting.setting!!, bindingAdapterPosition)

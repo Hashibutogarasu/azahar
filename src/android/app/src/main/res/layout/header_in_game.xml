@@ -12,7 +12,7 @@
         android:id="@+id/game_icon"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginEnd="16dp"/>
+        android:layout_marginEnd="16dp" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/text_game_title"

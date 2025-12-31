@@ -1,9 +1,7 @@
 // Copyright Citra Emulator Project / Lime3DS Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.utils
-
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.graphics.Color
@@ -21,13 +19,10 @@ import org.citra.citra_emu.R
 import org.citra.citra_emu.features.settings.model.Settings
 import org.citra.citra_emu.ui.main.ThemeProvider
 import kotlin.math.roundToInt
-
 object ThemeUtil {
     const val SYSTEM_BAR_ALPHA = 0.9f
-
     private val preferences: SharedPreferences get() =
         PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
-
     private fun getSelectedStaticThemeColor(): Int {
         val themeIndex = preferences.getInt(Settings.PREF_STATIC_THEME_COLOR, 0)
         val themes = arrayOf(
@@ -43,7 +38,6 @@ object ThemeUtil {
         )
         return themes[themeIndex]
     }
-
     fun setTheme(activity: AppCompatActivity) {
         setThemeMode(activity)
         if (preferences.getBoolean(Settings.PREF_MATERIAL_YOU, false)) {
@@ -51,7 +45,6 @@ object ThemeUtil {
         } else {
             activity.setTheme(getSelectedStaticThemeColor())
         }
-
         // Using a specific night mode check because this could apply incorrectly when using the
         // light app mode, dark system mode, and black backgrounds. Launching the settings activity
         // will then show light mode colors/navigation bars but with black backgrounds.
@@ -61,7 +54,6 @@ object ThemeUtil {
             activity.setTheme(R.style.ThemeOverlay_Citra_Dark)
         }
     }
-
     fun setThemeMode(activity: AppCompatActivity) {
         val themeMode = PreferenceManager.getDefaultSharedPreferences(activity.applicationContext)
             .getInt(Settings.PREF_THEME_MODE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
@@ -79,7 +71,6 @@ object ThemeUtil {
             AppCompatDelegate.MODE_NIGHT_YES -> setDarkModeSystemBars(windowController)
         }
     }
-
     private fun isNightMode(activity: AppCompatActivity): Boolean {
         return when (activity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
             Configuration.UI_MODE_NIGHT_NO -> false
@@ -87,17 +78,14 @@ object ThemeUtil {
             else -> false
         }
     }
-
     private fun setLightModeSystemBars(windowController: WindowInsetsControllerCompat) {
         windowController.isAppearanceLightStatusBars = true
         windowController.isAppearanceLightNavigationBars = true
     }
-
     private fun setDarkModeSystemBars(windowController: WindowInsetsControllerCompat) {
         windowController.isAppearanceLightStatusBars = false
         windowController.isAppearanceLightNavigationBars = false
     }
-
     fun setCorrectTheme(activity: AppCompatActivity) {
         val currentTheme = (activity as ThemeProvider).themeId
         setTheme(activity)
@@ -105,7 +93,6 @@ object ThemeUtil {
             activity.recreate()
         }
     }
-
     @ColorInt
     fun getColorWithOpacity(@ColorInt color: Int, alphaFactor: Float): Int {
         return Color.argb(
@@ -115,10 +102,8 @@ object ThemeUtil {
             Color.blue(color)
         )
     }
-
     // Listener that detects if the theme keys are being changed from the setting menu and recreates the activity
     private var listener: SharedPreferences.OnSharedPreferenceChangeListener? = null
-
     fun ThemeChangeListener(activity: AppCompatActivity) {
         listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             val relevantKeys = listOf(Settings.PREF_STATIC_THEME_COLOR, Settings.PREF_MATERIAL_YOU, Settings.PREF_BLACK_BACKGROUNDS)

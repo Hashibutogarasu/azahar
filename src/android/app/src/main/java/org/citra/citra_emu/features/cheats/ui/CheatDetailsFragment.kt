@@ -1,9 +1,7 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.features.cheats.ui
-
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.os.Bundle
@@ -25,13 +23,10 @@ import org.citra.citra_emu.R
 import org.citra.citra_emu.databinding.FragmentCheatDetailsBinding
 import org.citra.citra_emu.features.cheats.model.Cheat
 import org.citra.citra_emu.features.cheats.model.CheatsViewModel
-
 class CheatDetailsFragment : Fragment() {
     private val cheatsViewModel: CheatsViewModel by activityViewModels()
-
     private var _binding: FragmentCheatDetailsBinding? = null
     private val binding get() = _binding!!
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -40,7 +35,6 @@ class CheatDetailsFragment : Fragment() {
         _binding = FragmentCheatDetailsBinding.inflate(layoutInflater)
         return binding.root
     }
-
     // This is using the correct scope, lint is just acting up
     @SuppressLint("UnsafeRepeatOnLifecycleDetector")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,31 +54,25 @@ class CheatDetailsFragment : Fragment() {
         binding.buttonEdit.setOnClickListener { onEditClicked() }
         binding.buttonCancel.setOnClickListener { onCancelClicked() }
         binding.buttonOk.setOnClickListener { onOkClicked() }
-
         // On a portrait phone screen (or other narrow screen), only one of the two panes are shown
         // at the same time. If the user is navigating using a d-pad and moves focus to an element
         // in the currently hidden pane, we need to manually show that pane.
         CheatsActivity.setOnFocusChangeListenerRecursively(view) { _, hasFocus ->
             cheatsViewModel.onDetailsViewFocusChanged(hasFocus)
         }
-
         binding.toolbarCheatDetails.setNavigationOnClickListener {
             cheatsViewModel.closeDetailsView()
         }
-
         setInsets()
     }
-
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
-
     private fun clearEditErrors() {
         binding.editName.error = null
         binding.editCode.error = null
     }
-
     private fun onDeleteClicked() {
         val name = binding.editNameInput.text.toString()
         MaterialAlertDialogBuilder(requireContext())
@@ -95,19 +83,16 @@ class CheatDetailsFragment : Fragment() {
             .setNegativeButton(android.R.string.cancel, null)
             .show()
     }
-
     private fun onEditClicked() {
         cheatsViewModel.setIsEditing(true)
         binding.buttonOk.requestFocus()
     }
-
     private fun onCancelClicked() {
         cheatsViewModel.setIsEditing(false)
         onSelectedCheatUpdated(cheatsViewModel.selectedCheat.value)
         binding.buttonDelete.requestFocus()
         cheatsViewModel.closeDetailsView()
     }
-
     private fun onOkClicked() {
         clearEditErrors()
         val name = binding.editNameInput.text.toString()
@@ -136,11 +121,9 @@ class CheatDetailsFragment : Fragment() {
         }
         binding.buttonEdit.requestFocus()
     }
-
     private fun onSelectedCheatUpdated(cheat: Cheat?) {
         clearEditErrors()
         val isEditing: Boolean = cheatsViewModel.isEditing.value == true
-
         // If the fragment was recreated while editing a cheat, it's vital that we
         // don't repopulate the fields, otherwise the user's changes will be lost
         if (!isEditing) {
@@ -155,7 +138,6 @@ class CheatDetailsFragment : Fragment() {
             }
         }
     }
-
     private fun onIsEditingUpdated(isEditing: Boolean) {
         if (isEditing) {
             binding.root.visibility = View.VISIBLE
@@ -163,31 +145,25 @@ class CheatDetailsFragment : Fragment() {
         binding.editNameInput.isEnabled = isEditing
         binding.editNotesInput.isEnabled = isEditing
         binding.editCodeInput.isEnabled = isEditing
-
         binding.buttonDelete.visibility = if (isEditing) View.GONE else View.VISIBLE
         binding.buttonEdit.visibility = if (isEditing) View.GONE else View.VISIBLE
         binding.buttonCancel.visibility = if (isEditing) View.VISIBLE else View.GONE
         binding.buttonOk.visibility = if (isEditing) View.VISIBLE else View.GONE
     }
-
     private fun setInsets() =
         ViewCompat.setOnApplyWindowInsetsListener(
             binding.root
         ) { _: View?, windowInsets: WindowInsetsCompat ->
             val barInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             val cutoutInsets = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
-
             val leftInsets = barInsets.left + cutoutInsets.left
             val rightInsets = barInsets.right + cutoutInsets.right
-
             val mlpAppBar = binding.toolbarCheatDetails.layoutParams as ViewGroup.MarginLayoutParams
             mlpAppBar.leftMargin = leftInsets
             mlpAppBar.rightMargin = rightInsets
             binding.toolbarCheatDetails.layoutParams = mlpAppBar
-
             binding.scrollView.updatePadding(left = leftInsets, right = rightInsets)
             binding.buttonContainer.updatePadding(left = leftInsets, right = rightInsets)
-
             windowInsets
         }
 }

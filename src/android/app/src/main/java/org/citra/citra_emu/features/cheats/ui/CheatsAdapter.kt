@@ -1,9 +1,7 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.features.cheats.ui
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import org.citra.citra_emu.databinding.ListItemCheatBinding
 import org.citra.citra_emu.features.cheats.model.Cheat
 import org.citra.citra_emu.features.cheats.model.CheatsViewModel
-
 class CheatsAdapter(
     private val activity: FragmentActivity,
     private val viewModel: CheatsViewModel
@@ -25,12 +22,9 @@ class CheatsAdapter(
         addViewListeners(binding.root)
         return CheatViewHolder(binding)
     }
-
     override fun onBindViewHolder(holder: CheatViewHolder, position: Int) =
         holder.bind(activity, viewModel.cheats[position], position)
-
     override fun getItemCount(): Int = viewModel.cheats.size
-
     private fun addViewListeners(view: View) {
         // On a portrait phone screen (or other narrow screen), only one of the two panes are shown
         // at the same time. If the user is navigating using a d-pad and moves focus to an element
@@ -39,14 +33,12 @@ class CheatsAdapter(
             viewModel.onListViewFocusChanged(hasFocus)
         }
     }
-
     inner class CheatViewHolder(private val binding: ListItemCheatBinding) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener,
         CompoundButton.OnCheckedChangeListener {
         private lateinit var viewModel: CheatsViewModel
         private lateinit var cheat: Cheat
         private var position = 0
-
         fun bind(activity: FragmentActivity, cheat: Cheat, position: Int) {
             viewModel = ViewModelProvider(activity)[CheatsViewModel::class.java]
             this.cheat = cheat
@@ -56,12 +48,10 @@ class CheatsAdapter(
             binding.cheatContainer.setOnClickListener(this)
             binding.cheatSwitch.setOnCheckedChangeListener(this)
         }
-
         override fun onClick(root: View) {
             viewModel.setSelectedCheat(cheat, position)
             viewModel.openDetailsView()
         }
-
         override fun onCheckedChanged(buttonView: CompoundButton, isChecked: Boolean) {
             cheat.setEnabled(isChecked)
         }

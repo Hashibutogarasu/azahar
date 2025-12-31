@@ -1,12 +1,9 @@
 // Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
-
 package org.citra.citra_emu.features.settings.ui
-
 import org.citra.citra_emu.features.settings.model.AbstractSetting
 import org.citra.citra_emu.features.settings.model.view.SettingsItem
-
 /**
  * Abstraction for a screen showing a list of settings. Instances of
  * this type of view will each display a layer of the setting hierarchy.
@@ -18,17 +15,14 @@ interface SettingsFragmentView {
      * @param settingsList The result of converting the HashMap to an ArrayList
      */
     fun showSettingsList(settingsList: ArrayList<SettingsItem>)
-
     /**
      * Instructs the Fragment to load the settings screen.
      */
     fun loadSettingsList()
-
     /**
      * @return The Fragment's containing activity.
      */
     val activityView: SettingsActivityView?
-
     /**
      * Tell the Fragment to tell the containing Activity to show a new
      * Fragment containing a submenu of settings.
@@ -36,7 +30,6 @@ interface SettingsFragmentView {
      * @param menuKey Identifier for the settings group that should be shown.
      */
     fun loadSubMenu(menuKey: String)
-
     /**
      * Tell the Fragment to tell the containing activity to display a toast message.
      *
@@ -44,14 +37,12 @@ interface SettingsFragmentView {
      * @param is_long Whether this should be a long Toast or short one.
      */
     fun showToastMessage(message: String?, is_long: Boolean)
-
     /**
      * Have the fragment add a setting to the HashMap.
      *
      * @param setting The (possibly previously missing) new setting.
      */
     fun putSetting(setting: AbstractSetting)
-
     /**
      * Have the fragment tell the containing Activity that a setting was modified.
      */
