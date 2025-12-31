@@ -937,4 +937,8 @@
     <string name="quickload_not_found">No Quicksave available.</string>
 
     <string name="loader_game_does_not_exist">Game file does not exist</string>
+
+    <string name="perf_fps">FPS:\u00A0%d</string>
+    <string name="perf_speed">Speed:\u00A0%d%%</string>
+    <string name="perf_frame_time">Frame:\u00A0%.1fms (GPU: [CMD:\u00A0%.1fms SWP:\u00A0%.1fms] IPC:\u00A0%.1fms SVC:\u00A0%.1fms Rem:\u00A0%.1fms)</string>
 </resources>
