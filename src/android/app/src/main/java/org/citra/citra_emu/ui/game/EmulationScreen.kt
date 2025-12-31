@@ -27,11 +27,27 @@ fun EmulationScreen(
     onCloseSaveStateMenu: () -> Unit,
     isLayoutMenuOpen: Boolean,
     onCloseLayoutMenu: () -> Unit,
+    isOverlayMenuOpen: Boolean,
+    onCloseOverlayMenu: () -> Unit,
+    isAmiiboMenuOpen: Boolean,
+    onCloseAmiiboMenu: () -> Unit,
     onSurfaceCreated: (SurfaceView) -> Unit,
     onOverlayCreated: (InputOverlay) -> Unit,
     menuItems: List<EmulationMenuItem>,
     loadingState: LoadingState = LoadingState.Hidden,
     performanceText: String? = null,
+    // Overlay Options Callbacks
+    isOverlayEnabled: Boolean = true,
+    onOverlayEnabledChange: (Boolean) -> Unit = {},
+    scale: Float = 50f,
+    onScaleChange: (Float) -> Unit = {},
+    opacity: Float = 50f,
+    onOpacityChange: (Float) -> Unit = {},
+    onEditLayout: () -> Unit = {},
+    onResetOverlay: () -> Unit = {},
+    // Amiibo Callbacks
+    onLoadAmiibo: () -> Unit = {},
+    onRemoveAmiibo: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val drawerState = rememberDrawerState(
@@ -39,6 +55,8 @@ fun EmulationScreen(
     )
     val saveStateSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val layoutSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val overlaySheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val amiiboSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     LaunchedEffect(isDrawerOpen) {
         if (isDrawerOpen && drawerState.isClosed) {
@@ -70,13 +88,29 @@ fun EmulationScreen(
         }
     }
 
+    LaunchedEffect(isOverlayMenuOpen) {
+        if (isOverlayMenuOpen) {
+            overlaySheetState.show()
+        } else {
+            overlaySheetState.hide()
+        }
+    }
+
+    LaunchedEffect(isAmiiboMenuOpen) {
+        if (isAmiiboMenuOpen) {
+            amiiboSheetState.show()
+        } else {
+            amiiboSheetState.hide()
+        }
+    }
+
     BackHandler(enabled = drawerState.isOpen) {
         onCloseDrawer()
     }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = !isSaveStateMenuOpen && !isLayoutMenuOpen,
+        gesturesEnabled = !isSaveStateMenuOpen && !isLayoutMenuOpen && !isOverlayMenuOpen && !isAmiiboMenuOpen,
         drawerContent = {
             ModalDrawerSheet {
                 EmulationMenu(
@@ -173,6 +207,38 @@ fun EmulationScreen(
                         ) {
                             Text("Layout Options Menu Placeholder")
                         }
+                    }
+                }
+
+                if (isOverlayMenuOpen) {
+                    ModalBottomSheet(
+                        onDismissRequest = onCloseOverlayMenu,
+                        sheetState = overlaySheetState
+                    ) {
+                        OverlayOptionsBottomSheet(
+                            isOverlayEnabled = isOverlayEnabled,
+                            onOverlayEnabledChange = onOverlayEnabledChange,
+                            isHapticFeedbackEnabled = false,
+                            onHapticFeedbackChange = {},
+                            opacity = opacity,
+                            onOpacityChange = onOpacityChange,
+                            scale = scale,
+                            onScaleChange = onScaleChange,
+                            onEditLayout = onEditLayout,
+                            onResetOverlay = onResetOverlay
+                        )
+                    }
+                }
+
+                if (isAmiiboMenuOpen) {
+                    ModalBottomSheet(
+                        onDismissRequest = onCloseAmiiboMenu,
+                        sheetState = amiiboSheetState
+                    ) {
+                        AmiiboBottomSheet(
+                            onLoadAmiibo = onLoadAmiibo,
+                            onRemoveAmiibo = onRemoveAmiibo
+                        )
                     }
                 }
             }

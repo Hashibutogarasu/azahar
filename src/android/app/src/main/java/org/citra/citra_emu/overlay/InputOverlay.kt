@@ -2,6 +2,7 @@
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
 package org.citra.citra_emu.overlay
+
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
@@ -26,6 +27,7 @@ import org.citra.citra_emu.utils.EmulationMenuSettings
 import org.citra.citra_emu.utils.TurboHelper
 import java.lang.NullPointerException
 import kotlin.math.min
+
 /**
  * Draws the interactive input overlay on top of the
  * [SurfaceView] that is rendering emulation.
@@ -43,8 +45,10 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
     private var dpadBeingConfigured: InputOverlayDrawableDpad? = null
     private var joystickBeingConfigured: InputOverlayDrawableJoystick? = null
     private val settingsViewModel = NativeLibrary.sEmulationActivity.get()!!.settingsViewModel
+
     // Stores the ID of the pointer that interacted with the 3DS touchscreen.
     private var touchscreenPointerId = -1
+
     init {
         if (!preferences.getBoolean("OverlayInit", false)) {
             defaultOverlay()
@@ -60,12 +64,14 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
         // Request focus for the overlay so it has priority on presses.
         requestFocus()
     }
+
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
         overlayButtons.forEach { it.draw(canvas) }
         overlayDpads.forEach { it.draw(canvas) }
         overlayJoysticks.forEach { it.draw(canvas) }
     }
+
     private fun swapScreen() {
         val isEnabled = !EmulationMenuSettings.swapScreens
         EmulationMenuSettings.swapScreens = isEnabled
@@ -74,10 +80,12 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
             (context as Activity).windowManager.defaultDisplay.rotation
         )
     }
-    fun hapticFeedback(type:Int){
-        if(EmulationMenuSettings.hapticFeedback)
+
+    fun hapticFeedback(type: Int) {
+        if (EmulationMenuSettings.hapticFeedback)
             performHapticFeedback(type)
     }
+
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         if (isInEditMode) {
             return onTouchWhileEditing(event)
@@ -117,7 +125,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                 }
             }
             var hasActiveJoystick = false
-            if(!hasActiveButtons && !hasActiveDpad){
+            if (!hasActiveButtons && !hasActiveDpad) {
                 for (joystick in overlayJoysticks) {
                     if (joystick.trackId == pointerId) {
                         hasActiveJoystick = true
@@ -137,17 +145,17 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
             }
             var anyOverlayStateChanged = false
             var shouldUpdateView = false
-            if(!hasActiveDpad && !hasActiveJoystick) {
+            if (!hasActiveDpad && !hasActiveJoystick) {
                 for (button in overlayButtons) {
-                    val stateChanged = button.updateStatus(event, pointerIndex, hasActiveButtons, this)
+                    val stateChanged =
+                        button.updateStatus(event, pointerIndex, hasActiveButtons, this)
                     if (!stateChanged) {
                         continue
                     }
                     anyOverlayStateChanged = true
                     if (button.id == NativeLibrary.ButtonType.BUTTON_SWAP && button.status == NativeLibrary.ButtonState.PRESSED) {
                         swapScreen()
-                    }
-                    else if (button.id == NativeLibrary.ButtonType.BUTTON_TURBO && button.status == NativeLibrary.ButtonState.PRESSED) {
+                    } else if (button.id == NativeLibrary.ButtonType.BUTTON_TURBO && button.status == NativeLibrary.ButtonState.PRESSED) {
                         TurboHelper.toggleTurbo(true)
                     }
                     NativeLibrary.onGamePadEvent(
@@ -158,7 +166,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                     shouldUpdateView = true
                 }
             }
-            if(!hasActiveButtons && !hasActiveJoystick) {
+            if (!hasActiveButtons && !hasActiveJoystick) {
                 for (dpad in overlayDpads) {
                     val stateChanged = dpad.updateStatus(
                         event,
@@ -194,9 +202,10 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                     shouldUpdateView = true
                 }
             }
-            if(!hasActiveDpad && !hasActiveButtons) {
+            if (!hasActiveDpad && !hasActiveButtons) {
                 for (joystick in overlayJoysticks) {
-                    val stateChanged = joystick.updateStatus(event, pointerIndex, hasActiveJoystick, this)
+                    val stateChanged =
+                        joystick.updateStatus(event, pointerIndex, hasActiveJoystick, this)
                     if (!stateChanged) {
                         continue
                     }
@@ -247,6 +256,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
         }
         return true
     }
+
     fun onTouchWhileEditing(event: MotionEvent): Boolean {
         val pointerIndex = event.actionIndex
         val fingerPositionX = event.getX(pointerIndex).toInt()
@@ -266,11 +276,13 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                         buttonBeingConfigured = it
                         buttonBeingConfigured!!.onConfigureTouch(event)
                     }
+
                 MotionEvent.ACTION_MOVE -> if (buttonBeingConfigured != null) {
                     buttonBeingConfigured!!.onConfigureTouch(event)
                     invalidate()
                     return true
                 }
+
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> if (buttonBeingConfigured == it) {
                     // Persist button position by saving new place.
                     saveControlPosition(
@@ -293,11 +305,13 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                         dpadBeingConfigured = it
                         dpadBeingConfigured!!.onConfigureTouch(event)
                     }
+
                 MotionEvent.ACTION_MOVE -> if (dpadBeingConfigured != null) {
                     dpadBeingConfigured!!.onConfigureTouch(event)
                     invalidate()
                     return true
                 }
+
                 MotionEvent.ACTION_UP,
                 MotionEvent.ACTION_POINTER_UP -> if (dpadBeingConfigured == it) {
                     // Persist button position by saving new place.
@@ -319,10 +333,12 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                     joystickBeingConfigured = it
                     joystickBeingConfigured!!.onConfigureTouch(event)
                 }
+
                 MotionEvent.ACTION_MOVE -> if (joystickBeingConfigured != null) {
                     joystickBeingConfigured!!.onConfigureTouch(event)
                     invalidate()
                 }
+
                 MotionEvent.ACTION_UP,
                 MotionEvent.ACTION_POINTER_UP -> if (joystickBeingConfigured != null) {
                     saveControlPosition(
@@ -336,6 +352,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
         }
         return true
     }
+
     private fun addOverlayControls(orientation: String) {
         if (preferences.getBoolean("buttonToggle0", true)) {
             overlayButtons.add(
@@ -520,6 +537,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
             )
         }
     }
+
     fun refreshControls() {
         // Remove all the overlay buttons from the HashSet.
         overlayButtons.clear()
@@ -537,15 +555,27 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
         }
         invalidate()
     }
+
     private fun saveControlPosition(sharedPrefsId: Int, x: Int, y: Int, orientation: String) {
         preferences.edit()
             .putFloat("$sharedPrefsId$orientation-X", x.toFloat())
             .putFloat("$sharedPrefsId$orientation-Y", y.toFloat())
             .apply()
     }
+
     fun setIsInEditMode(isInEditMode: Boolean) {
         this.isInEditMode = isInEditMode
     }
+
+    fun isEditing(): Boolean {
+        return isInEditMode
+    }
+
+    fun toggleEditMode() {
+        isInEditMode = !isInEditMode
+        invalidate()
+    }
+
     private fun defaultOverlay() {
         if (!preferences.getBoolean("OverlayInit", false)) {
             // It's possible that a user has created their overlay before this was added
@@ -569,6 +599,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
             .putBoolean("OverlayInit", true)
             .apply()
     }
+
     fun resetButtonPlacement() {
         val isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
         if (isLandscape) {
@@ -578,6 +609,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
         }
         refreshControls()
     }
+
     private fun defaultOverlayLandscape() {
         // Get screen size
         val display = (context as Activity).windowManager.defaultDisplay
@@ -724,6 +756,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
             )
             .apply()
     }
+
     private fun defaultOverlayPortrait() {
         // Get screen size
         val display = (context as Activity).windowManager.defaultDisplay
@@ -873,12 +906,15 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
             )
             .apply()
     }
+
     override fun isInEditMode(): Boolean {
         return isInEditMode
     }
+
     companion object {
         private val preferences
             get() = PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
+
         /**
          * Resizes a [Bitmap] by a given scale factor
          *
@@ -905,6 +941,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
             vectorDrawable.draw(canvas)
             return scaledBitmap
         }
+
         /**
          * Resizes a [Bitmap] by a given scale factor
          *
@@ -925,6 +962,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                 true
             )
         }
+
         /**
          * Initializes an InputOverlayDrawableButton, given by resId, with all of the
          * parameters set for it to be properly shown on the InputOverlay.
@@ -974,11 +1012,13 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                 NativeLibrary.ButtonType.BUTTON_START,
                 NativeLibrary.ButtonType.BUTTON_SELECT,
                 NativeLibrary.ButtonType.BUTTON_SWAP -> 0.08f
+
                 NativeLibrary.ButtonType.BUTTON_TURBO -> 0.10f
                 NativeLibrary.ButtonType.TRIGGER_L,
                 NativeLibrary.ButtonType.TRIGGER_R,
                 NativeLibrary.ButtonType.BUTTON_ZL,
                 NativeLibrary.ButtonType.BUTTON_ZR -> 0.18f
+
                 else -> 0.11f
             }
             scale *= (preferences.getInt("controlScale", 50) + 50).toFloat()
@@ -990,7 +1030,13 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
             val defaultStateBitmap = getBitmap(context, defaultResId, scale)
             val pressedStateBitmap = getBitmap(context, pressedResId, scale)
             val overlayDrawable =
-                InputOverlayDrawableButton(res, defaultStateBitmap, pressedStateBitmap, buttonId, opacity)
+                InputOverlayDrawableButton(
+                    res,
+                    defaultStateBitmap,
+                    pressedStateBitmap,
+                    buttonId,
+                    opacity
+                )
             // The X and Y coordinates of the InputOverlayDrawableButton on the InputOverlay.
             // These were set in the input overlay configuration menu.
             val xKey = "$buttonId$orientation-X"
@@ -1006,6 +1052,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
             overlayDrawable.setPosition(drawableX, drawableY)
             return overlayDrawable
         }
+
         /**
          * Initializes an [InputOverlayDrawableDpad]
          *
@@ -1045,7 +1092,8 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
             // Initialize the InputOverlayDrawableDpad.
             val defaultStateBitmap = getBitmap(context, defaultResId, scale)
             val pressedOneDirectionStateBitmap = getBitmap(context, pressedOneDirectionResId, scale)
-            val pressedTwoDirectionsStateBitmap = getBitmap(context, pressedTwoDirectionsResId, scale)
+            val pressedTwoDirectionsStateBitmap =
+                getBitmap(context, pressedTwoDirectionsResId, scale)
             val overlayDrawable = InputOverlayDrawableDpad(
                 res,
                 defaultStateBitmap,
@@ -1070,6 +1118,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
             overlayDrawable.setPosition(drawableX, drawableY)
             return overlayDrawable
         }
+
         /**
          * Initializes an [InputOverlayDrawableJoystick]
          *

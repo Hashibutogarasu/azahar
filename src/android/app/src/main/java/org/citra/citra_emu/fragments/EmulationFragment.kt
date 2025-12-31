@@ -21,6 +21,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
+import java.io.File
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -61,6 +63,7 @@ import org.citra.citra_emu.utils.FileUtil
 import org.citra.citra_emu.utils.GameHelper
 import org.citra.citra_emu.utils.Log
 import org.citra.citra_emu.viewmodel.EmulationViewModel
+import org.citra.citra_emu.viewmodel.EmulationMenuViewModel
 
 class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.FrameCallback {
     private val preferences: SharedPreferences
@@ -72,6 +75,7 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
     private lateinit var game: Game
     private lateinit var screenAdjustmentUtil: ScreenAdjustmentUtil
     private val emulationViewModel: EmulationViewModel by activityViewModels()
+    private val menuViewModel: EmulationMenuViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
     private val settings get() = settingsViewModel.settings
     private val onPause = Runnable { togglePause() }
@@ -79,10 +83,6 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
 
     // States for Compose
     private var performanceText by mutableStateOf<String?>(null)
-    private var isPaused by mutableStateOf(false)
-    private var menuDrawerState by mutableStateOf(false)
-    private var isSaveStateMenuOpen by mutableStateOf(false)
-    private var isLayoutMenuOpen by mutableStateOf(false)
 
     // View references captured from Compose
     private var surfaceView: SurfaceView? = null
@@ -151,15 +151,29 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
             this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    when {
-                        menuDrawerState -> menuDrawerState = false
-                        isSaveStateMenuOpen -> isSaveStateMenuOpen = false
-                        isLayoutMenuOpen -> isLayoutMenuOpen = false
-                        else -> menuDrawerState = true
+                    with(menuViewModel) {
+                        when {
+                            isDrawerOpen.value -> setDrawerOpen(false)
+                            isSaveStateMenuOpen.value -> setSaveStateMenuOpen(false)
+                            isOverlayMenuOpen.value -> setOverlayMenuOpen(false)
+                            isAmiiboMenuOpen.value -> setAmiiboMenuOpen(false)
+                            isLayoutMenuOpen.value -> setLayoutMenuOpen(false)
+                            else -> setDrawerOpen(true)
+                        }
                     }
                 }
             }
         )
+    }
+
+    private val amiiboFilePicker = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null) {
+            val cacheDir = requireContext().cacheDir.absolutePath
+            if (FileUtil.copyUriToInternalStorage(uri, cacheDir, "amiibo.bin")) {
+               val filePath = File(cacheDir, "amiibo.bin").absolutePath
+               NativeLibrary.loadAmiibo(filePath)
+            }
+        }
     }
 
     override fun onCreateView(
@@ -201,15 +215,51 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
                     )
                 }
 
+                val menuDrawerState by menuViewModel.isDrawerOpen.collectAsState()
+                val isSaveStateMenuOpen by menuViewModel.isSaveStateMenuOpen.collectAsState()
+                val isLayoutMenuOpen by menuViewModel.isLayoutMenuOpen.collectAsState()
+                val isOverlayMenuOpen by menuViewModel.isOverlayMenuOpen.collectAsState()
+                val isAmiiboMenuOpen by menuViewModel.isAmiiboMenuOpen.collectAsState()
+
+                // Overlay Settings States
+                var isOverlayEnabled by remember {
+                    mutableStateOf(
+                        EmulationMenuSettings.showOverlay
+                    )
+                }
+                var overlayScale by remember {
+                    mutableStateOf(
+                        preferences.getInt("controlScale", 50).toFloat()
+                    )
+                }
+                var overlayOpacity by remember {
+                    mutableStateOf(
+                        preferences.getInt(
+                            "controlOpacity",
+                            50
+                        ).toFloat()
+                    )
+                }
+
                 CitraTheme {
                     EmulationScreen(
                         game = game,
+                        // Drawer
                         isDrawerOpen = menuDrawerState,
-                        onCloseDrawer = { menuDrawerState = false },
+                        onCloseDrawer = { menuViewModel.setDrawerOpen(false) },
+                        // Save State
                         isSaveStateMenuOpen = isSaveStateMenuOpen,
-                        onCloseSaveStateMenu = { isSaveStateMenuOpen = false },
+                        onCloseSaveStateMenu = { menuViewModel.setSaveStateMenuOpen(false) },
+                        // Layout
                         isLayoutMenuOpen = isLayoutMenuOpen,
-                        onCloseLayoutMenu = { isLayoutMenuOpen = false },
+                        onCloseLayoutMenu = { menuViewModel.setLayoutMenuOpen(false) },
+                        // Overlay
+                        isOverlayMenuOpen = isOverlayMenuOpen,
+                        onCloseOverlayMenu = { menuViewModel.setOverlayMenuOpen(false) },
+                        // Amiibo
+                        isAmiiboMenuOpen = isAmiiboMenuOpen,
+                        onCloseAmiiboMenu = { menuViewModel.setAmiiboMenuOpen(false) },
+
                         onSurfaceCreated = { view ->
                             surfaceView = view
                             view.holder.addCallback(this@EmulationFragment)
@@ -220,7 +270,40 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
                         },
                         menuItems = menuItems,
                         loadingState = loadingState,
-                        performanceText = performanceText
+                        performanceText = performanceText,
+
+                        // Overlay Options Callbacks
+                        isOverlayEnabled = isOverlayEnabled,
+                        onOverlayEnabledChange = { enabled ->
+                            isOverlayEnabled = enabled
+                            EmulationMenuSettings.showOverlay = enabled
+                            inputOverlay?.refreshControls()
+                        },
+                        scale = overlayScale,
+                        onScaleChange = { value ->
+                            overlayScale = value
+                            setControlScale(value.toInt(), "controlScale")
+                        },
+                        opacity = overlayOpacity,
+                        onOpacityChange = { value ->
+                            overlayOpacity = value
+                            setControlOpacity(value.toInt())
+                        },
+                        onEditLayout = {
+                            menuViewModel.setOverlayMenuOpen(false)
+                            inputOverlay?.toggleEditMode()
+                        },
+                        onResetOverlay = {
+                            resetInputOverlay()
+                            // Refresh local state to match reset values
+                            isOverlayEnabled = EmulationMenuSettings.showOverlay
+                            overlayScale = preferences.getInt("controlScale", 50).toFloat()
+                            overlayOpacity = preferences.getInt("controlOpacity", 50).toFloat()
+                        },
+
+                        // Amiibo Callbacks
+                        onLoadAmiibo = { amiiboFilePicker.launch("*/*") },
+                        onRemoveAmiibo = { NativeLibrary.removeAmiibo() }
                     )
                 }
             }
@@ -228,16 +311,17 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
     }
 
     fun isDrawerOpen(): Boolean {
-        return menuDrawerState
+        return menuViewModel.isDrawerOpen.value
     }
 
     private fun togglePause() {
         if (emulationState.isPaused) {
             emulationState.unpause()
+            menuViewModel.setPaused(false)
         } else {
             emulationState.pause()
+            menuViewModel.setPaused(true)
         }
-        isPaused = emulationState.isPaused
     }
 
     override fun onResume() {
@@ -245,7 +329,7 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
         Choreographer.getInstance().postFrameCallback(this)
         if (NativeLibrary.isRunning()) {
             emulationState.pause()
-            isPaused = true
+            menuViewModel.setPaused(true)
             return
         }
         if (DirectoryInitialization.areCitraDirectoriesReady()) {
@@ -258,6 +342,7 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
     override fun onPause() {
         if (NativeLibrary.isRunning()) {
             emulationState.pause()
+            menuViewModel.setPaused(true)
         }
         Choreographer.getInstance().removeFrameCallback(this)
         super.onPause()
@@ -300,7 +385,7 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
     @Composable
     private fun rememberMenuItems(): List<EmulationMenuItem> {
         val context = androidx.compose.ui.platform.LocalContext.current
-        val isPaused = emulationState.isPaused
+        val isPaused by menuViewModel.isPaused.collectAsState()
 
         return remember(isPaused) {
             listOf(
@@ -313,26 +398,24 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
                     titleId = R.string.savestates,
                     iconId = R.drawable.ic_save,
                     action = {
-                        menuDrawerState = false
-                        isSaveStateMenuOpen = true
+                        menuViewModel.setSaveStateMenuOpen(true)
                     }
                 ),
                 EmulationMenuItem.Action(
                     titleId = R.string.emulation_overlay_options,
                     iconId = R.drawable.ic_controller,
-                    action = { /* TODO: Implement Overlay Dialog */ }
+                    action = { menuViewModel.setOverlayMenuOpen(true) }
                 ),
                 EmulationMenuItem.Action(
                     titleId = R.string.menu_emulation_amiibo,
                     iconId = R.drawable.ic_nfc,
-                    action = { /* TODO: Implement Amiibo Dialog */ }
+                    action = { menuViewModel.setAmiiboMenuOpen(true) }
                 ),
                 EmulationMenuItem.Action(
                     titleId = R.string.emulation_switch_screen_layout,
                     iconId = R.drawable.ic_splitscreen,
                     action = {
-                        menuDrawerState = false
-                        isLayoutMenuOpen = true
+                        menuViewModel.setLayoutMenuOpen(true)
                     }
                 ),
                 EmulationMenuItem.Action(
@@ -432,8 +515,10 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
     private fun resetInputOverlay() {
         resetAllScales()
         preferences.edit()
+            .putInt("controlScale", 50)
             .putInt("controlOpacity", 50)
             .apply()
+        EmulationMenuSettings.showOverlay = true
         val editor = preferences.edit()
         for (i in 0 until 16) {
             var defaultValue = true
