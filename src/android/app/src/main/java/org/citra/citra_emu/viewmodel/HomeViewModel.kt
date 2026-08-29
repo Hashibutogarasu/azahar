@@ -14,11 +14,22 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.R
-import org.citra.citra_emu.fragments.CitraDirectoryDialogFragment
 import org.citra.citra_emu.utils.GameHelper
 import org.citra.citra_emu.utils.PermissionsHandler
 
 class HomeViewModel : ViewModel() {
+    /** Callback invoked once the user confirms or cancels the pending citra-directory dialog. */
+    fun interface DirectoryDialogListener {
+        fun onPressPositiveButton(moveData: Boolean, path: Uri)
+    }
+
+    val pendingDirectoryPath get() = _pendingDirectoryPath.asStateFlow()
+    private val _pendingDirectoryPath = MutableStateFlow<Uri?>(null)
+
+    fun setPendingDirectoryPath(path: Uri?) {
+        _pendingDirectoryPath.value = path
+    }
+
     val navigationVisible get() = _navigationVisible.asStateFlow()
     private val _navigationVisible = MutableStateFlow(Pair(false, false))
 
@@ -44,7 +55,7 @@ class HomeViewModel : ViewModel() {
         ).path ?: ""
     )
 
-    var directoryListener: CitraDirectoryDialogFragment.Listener? = null
+    var directoryListener: DirectoryDialogListener? = null
 
     val dirProgress get() = _dirProgress.asStateFlow()
     private val _dirProgress = MutableStateFlow(0)
@@ -58,7 +69,13 @@ class HomeViewModel : ViewModel() {
     val copyComplete get() = _copyComplete.asStateFlow()
     private val _copyComplete = MutableStateFlow(false)
 
-    var copyInProgress = false
+    val copyInProgress get() = _copyInProgress.value
+    val copyInProgressFlow get() = _copyInProgress.asStateFlow()
+    private val _copyInProgress = MutableStateFlow(false)
+
+    fun setCopyInProgress(inProgress: Boolean) {
+        _copyInProgress.value = inProgress
+    }
 
     var navigatedToSetup = false
 
@@ -95,7 +112,7 @@ class HomeViewModel : ViewModel() {
         _dirProgress.value = 0
         _maxDirProgress.value = 0
         _copyComplete.value = false
-        copyInProgress = false
+        _copyInProgress.value = false
     }
 
     fun onUpdateSearchProgress(resources: Resources, directoryName: String) {
