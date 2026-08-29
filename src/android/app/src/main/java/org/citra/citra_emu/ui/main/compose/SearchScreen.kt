@@ -45,6 +45,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.CheatsRouteDestination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import info.debatty.java.stringsimilarity.Jaccard
 import info.debatty.java.stringsimilarity.JaroWinkler
 import org.citra.citra_emu.CitraApplication
@@ -63,14 +67,20 @@ private enum class SearchFilter { NONE, RECENTLY_PLAYED, RECENTLY_ADDED, INSTALL
  * Search and filter tab. Mirrors the legacy `SearchFragment`; reuses [GameCard] from
  * [GamesScreen] for result rendering.
  */
+@Destination<RootGraph>
 @Composable
 fun SearchScreen(
+    navigator: DestinationsNavigator,
     gamesViewModel: GamesViewModel,
     homeViewModel: HomeViewModel,
-    onGameClick: (Game) -> Unit,
-    onCheatsClick: (Game) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val onGameClick: (Game) -> Unit = { game -> context.startActivity(game.launchIntent) }
+    val onCheatsClick: (Game) -> Unit = { game ->
+        navigator.navigate(CheatsRouteDestination(titleId = game.titleId))
+    }
+
     LaunchedEffect(Unit) {
         homeViewModel.setNavigationVisibility(visible = true, animated = true)
         homeViewModel.setStatusBarShadeVisibility(visible = true)
@@ -83,7 +93,6 @@ fun SearchScreen(
     var filter by rememberSaveable { mutableStateOf(SearchFilter.NONE) }
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val context = LocalContext.current
     val preferences = remember {
         PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
     }

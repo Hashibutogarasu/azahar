@@ -35,6 +35,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.citra.citra_emu.R
 import org.citra.citra_emu.model.License
 import org.citra.citra_emu.viewmodel.HomeViewModel
@@ -153,17 +156,20 @@ private val LICENSES = listOf(
 )
 
 /** Mirrors the legacy `LicensesFragment` + `LicenseAdapter`. */
+@Destination<RootGraph>
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LicensesScreen(
+    navigator: DestinationsNavigator,
     homeViewModel: HomeViewModel,
-    onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LaunchedEffect(Unit) {
         homeViewModel.setNavigationVisibility(visible = false, animated = true)
         homeViewModel.setStatusBarShadeVisibility(visible = false)
     }
+
+    val onNavigateBack: () -> Unit = { navigator.navigateUp() }
 
     var selectedLicense by remember { mutableStateOf<License?>(null) }
 

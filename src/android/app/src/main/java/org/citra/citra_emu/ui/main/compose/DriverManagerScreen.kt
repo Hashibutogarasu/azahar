@@ -47,6 +47,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.citra.citra_emu.R
 import org.citra.citra_emu.ui.main.compose.dialogs.DriversLoadingDialog
 import org.citra.citra_emu.ui.main.compose.dialogs.IndeterminateProgressDialog
@@ -59,13 +62,14 @@ import org.citra.citra_emu.viewmodel.TaskViewModel
 import java.io.IOException
 
 /** Mirrors the legacy `DriverManagerFragment` + `DriverAdapter`. */
+@Destination<RootGraph>
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DriverManagerScreen(
+    navigator: DestinationsNavigator,
     homeViewModel: HomeViewModel,
     driverViewModel: DriverViewModel,
     taskViewModel: TaskViewModel,
-    onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LaunchedEffect(Unit) {
@@ -77,6 +81,7 @@ fun DriverManagerScreen(
     }
 
     val context = LocalContext.current
+    val onNavigateBack: () -> Unit = { navigator.navigateUp() }
     val drivers by driverViewModel.driverList.collectAsStateWithLifecycle()
     val selectedDriver by driverViewModel.selectedDriverFlow.collectAsStateWithLifecycle()
     val areDriversLoading by driverViewModel.areDriversLoading.collectAsStateWithLifecycle()

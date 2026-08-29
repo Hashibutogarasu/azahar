@@ -6,7 +6,11 @@ package org.citra.citra_emu.ui.main.compose
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -43,10 +47,30 @@ import androidx.compose.ui.unit.dp
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.preference.PreferenceManager
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkManager
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.AboutScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.DriverManagerScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.SystemFilesScreenDestination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.R
+import org.citra.citra_emu.contracts.OpenFileResultContract
+import org.citra.citra_emu.features.settings.ui.SettingsActivity
+import org.citra.citra_emu.features.settings.utils.SettingsFile
+import org.citra.citra_emu.features.settings.model.Settings
+import org.citra.citra_emu.model.Game
 import org.citra.citra_emu.model.HomeSetting
 import org.citra.citra_emu.ui.main.compose.dialogs.MessageDialog
+import org.citra.citra_emu.utils.CiaInstallWorker
+import org.citra.citra_emu.utils.CitraDirectoryHelper
+import org.citra.citra_emu.utils.FileBrowserHelper
+import org.citra.citra_emu.utils.GameHelper
 import org.citra.citra_emu.utils.GpuDriverHelper
 import org.citra.citra_emu.utils.Log
 import org.citra.citra_emu.utils.PermissionsHandler
@@ -57,19 +81,12 @@ import org.citra.citra_emu.viewmodel.HomeViewModel
  * The home tab's grid of app-level settings and shortcuts. Mirrors the legacy
  * `HomeSettingsFragment` + `HomeSettingAdapter`, reusing the existing [HomeSetting] model.
  */
+@Destination<RootGraph>
 @Composable
 fun HomeSettingsScreen(
+    navigator: DestinationsNavigator,
     homeViewModel: HomeViewModel,
     driverViewModel: DriverViewModel,
-    onOpenSettings: () -> Unit,
-    onOpenThemeSettings: () -> Unit,
-    onInstallCia: () -> Unit,
-    onOpenCitraDirectory: () -> Unit,
-    onOpenGamesDirectory: () -> Unit,
-    onNavigateToSystemFiles: () -> Unit,
-    onNavigateToDriverManager: () -> Unit,
-    onNavigateToAbout: () -> Unit,
-    onConnectArticBase: (address: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LaunchedEffect(Unit) {
@@ -78,8 +95,63 @@ fun HomeSettingsScreen(
     }
 
     val context = LocalContext.current
+    val activity = context as AppCompatActivity
     var showArticDialog by remember { mutableStateOf(false) }
     var disabledOption by remember { mutableStateOf<HomeSetting?>(null) }
+
+    val onOpenSettings: () -> Unit = { SettingsActivity.launch(context, SettingsFile.FILE_NAME_CONFIG, "") }
+    val onOpenThemeSettings: () -> Unit = { SettingsActivity.launch(context, Settings.SECTION_THEME, "") }
+    val onNavigateToSystemFiles: () -> Unit = { navigator.navigate(SystemFilesScreenDestination) }
+    val onNavigateToDriverManager: () -> Unit = { navigator.navigate(DriverManagerScreenDestination) }
+    val onNavigateToAbout: () -> Unit = { navigator.navigate(AboutScreenDestination) }
+    val onConnectArticBase: (String) -> Unit = { address ->
+        context.startActivity(
+            Game(title = context.getString(R.string.artic_base), path = "articbase://$address", filename = "").launchIntent
+        )
+    }
+
+    val ciaFileInstaller = rememberLauncherForActivityResult(OpenFileResultContract()) { result: Intent? ->
+        if (result != null) {
+            val selectedFiles = FileBrowserHelper.getSelectedFiles(result, context, listOf("cia"))
+            if (selectedFiles == null) {
+                Toast.makeText(context, R.string.cia_file_not_found, Toast.LENGTH_LONG).show()
+            } else {
+                WorkManager.getInstance(context).enqueueUniqueWork(
+                    "installCiaWork",
+                    ExistingWorkPolicy.APPEND_OR_REPLACE,
+                    OneTimeWorkRequest.Builder(CiaInstallWorker::class.java)
+                        .setInputData(Data.Builder().putStringArray("CIA_FILES", selectedFiles).build())
+                        .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                        .build()
+                )
+            }
+        }
+    }
+    val onInstallCia: () -> Unit = { ciaFileInstaller.launch(true) }
+
+    val openCitraDirectory = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocumentTree()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            CitraDirectoryHelper(activity).showCitraDirectoryDialog(uri)
+        }
+    }
+    val onOpenCitraDirectory: () -> Unit = { openCitraDirectory.launch(null) }
+
+    val getGamesDirectory = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocumentTree()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            context.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
+                .edit().putString(GameHelper.KEY_GAME_PATH, uri.toString()).apply()
+            Toast.makeText(context, R.string.games_dir_selected, Toast.LENGTH_LONG).show()
+            homeViewModel.setGamesDir(activity, uri.path!!)
+        }
+    }
+    val onOpenGamesDirectory: () -> Unit = {
+        getGamesDirectory.launch(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).data)
+    }
 
     val options = remember {
         listOf(

@@ -65,16 +65,21 @@ import org.citra.citra_emu.utils.CitraDirectoryHelper
 import org.citra.citra_emu.utils.GameHelper
 import org.citra.citra_emu.utils.PermissionsHandler
 import org.citra.citra_emu.viewmodel.HomeViewModel
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.GamesScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.SetupScreenDestination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 /**
  * First-time-launch onboarding flow. Mirrors the legacy `SetupFragment` + `SetupAdapter`,
  * using [HorizontalPager] instead of `ViewPager2`.
  */
+@Destination<RootGraph>
 @Composable
 fun SetupScreen(
+    navigator: DestinationsNavigator,
     homeViewModel: HomeViewModel,
-    onFinishSetup: () -> Unit,
-    onFinish: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LaunchedEffect(Unit) {
@@ -83,6 +88,12 @@ fun SetupScreen(
 
     val context = LocalContext.current
     val activity = context as FragmentActivity
+    val onFinishSetup: () -> Unit = {
+        navigator.navigate(GamesScreenDestination) {
+            popUpTo(SetupScreenDestination) { inclusive = true }
+        }
+    }
+    val onFinish: () -> Unit = { activity.finish() }
     val preferences = remember {
         PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
     }

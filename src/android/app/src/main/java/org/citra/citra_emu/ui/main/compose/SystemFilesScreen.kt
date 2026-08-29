@@ -48,6 +48,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.text.HtmlCompat
 import androidx.preference.PreferenceManager
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -73,13 +76,13 @@ private sealed class SystemFilesDialog {
  * "set up system files" flow (detect installed titles, pick O3DS/N3DS + Artic address, install),
  * and the home menu launcher.
  */
+@Destination<RootGraph>
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SystemFilesScreen(
+    navigator: DestinationsNavigator,
     homeViewModel: HomeViewModel,
     gamesViewModel: GamesViewModel,
-    onNavigateBack: () -> Unit,
-    onLaunchEmulation: (Game) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LaunchedEffect(Unit) {
@@ -89,6 +92,8 @@ fun SystemFilesScreen(
     }
 
     val context = LocalContext.current
+    val onNavigateBack: () -> Unit = { navigator.navigateUp() }
+    val onLaunchEmulation: (Game) -> Unit = { game -> context.startActivity(game.launchIntent) }
     val preferences = remember {
         PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
     }

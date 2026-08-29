@@ -66,6 +66,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.preference.PreferenceManager
 import coil.ImageLoader
 import coil.compose.AsyncImage
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.CheatsRouteDestination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -81,15 +85,21 @@ import org.citra.citra_emu.viewmodel.HomeViewModel
  * The default home tab: a grid of installed/discovered games. Mirrors the legacy
  * `GamesFragment` + `GameAdapter`.
  */
+@Destination<RootGraph>(start = true)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GamesScreen(
+    navigator: DestinationsNavigator,
     gamesViewModel: GamesViewModel,
     homeViewModel: HomeViewModel,
-    onGameClick: (Game) -> Unit,
-    onCheatsClick: (Game) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val onGameClick: (Game) -> Unit = { game -> context.startActivity(game.launchIntent) }
+    val onCheatsClick: (Game) -> Unit = { game ->
+        navigator.navigate(CheatsRouteDestination(titleId = game.titleId))
+    }
+
     val allGames by gamesViewModel.games.collectAsStateWithLifecycle()
     val isReloading by gamesViewModel.isReloading.collectAsStateWithLifecycle()
     val shouldSwapData by gamesViewModel.shouldSwapData.collectAsStateWithLifecycle()
