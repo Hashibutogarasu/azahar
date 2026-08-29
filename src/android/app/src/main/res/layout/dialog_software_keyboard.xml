@@ -9,7 +9,6 @@
     android:paddingHorizontal="24dp"
     tools:hint="@string/cheats_name"
     app:errorEnabled="true"
-    app:layout_constraintBottom_toTopOf="@id/edit_notes"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent">

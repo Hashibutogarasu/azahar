@@ -5,59 +5,45 @@
 package org.citra.citra_emu.features.cheats.ui
 
 import android.os.Bundle
-import android.view.View
-import android.view.View.OnFocusChangeListener
-import android.view.ViewGroup
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
-import androidx.navigation.fragment.NavHostFragment
-import com.google.android.material.color.MaterialColors
-import org.citra.citra_emu.R
-import org.citra.citra_emu.databinding.ActivityCheatsBinding
-import org.citra.citra_emu.utils.InsetsHelper
+import org.citra.citra_emu.features.cheats.model.CheatsViewModel
+import org.citra.citra_emu.features.cheats.ui.compose.CheatsScreen
+import org.citra.citra_emu.ui.compose.theme.AzaharTheme
 import org.citra.citra_emu.utils.ThemeUtil
 
 class CheatsActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityCheatsBinding
+    private val cheatsViewModel: CheatsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeUtil.setTheme(this)
 
         super.onCreate(savedInstanceState)
 
-        binding = ActivityCheatsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        if (InsetsHelper.getSystemGestureType(applicationContext) !=
-            InsetsHelper.GESTURE_NAVIGATION
-        ) {
-            binding.navigationBarShade.setBackgroundColor(
-                ThemeUtil.getColorWithOpacity(
-                    MaterialColors.getColor(
-                        binding.navigationBarShade,
-                        com.google.android.material.R.attr.colorSurface
-                    ),
-                    ThemeUtil.SYSTEM_BAR_ALPHA
-                )
-            )
-        }
 
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
-        val navController = navHostFragment.navController
-        navController.setGraph(R.navigation.cheats_navigation, intent.extras)
+        cheatsViewModel.initialize(intent.getLongExtra(EXTRA_TITLE_ID, -1L))
+
+        setContent {
+            AzaharTheme {
+                CheatsScreen(
+                    cheatsViewModel = cheatsViewModel,
+                    onNavigateBack = { finish() }
+                )
+            }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        cheatsViewModel.saveIfNeeded()
     }
 
     companion object {
-        fun setOnFocusChangeListenerRecursively(view: View, listener: OnFocusChangeListener?) {
-            view.onFocusChangeListener = listener
-            if (view is ViewGroup) {
-                for (i in 0 until view.childCount) {
-                    val child = view.getChildAt(i)
-                    setOnFocusChangeListenerRecursively(child, listener)
-                }
-            }
-        }
+        /** Matches the `titleId` argument name used by the `cheatsActivity`
+         *  destination in `emulation_navigation.xml`. */
+        private const val EXTRA_TITLE_ID = "titleId"
     }
 }
