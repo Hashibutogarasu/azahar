@@ -30,10 +30,14 @@ class DriverViewModel : ViewModel() {
     private val _isDeletingDrivers = MutableStateFlow(false)
 
     val driverList get() = _driverList.asStateFlow()
-    private val _driverList = MutableStateFlow(mutableListOf<Pair<Uri, GpuDriverMetadata>>())
+    private val _driverList = MutableStateFlow<List<Pair<Uri, GpuDriverMetadata>>>(emptyList())
 
     var previouslySelectedDriver = 0
-    var selectedDriver = -1
+        private set
+
+    val selectedDriver get() = _selectedDriver.value
+    val selectedDriverFlow get() = _selectedDriver.asStateFlow()
+    private val _selectedDriver = MutableStateFlow(-1)
 
     private val _selectedDriverMetadata =
         MutableStateFlow(
@@ -73,7 +77,7 @@ class DriverViewModel : ViewModel() {
         if (selectedDriver != -1) {
             previouslySelectedDriver = selectedDriver
         }
-        selectedDriver = value
+        _selectedDriver.value = value
     }
 
     fun setNewDriverInstalled(value: Boolean) {
@@ -84,7 +88,7 @@ class DriverViewModel : ViewModel() {
         val driverIndex = _driverList.value.indexOfFirst { it == driverData }
         if (driverIndex == -1) {
             setSelectedDriverIndex(_driverList.value.size)
-            _driverList.value.add(driverData)
+            _driverList.value = _driverList.value + driverData
             _selectedDriverMetadata.value = driverData.second.name
                 ?: CitraApplication.appContext.getString(R.string.system_gpu_driver)
         } else {
@@ -93,7 +97,7 @@ class DriverViewModel : ViewModel() {
     }
 
     fun removeDriver(driverData: Pair<Uri, GpuDriverMetadata>) {
-        _driverList.value.remove(driverData)
+        _driverList.value = _driverList.value - driverData
     }
 
     fun onCloseDriverManager() {
