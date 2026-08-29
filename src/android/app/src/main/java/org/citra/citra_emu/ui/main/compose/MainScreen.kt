@@ -245,17 +245,22 @@ private fun MainBottomNavigation(
 ) {
     val currentDestination by navController.currentDestinationAsState()
 
+    val isGamesSelected = currentDestination == GamesScreenDestination
+
     NavigationBar {
         NavigationBarItem(
-            selected = currentDestination == GamesScreenDestination,
+            selected = isGamesSelected,
             onClick = {
-                if (currentDestination == GamesScreenDestination) {
+                if (isGamesSelected) {
                     gamesViewModel.setShouldScrollToTop(true)
                 } else {
                     navigator.navigate(GamesScreenDestination) { launchSingleTop = true }
                 }
             },
-            icon = { Icon(painterResource(R.drawable.selector_controller), contentDescription = null) },
+            icon = {
+                val iconId = if (isGamesSelected) R.drawable.ic_controller else R.drawable.ic_controller_outline
+                Icon(painterResource(iconId), contentDescription = null)
+            },
             label = { Text(stringResource(R.string.home_games)) }
         )
         NavigationBarItem(
