@@ -196,6 +196,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
     implementation("androidx.navigation:navigation-compose:2.8.0")
     debugImplementation("androidx.compose.ui:ui-tooling")
+
+    // Showkase component browser (debug builds only)
+    debugImplementation("com.airbnb.android:showkase:1.0.4")
+    kspDebug("com.airbnb.android:showkase-processor:1.0.4")
 }
 
 // Download Vulkan Validation Layers from the KhronosGroup GitHub.
