@@ -50,6 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.launch
@@ -59,6 +60,7 @@ import org.citra.citra_emu.features.settings.model.Settings
 import org.citra.citra_emu.model.SetupCallback
 import org.citra.citra_emu.model.SetupPage
 import org.citra.citra_emu.model.StepState
+import org.citra.citra_emu.ui.compose.HtmlText
 import org.citra.citra_emu.ui.main.compose.dialogs.MessageDialog
 import org.citra.citra_emu.ui.main.compose.dialogs.SetupWarningDialog
 import org.citra.citra_emu.utils.CitraDirectoryHelper
@@ -431,10 +433,11 @@ private fun SetupPageContent(page: SetupPage, completed: Boolean, onAction: () -
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = 24.dp)
         )
-        Text(
+        HtmlText(
             stringResource(page.descriptionId),
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
+            htmlMode = HtmlCompat.FROM_HTML_MODE_LEGACY,
             modifier = Modifier.padding(top = 16.dp)
         )
         if (completed) {

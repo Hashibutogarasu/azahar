@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.core.text.HtmlCompat
 import org.citra.citra_emu.utils.toAnnotatedString
 
@@ -25,11 +26,12 @@ fun HtmlText(
     html: String,
     modifier: Modifier = Modifier,
     style: TextStyle = LocalTextStyle.current,
+    textAlign: TextAlign = TextAlign.Unspecified,
     htmlMode: Int = HtmlCompat.FROM_HTML_MODE_COMPACT
 ) {
     val linkColor = MaterialTheme.colorScheme.primary
     val annotatedString = remember(html, linkColor, htmlMode) {
         HtmlCompat.fromHtml(html, htmlMode).toAnnotatedString(linkColor)
     }
-    Text(annotatedString, modifier = modifier, style = style)
+    Text(annotatedString, modifier = modifier, style = style, textAlign = textAlign)
 }

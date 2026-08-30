@@ -41,6 +41,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.citra.citra_emu.R
+import org.citra.citra_emu.ui.compose.HtmlText
 import org.citra.citra_emu.utils.PermissionsHandler
 import org.citra.citra_emu.viewmodel.HomeViewModel
 import org.citra.citra_emu.viewmodel.TaskViewModel
@@ -163,7 +164,7 @@ fun SelectUserDirectoryDialog(onConfirm: () -> Unit) {
     AlertDialog(
         onDismissRequest = {},
         title = { Text(stringResource(R.string.select_citra_user_folder)) },
-        text = { Text(stringResource(R.string.selecting_user_directory_without_write_permissions)) },
+        text = { HtmlText(stringResource(R.string.selecting_user_directory_without_write_permissions)) },
         confirmButton = {
             TextButton(onClick = onConfirm) { Text(stringResource(android.R.string.ok)) }
         }
