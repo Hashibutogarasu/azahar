@@ -52,7 +52,10 @@ class SettingsActivityPresenter(
             NativeLibrary.updateFramebuffer(NativeLibrary.isPortraitMode)
         }
         NativeLibrary.reloadSettings()
-        appSettings.applyPendingLanguage()
+
+        if (finishing && appSettings.applyPendingLanguage()) {
+            activityView.restartApp()
+        }
     }
 
     fun onSettingChanged() {

@@ -33,9 +33,10 @@ class AppSettingsRepository {
         pendingLanguageTag = localeTag
     }
 
-    /** Applies the pending language selection, if any, via [AppCompatDelegate]. */
-    fun applyPendingLanguage() {
-        val tag = pendingLanguageTag ?: return
+    /** Applies the pending language selection, if any, via [AppCompatDelegate]. Returns whether
+     *  there was one to apply. */
+    fun applyPendingLanguage(): Boolean {
+        val tag = pendingLanguageTag ?: return false
         pendingLanguageTag = null
         AppCompatDelegate.setApplicationLocales(
             if (tag.isEmpty()) {
@@ -44,6 +45,7 @@ class AppSettingsRepository {
                 LocaleListCompat.forLanguageTags(tag)
             }
         )
+        return true
     }
 
     /**

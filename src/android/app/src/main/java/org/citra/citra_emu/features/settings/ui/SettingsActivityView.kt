@@ -42,4 +42,12 @@ interface SettingsActivityView {
      * unless this has been called, the Activity will not save to disk.
      */
     fun onSettingChanged()
+
+    /**
+     * Restarts the whole app at [org.citra.citra_emu.ui.main.MainActivity]'s splash screen,
+     * replacing the current task. Used after applying a display language change, since letting
+     * [androidx.appcompat.app.AppCompatDelegate] recreate the existing Activities in place is
+     * visibly janky.
+     */
+    fun restartApp()
 }

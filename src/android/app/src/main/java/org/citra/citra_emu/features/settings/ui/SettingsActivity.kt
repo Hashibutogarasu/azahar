@@ -37,6 +37,7 @@ import org.citra.citra_emu.features.settings.model.StringSetting
 import org.citra.citra_emu.features.settings.ui.compose.SettingsSectionScreen
 import org.citra.citra_emu.features.settings.utils.SettingsFile
 import org.citra.citra_emu.ui.compose.theme.AzaharTheme
+import org.citra.citra_emu.ui.main.MainActivity
 import org.citra.citra_emu.utils.DirectoryInitialization
 import org.citra.citra_emu.utils.Log
 import org.citra.citra_emu.utils.SystemSaveGame
@@ -126,6 +127,13 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityView {
 
     override fun onSettingChanged() {
         presenter.onSettingChanged()
+    }
+
+    override fun restartApp() {
+        val restart = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        startActivity(restart)
     }
 
     fun onSettingsReset() {
