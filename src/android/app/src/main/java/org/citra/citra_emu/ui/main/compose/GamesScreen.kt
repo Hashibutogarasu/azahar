@@ -77,6 +77,7 @@ import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.R
 import org.citra.citra_emu.features.settings.model.Settings
 import org.citra.citra_emu.model.Game
+import org.citra.citra_emu.ui.compose.HtmlText
 import org.citra.citra_emu.utils.GameIconUtils
 import org.citra.citra_emu.viewmodel.GamesViewModel
 import org.citra.citra_emu.viewmodel.HomeViewModel
@@ -162,17 +163,10 @@ fun GamesScreen(
 
 @Composable
 private fun Warning3DSFilesDialog(onDismiss: () -> Unit) {
-    val context = LocalContext.current
-    val message = remember {
-        HtmlCompat.fromHtml(
-            context.getString(R.string.warning_3ds_files),
-            HtmlCompat.FROM_HTML_MODE_LEGACY
-        ).toString()
-    }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.important)) },
-        text = { Text(message) },
+        text = { HtmlText(stringResource(R.string.warning_3ds_files), htmlMode = HtmlCompat.FROM_HTML_MODE_LEGACY) },
         confirmButton = {
             TextButton(onClick = onDismiss) { Text(stringResource(R.string.dont_show_again)) }
         }

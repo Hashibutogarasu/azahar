@@ -46,7 +46,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.core.text.HtmlCompat
 import androidx.preference.PreferenceManager
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -59,6 +58,7 @@ import org.citra.citra_emu.NativeLibrary
 import org.citra.citra_emu.R
 import org.citra.citra_emu.features.settings.model.Settings
 import org.citra.citra_emu.model.Game
+import org.citra.citra_emu.ui.compose.HtmlText
 import org.citra.citra_emu.utils.SystemSaveGame
 import org.citra.citra_emu.viewmodel.GamesViewModel
 import org.citra.citra_emu.viewmodel.HomeViewModel
@@ -143,11 +143,8 @@ fun SystemFilesScreen(
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(top = 16.dp)
             )
-            Text(
-                HtmlCompat.fromHtml(
-                    stringResource(R.string.setup_system_files_preamble),
-                    HtmlCompat.FROM_HTML_MODE_COMPACT
-                ).toString(),
+            HtmlText(
+                stringResource(R.string.setup_system_files_preamble),
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier.padding(top = 16.dp)
             )
@@ -292,14 +289,7 @@ fun SystemFilesScreen(
             AlertDialog(
                 onDismissRequest = { dialog = SystemFilesDialog.None },
                 title = { Text(stringResource(R.string.delete_system_files)) },
-                text = {
-                    Text(
-                        HtmlCompat.fromHtml(
-                            context.getString(R.string.delete_system_files_description),
-                            HtmlCompat.FROM_HTML_MODE_COMPACT
-                        ).toString()
-                    )
-                },
+                text = { HtmlText(context.getString(R.string.delete_system_files_description)) },
                 confirmButton = {
                     TextButton(onClick = {
                         NativeLibrary.unlinkConsole()
