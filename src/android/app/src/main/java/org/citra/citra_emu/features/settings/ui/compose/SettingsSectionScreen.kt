@@ -13,11 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -42,9 +38,11 @@ import org.citra.citra_emu.features.settings.utils.SettingsFile
 
 /**
  * Hosts one section of the settings list (the root menu, or a sub-section such as
- * General/System/Camera/...) as a compose-destinations push/pop destination. Mirrors the legacy
- * `SettingsFragment`: item list construction and rendering (`SettingsFragmentPresenter`/
- * `SettingsAdapter`) is unchanged and reused as-is via [AndroidView].
+ * General/System/Camera/...) as a compose-destinations push/pop destination. Item list
+ * construction and rendering (`SettingsFragmentPresenter`/`SettingsAdapter`) is reused as-is
+ * from the legacy `SettingsFragment` via [AndroidView], built synchronously rather than in a
+ * `LaunchedEffect`, since [SettingsActivity] already awaits every setting any section could
+ * need before this screen becomes reachable.
  */
 @Destination<RootGraph>
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,15 +55,14 @@ fun SettingsSectionScreen(
 ) {
     val activity = LocalContext.current as SettingsActivity
 
-    var items by remember(menuTag, gameId) { mutableStateOf<ArrayList<SettingsItem>?>(null) }
-
-    val (fragmentView, presenter) = remember(menuTag, gameId) {
+    val (fragmentView, presenter, items) = remember(menuTag, gameId) {
         lateinit var presenterRef: SettingsFragmentPresenter
+        var loadedItems: ArrayList<SettingsItem> = arrayListOf()
         val view = object : SettingsFragmentView {
             override var activityView: SettingsActivityView? = activity
 
             override fun showSettingsList(settingsList: ArrayList<SettingsItem>) {
-                items = settingsList
+                loadedItems = settingsList
             }
 
             override fun loadSettingsList() {}
@@ -90,12 +87,11 @@ fun SettingsSectionScreen(
                 activityView!!.onSettingChanged()
             }
         }
-        presenterRef = SettingsFragmentPresenter(view).apply { onCreate(menuTag, gameId) }
-        view to presenterRef
-    }
-
-    LaunchedEffect(menuTag, gameId) {
-        presenter.loadSettingsList()
+        presenterRef = SettingsFragmentPresenter(view).apply {
+            onCreate(menuTag, gameId)
+            loadSettingsList()
+        }
+        Triple(view, presenterRef, loadedItems)
     }
 
     Scaffold(
@@ -130,7 +126,7 @@ fun SettingsSectionScreen(
                 }
             },
             update = { recyclerView ->
-                (recyclerView.adapter as SettingsAdapter).setSettingsList(items ?: arrayListOf())
+                (recyclerView.adapter as SettingsAdapter).setSettingsList(items)
             }
         )
     }

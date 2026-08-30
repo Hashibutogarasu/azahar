@@ -13,10 +13,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import androidx.preference.PreferenceManager
@@ -70,19 +76,27 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityView {
 
         setContent {
             AzaharTheme {
+                var settingsReady by remember { mutableStateOf(false) }
                 LaunchedEffect(Unit) {
                     settingsViewModel.prepareAll(gameID, this@SettingsActivity)
+                    settingsReady = true
                 }
 
-                val navController = rememberNavController()
-                DestinationsNavHost(
-                    navGraph = NavGraphs.root,
-                    start = SettingsSectionScreenDestination(menuTag = menuTag, gameId = gameID),
-                    navController = navController,
-                    dependenciesContainerBuilder = {
-                        dependency(settingsViewModel)
+                if (settingsReady) {
+                    val navController = rememberNavController()
+                    DestinationsNavHost(
+                        navGraph = NavGraphs.root,
+                        start = SettingsSectionScreenDestination(menuTag = menuTag, gameId = gameID),
+                        navController = navController,
+                        dependenciesContainerBuilder = {
+                            dependency(settingsViewModel)
+                        }
+                    )
+                } else {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
                     }
-                )
+                }
             }
         }
     }

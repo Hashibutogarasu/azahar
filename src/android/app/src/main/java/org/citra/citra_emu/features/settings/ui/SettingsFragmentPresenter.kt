@@ -62,11 +62,11 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
     fun onCreate(menuTag: String, gameId: String) {
         this.gameId = gameId
         this.menuTag = menuTag
+        preferences = PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
     }
 
     fun onViewCreated(settingsAdapter: SettingsAdapter) {
         this.settingsAdapter = settingsAdapter
-        preferences = PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
     }
 
     fun putSetting(setting: AbstractSetting) {
