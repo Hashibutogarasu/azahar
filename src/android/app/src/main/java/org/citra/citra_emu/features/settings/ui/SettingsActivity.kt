@@ -45,7 +45,7 @@ import org.citra.citra_emu.utils.ThemeUtil
 class SettingsActivity : AppCompatActivity(), SettingsActivityView {
     private val settingsViewModel: SettingsViewModel by viewModels()
 
-    private val presenter = SettingsActivityPresenter(this, settingsViewModel.appSettings)
+    private lateinit var presenter: SettingsActivityPresenter
 
     override val settings: Settings get() = settingsViewModel.settings
 
@@ -58,6 +58,8 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityView {
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        presenter = SettingsActivityPresenter(this, settingsViewModel.appSettings)
 
         val launcher = intent
         val gameID = launcher.getStringExtra(ARG_GAME_ID)
