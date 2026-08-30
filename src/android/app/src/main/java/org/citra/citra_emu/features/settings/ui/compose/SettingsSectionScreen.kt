@@ -4,10 +4,8 @@
 
 package org.citra.citra_emu.features.settings.ui.compose
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -20,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -63,7 +60,6 @@ fun SettingsSectionScreen(
     val activity = LocalContext.current as SettingsActivity
 
     var items by remember(menuTag, gameId) { mutableStateOf<ArrayList<SettingsItem>?>(null) }
-    var isLoading by remember(menuTag, gameId) { mutableStateOf(true) }
 
     val (fragmentView, presenter) = remember(menuTag, gameId) {
         lateinit var presenterRef: SettingsFragmentPresenter
@@ -104,9 +100,7 @@ fun SettingsSectionScreen(
     }
 
     LaunchedEffect(menuTag, gameId) {
-        isLoading = true
         settingsViewModel.prepareSection(menuTag, gameId, activity)
-        isLoading = false
         presenter.loadSettingsList()
     }
 
@@ -131,25 +125,19 @@ fun SettingsSectionScreen(
             )
         }
     ) { contentPadding ->
-        if (isLoading) {
-            Box(Modifier.fillMaxSize().padding(contentPadding), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        } else {
-            AndroidView(
-                modifier = Modifier.fillMaxSize().padding(contentPadding),
-                factory = { context ->
-                    RecyclerView(context).apply {
-                        layoutManager = LinearLayoutManager(context)
-                        val settingsAdapter = SettingsAdapter(fragmentView, context)
-                        presenter.onViewCreated(settingsAdapter)
-                        adapter = settingsAdapter
-                    }
-                },
-                update = { recyclerView ->
-                    (recyclerView.adapter as SettingsAdapter).setSettingsList(items ?: arrayListOf())
+        AndroidView(
+            modifier = Modifier.fillMaxSize().padding(contentPadding),
+            factory = { context ->
+                RecyclerView(context).apply {
+                    layoutManager = LinearLayoutManager(context)
+                    val settingsAdapter = SettingsAdapter(fragmentView, context)
+                    presenter.onViewCreated(settingsAdapter)
+                    adapter = settingsAdapter
                 }
-            )
-        }
+            },
+            update = { recyclerView ->
+                (recyclerView.adapter as SettingsAdapter).setSettingsList(items ?: arrayListOf())
+            }
+        )
     }
 }
