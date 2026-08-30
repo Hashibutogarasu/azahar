@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.R
+import org.citra.citra_emu.utils.DirectoryInitialization
 import org.citra.citra_emu.utils.FileUtil.asDocumentFile
 import org.citra.citra_emu.utils.GpuDriverMetadata
 import org.citra.citra_emu.utils.GpuDriverHelper
@@ -54,7 +55,22 @@ class DriverViewModel : ViewModel() {
     val isInteractionAllowed
         get() = !areDriversLoading.value && isDriverReady.value && !isDeletingDrivers.value
 
+    private var driversLoaded = false
+
     init {
+        loadDrivers()
+    }
+
+    /**
+     * Loads the installed GPU driver list, if not already loaded. A no-op if the Citra user
+     * directory isn't initialized yet; callers that display driver data call this again once
+     * composed, by which point it's guaranteed to be ready.
+     */
+    fun loadDrivers() {
+        if (driversLoaded || !DirectoryInitialization.areCitraDirectoriesReady()) {
+            return
+        }
+        driversLoaded = true
         _areDriversLoading.value = true
         viewModelScope.launch {
             withContext(Dispatchers.IO) {

@@ -93,6 +93,7 @@ fun HomeSettingsScreen(
     LaunchedEffect(Unit) {
         homeViewModel.setNavigationVisibility(visible = true, animated = true)
         homeViewModel.setStatusBarShadeVisibility(visible = true)
+        driverViewModel.loadDrivers()
     }
 
     val context = LocalContext.current

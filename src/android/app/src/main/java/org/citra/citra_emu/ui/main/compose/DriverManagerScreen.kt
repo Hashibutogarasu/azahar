@@ -75,6 +75,7 @@ fun DriverManagerScreen(
     LaunchedEffect(Unit) {
         homeViewModel.setNavigationVisibility(visible = false, animated = true)
         homeViewModel.setStatusBarShadeVisibility(visible = false)
+        driverViewModel.loadDrivers()
     }
     DisposableEffect(Unit) {
         onDispose { driverViewModel.onCloseDriverManager() }
