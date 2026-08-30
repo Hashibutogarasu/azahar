@@ -13,6 +13,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -69,6 +70,10 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityView {
 
         setContent {
             AzaharTheme {
+                LaunchedEffect(Unit) {
+                    settingsViewModel.prepareAll(gameID, this@SettingsActivity)
+                }
+
                 val navController = rememberNavController()
                 DestinationsNavHost(
                     navGraph = NavGraphs.root,

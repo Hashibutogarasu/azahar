@@ -32,7 +32,6 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.citra.citra_emu.R
 import org.citra.citra_emu.features.settings.model.AbstractSetting
 import org.citra.citra_emu.features.settings.model.Settings
-import org.citra.citra_emu.features.settings.model.SettingsViewModel
 import org.citra.citra_emu.features.settings.model.view.SettingsItem
 import org.citra.citra_emu.features.settings.ui.SettingsActivity
 import org.citra.citra_emu.features.settings.ui.SettingsActivityView
@@ -54,7 +53,6 @@ fun SettingsSectionScreen(
     menuTag: String,
     gameId: String,
     navigator: DestinationsNavigator,
-    settingsViewModel: SettingsViewModel,
     modifier: Modifier = Modifier
 ) {
     val activity = LocalContext.current as SettingsActivity
@@ -70,10 +68,7 @@ fun SettingsSectionScreen(
                 items = settingsList
             }
 
-            override fun loadSettingsList() {
-                // Driven explicitly by this screen once EmulatorSettingsRepository/Service
-                // finish loading, not by the presenter itself.
-            }
+            override fun loadSettingsList() {}
 
             override fun loadSubMenu(menuKey: String) {
                 if (menuKey == Settings.SECTION_LANGUAGE) {
@@ -100,7 +95,6 @@ fun SettingsSectionScreen(
     }
 
     LaunchedEffect(menuTag, gameId) {
-        settingsViewModel.prepareSection(menuTag, gameId, activity)
         presenter.loadSettingsList()
     }
 

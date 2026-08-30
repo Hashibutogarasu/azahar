@@ -18,12 +18,11 @@ class SettingsViewModel : ViewModel() {
     private val service = EmulatorSettingsService(repository)
 
     /**
-     * Ensures the emulator settings needed to display [menuTag] are loaded, off the UI thread.
-     * Callers drive their own loading indicator around this suspend call (e.g. from a
-     * `LaunchedEffect` scoped to that section's own screen), since sections can be prepared
-     * concurrently and each needs its own independent loading state.
+     * Loads every emulator setting the settings screen might need, off the UI thread. Called
+     * once, before the settings screen shows any section, so no individual section has to load
+     * anything (or show its own loading state) itself.
      */
-    suspend fun prepareSection(menuTag: String, gameId: String?, view: SettingsActivityView?) {
-        service.prepareSection(menuTag, settings, gameId, view)
+    suspend fun prepareAll(gameId: String?, view: SettingsActivityView?) {
+        service.prepareAll(settings, gameId, view)
     }
 }
