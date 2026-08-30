@@ -7,17 +7,9 @@ package org.citra.citra_emu.features.settings.ui
 import org.citra.citra_emu.features.settings.model.Settings
 
 /**
- * Abstraction for the Activity that manages SettingsFragments.
+ * Abstraction for the Activity that hosts the settings section screens.
  */
 interface SettingsActivityView {
-    /**
-     * Show a new SettingsFragment.
-     *
-     * @param menuTag    Identifier for the settings group that should be displayed.
-     * @param addToStack Whether or not this fragment should replace a previous one.
-     */
-    fun showSettingsFragment(menuTag: String, addToStack: Boolean, gameId: String)
-
     /**
      * Called by a contained Fragment to get access to the Setting HashMap
      * loaded from disk, so that each Fragment doesn't need to perform its own
@@ -26,11 +18,6 @@ interface SettingsActivityView {
      * @return A HashMap of Settings.
      */
     val settings: Settings
-
-    /**
-     * Called when a load operation completes.
-     */
-    fun onSettingsFileLoaded()
 
     /**
      * Called when a load operation fails.

@@ -8,53 +8,54 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
-import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
+import androidx.navigation.compose.rememberNavController
 import androidx.preference.PreferenceManager
-import com.google.android.material.color.MaterialColors
+import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.generated.NavGraphs
+import com.ramcosta.composedestinations.generated.destinations.SettingsSectionScreenDestination
+import com.ramcosta.composedestinations.navigation.dependency
 import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.NativeLibrary
 import org.citra.citra_emu.R
-import org.citra.citra_emu.databinding.ActivitySettingsBinding
-import java.io.IOException
 import org.citra.citra_emu.features.settings.model.BooleanSetting
+import java.io.IOException
 import org.citra.citra_emu.features.settings.model.FloatSetting
 import org.citra.citra_emu.features.settings.model.IntSetting
 import org.citra.citra_emu.features.settings.model.ScaledFloatSetting
 import org.citra.citra_emu.features.settings.model.Settings
 import org.citra.citra_emu.features.settings.model.SettingsViewModel
 import org.citra.citra_emu.features.settings.model.StringSetting
+import org.citra.citra_emu.features.settings.ui.compose.SettingsSectionScreen
 import org.citra.citra_emu.features.settings.utils.SettingsFile
-import org.citra.citra_emu.utils.SystemSaveGame
+import org.citra.citra_emu.ui.compose.theme.AzaharTheme
 import org.citra.citra_emu.utils.DirectoryInitialization
-import org.citra.citra_emu.utils.InsetsHelper
+import org.citra.citra_emu.utils.Log
+import org.citra.citra_emu.utils.SystemSaveGame
 import org.citra.citra_emu.utils.ThemeUtil
 
 class SettingsActivity : AppCompatActivity(), SettingsActivityView {
-    private val presenter = SettingsActivityPresenter(this)
-
-    private lateinit var binding: ActivitySettingsBinding
-
     private val settingsViewModel: SettingsViewModel by viewModels()
 
+    private val presenter = SettingsActivityPresenter(this, settingsViewModel.appSettings)
+
     override val settings: Settings get() = settingsViewModel.settings
+
+    var currentToolbarTitle by mutableStateOf("")
+        private set
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeUtil.setTheme(this)
 
         super.onCreate(savedInstanceState)
-
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
@@ -63,44 +64,18 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityView {
         val menuTag = launcher.getStringExtra(ARG_MENU_TAG)
         presenter.onCreate(savedInstanceState, menuTag!!, gameID!!)
 
-        // Show "Back" button in the action bar for navigation
-        setSupportActionBar(binding.toolbarSettings)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-
-        if (InsetsHelper.getSystemGestureType(applicationContext) !=
-            InsetsHelper.GESTURE_NAVIGATION
-        ) {
-            binding.navigationBarShade.setBackgroundColor(
-                ThemeUtil.getColorWithOpacity(
-                    MaterialColors.getColor(
-                        binding.navigationBarShade,
-                        com.google.android.material.R.attr.colorSurface
-                    ),
-                    ThemeUtil.SYSTEM_BAR_ALPHA
+        setContent {
+            AzaharTheme {
+                val navController = rememberNavController()
+                DestinationsNavHost(
+                    navGraph = NavGraphs.root,
+                    start = SettingsSectionScreenDestination(menuTag = menuTag, gameId = gameID),
+                    navController = navController,
+                    dependenciesContainerBuilder = {
+                        dependency(settingsViewModel)
+                    }
                 )
-            )
-        }
-
-        onBackPressedDispatcher.addCallback(
-            this,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() = navigateBack()
             }
-        )
-
-        setInsets()
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        navigateBack()
-        return true
-    }
-
-    private fun navigateBack() {
-        if (supportFragmentManager.backStackEntryCount > 0) {
-            supportFragmentManager.popBackStack()
-        } else {
-            finish()
         }
     }
 
@@ -135,53 +110,8 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityView {
         presenter.onStop(isFinishing)
     }
 
-    override fun showSettingsFragment(menuTag: String, addToStack: Boolean, gameId: String) {
-        if (!addToStack && settingsFragment != null) {
-            return
-        }
-
-        val transaction = supportFragmentManager.beginTransaction()
-        if (addToStack) {
-            if (areSystemAnimationsEnabled()) {
-                transaction.setCustomAnimations(
-                    R.anim.anim_settings_fragment_in,
-                    R.anim.anim_settings_fragment_out,
-                    0,
-                    R.anim.anim_pop_settings_fragment_out
-                )
-            }
-            transaction.addToBackStack(null)
-        }
-        transaction.replace(
-            R.id.frame_content,
-            SettingsFragment.newInstance(menuTag, gameId),
-            FRAGMENT_TAG
-        )
-        transaction.commit()
-    }
-
-    private fun areSystemAnimationsEnabled(): Boolean {
-        val duration = android.provider.Settings.Global.getFloat(
-            contentResolver,
-            android.provider.Settings.Global.ANIMATOR_DURATION_SCALE,
-            1f
-        )
-        val transition = android.provider.Settings.Global.getFloat(
-            contentResolver,
-            android.provider.Settings.Global.TRANSITION_ANIMATION_SCALE,
-            1f
-        )
-        return duration != 0f && transition != 0f
-    }
-
-    override fun onSettingsFileLoaded() {
-        val fragment: SettingsFragmentView? = settingsFragment
-        fragment?.loadSettingsList()
-    }
-
     override fun onSettingsFileNotFound() {
-        val fragment: SettingsFragmentView? = settingsFragment
-        fragment?.loadSettingsList()
+        Log.error("[SettingsActivity] Settings file not found.")
     }
 
     override fun showToastMessage(message: String, isLong: Boolean) {
@@ -244,40 +174,12 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityView {
     }
 
     fun setToolbarTitle(title: String) {
-        binding.toolbarSettingsLayout.title = title
-    }
-
-    private val settingsFragment: SettingsFragment?
-        get() = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG) as SettingsFragment?
-
-    private fun setInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(
-            binding.frameContent
-        ) { view: View, windowInsets: WindowInsetsCompat ->
-            val barInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val cutoutInsets = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
-            view.updatePadding(
-                left = barInsets.left + cutoutInsets.left,
-                right = barInsets.right + cutoutInsets.right
-            )
-
-            val mlpAppBar = binding.appbarSettings.layoutParams as MarginLayoutParams
-            mlpAppBar.leftMargin = barInsets.left + cutoutInsets.left
-            mlpAppBar.rightMargin = barInsets.right + cutoutInsets.right
-            binding.appbarSettings.layoutParams = mlpAppBar
-
-            val mlpShade = binding.navigationBarShade.layoutParams as MarginLayoutParams
-            mlpShade.height = barInsets.bottom
-            binding.navigationBarShade.layoutParams = mlpShade
-
-            windowInsets
-        }
+        currentToolbarTitle = title
     }
 
     companion object {
         private const val ARG_MENU_TAG = "menu_tag"
         private const val ARG_GAME_ID = "game_id"
-        private const val FRAGMENT_TAG = "settings"
 
         @JvmStatic
         fun launch(context: Context, menuTag: String?, gameId: String?) {

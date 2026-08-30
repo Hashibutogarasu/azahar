@@ -109,6 +109,7 @@ class Settings {
         const val SECTION_AUDIO = "Audio"
         const val SECTION_DEBUG = "Debugging"
         const val SECTION_THEME = "Theme"
+        const val SECTION_LANGUAGE = "Language"
         const val SECTION_CUSTOM_LANDSCAPE = "Custom Landscape Layout"
         const val SECTION_CUSTOM_PORTRAIT = "Custom Portrait Layout"
 

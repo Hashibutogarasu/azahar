@@ -5,15 +5,18 @@
 package org.citra.citra_emu.features.settings.ui
 
 import android.os.Bundle
-import android.text.TextUtils
 import org.citra.citra_emu.NativeLibrary
+import org.citra.citra_emu.features.settings.data.AppSettingsRepository
 import org.citra.citra_emu.features.settings.model.IntSetting
 import org.citra.citra_emu.features.settings.model.Settings
 import org.citra.citra_emu.utils.SystemSaveGame
 import org.citra.citra_emu.utils.DirectoryInitialization
 import org.citra.citra_emu.utils.Log
 
-class SettingsActivityPresenter(private val activityView: SettingsActivityView) {
+class SettingsActivityPresenter(
+    private val activityView: SettingsActivityView,
+    private val appSettings: AppSettingsRepository
+) {
     val settings: Settings get() = activityView.settings
 
     private var shouldSave = false
@@ -28,35 +31,16 @@ class SettingsActivityPresenter(private val activityView: SettingsActivityView) 
         }
     }
 
-    fun onResume() {
-        SystemSaveGame.load()
-    }
+    fun onResume() {}
 
     fun onPause() {
         SystemSaveGame.save()
     }
 
     fun onStart() {
-        prepareDirectoriesIfNeeded()
-    }
-
-    private fun loadSettingsUI() {
-        if (!settings.isLoaded) {
-            if (!TextUtils.isEmpty(gameId)) {
-                settings.loadSettings(gameId, activityView)
-            } else {
-                settings.loadSettings(activityView)
-            }
-        }
-        activityView.showSettingsFragment(menuTag, false, gameId)
-        activityView.onSettingsFileLoaded()
-    }
-
-    private fun prepareDirectoriesIfNeeded() {
         if (!DirectoryInitialization.areCitraDirectoriesReady()) {
             DirectoryInitialization.start()
         }
-        loadSettingsUI()
     }
 
     fun onStop(finishing: Boolean) {
@@ -68,6 +52,7 @@ class SettingsActivityPresenter(private val activityView: SettingsActivityView) 
             NativeLibrary.updateFramebuffer(NativeLibrary.isPortraitMode)
         }
         NativeLibrary.reloadSettings()
+        appSettings.applyPendingLanguage()
     }
 
     fun onSettingChanged() {

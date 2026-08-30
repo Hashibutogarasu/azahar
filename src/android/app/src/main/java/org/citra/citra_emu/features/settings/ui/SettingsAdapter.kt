@@ -499,7 +499,10 @@ class SettingsAdapter(
         MessageDialogFragment.newInstance(
             R.string.setting_not_editable,
             R.string.setting_not_editable_description
-        ).show((fragmentView as SettingsFragment).childFragmentManager, MessageDialogFragment.TAG)
+        ).show(
+            (fragmentView.activityView as AppCompatActivity).supportFragmentManager,
+            MessageDialogFragment.TAG
+        )
     }
 
     fun onClickRegenerateConsoleId() {

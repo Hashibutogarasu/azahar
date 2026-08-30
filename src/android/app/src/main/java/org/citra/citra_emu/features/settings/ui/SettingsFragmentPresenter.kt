@@ -67,7 +67,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
     fun onViewCreated(settingsAdapter: SettingsAdapter) {
         this.settingsAdapter = settingsAdapter
         preferences = PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
-        loadSettingsList()
     }
 
     fun putSetting(setting: AbstractSetting) {
@@ -193,6 +192,14 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     0,
                     R.drawable.ic_code,
                     Settings.SECTION_DEBUG
+                )
+            )
+            add(
+                SubmenuSetting(
+                    R.string.preferences_language,
+                    0,
+                    R.drawable.ic_language,
+                    Settings.SECTION_LANGUAGE
                 )
             )
 
