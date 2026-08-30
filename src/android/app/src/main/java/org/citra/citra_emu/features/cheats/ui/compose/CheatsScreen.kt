@@ -16,11 +16,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -52,16 +48,10 @@ fun CheatsScreen(
 ) {
     val selectedCheat by cheatsViewModel.selectedCheat.collectAsStateWithLifecycle()
     val isEditing by cheatsViewModel.isEditing.collectAsStateWithLifecycle()
-    val openEvent by cheatsViewModel.openDetailsViewEvent.collectAsStateWithLifecycle()
-    val closeEvent by cheatsViewModel.closeDetailsViewEvent.collectAsStateWithLifecycle()
+    val isAdding by cheatsViewModel.isAdding.collectAsStateWithLifecycle()
 
-    var detailsOpen by rememberSaveable { mutableStateOf(false) }
-
-    LaunchedEffect(openEvent) { if (openEvent) detailsOpen = true }
-    LaunchedEffect(closeEvent) { if (closeEvent) detailsOpen = false }
-    LaunchedEffect(selectedCheat, isEditing) {
-        if (selectedCheat == null && !isEditing) detailsOpen = false
-    }
+    val detailsOpen = selectedCheat != null || isEditing || isAdding
+    val onCloseDetails: () -> Unit = { cheatsViewModel.setSelectedCheat(null, -1) }
 
     Box(modifier.fillMaxSize()) {
         BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -74,16 +64,16 @@ fun CheatsScreen(
                     )
                     CheatDetailsPane(
                         cheatsViewModel,
-                        onClose = { cheatsViewModel.closeDetailsView() },
+                        onClose = onCloseDetails,
                         modifier = Modifier.weight(1f)
                     )
                 }
             } else {
-                BackHandler(enabled = detailsOpen) { cheatsViewModel.closeDetailsView() }
+                BackHandler(enabled = detailsOpen, onBack = onCloseDetails)
                 if (detailsOpen) {
                     CheatDetailsPane(
                         cheatsViewModel,
-                        onClose = { cheatsViewModel.closeDetailsView() },
+                        onClose = onCloseDetails,
                         modifier = Modifier.fillMaxSize()
                     )
                 } else {

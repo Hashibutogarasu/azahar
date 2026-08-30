@@ -118,7 +118,6 @@ fun CheatDetailsPane(
         name = selectedCheat?.getName().orEmpty()
         notes = selectedCheat?.getNotes().orEmpty()
         code = selectedCheat?.getCode().orEmpty()
-        cheatsViewModel.closeDetailsView()
     }
 
     Scaffold(

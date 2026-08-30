@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
@@ -101,9 +102,12 @@ fun HomeSettingsScreen(
 
     val onOpenSettings: () -> Unit = { SettingsActivity.launch(context, SettingsFile.FILE_NAME_CONFIG, "") }
     val onOpenThemeSettings: () -> Unit = { SettingsActivity.launch(context, Settings.SECTION_THEME, "") }
-    val onNavigateToSystemFiles: () -> Unit = { navigator.navigate(SystemFilesScreenDestination) }
-    val onNavigateToDriverManager: () -> Unit = { navigator.navigate(DriverManagerScreenDestination) }
-    val onNavigateToAbout: () -> Unit = { navigator.navigate(AboutScreenDestination) }
+    val onNavigateToSystemFiles: () -> Unit =
+        { navigator.navigate(SystemFilesScreenDestination) { launchSingleTop = true } }
+    val onNavigateToDriverManager: () -> Unit =
+        { navigator.navigate(DriverManagerScreenDestination) { launchSingleTop = true } }
+    val onNavigateToAbout: () -> Unit =
+        { navigator.navigate(AboutScreenDestination) { launchSingleTop = true } }
     val onConnectArticBase: (String) -> Unit = { address ->
         context.startActivity(
             Game(title = context.getString(R.string.artic_base), path = "articbase://$address", filename = "").launchIntent
@@ -271,7 +275,10 @@ private fun HomeOptionCard(
             .padding(horizontal = 12.dp, vertical = 12.dp)
             .clickable { if (enabled) option.onClick() else onDisabledClick() }
     ) {
-        Row(Modifier.padding(vertical = 10.dp, horizontal = 20.dp)) {
+        Row(
+            Modifier.padding(vertical = 10.dp, horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Icon(
                 painterResource(option.iconId),
                 contentDescription = null,

@@ -9,11 +9,21 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -36,16 +46,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.preference.PreferenceManager
 import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.animations.NavHostAnimatedDestinationStyle
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.generated.destinations.GamesScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.HomeSettingsScreenDestination
@@ -85,6 +100,13 @@ import org.citra.citra_emu.viewmodel.TaskViewModel
  * [DestinationsNavHost]'s dependency container rather than being passed down as parameters, so
  * each `@Destination` composable just declares the ones it needs.
  */
+private object MainNavTransitions : NavHostAnimatedDestinationStyle() {
+    override val enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition
+        get() = { fadeIn(tween(300)) }
+    override val exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition
+        get() = { fadeOut(tween(300)) }
+}
+
 @Composable
 fun MainScreen(
     homeViewModel: HomeViewModel,
@@ -148,13 +170,32 @@ fun MainScreen(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
+    val smallLayout = booleanResource(R.bool.small_layout)
+    val layoutDirection = LocalLayoutDirection.current
+    val showEasing = CubicBezierEasing(0.05f, 0.7f, 0.1f, 1f)
+    val hideEasing = CubicBezierEasing(0.3f, 0f, 0.8f, 0.15f)
+    val chromeEnter = when {
+        !navigationVisible.second -> EnterTransition.None
+        smallLayout -> slideInVertically(tween(300, easing = showEasing)) { it * 2 }
+        layoutDirection == LayoutDirection.Ltr ->
+            slideInHorizontally(tween(300, easing = showEasing)) { -it * 2 }
+        else -> slideInHorizontally(tween(300, easing = showEasing)) { it * 2 }
+    }
+    val chromeExit = when {
+        !navigationVisible.second -> ExitTransition.None
+        smallLayout -> slideOutVertically(tween(300, easing = hideEasing)) { it * 2 }
+        layoutDirection == LayoutDirection.Ltr ->
+            slideOutHorizontally(tween(300, easing = hideEasing)) { -it * 2 }
+        else -> slideOutHorizontally(tween(300, easing = hideEasing)) { it * 2 }
+    }
+
     Box(modifier.fillMaxSize()) {
         Scaffold(
             bottomBar = {
                 AnimatedVisibility(
                     visible = navigationVisible.first,
-                    enter = fadeIn(),
-                    exit = fadeOut()
+                    enter = chromeEnter,
+                    exit = chromeExit
                 ) {
                     MainBottomNavigation(navController, navigator, gamesViewModel, context)
                 }
@@ -164,7 +205,10 @@ fun MainScreen(
                 navGraph = NavGraphs.root,
                 start = startRoute,
                 navController = navController,
-                modifier = Modifier.padding(contentPadding),
+                defaultTransitions = MainNavTransitions,
+                modifier = Modifier
+                    .padding(contentPadding)
+                    .consumeWindowInsets(contentPadding),
                 dependenciesContainerBuilder = {
                     dependency(homeViewModel)
                     dependency(gamesViewModel)
@@ -174,11 +218,17 @@ fun MainScreen(
             )
         }
 
-        if (statusBarShadeVisible) {
+        AnimatedVisibility(
+            visible = statusBarShadeVisible,
+            enter = slideInVertically(tween(300, easing = showEasing)) { -it * 2 },
+            exit = slideOutVertically(tween(300, easing = hideEasing)) { -it * 2 },
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
+        ) {
             Surface(
                 color = MaterialTheme.colorScheme.surface.copy(alpha = ThemeUtil.SYSTEM_BAR_ALPHA),
                 modifier = Modifier
-                    .align(Alignment.TopCenter)
                     .fillMaxWidth()
                     .windowInsetsTopHeight(WindowInsets.statusBars)
             ) {}

@@ -35,12 +35,6 @@ class CheatsViewModel : ViewModel() {
     val cheatDeletedEvent get() = _cheatDeletedEvent.asStateFlow()
     private val _cheatDeletedEvent = MutableStateFlow<Int?>(null)
 
-    val openDetailsViewEvent get() = _openDetailsViewEvent.asStateFlow()
-    private val _openDetailsViewEvent = MutableStateFlow(false)
-
-    val closeDetailsViewEvent get() = _closeDetailsViewEvent.asStateFlow()
-    private val _closeDetailsViewEvent = MutableStateFlow(false)
-
     val listViewFocusChange get() = _listViewFocusChange.asStateFlow()
     private val _listViewFocusChange = MutableStateFlow(false)
 
@@ -146,16 +140,6 @@ class CheatsViewModel : ViewModel() {
         cheatsNeedSaving = true
         load()
         notifyCheatDeleted(position)
-    }
-
-    fun openDetailsView() {
-        _openDetailsViewEvent.value = true
-        _openDetailsViewEvent.value = false
-    }
-
-    fun closeDetailsView() {
-        _closeDetailsViewEvent.value = true
-        _closeDetailsViewEvent.value = false
     }
 
     fun onListViewFocusChanged(changed: Boolean) {

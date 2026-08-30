@@ -77,10 +77,7 @@ fun CheatListPane(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                cheatsViewModel.startAddingCheat()
-                cheatsViewModel.openDetailsView()
-            }) {
+            FloatingActionButton(onClick = { cheatsViewModel.startAddingCheat() }) {
                 Icon(
                     painterResource(R.drawable.ic_add),
                     contentDescription = stringResource(R.string.cheats_add)
@@ -98,10 +95,7 @@ fun CheatListPane(
                     name = cheat.getName(),
                     enabled = cheat.getEnabled(),
                     onToggle = { cheat.setEnabled(it) },
-                    onClick = {
-                        cheatsViewModel.setSelectedCheat(cheat, index)
-                        cheatsViewModel.openDetailsView()
-                    }
+                    onClick = { cheatsViewModel.setSelectedCheat(cheat, index) }
                 )
                 HorizontalDivider()
             }
