@@ -25,4 +25,16 @@ public:
 private:
     NDKMotion* ndk_motion_device;
 };
+
+/**
+ * Sets the gyroscope's per-axis output multiplier (1.0 = unchanged), applied to whichever source
+ * (device or physical controller, see GameControllerManager::SetGyroPreferExternalController())
+ * is currently providing gyroscope data. vertical_scale scales the pitch axis, horizontal_scale
+ * the yaw axis; see NDKMotion::GetStatus() for the exact axis mapping used.
+ */
+void SetGyroSensitivity(float vertical_scale, float horizontal_scale);
+
+/** Sets whether each gyroscope axis (see SetGyroSensitivity()) should be negated. */
+void SetGyroInvert(bool invert_vertical, bool invert_horizontal);
+
 } // namespace InputManager

@@ -60,6 +60,7 @@ import org.citra.citra_emu.display.ScreenAdjustmentUtil
 import org.citra.citra_emu.display.ScreenLayout
 import org.citra.citra_emu.features.settings.model.BooleanSetting
 import org.citra.citra_emu.features.settings.model.IntSetting
+import org.citra.citra_emu.features.settings.model.ScaledFloatSetting
 import org.citra.citra_emu.features.settings.model.SettingsViewModel
 import org.citra.citra_emu.features.settings.ui.SettingsActivity
 import org.citra.citra_emu.features.settings.utils.SettingsFile
@@ -1270,6 +1271,16 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
             autoDetectEnabled
         )
         NativeLibrary.setGyroPreferExternalController(gyroPreferExternal)
+        NativeLibrary.setGyroSensitivity(
+            ScaledFloatSetting.GYRO_SENSITIVITY_VERTICAL.float /
+                ScaledFloatSetting.GYRO_SENSITIVITY_VERTICAL.scale,
+            ScaledFloatSetting.GYRO_SENSITIVITY_HORIZONTAL.float /
+                ScaledFloatSetting.GYRO_SENSITIVITY_HORIZONTAL.scale
+        )
+        NativeLibrary.setGyroInvert(
+            BooleanSetting.INVERT_GYRO_VERTICAL.boolean,
+            BooleanSetting.INVERT_GYRO_HORIZONTAL.boolean
+        )
     }
 
     private fun setInsets() {

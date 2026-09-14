@@ -455,6 +455,18 @@ void Java_org_citra_citra_1emu_NativeLibrary_setGyroPreferExternalController(
     GameControllerManager::SetGyroPreferExternalController(prefer == JNI_TRUE);
 }
 
+void Java_org_citra_citra_1emu_NativeLibrary_setGyroSensitivity(
+    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jfloat vertical_scale,
+    jfloat horizontal_scale) {
+    InputManager::SetGyroSensitivity(vertical_scale, horizontal_scale);
+}
+
+void Java_org_citra_citra_1emu_NativeLibrary_setGyroInvert(
+    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jboolean invert_vertical,
+    jboolean invert_horizontal) {
+    InputManager::SetGyroInvert(invert_vertical == JNI_TRUE, invert_horizontal == JNI_TRUE);
+}
+
 jboolean Java_org_citra_citra_1emu_NativeLibrary_onGameControllerKeyEvent(
     JNIEnv* env, [[maybe_unused]] jobject obj, jobject key_event) {
     return static_cast<jboolean>(GameControllerManager::ProcessKeyEvent(env, key_event));

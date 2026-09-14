@@ -10,7 +10,14 @@ enum class ScaledFloatSetting(
     override val defaultValue: Float,
     val scale: Int
 ) : AbstractFloatSetting {
-    AUDIO_VOLUME("volume", Settings.SECTION_AUDIO, 1.0f, 100);
+    AUDIO_VOLUME("volume", Settings.SECTION_AUDIO, 1.0f, 100),
+    GYRO_SENSITIVITY_VERTICAL("gyro_sensitivity_vertical", Settings.SECTION_CONTROLS, 1.0f, 100),
+    GYRO_SENSITIVITY_HORIZONTAL(
+        "gyro_sensitivity_horizontal",
+        Settings.SECTION_CONTROLS,
+        1.0f,
+        100
+    );
 
     override var float: Float = defaultValue
         get() = field * scale

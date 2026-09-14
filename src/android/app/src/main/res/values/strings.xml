@@ -805,6 +805,14 @@
     <string name="gyro_input_source_description">Choose whether motion (gyro) controls come from this device or a connected controller\'s gyroscope. Falls back to this device if the controller has no gyroscope.</string>
     <string name="gyro_input_source_device">This Device</string>
     <string name="gyro_input_source_controller">External Controller</string>
+    <string name="gyro_sensitivity_vertical">Gyro Vertical Sensitivity</string>
+    <string name="gyro_sensitivity_vertical_description">Adjust the gyroscope\'s vertical (pitch) sensitivity.</string>
+    <string name="invert_gyro_vertical">Invert Gyro Vertical Axis</string>
+    <string name="invert_gyro_vertical_description">Invert the gyroscope\'s vertical (pitch) axis.</string>
+    <string name="gyro_sensitivity_horizontal">Gyro Horizontal Sensitivity</string>
+    <string name="gyro_sensitivity_horizontal_description">Adjust the gyroscope\'s horizontal (yaw) sensitivity.</string>
+    <string name="invert_gyro_horizontal">Invert Gyro Horizontal Axis</string>
+    <string name="invert_gyro_horizontal_description">Invert the gyroscope\'s horizontal (yaw) axis.</string>
     <string name="instant_debug_log">Flush log output on every message</string>
     <string name="instant_debug_log_description">Immediately commits the debug log to file. Use this if Azahar crashes and the log output is being cut.</string>
     <string name="disable_right_eye_render">Disable Right Eye Render</string>

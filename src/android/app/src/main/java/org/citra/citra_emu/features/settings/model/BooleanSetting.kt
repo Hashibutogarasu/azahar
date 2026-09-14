@@ -23,7 +23,9 @@ enum class BooleanSetting(
         "invert_controller_left_stick_y_axis",
         Settings.SECTION_CONTROLS,
         false
-    );
+    ),
+    INVERT_GYRO_VERTICAL("invert_gyro_vertical", Settings.SECTION_CONTROLS, false),
+    INVERT_GYRO_HORIZONTAL("invert_gyro_horizontal", Settings.SECTION_CONTROLS, false);
 
     override var boolean: Boolean = defaultValue
 

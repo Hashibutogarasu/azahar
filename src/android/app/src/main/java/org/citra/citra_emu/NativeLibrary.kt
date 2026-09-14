@@ -96,6 +96,15 @@ object NativeLibrary {
     external fun setGyroPreferExternalController(preferExternal: Boolean)
 
     /**
+     * Sets the gyroscope's per-axis output multiplier (1.0 = unchanged), applied regardless of
+     * whether the device's own gyroscope or a physical controller's is currently active.
+     */
+    external fun setGyroSensitivity(verticalScale: Float, horizontalScale: Float)
+
+    /** Sets whether each gyroscope axis (see [setGyroSensitivity]) should be negated. */
+    external fun setGyroInvert(invertVertical: Boolean, invertHorizontal: Boolean)
+
+    /**
      * Handles touch events.
      *
      * @param xAxis  The value of the x-axis.

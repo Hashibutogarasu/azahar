@@ -772,6 +772,48 @@ class SettingsSectionViewModel(
                     IntSetting.GYRO_INPUT_SOURCE.defaultValue
                 )
             )
+            add(
+                SliderSetting(
+                    ScaledFloatSetting.GYRO_SENSITIVITY_VERTICAL,
+                    R.string.gyro_sensitivity_vertical,
+                    R.string.gyro_sensitivity_vertical_description,
+                    0,
+                    200,
+                    "%",
+                    ScaledFloatSetting.GYRO_SENSITIVITY_VERTICAL.key,
+                    ScaledFloatSetting.GYRO_SENSITIVITY_VERTICAL.defaultValue
+                )
+            )
+            add(
+                SwitchSetting(
+                    BooleanSetting.INVERT_GYRO_VERTICAL,
+                    R.string.invert_gyro_vertical,
+                    R.string.invert_gyro_vertical_description,
+                    BooleanSetting.INVERT_GYRO_VERTICAL.key,
+                    BooleanSetting.INVERT_GYRO_VERTICAL.defaultValue
+                )
+            )
+            add(
+                SliderSetting(
+                    ScaledFloatSetting.GYRO_SENSITIVITY_HORIZONTAL,
+                    R.string.gyro_sensitivity_horizontal,
+                    R.string.gyro_sensitivity_horizontal_description,
+                    0,
+                    200,
+                    "%",
+                    ScaledFloatSetting.GYRO_SENSITIVITY_HORIZONTAL.key,
+                    ScaledFloatSetting.GYRO_SENSITIVITY_HORIZONTAL.defaultValue
+                )
+            )
+            add(
+                SwitchSetting(
+                    BooleanSetting.INVERT_GYRO_HORIZONTAL,
+                    R.string.invert_gyro_horizontal,
+                    R.string.invert_gyro_horizontal_description,
+                    BooleanSetting.INVERT_GYRO_HORIZONTAL.key,
+                    BooleanSetting.INVERT_GYRO_HORIZONTAL.defaultValue
+                )
+            )
 
             add(HeaderSetting(R.string.generic_buttons))
             Settings.buttonKeys.forEachIndexed { i: Int, key: String ->
