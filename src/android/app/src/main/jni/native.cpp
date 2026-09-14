@@ -374,7 +374,7 @@ void Java_org_citra_citra_1emu_NativeLibrary_surfaceChangedSecondary(
 
     auto& system = Core::System::GetInstance();
     if (notify && system.IsPoweredOn()) {
-        system.GPU().Renderer().NotifySurfaceChanged();
+        system.GPU().Renderer().NotifySurfaceChanged(true);
     }
 
     LOG_INFO(Frontend, "Secondary surface changed");
