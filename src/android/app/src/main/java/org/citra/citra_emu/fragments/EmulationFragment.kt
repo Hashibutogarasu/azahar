@@ -97,6 +97,11 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
     private val inputManager: InputManager
         get() = requireContext().getSystemService(Context.INPUT_SERVICE) as InputManager
 
+    /**
+     * Auto-hides the virtual controller overlay when a physical game controller connects.
+     * Deliberately does not restore the overlay on [onInputDeviceRemoved]; it is only ever
+     * restored by [InputOverlay.setAutoHidden] in response to a touch.
+     */
     private val controllerDeviceListener = object : InputManager.InputDeviceListener {
         override fun onInputDeviceAdded(deviceId: Int) {
             if (!isGameController(deviceId) || !EmulationMenuSettings.autoDisableOverlayOnController) {
@@ -105,14 +110,9 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
             binding.surfaceInputOverlay.setAutoHidden(true)
         }
 
-        override fun onInputDeviceRemoved(deviceId: Int) {
-            // No op: the overlay stays hidden until re-shown by a touch or by another
-            // still-connected controller; nothing to restore just because one device left.
-        }
+        override fun onInputDeviceRemoved(deviceId: Int) {}
 
-        override fun onInputDeviceChanged(deviceId: Int) {
-            // No op
-        }
+        override fun onInputDeviceChanged(deviceId: Int) {}
     }
 
     private fun isGameController(deviceId: Int): Boolean {
