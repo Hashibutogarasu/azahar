@@ -115,6 +115,13 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
         override fun onInputDeviceChanged(deviceId: Int) {}
     }
 
+    /**
+     * Hides or restores the virtual controller overlay. Safe to call before the view is created.
+     */
+    fun setOverlayAutoHidden(hidden: Boolean) {
+        _binding?.surfaceInputOverlay?.setAutoHidden(hidden)
+    }
+
     private fun isGameController(deviceId: Int): Boolean {
         val device = InputDevice.getDevice(deviceId) ?: return false
         val sources = device.sources
@@ -1230,6 +1237,9 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
     override fun doFrame(frameTimeNanos: Long) {
         Choreographer.getInstance().postFrameCallback(this)
         NativeLibrary.doFrame()
+        if (IntSetting.CONTROLLER_INPUT_MODE.int != 0) {
+            NativeLibrary.updateGameControllers()
+        }
     }
 
     private fun setInsets() {

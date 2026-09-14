@@ -64,6 +64,7 @@ enum class IntSetting(
     USE_FRAME_LIMIT("use_frame_limit", Settings.SECTION_RENDERER, 1),
     DELAY_RENDER_THREAD_US("delay_game_render_thread_us", Settings.SECTION_RENDERER, 0),
     USE_ARTIC_BASE_CONTROLLER("use_artic_base_controller", Settings.SECTION_CONTROLS, 0),
+    CONTROLLER_INPUT_MODE("controller_input_mode", Settings.SECTION_CONTROLS, 0),
     ORIENTATION_OPTION("screen_orientation", Settings.SECTION_LAYOUT, 2),
     DISABLE_RIGHT_EYE_RENDER("disable_right_eye_render", Settings.SECTION_RENDERER, 0);
     override var int: Int = defaultValue

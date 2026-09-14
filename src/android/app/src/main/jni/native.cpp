@@ -52,6 +52,7 @@
 #ifdef ENABLE_VULKAN
 #include "jni/emu_window/emu_window_vk.h"
 #endif
+#include "jni/game_controller_manager.h"
 #include "jni/id_cache.h"
 #include "jni/input_manager.h"
 #include "jni/ndk_motion.h"
@@ -123,6 +124,7 @@ static void TryShutdown() {
     Core::System::GetInstance().Shutdown();
     window.reset();
     InputManager::Shutdown();
+    GameControllerManager::Shutdown(IDCache::GetEnvForThread());
     MicroProfileShutdown();
 }
 
@@ -333,6 +335,33 @@ void Java_org_citra_citra_1emu_NativeLibrary_doFrame([[maybe_unused]] JNIEnv* en
     if (window) {
         window->TryPresenting();
     }
+}
+
+void Java_org_citra_citra_1emu_NativeLibrary_initGameControllerManager(JNIEnv* env,
+                                                                        [[maybe_unused]] jobject obj,
+                                                                        jobject context) {
+    GameControllerManager::Init(env, context);
+}
+
+void Java_org_citra_citra_1emu_NativeLibrary_shutdownGameControllerManager(JNIEnv* env,
+                                                                            [[maybe_unused]] jobject
+                                                                                obj) {
+    GameControllerManager::Shutdown(env);
+}
+
+void Java_org_citra_citra_1emu_NativeLibrary_updateGameControllers(
+    JNIEnv* env, [[maybe_unused]] jobject obj) {
+    GameControllerManager::Update(env);
+}
+
+jboolean Java_org_citra_citra_1emu_NativeLibrary_onGameControllerKeyEvent(
+    JNIEnv* env, [[maybe_unused]] jobject obj, jobject key_event) {
+    return static_cast<jboolean>(GameControllerManager::ProcessKeyEvent(env, key_event));
+}
+
+jboolean Java_org_citra_citra_1emu_NativeLibrary_onGameControllerMotionEvent(
+    JNIEnv* env, [[maybe_unused]] jobject obj, jobject motion_event) {
+    return static_cast<jboolean>(GameControllerManager::ProcessMotionEvent(env, motion_event));
 }
 
 void JNICALL Java_org_citra_citra_1emu_NativeLibrary_initializeGpuDriver(

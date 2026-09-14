@@ -738,6 +738,21 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
     private fun addControlsSettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.preferences_controls))
         sl.apply {
+            add(
+                SingleChoiceSetting(
+                    IntSetting.CONTROLLER_INPUT_MODE,
+                    R.string.controller_input_mode,
+                    R.string.controller_input_mode_description,
+                    R.array.controllerInputModes,
+                    R.array.controllerInputModeValues,
+                    IntSetting.CONTROLLER_INPUT_MODE.key,
+                    IntSetting.CONTROLLER_INPUT_MODE.defaultValue
+                )
+            )
+            if (IntSetting.CONTROLLER_INPUT_MODE.int != 0) {
+                return@apply
+            }
+
             add(HeaderSetting(R.string.generic_buttons))
             Settings.buttonKeys.forEachIndexed { i: Int, key: String ->
                 val button = getInputObject(key)

@@ -580,4 +580,13 @@
         <item>9</item>
     </integer-array>
 
+    <string-array name="controllerInputModes">
+        <item>@string/controller_input_mode_manual</item>
+        <item>@string/controller_input_mode_auto_detect</item>
+    </string-array>
+    <integer-array name="controllerInputModeValues">
+        <item>0</item>
+        <item>1</item>
+    </integer-array>
+
 </resources>

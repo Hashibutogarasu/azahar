@@ -54,6 +54,7 @@ android {
     buildFeatures {
         viewBinding = true
         compose = true
+        prefab = true
     }
 
     lint {
@@ -181,6 +182,7 @@ dependencies {
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.work:work-runtime:2.9.1")
     implementation("com.google.android.material:material:1.9.0")
+    implementation("androidx.games:games-controller:2.0.2")
     implementation("info.debatty:java-string-similarity:2.0.0")
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("org.ini4j:ini4j:0.5.4")

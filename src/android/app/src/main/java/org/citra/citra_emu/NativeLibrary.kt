@@ -6,6 +6,7 @@ package org.citra.citra_emu
 
 import android.Manifest.permission
 import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -13,6 +14,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Html
 import android.text.method.LinkMovementMethod
+import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.Surface
 import android.view.View
 import android.widget.TextView
@@ -124,6 +127,26 @@ object NativeLibrary {
     external fun surfaceChanged(surf: Surface)
     external fun surfaceDestroyed()
     external fun doFrame()
+
+    /**
+     * Initializes the Android Game Controller Library so physical controllers can be
+     * auto-detected and mapped to standardized inputs, instead of relying on manual bindings.
+     */
+    external fun initGameControllerManager(context: Context)
+    external fun shutdownGameControllerManager()
+
+    /**
+     * Polls every connected controller once. Must be called once per frame while controller
+     * auto-detect mode is active.
+     */
+    external fun updateGameControllers()
+
+    /**
+     * Forwards a physical controller key/motion event for auto-detect processing. Returns false
+     * (and does nothing) on API levels below 31, letting the caller fall back to manual mapping.
+     */
+    external fun onGameControllerKeyEvent(event: KeyEvent): Boolean
+    external fun onGameControllerMotionEvent(event: MotionEvent): Boolean
 
     /**
      * Unpauses emulation from a paused state.
@@ -346,6 +369,18 @@ object NativeLibrary {
                 fragment.arguments = args
                 return fragment
             }
+        }
+    }
+
+    /**
+     * Called from native code when the Game Controller Library detects a physical controller
+     * connecting or disconnecting, so the UI can react (e.g. auto-hide the virtual overlay).
+     */
+    @Keep
+    @JvmStatic
+    fun onControllerConnectionChanged(connected: Boolean) {
+        if (connected && EmulationMenuSettings.autoDisableOverlayOnController) {
+            sEmulationActivity.get()?.setOverlayAutoHidden(true)
         }
     }
 

@@ -66,6 +66,14 @@ class EmulationActivity : AppCompatActivity() {
 
     private var isEmulationRunning: Boolean = false
 
+    /**
+     * Forwards an auto-hide request to the currently attached [EmulationFragment]'s overlay, if
+     * any is attached. Safe to call from a native callback at any point in the activity lifecycle.
+     */
+    fun setOverlayAutoHidden(hidden: Boolean) {
+        runCatching { emulationFragment.setOverlayAutoHidden(hidden) }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeUtil.setTheme(this)
 
@@ -106,6 +114,10 @@ class EmulationActivity : AppCompatActivity() {
         instance = this
 
         applyOrientationSettings() // Check for orientation settings at startup
+
+        if (IntSetting.CONTROLLER_INPUT_MODE.int != 0) {
+            NativeLibrary.initGameControllerManager(applicationContext)
+        }
     }
 
     // On some devices, the system bars will not disappear on first boot or after some
@@ -141,6 +153,9 @@ class EmulationActivity : AppCompatActivity() {
         EmulationLifecycleUtil.clear()
         isEmulationRunning = false
         instance = null
+        if (IntSetting.CONTROLLER_INPUT_MODE.int != 0) {
+            NativeLibrary.shutdownGameControllerManager()
+        }
         super.onDestroy()
     }
 
@@ -210,6 +225,11 @@ class EmulationActivity : AppCompatActivity() {
         screenAdjustmentUtil.changeActivityOrientation(orientationOption)
     }
 
+    private fun isGameControllerSource(source: Int): Boolean {
+        return source and InputDevice.SOURCE_GAMEPAD == InputDevice.SOURCE_GAMEPAD ||
+            source and InputDevice.SOURCE_JOYSTICK == InputDevice.SOURCE_JOYSTICK
+    }
+
     // Gets button presses
     @Suppress("DEPRECATION")
     @SuppressLint("GestureBackNavigation")
@@ -221,6 +241,12 @@ class EmulationActivity : AppCompatActivity() {
 
         if (emulationFragment.isDrawerOpen()) {
             return super.dispatchKeyEvent(event)
+        }
+
+        if (IntSetting.CONTROLLER_INPUT_MODE.int != 0 && isGameControllerSource(event.source) &&
+            NativeLibrary.onGameControllerKeyEvent(event)
+        ) {
+            return true
         }
 
         val button =
@@ -271,6 +297,13 @@ class EmulationActivity : AppCompatActivity() {
         if (event.actionMasked == MotionEvent.ACTION_CANCEL) {
             return true
         }
+
+        if (IntSetting.CONTROLLER_INPUT_MODE.int != 0 &&
+            NativeLibrary.onGameControllerMotionEvent(event)
+        ) {
+            return true
+        }
+
         val input = event.device
         val motions = input.motionRanges
         val axisValuesCirclePad = floatArrayOf(0.0f, 0.0f)
