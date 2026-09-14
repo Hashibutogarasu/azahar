@@ -224,6 +224,16 @@ class EmulationActivity : AppCompatActivity() {
             source and InputDevice.SOURCE_JOYSTICK == InputDevice.SOURCE_JOYSTICK
     }
 
+    /**
+     * Re-hides the virtual overlay on the next physical controller button press, since a touch
+     * only restores it until the controller is actually used again.
+     */
+    private fun setOverlayAutoHiddenOnControllerInput() {
+        if (EmulationMenuSettings.autoDisableOverlayOnController) {
+            setOverlayAutoHidden(true)
+        }
+    }
+
     // Gets button presses
     @Suppress("DEPRECATION")
     @SuppressLint("GestureBackNavigation")
@@ -235,6 +245,10 @@ class EmulationActivity : AppCompatActivity() {
 
         if (emulationFragment.isDrawerOpen()) {
             return super.dispatchKeyEvent(event)
+        }
+
+        if (isGameControllerSource(event.source) && event.action == KeyEvent.ACTION_DOWN) {
+            setOverlayAutoHiddenOnControllerInput()
         }
 
         if (IntSetting.CONTROLLER_INPUT_MODE.int != 0 && isGameControllerSource(event.source) &&
