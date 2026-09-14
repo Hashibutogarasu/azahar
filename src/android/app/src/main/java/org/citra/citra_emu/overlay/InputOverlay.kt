@@ -118,29 +118,17 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                 swapScreen()
             }
 
-            NativeLibrary.onGamePadEvent(NativeLibrary.TouchScreenDevice, button.id, button.status)
+            NativeLibrary.setVirtualButton(button.id, button.status == NativeLibrary.ButtonState.PRESSED)
             shouldUpdateView = true
         }
         for (dpad in overlayDpads) {
             if (!dpad.updateStatus(event, EmulationMenuSettings.dpadSlide, this)) {
                 continue
             }
-            NativeLibrary.onGamePadEvent(NativeLibrary.TouchScreenDevice, dpad.upId, dpad.upStatus)
-            NativeLibrary.onGamePadEvent(
-                NativeLibrary.TouchScreenDevice,
-                dpad.downId,
-                dpad.downStatus
-            )
-            NativeLibrary.onGamePadEvent(
-                NativeLibrary.TouchScreenDevice,
-                dpad.leftId,
-                dpad.leftStatus
-            )
-            NativeLibrary.onGamePadEvent(
-                NativeLibrary.TouchScreenDevice,
-                dpad.rightId,
-                dpad.rightStatus
-            )
+            NativeLibrary.setVirtualButton(dpad.upId, dpad.upStatus == NativeLibrary.ButtonState.PRESSED)
+            NativeLibrary.setVirtualButton(dpad.downId, dpad.downStatus == NativeLibrary.ButtonState.PRESSED)
+            NativeLibrary.setVirtualButton(dpad.leftId, dpad.leftStatus == NativeLibrary.ButtonState.PRESSED)
+            NativeLibrary.setVirtualButton(dpad.rightId, dpad.rightStatus == NativeLibrary.ButtonState.PRESSED)
             shouldUpdateView = true
         }
         for (joystick in overlayJoysticks) {
@@ -148,12 +136,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                 continue
             }
             val axisID = joystick.joystickId
-            NativeLibrary.onGamePadMoveEvent(
-                NativeLibrary.TouchScreenDevice,
-                axisID,
-                joystick.xAxis,
-                joystick.yAxis
-            )
+            NativeLibrary.setVirtualStick(axisID, joystick.xAxis, joystick.yAxis)
             shouldUpdateView = true
         }
 

@@ -21,12 +21,20 @@ void Init(JNIEnv* env, jobject context);
 void Shutdown(JNIEnv* env);
 
 /**
- * Polls every connected controller once and forwards standardized button/axis state into
- * InputManager, mirroring what the manual key/axis bindings normally feed in. Must be called
- * once per frame while auto-detect controller mode is active. When invert_left_stick_y is true,
- * the left stick's (circle pad) Y axis is negated before being forwarded.
+ * Merges virtual (SetVirtualButton()/SetVirtualStick()) and, if read_physical_controllers,
+ * physical controller state into InputManager. Leaves a button/stick untouched when neither
+ * source has anything to report, so the separate manual key/axis mapping path
+ * (Java_..._onGamePadEvent/onGamePadMoveEvent) keeps working when physical controllers aren't
+ * read here. Safe to call regardless of Init() state or controller input mode; call once per
+ * frame. invert_left_stick_y negates a physical left stick's Y axis; virtual input is unaffected.
  */
-void Update(JNIEnv* env, bool invert_left_stick_y);
+void Update(JNIEnv* env, bool invert_left_stick_y, bool read_physical_controllers);
+
+/** Records a virtual (touch overlay) button's pressed state; merged into InputManager by Update(). */
+void SetVirtualButton(int n3ds_button_id, bool pressed);
+
+/** Records a virtual (touch overlay) stick's x/y position; merged into InputManager by Update(). */
+void SetVirtualStick(int n3ds_analog_id, float x, float y);
 
 /**
  * Forwards a Java KeyEvent for controller processing. Only meaningful on API level 31+, where

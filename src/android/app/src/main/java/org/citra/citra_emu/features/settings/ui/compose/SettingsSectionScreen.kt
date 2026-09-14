@@ -13,6 +13,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -55,17 +57,19 @@ fun SettingsSectionScreen(
 ) {
     val activity = LocalContext.current as SettingsActivity
 
-    val (fragmentView, presenter, items) = remember(menuTag, gameId) {
+    val (fragmentView, presenter, loadedItemsState) = remember(menuTag, gameId) {
         lateinit var presenterRef: SettingsFragmentPresenter
-        var loadedItems: ArrayList<SettingsItem> = arrayListOf()
+        val loadedItemsState = mutableStateOf<ArrayList<SettingsItem>>(arrayListOf())
         val view = object : SettingsFragmentView {
             override var activityView: SettingsActivityView? = activity
 
             override fun showSettingsList(settingsList: ArrayList<SettingsItem>) {
-                loadedItems = settingsList
+                loadedItemsState.value = settingsList
             }
 
-            override fun loadSettingsList() {}
+            override fun loadSettingsList() {
+                presenterRef.loadSettingsList()
+            }
 
             override fun loadSubMenu(menuKey: String) {
                 if (menuKey == Settings.SECTION_LANGUAGE) {
@@ -85,14 +89,16 @@ fun SettingsSectionScreen(
 
             override fun onSettingChanged() {
                 activityView!!.onSettingChanged()
+                loadSettingsList()
             }
         }
         presenterRef = SettingsFragmentPresenter(view).apply {
             onCreate(menuTag, gameId)
             loadSettingsList()
         }
-        Triple(view, presenterRef, loadedItems)
+        Triple(view, presenterRef, loadedItemsState)
     }
+    val items by loadedItemsState
 
     Scaffold(
         modifier = modifier,

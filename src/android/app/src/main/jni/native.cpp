@@ -424,8 +424,30 @@ void Java_org_citra_citra_1emu_NativeLibrary_shutdownGameControllerManager(JNIEn
 }
 
 void Java_org_citra_citra_1emu_NativeLibrary_updateGameControllers(
-    JNIEnv* env, [[maybe_unused]] jobject obj, jboolean invert_left_stick_y) {
-    GameControllerManager::Update(env, invert_left_stick_y != JNI_FALSE);
+    JNIEnv* env, [[maybe_unused]] jobject obj, jboolean invert_left_stick_y,
+    jboolean read_physical_controllers) {
+    GameControllerManager::Update(env, invert_left_stick_y != JNI_FALSE,
+                                  read_physical_controllers != JNI_FALSE);
+}
+
+void Java_org_citra_citra_1emu_NativeLibrary_setVirtualButton(
+    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jint button, jboolean pressed) {
+    GameControllerManager::SetVirtualButton(button, pressed == JNI_TRUE);
+}
+
+/** Forwards virtual stick input to GameControllerManager, normalized like onGamePadMoveEvent(). */
+void Java_org_citra_citra_1emu_NativeLibrary_setVirtualStick(
+    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jint axis, jfloat x, jfloat y) {
+    x = std::clamp(x, -1.f, 1.f);
+    y = std::clamp(-y, -1.f, 1.f);
+
+    float r = x * x + y * y;
+    if (r > 1.0f) {
+        r = std::sqrt(r);
+        x /= r;
+        y /= r;
+    }
+    GameControllerManager::SetVirtualStick(axis, x, y);
 }
 
 jboolean Java_org_citra_citra_1emu_NativeLibrary_onGameControllerKeyEvent(

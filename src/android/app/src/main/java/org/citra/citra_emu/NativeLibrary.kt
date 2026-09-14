@@ -82,6 +82,12 @@ object NativeLibrary {
      */
     external fun onGamePadAxisEvent(device: String?, axisId: Int, axisVal: Float): Boolean
 
+    /** Records a virtual (touch overlay) button's pressed state, merged by GameControllerManager. */
+    external fun setVirtualButton(button: Int, pressed: Boolean)
+
+    /** Records a virtual (touch overlay) stick's position, merged by GameControllerManager. */
+    external fun setVirtualStick(axis: Int, xAxis: Float, yAxis: Float)
+
     /**
      * Handles touch events.
      *
@@ -143,11 +149,12 @@ object NativeLibrary {
     external fun shutdownGameControllerManager()
 
     /**
-     * Polls every connected controller once. Must be called once per frame while controller
-     * auto-detect mode is active. When invertLeftStickY is true, the left stick's Y axis is
-     * flipped back to Android's raw (unnegated) convention.
+     * Merges the virtual controller with, when readPhysicalControllers is true, every connected
+     * physical controller, and forwards the result to the emulated core. Must be called once per
+     * frame regardless of controller input mode, since the virtual overlay is always active.
+     * invertLeftStickY flips a physical left stick's Y axis back to Android's raw convention.
      */
-    external fun updateGameControllers(invertLeftStickY: Boolean)
+    external fun updateGameControllers(invertLeftStickY: Boolean, readPhysicalControllers: Boolean)
 
     /**
      * Forwards a physical controller key/motion event for auto-detect processing. Returns false

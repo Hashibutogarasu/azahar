@@ -100,9 +100,10 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
     private val topFirstState = mutableStateOf(!EmulationMenuSettings.swapScreens)
 
     /**
-     * Tracks whether the Game Controller Library is currently initialized, so [doFrame] can
-     * react to the user changing [IntSetting.CONTROLLER_INPUT_MODE] mid-session instead of only
-     * checking it once at activity creation.
+     * Tracks whether Paddleboat is currently initialized, so [doFrame] can react to the user
+     * changing [IntSetting.CONTROLLER_INPUT_MODE] mid-session. [NativeLibrary.updateGameControllers]
+     * itself is still called every frame regardless, since it also merges in the virtual
+     * (touch overlay) controller.
      */
     private var gameControllerManagerActive = false
 
@@ -1262,11 +1263,10 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
                 NativeLibrary.shutdownGameControllerManager()
             }
         }
-        if (autoDetectEnabled) {
-            NativeLibrary.updateGameControllers(
-                BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS.boolean
-            )
-        }
+        NativeLibrary.updateGameControllers(
+            BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS.boolean,
+            autoDetectEnabled
+        )
     }
 
     private fun setInsets() {
