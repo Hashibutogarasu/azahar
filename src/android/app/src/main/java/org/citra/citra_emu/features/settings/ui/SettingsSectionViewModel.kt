@@ -760,6 +760,19 @@ class SettingsSectionViewModel(
                 )
             )
 
+            add(HeaderSetting(R.string.gyro_settings))
+            add(
+                SingleChoiceSetting(
+                    IntSetting.GYRO_INPUT_SOURCE,
+                    R.string.gyro_input_source,
+                    R.string.gyro_input_source_description,
+                    R.array.gyroInputSources,
+                    R.array.gyroInputSourceValues,
+                    IntSetting.GYRO_INPUT_SOURCE.key,
+                    IntSetting.GYRO_INPUT_SOURCE.defaultValue
+                )
+            )
+
             add(HeaderSetting(R.string.generic_buttons))
             Settings.buttonKeys.forEachIndexed { i: Int, key: String ->
                 val button = getInputObject(key)

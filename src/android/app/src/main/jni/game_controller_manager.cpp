@@ -3,6 +3,7 @@
 // Refer to the license.txt file included.
 
 #include <array>
+#include <atomic>
 #include <cstdint>
 #include <dlfcn.h>
 #include <unordered_map>
@@ -22,16 +23,22 @@ constexpr int kMaxControllers = 8;
 std::array<uint32_t, kMaxControllers> g_previous_buttons{};
 bool g_initialized = false;
 
+std::atomic<bool> g_gyro_prefer_external{false};
+std::atomic<bool> g_gyro_sample_valid{false};
+std::atomic<float> g_gyro_x{0.f};
+std::atomic<float> g_gyro_y{0.f};
+std::atomic<float> g_gyro_z{0.f};
+
 struct StickState {
     float x = 0.f;
     float y = 0.f;
 };
 
-// Virtual (touch overlay) state, keyed by N3DS_BUTTON_*/N3DS_CIRCLEPAD/N3DS_STICK_C id.
+/** Virtual (touch overlay) state, keyed by an N3DS_BUTTON_, N3DS_CIRCLEPAD, or N3DS_STICK_C id. */
 std::unordered_map<int, bool> g_virtual_buttons;
 std::unordered_map<int, StickState> g_virtual_sticks;
 
-// Last combined (physical OR virtual) pressed state per button id, for edge detection in Update().
+/** Last combined (physical OR virtual) pressed state per button id, for edge detection in Update(). */
 std::unordered_map<int, bool> g_previous_combined_buttons;
 
 struct ButtonMapping {
@@ -109,12 +116,31 @@ void OnControllerStatusChanged(const int32_t controller_index,
     if (controller_index >= 0 && controller_index < kMaxControllers) {
         g_previous_buttons[controller_index] = 0;
     }
+    if (status == PADDLEBOAT_CONTROLLER_JUST_DISCONNECTED) {
+        g_gyro_sample_valid = false;
+    }
 
     JNIEnv* env = IDCache::GetEnvForThread();
     env->CallStaticVoidMethod(IDCache::GetNativeLibraryClass(),
                               IDCache::GetOnControllerConnectionChanged(),
                               static_cast<jboolean>(status ==
                                                      PADDLEBOAT_CONTROLLER_JUST_CONNECTED));
+}
+
+/**
+ * Records the latest gyroscope sample reported by any controller, for TryGetControllerGyro() to
+ * read back. Accelerometer samples are ignored; the Android device's own accelerometer is still
+ * used regardless of SetGyroPreferExternalController().
+ */
+void OnControllerMotionData(int32_t controller_index, const Paddleboat_Motion_Data* motion_data,
+                            void* user_data) {
+    if (!motion_data || motion_data->motionType != PADDLEBOAT_MOTION_GYROSCOPE) {
+        return;
+    }
+    g_gyro_x = motion_data->motionX;
+    g_gyro_y = motion_data->motionY;
+    g_gyro_z = motion_data->motionZ;
+    g_gyro_sample_valid = true;
 }
 
 void SetButton(bool is_down, bool was_down, int n3ds_button_id) {
@@ -138,6 +164,7 @@ void Init(JNIEnv* env, jobject context) {
         return;
     }
     Paddleboat_setControllerStatusCallback(OnControllerStatusChanged, nullptr);
+    Paddleboat_setMotionDataCallback(OnControllerMotionData, nullptr);
     ResolveInputEventBridge();
     g_previous_buttons.fill(0);
     g_initialized = true;
@@ -148,6 +175,8 @@ void Shutdown(JNIEnv* env) {
         return;
     }
     Paddleboat_setControllerStatusCallback(nullptr, nullptr);
+    Paddleboat_setMotionDataCallback(nullptr, nullptr);
+    g_gyro_sample_valid = false;
     Paddleboat_destroy(env);
     g_initialized = false;
 }
@@ -233,6 +262,23 @@ void SetVirtualButton(int n3ds_button_id, bool pressed) {
 
 void SetVirtualStick(int n3ds_analog_id, float x, float y) {
     g_virtual_sticks[n3ds_analog_id] = {x, y};
+}
+
+void SetGyroPreferExternalController(bool prefer) {
+    g_gyro_prefer_external = prefer;
+    if (!prefer) {
+        g_gyro_sample_valid = false;
+    }
+}
+
+bool TryGetControllerGyro(float* x, float* y, float* z) {
+    if (!g_gyro_prefer_external || !g_initialized || !g_gyro_sample_valid) {
+        return false;
+    }
+    *x = g_gyro_x;
+    *y = g_gyro_y;
+    *z = g_gyro_z;
+    return true;
 }
 
 bool ProcessKeyEvent(JNIEnv* env, jobject key_event) {

@@ -800,6 +800,11 @@
     <string name="controller_input_mode_auto_detect">Auto-detect Controller</string>
     <string name="invert_controller_left_stick_y_axis">Invert Left Stick Y Axis</string>
     <string name="invert_controller_left_stick_y_axis_description">Invert the left stick\'s vertical axis when using auto-detected controllers.</string>
+    <string name="gyro_settings">Gyro Settings</string>
+    <string name="gyro_input_source">Gyro Input Source</string>
+    <string name="gyro_input_source_description">Choose whether motion (gyro) controls come from this device or a connected controller\'s gyroscope. Falls back to this device if the controller has no gyroscope.</string>
+    <string name="gyro_input_source_device">This Device</string>
+    <string name="gyro_input_source_controller">External Controller</string>
     <string name="instant_debug_log">Flush log output on every message</string>
     <string name="instant_debug_log_description">Immediately commits the debug log to file. Use this if Azahar crashes and the log output is being cut.</string>
     <string name="disable_right_eye_render">Disable Right Eye Render</string>

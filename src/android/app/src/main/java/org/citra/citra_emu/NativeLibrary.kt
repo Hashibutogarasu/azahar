@@ -89,6 +89,13 @@ object NativeLibrary {
     external fun setVirtualStick(axis: Int, xAxis: Float, yAxis: Float)
 
     /**
+     * Selects whether a gyroscope-capable physical controller's gyroscope should be used in
+     * place of the Android device's own gyroscope. Has no effect when no such controller is
+     * connected; the device's own gyroscope is used in that case regardless of this setting.
+     */
+    external fun setGyroPreferExternalController(preferExternal: Boolean)
+
+    /**
      * Handles touch events.
      *
      * @param xAxis  The value of the x-axis.

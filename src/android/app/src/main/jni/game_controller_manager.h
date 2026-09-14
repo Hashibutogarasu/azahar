@@ -37,6 +37,23 @@ void SetVirtualButton(int n3ds_button_id, bool pressed);
 void SetVirtualStick(int n3ds_analog_id, float x, float y);
 
 /**
+ * Sets whether a physical controller's gyroscope should be used in place of the Android device's
+ * own gyroscope, when the currently connected controller reports gyroscope support. Safe to call
+ * whether or not Init() has been called.
+ */
+void SetGyroPreferExternalController(bool prefer);
+
+/**
+ * Fills x/y/z with the latest gyroscope sample from a physical controller, as reported by
+ * Paddleboat (raw units, matching Android's ASENSOR_TYPE_GYROSCOPE rad/s convention; the caller
+ * is responsible for any unit/axis conversion), and returns true, if
+ * SetGyroPreferExternalController(true) is in effect, Paddleboat is initialized, and a
+ * gyroscope-capable controller has reported at least one sample. Returns false (leaving x/y/z
+ * untouched) otherwise, so the caller should fall back to the device's own gyroscope.
+ */
+bool TryGetControllerGyro(float* x, float* y, float* z);
+
+/**
  * Forwards a Java KeyEvent for controller processing. Only meaningful on API level 31+, where
  * the NDK can translate a Java input event into an AInputEvent; returns false otherwise so the
  * caller can fall back to manual key mapping.

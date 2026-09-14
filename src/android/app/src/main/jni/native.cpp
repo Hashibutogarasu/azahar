@@ -450,6 +450,11 @@ void Java_org_citra_citra_1emu_NativeLibrary_setVirtualStick(
     GameControllerManager::SetVirtualStick(axis, x, y);
 }
 
+void Java_org_citra_citra_1emu_NativeLibrary_setGyroPreferExternalController(
+    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jboolean prefer) {
+    GameControllerManager::SetGyroPreferExternalController(prefer == JNI_TRUE);
+}
+
 jboolean Java_org_citra_citra_1emu_NativeLibrary_onGameControllerKeyEvent(
     JNIEnv* env, [[maybe_unused]] jobject obj, jobject key_event) {
     return static_cast<jboolean>(GameControllerManager::ProcessKeyEvent(env, key_event));

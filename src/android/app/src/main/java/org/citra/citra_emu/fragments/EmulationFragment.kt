@@ -101,9 +101,9 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
 
     /**
      * Tracks whether Paddleboat is currently initialized, so [doFrame] can react to the user
-     * changing [IntSetting.CONTROLLER_INPUT_MODE] mid-session. [NativeLibrary.updateGameControllers]
-     * itself is still called every frame regardless, since it also merges in the virtual
-     * (touch overlay) controller.
+     * changing [IntSetting.CONTROLLER_INPUT_MODE] or [IntSetting.GYRO_INPUT_SOURCE] mid-session.
+     * [NativeLibrary.updateGameControllers] itself is still called every frame regardless, since
+     * it also merges in the virtual (touch overlay) controller.
      */
     private var gameControllerManagerActive = false
 
@@ -1255,9 +1255,11 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
         NativeLibrary.doFrameSecondary()
 
         val autoDetectEnabled = IntSetting.CONTROLLER_INPUT_MODE.int != 0
-        if (autoDetectEnabled != gameControllerManagerActive) {
-            gameControllerManagerActive = autoDetectEnabled
-            if (autoDetectEnabled) {
+        val gyroPreferExternal = IntSetting.GYRO_INPUT_SOURCE.int != 0
+        val needsGameControllerManager = autoDetectEnabled || gyroPreferExternal
+        if (needsGameControllerManager != gameControllerManagerActive) {
+            gameControllerManagerActive = needsGameControllerManager
+            if (needsGameControllerManager) {
                 NativeLibrary.initGameControllerManager(requireContext().applicationContext)
             } else {
                 NativeLibrary.shutdownGameControllerManager()
@@ -1267,6 +1269,7 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
             BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS.boolean,
             autoDetectEnabled
         )
+        NativeLibrary.setGyroPreferExternalController(gyroPreferExternal)
     }
 
     private fun setInsets() {

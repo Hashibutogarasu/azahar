@@ -6,6 +6,7 @@
 #include "common/assert.h"
 #include "common/logging/log.h"
 #include "common/vector_math.h"
+#include "jni/game_controller_manager.h"
 #include "jni/ndk_motion.h"
 
 namespace InputManager {
@@ -131,9 +132,23 @@ public:
         }
     }
 
+    /**
+     * When a physical controller's gyroscope is preferred (GameControllerManager::
+     * TryGetControllerGyro()), its sample replaces the device's own rotation, converted with the
+     * same rad/s-to-deg/s and axis mapping as ASENSOR_TYPE_GYROSCOPE below, since Paddleboat
+     * reports gyroscope data in that same convention.
+     */
     std::tuple<Vec3<float>, Vec3<float>> GetStatus() const override {
         if (std::thread::id{} == poll_thread.get_id()) {
             Update();
+        }
+        float controller_x, controller_y, controller_z;
+        if (GameControllerManager::TryGetControllerGyro(&controller_x, &controller_y,
+                                                         &controller_z)) {
+            Vec3<float> controller_rotation =
+                TransformAxes({controller_x, controller_y, controller_z}) * 180.0f /
+                static_cast<float>(M_PI);
+            return {acceleration, controller_rotation};
         }
         return {acceleration, rotation};
     }
