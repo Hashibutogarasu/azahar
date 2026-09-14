@@ -106,10 +106,10 @@ fun EmulationScreensLayout(
         val zoomFittingHeight = maxHeight / combinedHeight
         val zoom = minOf(zoomFittingWidth, zoomFittingHeight)
 
-        val topScreenWidth = TOP_SCREEN_WIDTH * zoom
-        val topScreenHeight = TOP_SCREEN_HEIGHT * zoom
-        val bottomScreenWidth = BOTTOM_SCREEN_WIDTH * zoom
-        val bottomScreenHeight = BOTTOM_SCREEN_HEIGHT * zoom
+        val topScreenWidth = zoom * TOP_SCREEN_WIDTH
+        val topScreenHeight = zoom * TOP_SCREEN_HEIGHT
+        val bottomScreenWidth = zoom * BOTTOM_SCREEN_WIDTH
+        val bottomScreenHeight = zoom * BOTTOM_SCREEN_HEIGHT
 
         Column(
             modifier = Modifier.wrapContentWidth(),
