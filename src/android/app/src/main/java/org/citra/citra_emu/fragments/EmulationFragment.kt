@@ -98,6 +98,13 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
      */
     private val topFirstState = mutableStateOf(!EmulationMenuSettings.swapScreens)
 
+    /**
+     * Tracks whether the Game Controller Library is currently initialized, so [doFrame] can
+     * react to the user changing [IntSetting.CONTROLLER_INPUT_MODE] mid-session instead of only
+     * checking it once at activity creation.
+     */
+    private var gameControllerManagerActive = false
+
     private val emulationViewModel: EmulationViewModel by activityViewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
 
@@ -1244,7 +1251,17 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
         Choreographer.getInstance().postFrameCallback(this)
         NativeLibrary.doFrame()
         NativeLibrary.doFrameSecondary()
-        if (IntSetting.CONTROLLER_INPUT_MODE.int != 0) {
+
+        val autoDetectEnabled = IntSetting.CONTROLLER_INPUT_MODE.int != 0
+        if (autoDetectEnabled != gameControllerManagerActive) {
+            gameControllerManagerActive = autoDetectEnabled
+            if (autoDetectEnabled) {
+                NativeLibrary.initGameControllerManager(requireContext().applicationContext)
+            } else {
+                NativeLibrary.shutdownGameControllerManager()
+            }
+        }
+        if (autoDetectEnabled) {
             NativeLibrary.updateGameControllers()
         }
     }

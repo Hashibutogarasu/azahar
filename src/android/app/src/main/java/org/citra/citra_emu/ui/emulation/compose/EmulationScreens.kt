@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.boundsInWindow
@@ -61,6 +62,11 @@ private fun EmulationSurfaceView(
  * and [bottomWeight] decide their relative on-screen size. Native code never makes either
  * decision: each native window always renders the same fixed screen (top or bottom) regardless
  * of where this layout places it.
+ *
+ * Each screen is wrapped in [key] with a stable identity ("top"/"bottom") so that swapping their
+ * order only reorders them; without it, Compose's positional slot table would treat the reordered
+ * calls as different content and tear down/recreate both underlying SurfaceViews (and their
+ * native surfaces) on every swap.
  */
 @Composable
 fun EmulationScreensLayout(
@@ -101,11 +107,11 @@ fun EmulationScreensLayout(
             }
         }
         if (topFirst) {
-            topScreen()
-            bottomScreen()
+            key("top") { topScreen() }
+            key("bottom") { bottomScreen() }
         } else {
-            bottomScreen()
-            topScreen()
+            key("bottom") { bottomScreen() }
+            key("top") { topScreen() }
         }
     }
 }

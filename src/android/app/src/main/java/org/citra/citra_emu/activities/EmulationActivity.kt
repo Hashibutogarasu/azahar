@@ -114,10 +114,6 @@ class EmulationActivity : AppCompatActivity() {
         instance = this
 
         applyOrientationSettings() // Check for orientation settings at startup
-
-        if (IntSetting.CONTROLLER_INPUT_MODE.int != 0) {
-            NativeLibrary.initGameControllerManager(applicationContext)
-        }
     }
 
     // On some devices, the system bars will not disappear on first boot or after some
@@ -153,9 +149,7 @@ class EmulationActivity : AppCompatActivity() {
         EmulationLifecycleUtil.clear()
         isEmulationRunning = false
         instance = null
-        if (IntSetting.CONTROLLER_INPUT_MODE.int != 0) {
-            NativeLibrary.shutdownGameControllerManager()
-        }
+        NativeLibrary.shutdownGameControllerManager()
         super.onDestroy()
     }
 
