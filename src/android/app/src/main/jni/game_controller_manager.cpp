@@ -54,6 +54,14 @@ void ResolveInputEventBridge() {
 }
 
 /**
+ * InputManager::Init() only runs once the emulated core starts (inside RunCitra), which can be
+ * well after auto-detect mode is enabled and doFrame() starts polling controllers.
+ */
+bool IsInputManagerReady() {
+    return InputManager::ButtonHandler() != nullptr && InputManager::AnalogHandler() != nullptr;
+}
+
+/**
  * Notifies the Kotlin side whenever any controller connects or disconnects, so the UI can react
  * (e.g. auto-hiding the virtual controller overlay) without polling.
  */
@@ -112,7 +120,7 @@ void Shutdown(JNIEnv* env) {
 }
 
 void Update(JNIEnv* env) {
-    if (!g_initialized) {
+    if (!g_initialized || !IsInputManagerReady()) {
         return;
     }
     Paddleboat_update(env);
