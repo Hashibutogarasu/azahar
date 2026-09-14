@@ -73,9 +73,11 @@ private fun EmulationSurfaceView(
  * window always renders the same fixed screen (top or bottom) regardless of where this layout
  * places it.
  *
- * The shared column width is chosen so the stacked pair fits both the available width (portrait)
- * and the available height (landscape, where a width-only fit would otherwise make the stacked
- * pair taller than the screen); [BoxWithConstraints] measures the available space to compute it.
+ * The shared column width is chosen so the stacked pair fills the available space as much as
+ * possible - like CSS's "cover" sizing - taking whichever of a width-driven or a height-driven
+ * fit is larger, even if that means the pair overflows (and is cropped at) the other axis, rather
+ * than a smaller fit that avoids cropping but leaves large letterboxed margins; [BoxWithConstraints]
+ * measures the available space to compute it.
  *
  * Each screen is wrapped in [key] with a stable identity ("top"/"bottom") so that swapping their
  * order only reorders them; without it, Compose's positional slot table would treat the reordered
@@ -98,7 +100,7 @@ fun EmulationScreensLayout(
     ) {
         val heightPerUnitWidth = 1f / TOP_SCREEN_ASPECT_RATIO + 1f / BOTTOM_SCREEN_ASPECT_RATIO
         val widthFittingHeight = maxHeight / heightPerUnitWidth
-        val columnWidth = minOf(maxWidth, widthFittingHeight)
+        val columnWidth = maxOf(maxWidth, widthFittingHeight)
 
         Column(
             modifier = Modifier.width(columnWidth),
