@@ -55,6 +55,19 @@ object EmulationMenuSettings {
                 .putBoolean("EmulationMenuSettings_ShowOverlay", value)
                 .apply()
         }
+    var autoDisableOverlayOnController: Boolean
+        get() = preferences.getBoolean("EmulationMenuSettings_AutoDisableOverlayOnController", false)
+        set(value) {
+            preferences.edit()
+                .putBoolean("EmulationMenuSettings_AutoDisableOverlayOnController", value)
+                .apply()
+        }
+
+    /**
+     * Transient (non-persisted) flag indicating the overlay is currently hidden by the
+     * auto-disable-on-controller-connect feature rather than by the user's [showOverlay] choice.
+     */
+    var overlayAutoHidden: Boolean = false
     var drawerLockMode: Int
         get() = preferences.getInt(
             "EmulationMenuSettings_DrawerLockMode",

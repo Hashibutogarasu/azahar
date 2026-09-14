@@ -91,6 +91,12 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
     }
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {
+        if (EmulationMenuSettings.overlayAutoHidden &&
+            EmulationMenuSettings.autoDisableOverlayOnController &&
+            event.actionMasked == MotionEvent.ACTION_DOWN
+        ) {
+            setAutoHidden(false)
+        }
         if (isInEditMode) {
             return onTouchWhileEditing(event)
         }
@@ -483,10 +489,23 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
             }
 
         // Add all the enabled overlay items back to the HashSet.
-        if (EmulationMenuSettings.showOverlay) {
+        if (EmulationMenuSettings.showOverlay && !EmulationMenuSettings.overlayAutoHidden) {
             addOverlayControls(orientation)
         }
         invalidate()
+    }
+
+    /**
+     * Hides or restores the overlay in response to a physical controller connecting or
+     * disconnecting, without touching the user's persisted [EmulationMenuSettings.showOverlay]
+     * preference.
+     */
+    fun setAutoHidden(hidden: Boolean) {
+        if (EmulationMenuSettings.overlayAutoHidden == hidden) {
+            return
+        }
+        EmulationMenuSettings.overlayAutoHidden = hidden
+        refreshControls()
     }
 
     private fun saveControlPosition(sharedPrefsId: Int, x: Int, y: Int, orientation: String) {

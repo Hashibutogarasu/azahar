@@ -39,6 +39,18 @@
         android:title="@string/emulation_swap_screens" />
 
     <item
+        android:id="@+id/menu_haptic_feedback"
+        android:icon="@drawable/ic_controller"
+        android:checkable="true"
+        android:title="@string/emulation_haptic_feedback" />
+
+    <item
+        android:id="@+id/menu_auto_disable_overlay_on_controller"
+        android:icon="@drawable/ic_controller"
+        android:checkable="true"
+        android:title="@string/emulation_auto_disable_overlay_on_controller" />
+
+    <item
         android:id="@+id/menu_lock_drawer"
         android:icon="@drawable/ic_unlocked"
         android:title="@string/lock_drawer" />

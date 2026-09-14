@@ -8,6 +8,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
+import android.hardware.input.InputManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -16,6 +17,7 @@ import android.os.SystemClock
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Choreographer
+import android.view.InputDevice
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.Surface
@@ -91,6 +93,34 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
 
     private val emulationViewModel: EmulationViewModel by activityViewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
+
+    private val inputManager: InputManager
+        get() = requireContext().getSystemService(Context.INPUT_SERVICE) as InputManager
+
+    private val controllerDeviceListener = object : InputManager.InputDeviceListener {
+        override fun onInputDeviceAdded(deviceId: Int) {
+            if (!isGameController(deviceId) || !EmulationMenuSettings.autoDisableOverlayOnController) {
+                return
+            }
+            binding.surfaceInputOverlay.setAutoHidden(true)
+        }
+
+        override fun onInputDeviceRemoved(deviceId: Int) {
+            // No op: the overlay stays hidden until re-shown by a touch or by another
+            // still-connected controller; nothing to restore just because one device left.
+        }
+
+        override fun onInputDeviceChanged(deviceId: Int) {
+            // No op
+        }
+    }
+
+    private fun isGameController(deviceId: Int): Boolean {
+        val device = InputDevice.getDevice(deviceId) ?: return false
+        val sources = device.sources
+        return sources and InputDevice.SOURCE_GAMEPAD == InputDevice.SOURCE_GAMEPAD ||
+            sources and InputDevice.SOURCE_JOYSTICK == InputDevice.SOURCE_JOYSTICK
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -231,6 +261,10 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
                 requireContext().theme
             )
         }
+        binding.inGameMenu.menu.findItem(R.id.menu_haptic_feedback).isChecked =
+            EmulationMenuSettings.hapticFeedback
+        binding.inGameMenu.menu.findItem(R.id.menu_auto_disable_overlay_on_controller).isChecked =
+            EmulationMenuSettings.autoDisableOverlayOnController
 
         binding.inGameMenu.getHeaderView(0).findViewById<TextView>(R.id.text_game_title).text =
             game.title
@@ -284,6 +318,22 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
 
                 R.id.menu_swap_screens -> {
                     screenAdjustmentUtil.swapScreen()
+                    true
+                }
+
+                R.id.menu_haptic_feedback -> {
+                    EmulationMenuSettings.hapticFeedback = !EmulationMenuSettings.hapticFeedback
+                    it.isChecked = EmulationMenuSettings.hapticFeedback
+                    true
+                }
+
+                R.id.menu_auto_disable_overlay_on_controller -> {
+                    EmulationMenuSettings.autoDisableOverlayOnController =
+                        !EmulationMenuSettings.autoDisableOverlayOnController
+                    it.isChecked = EmulationMenuSettings.autoDisableOverlayOnController
+                    if (!EmulationMenuSettings.autoDisableOverlayOnController) {
+                        binding.surfaceInputOverlay.setAutoHidden(false)
+                    }
                     true
                 }
 
@@ -445,6 +495,12 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
     override fun onResume() {
         super.onResume()
         Choreographer.getInstance().postFrameCallback(this)
+        inputManager.registerInputDeviceListener(controllerDeviceListener, null)
+        if (EmulationMenuSettings.autoDisableOverlayOnController &&
+            InputDevice.getDeviceIds().any { isGameController(it) }
+        ) {
+            binding.surfaceInputOverlay.setAutoHidden(true)
+        }
         if (NativeLibrary.isRunning()) {
             NativeLibrary.unPauseEmulation()
             return
@@ -461,6 +517,7 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
         if (NativeLibrary.isRunning()) {
             emulationState.pause()
         }
+        inputManager.unregisterInputDeviceListener(controllerDeviceListener)
         Choreographer.getInstance().removeFrameCallback(this)
         super.onPause()
     }

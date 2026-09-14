@@ -416,6 +416,7 @@
     <string name="emulation_swap_screens">Swap Screens</string>
     <string name="emulation_touch_overlay_reset">Reset Overlay</string>
     <string name="emulation_show_overlay">Show Overlay</string>
+    <string name="emulation_auto_disable_overlay_on_controller">Auto-hide Overlay on Controller</string>
     <string name="emulation_close_game">Close Game</string>
     <string name="emulation_toggle_pause">Toggle Pause</string>
     <string name="emulation_close_game_message">Are you sure that you would like to close the current game?</string>
