@@ -123,10 +123,17 @@ object NativeLibrary {
      */
     external fun run(path: String)
 
-    // Surface Handling
+    /**
+     * Surface handling. The "primary" surface always renders the 3DS top screen; the
+     * "secondary" surface always renders the bottom screen. The app decides where each is
+     * displayed on screen (order, size, swap) independently of these native entry points.
+     */
     external fun surfaceChanged(surf: Surface)
     external fun surfaceDestroyed()
     external fun doFrame()
+    external fun surfaceChangedSecondary(surf: Surface)
+    external fun surfaceDestroyedSecondary()
+    external fun doFrameSecondary()
 
     /**
      * Initializes the Android Game Controller Library so physical controllers can be

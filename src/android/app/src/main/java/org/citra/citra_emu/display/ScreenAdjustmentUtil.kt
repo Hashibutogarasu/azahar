@@ -21,15 +21,23 @@ class ScreenAdjustmentUtil(
     private val windowManager: WindowManager,
     private val settings: Settings,
 ) {
+    /**
+     * Invoked after every [swapScreen] call, from whichever trigger (drawer menu, virtual
+     * overlay button, hotkey); set by the owning fragment to reorder its two screen Composables.
+     */
+    var onScreenSwapped: (() -> Unit)? = null
+
+    /**
+     * Toggles which of the two independent screen Composables is displayed first. This is a
+     * purely app-side (Compose) arrangement change: native code always renders the same fixed
+     * screen (top or bottom) to each of its two windows regardless of on-screen order.
+     */
     fun swapScreen() {
         val isEnabled = !EmulationMenuSettings.swapScreens
         EmulationMenuSettings.swapScreens = isEnabled
-        NativeLibrary.swapScreens(
-            isEnabled,
-            windowManager.defaultDisplay.rotation
-        )
         BooleanSetting.SWAP_SCREEN.boolean = isEnabled
         settings.saveSetting(BooleanSetting.SWAP_SCREEN, SettingsFile.FILE_NAME_CONFIG)
+        onScreenSwapped?.invoke()
     }
     fun cycleLayouts() {
         val landscapeValues = context.resources.getIntArray(R.array.landscapeValues)

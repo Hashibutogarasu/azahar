@@ -54,7 +54,7 @@ class EmulationActivity : AppCompatActivity() {
     private val settingsViewModel: SettingsViewModel by viewModels()
 
     private lateinit var binding: ActivityEmulationBinding
-    private lateinit var screenAdjustmentUtil: ScreenAdjustmentUtil
+    lateinit var screenAdjustmentUtil: ScreenAdjustmentUtil
     private lateinit var hotkeyUtility: HotkeyUtility
 
     private val emulationFragment: EmulationFragment

@@ -72,8 +72,9 @@ private:
     EGLContext egl_context{};
 };
 
-EmuWindow_Android_OpenGL::EmuWindow_Android_OpenGL(Core::System& system_, ANativeWindow* surface)
-    : EmuWindow_Android{surface}, system{system_} {
+EmuWindow_Android_OpenGL::EmuWindow_Android_OpenGL(Core::System& system_, ANativeWindow* surface,
+                                                   bool is_secondary, EGLContext share_context)
+    : EmuWindow_Android{surface, is_secondary}, system{system_} {
     if (egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY); egl_display == EGL_NO_DISPLAY) {
         LOG_CRITICAL(Frontend, "eglGetDisplay() failed");
         return;
@@ -97,7 +98,8 @@ EmuWindow_Android_OpenGL::EmuWindow_Android_OpenGL(Core::System& system_, ANativ
         return;
     }
 
-    if (egl_context = eglCreateContext(egl_display, egl_config, 0, egl_context_attribs.data());
+    if (egl_context = eglCreateContext(egl_display, egl_config, share_context,
+                                       egl_context_attribs.data());
         egl_context == EGL_NO_CONTEXT) {
         LOG_CRITICAL(Frontend, "eglCreateContext() failed");
         return;
@@ -157,6 +159,10 @@ void EmuWindow_Android_OpenGL::DestroyWindowSurface() {
     egl_surface = EGL_NO_SURFACE;
 }
 
+/// Only the primary window terminates the display: eglGetDisplay(EGL_DEFAULT_DISPLAY) returns
+/// one shared, process-wide display, and the secondary window's context shares it with (and
+/// depends on) the primary window's, so terminating it from the secondary would break the
+/// primary window too.
 void EmuWindow_Android_OpenGL::DestroyContext() {
     if (!egl_context) {
         return;
@@ -167,7 +173,7 @@ void EmuWindow_Android_OpenGL::DestroyContext() {
     if (!eglDestroyContext(egl_display, egl_context)) {
         LOG_CRITICAL(Frontend, "eglDestroySurface() failed");
     }
-    if (!eglTerminate(egl_display)) {
+    if (!is_secondary && !eglTerminate(egl_display)) {
         LOG_CRITICAL(Frontend, "eglTerminate() failed");
     }
     egl_context = EGL_NO_CONTEXT;
@@ -212,6 +218,6 @@ void EmuWindow_Android_OpenGL::TryPresenting() {
         return;
     }
     eglSwapInterval(egl_display, Settings::values.use_vsync_new ? 1 : 0);
-    system.GPU().Renderer().TryPresent(0);
+    system.GPU().Renderer().TryPresent(0, is_secondary);
     eglSwapBuffers(egl_display, egl_surface);
 }

@@ -1046,6 +1046,13 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
         }
     }
 
+    /**
+     * The top and bottom screens now always render into two independent Composables (see
+     * EmulationScreensLayout), each native window always fit to its own screen. Arrangement
+     * settings that assumed a single combined surface (screen layout picker, small-screen
+     * position, large-screen proportion, custom pixel-rect layout) no longer have any effect on
+     * Android and are intentionally omitted here rather than left visible but non-functional.
+     */
     private fun addLayoutSettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.preferences_layout))
         sl.apply {
@@ -1058,67 +1065,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     R.array.screenOrientationValues,
                     IntSetting.ORIENTATION_OPTION.key,
                     IntSetting.ORIENTATION_OPTION.defaultValue
-                )
-            )
-            add(
-                SingleChoiceSetting(
-                    IntSetting.SCREEN_LAYOUT,
-                    R.string.emulation_switch_screen_layout,
-                    0,
-                    R.array.landscapeLayouts,
-                    R.array.landscapeLayoutValues,
-                    IntSetting.SCREEN_LAYOUT.key,
-                    IntSetting.SCREEN_LAYOUT.defaultValue
-                )
-            )
-            add(
-                SingleChoiceSetting(
-                    IntSetting.PORTRAIT_SCREEN_LAYOUT,
-                    R.string.emulation_switch_portrait_layout,
-                    0,
-                    R.array.portraitLayouts,
-                    R.array.portraitLayoutValues,
-                    IntSetting.PORTRAIT_SCREEN_LAYOUT.key,
-                    IntSetting.PORTRAIT_SCREEN_LAYOUT.defaultValue
-                )
-            )
-            add(
-                SingleChoiceSetting(
-                    IntSetting.SMALL_SCREEN_POSITION,
-                    R.string.emulation_small_screen_position,
-                    R.string.small_screen_position_description,
-                    R.array.smallScreenPositions,
-                    R.array.smallScreenPositionValues,
-                    IntSetting.SMALL_SCREEN_POSITION.key,
-                    IntSetting.SMALL_SCREEN_POSITION.defaultValue
-                )
-            )
-            add(
-                SliderSetting(
-                    FloatSetting.LARGE_SCREEN_PROPORTION,
-                    R.string.large_screen_proportion,
-                    R.string.large_screen_proportion_description,
-                    1,
-                    5,
-                    "",
-                    FloatSetting.LARGE_SCREEN_PROPORTION.key,
-                    FloatSetting.LARGE_SCREEN_PROPORTION.defaultValue
-                )
-            )
-            add(
-                SubmenuSetting(
-                    R.string.emulation_landscape_custom_layout,
-                    0,
-                    R.drawable.ic_fit_screen,
-                    Settings.SECTION_CUSTOM_LANDSCAPE
-                )
-            )
-            add(
-                SubmenuSetting(
-                    R.string.emulation_portrait_custom_layout,
-                    0,
-                    R.drawable.ic_portrait_fit_screen,
-                    Settings.SECTION_CUSTOM_PORTRAIT
                 )
             )
         }

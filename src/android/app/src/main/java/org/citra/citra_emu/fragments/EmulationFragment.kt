@@ -21,13 +21,13 @@ import android.view.InputDevice
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.Surface
-import android.view.SurfaceHolder
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
@@ -63,6 +63,7 @@ import org.citra.citra_emu.features.settings.model.SettingsViewModel
 import org.citra.citra_emu.features.settings.ui.SettingsActivity
 import org.citra.citra_emu.features.settings.utils.SettingsFile
 import org.citra.citra_emu.model.Game
+import org.citra.citra_emu.ui.emulation.compose.EmulationScreensLayout
 import org.citra.citra_emu.utils.DirectoryInitialization
 import org.citra.citra_emu.utils.DirectoryInitialization.DirectoryInitializationState
 import org.citra.citra_emu.utils.EmulationMenuSettings
@@ -74,7 +75,7 @@ import org.citra.citra_emu.utils.Log
 import org.citra.citra_emu.utils.ViewUtils
 import org.citra.citra_emu.viewmodel.EmulationViewModel
 
-class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.FrameCallback {
+class EmulationFragment : Fragment(), Choreographer.FrameCallback {
     private val preferences: SharedPreferences
         get() = PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
 
@@ -90,6 +91,12 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
 
     private lateinit var game: Game
     private lateinit var screenAdjustmentUtil: ScreenAdjustmentUtil
+
+    /**
+     * Which of the two screen Composables is displayed first. Toggled by [ScreenAdjustmentUtil]'s
+     * swapScreen(), which owns no view state of its own.
+     */
+    private val topFirstState = mutableStateOf(!EmulationMenuSettings.swapScreens)
 
     private val emulationViewModel: EmulationViewModel by activityViewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
@@ -183,7 +190,8 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
         retainInstance = true
         emulationState = EmulationState(game.path)
         emulationActivity = requireActivity() as EmulationActivity
-        screenAdjustmentUtil = ScreenAdjustmentUtil(requireContext(), requireActivity().windowManager, settingsViewModel.settings)
+        screenAdjustmentUtil = emulationActivity.screenAdjustmentUtil
+        screenAdjustmentUtil.onScreenSwapped = { topFirstState.value = !topFirstState.value }
         EmulationLifecycleUtil.addShutdownHook(hook = { emulationState.stop() })
         EmulationLifecycleUtil.addPauseResumeHook(hook = { togglePause() })
     }
@@ -205,7 +213,19 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
             return
         }
 
-        binding.surfaceEmulation.holder.addCallback(this)
+        binding.composeEmulationScreens.setContent {
+            EmulationScreensLayout(
+                topFirst = topFirstState.value,
+                onTopSurfaceChanged = { emulationState.newSurface(it) },
+                onTopSurfaceDestroyed = { emulationState.clearSurface() },
+                onBottomSurfaceChanged = { emulationState.newSecondarySurface(it) },
+                onBottomSurfaceDestroyed = { emulationState.clearSecondarySurface() },
+                onBottomScreenBoundsChanged = { bounds ->
+                    binding.surfaceInputOverlay.bottomScreenBoundsInWindow = bounds
+                }
+            )
+        }
+        binding.surfaceInputOverlay.onSwapScreenRequested = { screenAdjustmentUtil.swapScreen() }
         binding.doneControlConfig.setOnClickListener {
             binding.doneControlConfig.visibility = View.GONE
             binding.surfaceInputOverlay.setIsInEditMode(false)
@@ -1220,23 +1240,10 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
         }
     }
 
-    override fun surfaceCreated(holder: SurfaceHolder) {
-        // We purposely don't do anything here.
-        // All work is done in surfaceChanged, which we are guaranteed to get even for surface creation.
-    }
-
-    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-        Log.debug("[EmulationFragment] Surface changed. Resolution: " + width + "x" + height)
-        emulationState.newSurface(holder.surface)
-    }
-
-    override fun surfaceDestroyed(holder: SurfaceHolder) {
-        emulationState.clearSurface()
-    }
-
     override fun doFrame(frameTimeNanos: Long) {
         Choreographer.getInstance().postFrameCallback(this)
         NativeLibrary.doFrame()
+        NativeLibrary.doFrameSecondary()
         if (IntSetting.CONTROLLER_INPUT_MODE.int != 0) {
             NativeLibrary.updateGameControllers()
         }
@@ -1281,6 +1288,7 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
     private class EmulationState(private val gamePath: String) {
         private var state: State
         private var surface: Surface? = null
+        private var secondarySurface: Surface? = null
 
         init {
             // Starting state is stopped.
@@ -1317,9 +1325,8 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
             if (state != State.PAUSED) {
                 state = State.PAUSED
                 Log.debug("[EmulationFragment] Pausing emulation.")
-
-                // Release the surface before pausing, since emulation has to be running for that.
                 NativeLibrary.surfaceDestroyed()
+                NativeLibrary.surfaceDestroyedSecondary()
                 NativeLibrary.pauseEmulation()
             } else {
                 Log.warning("[EmulationFragment] Pause called while already paused.")
@@ -1348,17 +1355,27 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
                 Log.debug("[EmulationFragment] activity resumed or fresh start")
             }
 
-            // If the surface is set, run now. Otherwise, wait for it to get set.
-            if (surface != null) {
+            if (surface != null && secondarySurface != null) {
                 runWithValidSurface()
             }
         }
 
-        // Surface callbacks
+        /**
+         * Both the top and bottom screen surfaces must be ready before emulation can start or
+         * resume, since they back two independent native rendering windows.
+         */
         @Synchronized
         fun newSurface(surface: Surface?) {
             this.surface = surface
-            if (this.surface != null) {
+            if (this.surface != null && secondarySurface != null) {
+                runWithValidSurface()
+            }
+        }
+
+        @Synchronized
+        fun newSecondarySurface(surface: Surface?) {
+            this.secondarySurface = surface
+            if (this.secondarySurface != null && this.surface != null) {
                 runWithValidSurface()
             }
         }
@@ -1369,26 +1386,44 @@ class EmulationFragment : Fragment(), SurfaceHolder.Callback, Choreographer.Fram
                 Log.warning("[EmulationFragment] clearSurface called, but surface already null.")
             } else {
                 surface = null
-                Log.debug("[EmulationFragment] Surface destroyed.")
-                when (state) {
-                    State.RUNNING -> {
-                        NativeLibrary.surfaceDestroyed()
-                        state = State.PAUSED
-                    }
+                onSurfaceCleared()
+            }
+        }
 
-                    State.PAUSED -> {
-                        Log.warning("[EmulationFragment] Surface cleared while emulation paused.")
-                    }
+        @Synchronized
+        fun clearSecondarySurface() {
+            if (secondarySurface == null) {
+                Log.warning(
+                    "[EmulationFragment] clearSecondarySurface called, but surface already null."
+                )
+            } else {
+                secondarySurface = null
+                onSurfaceCleared()
+            }
+        }
 
-                    else -> {
-                        Log.warning("[EmulationFragment] Surface cleared while emulation stopped.")
-                    }
+        private fun onSurfaceCleared() {
+            Log.debug("[EmulationFragment] Surface destroyed.")
+            when (state) {
+                State.RUNNING -> {
+                    NativeLibrary.surfaceDestroyed()
+                    NativeLibrary.surfaceDestroyedSecondary()
+                    state = State.PAUSED
+                }
+
+                State.PAUSED -> {
+                    Log.warning("[EmulationFragment] Surface cleared while emulation paused.")
+                }
+
+                else -> {
+                    Log.warning("[EmulationFragment] Surface cleared while emulation stopped.")
                 }
             }
         }
 
         private fun runWithValidSurface() {
             NativeLibrary.surfaceChanged(surface!!)
+            NativeLibrary.surfaceChangedSecondary(secondarySurface!!)
             when (state) {
                 State.STOPPED -> {
                     Thread({
