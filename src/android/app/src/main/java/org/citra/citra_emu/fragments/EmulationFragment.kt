@@ -1406,7 +1406,7 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
                 Log.warning("[EmulationFragment] clearSurface called, but surface already null.")
             } else {
                 surface = null
-                onSurfaceCleared()
+                onSurfaceCleared(isSecondary = false)
             }
         }
 
@@ -1418,16 +1418,25 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
                 )
             } else {
                 secondarySurface = null
-                onSurfaceCleared()
+                onSurfaceCleared(isSecondary = true)
             }
         }
 
-        private fun onSurfaceCleared() {
+        /**
+         * Destroys only the native surface that was actually lost. The other one may still be
+         * valid and in active use by the renderer (e.g. only one of the two screen Composables
+         * was torn down and recreated); telling native it was destroyed too would invalidate a
+         * surface Android still considers current.
+         */
+        private fun onSurfaceCleared(isSecondary: Boolean) {
             Log.debug("[EmulationFragment] Surface destroyed.")
             when (state) {
                 State.RUNNING -> {
-                    NativeLibrary.surfaceDestroyed()
-                    NativeLibrary.surfaceDestroyedSecondary()
+                    if (isSecondary) {
+                        NativeLibrary.surfaceDestroyedSecondary()
+                    } else {
+                        NativeLibrary.surfaceDestroyed()
+                    }
                     state = State.PAUSED
                 }
 
