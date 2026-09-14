@@ -424,8 +424,8 @@ void Java_org_citra_citra_1emu_NativeLibrary_shutdownGameControllerManager(JNIEn
 }
 
 void Java_org_citra_citra_1emu_NativeLibrary_updateGameControllers(
-    JNIEnv* env, [[maybe_unused]] jobject obj) {
-    GameControllerManager::Update(env);
+    JNIEnv* env, [[maybe_unused]] jobject obj, jboolean invert_left_stick_y) {
+    GameControllerManager::Update(env, invert_left_stick_y != JNI_FALSE);
 }
 
 jboolean Java_org_citra_citra_1emu_NativeLibrary_onGameControllerKeyEvent(

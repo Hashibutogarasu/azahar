@@ -119,7 +119,14 @@ void Shutdown(JNIEnv* env) {
     g_initialized = false;
 }
 
-void Update(JNIEnv* env) {
+/**
+ * Paddleboat's stickY follows Android's raw AXIS_Y convention (positive is down), the same as
+ * the manual-mapping path's raw input before Java_..._onGamePadMoveEvent negates it to match
+ * what InputManager::AnalogFactory::MoveJoystick expects (positive is up). Negate here by
+ * default to match that existing convention; invert_left_stick_y (from the user-facing "Invert
+ * Left Stick Y Axis" setting) flips it back for controllers/users that want the raw sign.
+ */
+void Update(JNIEnv* env, bool invert_left_stick_y) {
     if (!g_initialized || !IsInputManagerReady()) {
         return;
     }
@@ -152,8 +159,10 @@ void Update(JNIEnv* env) {
 
         g_previous_buttons[index] = current;
 
-        InputManager::AnalogHandler()->MoveJoystick(
-            InputManager::N3DS_CIRCLEPAD, data.leftStick.stickX, data.leftStick.stickY);
+        const float left_stick_y =
+            invert_left_stick_y ? data.leftStick.stickY : -data.leftStick.stickY;
+        InputManager::AnalogHandler()->MoveJoystick(InputManager::N3DS_CIRCLEPAD,
+                                                     data.leftStick.stickX, left_stick_y);
         InputManager::AnalogHandler()->MoveJoystick(
             InputManager::N3DS_STICK_C, data.rightStick.stickX, data.rightStick.stickY);
     }

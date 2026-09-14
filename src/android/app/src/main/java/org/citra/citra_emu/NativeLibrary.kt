@@ -144,9 +144,10 @@ object NativeLibrary {
 
     /**
      * Polls every connected controller once. Must be called once per frame while controller
-     * auto-detect mode is active.
+     * auto-detect mode is active. When invertLeftStickY is true, the left stick's Y axis is
+     * flipped back to Android's raw (unnegated) convention.
      */
-    external fun updateGameControllers()
+    external fun updateGameControllers(invertLeftStickY: Boolean)
 
     /**
      * Forwards a physical controller key/motion event for auto-detect processing. Returns false

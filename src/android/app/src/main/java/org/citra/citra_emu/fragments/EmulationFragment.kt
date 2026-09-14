@@ -58,6 +58,7 @@ import org.citra.citra_emu.databinding.FragmentEmulationBinding
 import org.citra.citra_emu.display.PortraitScreenLayout
 import org.citra.citra_emu.display.ScreenAdjustmentUtil
 import org.citra.citra_emu.display.ScreenLayout
+import org.citra.citra_emu.features.settings.model.BooleanSetting
 import org.citra.citra_emu.features.settings.model.IntSetting
 import org.citra.citra_emu.features.settings.model.SettingsViewModel
 import org.citra.citra_emu.features.settings.ui.SettingsActivity
@@ -1262,7 +1263,9 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
             }
         }
         if (autoDetectEnabled) {
-            NativeLibrary.updateGameControllers()
+            NativeLibrary.updateGameControllers(
+                BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS.boolean
+            )
         }
     }
 

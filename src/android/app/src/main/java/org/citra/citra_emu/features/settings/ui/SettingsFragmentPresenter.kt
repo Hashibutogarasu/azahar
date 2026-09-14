@@ -750,6 +750,15 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                 )
             )
             if (IntSetting.CONTROLLER_INPUT_MODE.int != 0) {
+                add(
+                    SwitchSetting(
+                        BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS,
+                        R.string.invert_controller_left_stick_y_axis,
+                        R.string.invert_controller_left_stick_y_axis_description,
+                        BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS.key,
+                        BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS.defaultValue
+                    )
+                )
                 return@apply
             }
 

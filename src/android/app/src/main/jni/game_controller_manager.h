@@ -23,9 +23,10 @@ void Shutdown(JNIEnv* env);
 /**
  * Polls every connected controller once and forwards standardized button/axis state into
  * InputManager, mirroring what the manual key/axis bindings normally feed in. Must be called
- * once per frame while auto-detect controller mode is active.
+ * once per frame while auto-detect controller mode is active. When invert_left_stick_y is true,
+ * the left stick's (circle pad) Y axis is negated before being forwarded.
  */
-void Update(JNIEnv* env);
+void Update(JNIEnv* env, bool invert_left_stick_y);
 
 /**
  * Forwards a Java KeyEvent for controller processing. Only meaningful on API level 31+, where
