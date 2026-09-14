@@ -68,8 +68,8 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityView {
         settingsViewModel.restoreState(savedInstanceState)
 
         val launcher = intent
-        val gameID = launcher.getStringExtra(ARG_GAME_ID)
-        val menuTag = launcher.getStringExtra(ARG_MENU_TAG)
+        val gameID = launcher.getStringExtra(ARG_GAME_ID)!!
+        val menuTag = launcher.getStringExtra(ARG_MENU_TAG)!!
 
         setContent {
             AzaharTheme {
