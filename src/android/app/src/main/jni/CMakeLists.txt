@@ -14,6 +14,7 @@ add_library(citra-android SHARED
     cheats/cheat.cpp
     cheats/cheat.h
     cheats/cheat_engine.cpp
+    cheats/memory_tools.cpp
     config.cpp
     config.h
     default_ini.h

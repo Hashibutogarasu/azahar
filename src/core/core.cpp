@@ -71,7 +71,7 @@ Core::Timing& Global() {
     return System::GetInstance().CoreTiming();
 }
 
-System::System() : movie{*this}, cheat_engine{*this} {}
+System::System() : movie{*this}, cheat_engine{*this}, memory_tools{*this} {}
 
 System::~System() = default;
 
@@ -593,6 +593,14 @@ Cheats::CheatEngine& System::CheatEngine() {
 
 const Cheats::CheatEngine& System::CheatEngine() const {
     return cheat_engine;
+}
+
+Core::MemoryRecorder& System::MemoryTools() {
+    return memory_tools;
+}
+
+const Core::MemoryRecorder& System::MemoryTools() const {
+    return memory_tools;
 }
 
 void System::RegisterVideoDumper(std::shared_ptr<VideoDumper::Backend> dumper) {

@@ -195,6 +195,33 @@ object NativeLibrary {
     external fun stopEmulation()
 
     /**
+     * Advances emulation by exactly one frame while paused.
+     */
+    external fun advanceFrame()
+
+    /**
+     * Dumps the current FCRAM contents of the running session.
+     *
+     * @return the raw FCRAM bytes.
+     */
+    external fun dumpCurrentMemory(): ByteArray
+
+    /**
+     * Starts capturing one FCRAM snapshot per emulated frame into sequentially numbered
+     * binary files under the given directory.
+     *
+     * @param outputDirPath absolute path of an existing directory to write frame dumps into.
+     */
+    external fun startMemoryRecording(outputDirPath: String)
+
+    /**
+     * Stops the active memory recording session.
+     *
+     * @return the number of frames that were written.
+     */
+    external fun stopMemoryRecording(): Int
+
+    /**
      * Returns true if emulation is running (or is paused).
      */
     external fun isRunning(): Boolean

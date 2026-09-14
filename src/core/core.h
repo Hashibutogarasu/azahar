@@ -16,6 +16,7 @@
 #include "core/cheats/cheats.h"
 #include "core/hle/service/apt/applet_manager.h"
 #include "core/hle/service/plgldr/plgldr.h"
+#include "core/memory_tools.h"
 #include "core/movie.h"
 #include "core/perf_stats.h"
 
@@ -275,6 +276,12 @@ public:
     /// Gets a const reference to the cheat engine
     [[nodiscard]] const Cheats::CheatEngine& CheatEngine() const;
 
+    /// Gets a reference to the memory tools recorder
+    [[nodiscard]] Core::MemoryRecorder& MemoryTools();
+
+    /// Gets a const reference to the memory tools recorder
+    [[nodiscard]] const Core::MemoryRecorder& MemoryTools() const;
+
     /// Gets a reference to the custom texture cache system
     [[nodiscard]] VideoCore::CustomTexManager& CustomTexManager();
 
@@ -423,6 +430,9 @@ private:
 
     /// Cheats manager
     Cheats::CheatEngine cheat_engine;
+
+    /// Memory tools (dump/record) manager
+    Core::MemoryRecorder memory_tools;
 
     /// Video dumper backend
     std::shared_ptr<VideoDumper::Backend> video_dumper;
