@@ -34,14 +34,14 @@ import org.citra.citra_emu.features.settings.model.view.SettingsItem
 import org.citra.citra_emu.features.settings.ui.SettingsActivity
 import org.citra.citra_emu.features.settings.ui.SettingsActivityView
 import org.citra.citra_emu.features.settings.ui.SettingsAdapter
-import org.citra.citra_emu.features.settings.ui.SettingsFragmentPresenter
 import org.citra.citra_emu.features.settings.ui.SettingsFragmentView
+import org.citra.citra_emu.features.settings.ui.SettingsSectionViewModel
 import org.citra.citra_emu.features.settings.utils.SettingsFile
 
 /**
  * Hosts one section of the settings list (the root menu, or a sub-section such as
  * General/System/Camera/...) as a compose-destinations push/pop destination. Item list
- * construction and rendering (`SettingsFragmentPresenter`/`SettingsAdapter`) is reused as-is
+ * construction and rendering (`SettingsSectionViewModel`/`SettingsAdapter`) is reused as-is
  * from the legacy `SettingsFragment` via [AndroidView], built synchronously rather than in a
  * `LaunchedEffect`, since [SettingsActivity] already awaits every setting any section could
  * need before this screen becomes reachable.
@@ -57,8 +57,8 @@ fun SettingsSectionScreen(
 ) {
     val activity = LocalContext.current as SettingsActivity
 
-    val (fragmentView, presenter, loadedItemsState) = remember(menuTag, gameId) {
-        lateinit var presenterRef: SettingsFragmentPresenter
+    val (fragmentView, sectionViewModel, loadedItemsState) = remember(menuTag, gameId) {
+        lateinit var viewModelRef: SettingsSectionViewModel
         val loadedItemsState = mutableStateOf<ArrayList<SettingsItem>>(arrayListOf())
         val view = object : SettingsFragmentView {
             override var activityView: SettingsActivityView? = activity
@@ -68,7 +68,7 @@ fun SettingsSectionScreen(
             }
 
             override fun loadSettingsList() {
-                presenterRef.loadSettingsList()
+                viewModelRef.loadSettingsList()
             }
 
             override fun loadSubMenu(menuKey: String) {
@@ -84,7 +84,7 @@ fun SettingsSectionScreen(
             }
 
             override fun putSetting(setting: AbstractSetting) {
-                presenterRef.putSetting(setting)
+                viewModelRef.putSetting(setting)
             }
 
             override fun onSettingChanged() {
@@ -92,11 +92,10 @@ fun SettingsSectionScreen(
                 loadSettingsList()
             }
         }
-        presenterRef = SettingsFragmentPresenter(view).apply {
-            onCreate(menuTag, gameId)
+        viewModelRef = SettingsSectionViewModel(view, menuTag, gameId).apply {
             loadSettingsList()
         }
-        Triple(view, presenterRef, loadedItemsState)
+        Triple(view, viewModelRef, loadedItemsState)
     }
     val items by loadedItemsState
 
@@ -127,7 +126,7 @@ fun SettingsSectionScreen(
                 RecyclerView(context).apply {
                     layoutManager = LinearLayoutManager(context)
                     val settingsAdapter = SettingsAdapter(fragmentView, context)
-                    presenter.onViewCreated(settingsAdapter)
+                    sectionViewModel.onViewCreated(settingsAdapter)
                     adapter = settingsAdapter
                 }
             },

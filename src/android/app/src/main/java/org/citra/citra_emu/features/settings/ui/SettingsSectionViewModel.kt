@@ -12,6 +12,7 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.os.Build
 import android.text.TextUtils
+import androidx.lifecycle.ViewModel
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlin.math.min
@@ -48,22 +49,25 @@ import org.citra.citra_emu.utils.Log
 import org.citra.citra_emu.utils.SystemSaveGame
 import org.citra.citra_emu.utils.ThemeUtil
 
-class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) {
-    private var menuTag: String? = null
-    private lateinit var gameId: String
+/**
+ * Owns the settings list and its business logic for one section screen (the root menu, or a
+ * sub-section such as General/System/Camera/...). Scoped per menuTag/gameId by its caller
+ * ([org.citra.citra_emu.features.settings.ui.compose.SettingsSectionScreen]), not shared across
+ * sections.
+ */
+class SettingsSectionViewModel(
+    private val fragmentView: SettingsFragmentView,
+    private val menuTag: String,
+    private val gameId: String
+) : ViewModel() {
     private var settingsList: ArrayList<SettingsItem>? = null
 
     private val settingsActivity get() = fragmentView.activityView as SettingsActivity
     private val settings get() = fragmentView.activityView!!.settings
     private lateinit var settingsAdapter: SettingsAdapter
 
-    private lateinit var preferences: SharedPreferences
-
-    fun onCreate(menuTag: String, gameId: String) {
-        this.gameId = gameId
-        this.menuTag = menuTag
-        preferences = PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
-    }
+    private val preferences: SharedPreferences =
+        PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
 
     fun onViewCreated(settingsAdapter: SettingsAdapter) {
         this.settingsAdapter = settingsAdapter
@@ -85,9 +89,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
             settingsActivity.setToolbarTitle("Application Settings: $gameId")
         }
         val sl = ArrayList<SettingsItem>()
-        if (menuTag == null) {
-            return
-        }
         when (menuTag) {
             SettingsFile.FILE_NAME_CONFIG -> addConfigSettings(sl)
             Settings.SECTION_CORE -> addGeneralSettings(sl)
