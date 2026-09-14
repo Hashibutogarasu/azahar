@@ -4,10 +4,10 @@
 
 #include <array>
 #include <cstdint>
+#include <dlfcn.h>
 
-#include <android/api-level.h>
 #include <android/input.h>
-#include <paddleboat.h>
+#include <paddleboat/paddleboat.h>
 
 #include "jni/game_controller_manager.h"
 #include "jni/id_cache.h"
@@ -20,6 +20,38 @@ namespace {
 constexpr int kMaxControllers = 8;
 std::array<uint32_t, kMaxControllers> g_previous_buttons{};
 bool g_initialized = false;
+
+using KeyEventFromJavaFn = const AInputEvent* (*)(JNIEnv*, jobject);
+using MotionEventFromJavaFn = const AInputEvent* (*)(JNIEnv*, jobject);
+using InputEventReleaseFn = void (*)(const AInputEvent*);
+
+KeyEventFromJavaFn g_key_event_from_java = nullptr;
+MotionEventFromJavaFn g_motion_event_from_java = nullptr;
+InputEventReleaseFn g_input_event_release = nullptr;
+bool g_input_bridge_resolved = false;
+
+/**
+ * AKeyEvent_fromJava/AMotionEvent_fromJava/AInputEvent_release are only introduced in API 31,
+ * above this app's minSdkVersion, so the NDK refuses to link against them directly. Resolve them
+ * with dlsym instead, which works regardless of the compile-time target API level; the function
+ * pointers stay null (and callers no-op) on older devices.
+ */
+void ResolveInputEventBridge() {
+    if (g_input_bridge_resolved) {
+        return;
+    }
+    g_input_bridge_resolved = true;
+    void* handle = dlopen("libandroid.so", RTLD_NOW);
+    if (!handle) {
+        return;
+    }
+    g_key_event_from_java =
+        reinterpret_cast<KeyEventFromJavaFn>(dlsym(handle, "AKeyEvent_fromJava"));
+    g_motion_event_from_java =
+        reinterpret_cast<MotionEventFromJavaFn>(dlsym(handle, "AMotionEvent_fromJava"));
+    g_input_event_release =
+        reinterpret_cast<InputEventReleaseFn>(dlsym(handle, "AInputEvent_release"));
+}
 
 /**
  * Notifies the Kotlin side whenever any controller connects or disconnects, so the UI can react
@@ -65,6 +97,7 @@ void Init(JNIEnv* env, jobject context) {
         return;
     }
     Paddleboat_setControllerStatusCallback(OnControllerStatusChanged, nullptr);
+    ResolveInputEventBridge();
     g_previous_buttons.fill(0);
     g_initialized = true;
 }
@@ -111,36 +144,36 @@ void Update(JNIEnv* env) {
 
         g_previous_buttons[index] = current;
 
-        InputManager::AnalogHandler()->MoveJoystick(InputManager::N3DS_CIRCLEPAD, data.leftStick.x,
-                                                     data.leftStick.y);
-        InputManager::AnalogHandler()->MoveJoystick(InputManager::N3DS_STICK_C, data.rightStick.x,
-                                                     data.rightStick.y);
+        InputManager::AnalogHandler()->MoveJoystick(
+            InputManager::N3DS_CIRCLEPAD, data.leftStick.stickX, data.leftStick.stickY);
+        InputManager::AnalogHandler()->MoveJoystick(
+            InputManager::N3DS_STICK_C, data.rightStick.stickX, data.rightStick.stickY);
     }
 }
 
-bool ProcessKeyEvent([[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject key_event) {
-    if (!g_initialized || android_get_device_api_level() < 31) {
+bool ProcessKeyEvent(JNIEnv* env, jobject key_event) {
+    if (!g_initialized || !g_key_event_from_java || !g_input_event_release) {
         return false;
     }
-    AInputEvent* input_event = AKeyEvent_fromJava(env, key_event);
+    const AInputEvent* input_event = g_key_event_from_java(env, key_event);
     if (!input_event) {
         return false;
     }
     const bool handled = Paddleboat_processInputEvent(input_event) != 0;
-    AInputEvent_release(input_event);
+    g_input_event_release(input_event);
     return handled;
 }
 
-bool ProcessMotionEvent([[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject motion_event) {
-    if (!g_initialized || android_get_device_api_level() < 31) {
+bool ProcessMotionEvent(JNIEnv* env, jobject motion_event) {
+    if (!g_initialized || !g_motion_event_from_java || !g_input_event_release) {
         return false;
     }
-    AInputEvent* input_event = AMotionEvent_fromJava(env, motion_event);
+    const AInputEvent* input_event = g_motion_event_from_java(env, motion_event);
     if (!input_event) {
         return false;
     }
     const bool handled = Paddleboat_processInputEvent(input_event) != 0;
-    AInputEvent_release(input_event);
+    g_input_event_release(input_event);
     return handled;
 }
 
