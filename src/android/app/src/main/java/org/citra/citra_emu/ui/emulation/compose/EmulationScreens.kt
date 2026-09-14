@@ -12,10 +12,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
@@ -26,8 +26,10 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.viewinterop.AndroidView
 
 /** The 3DS top screen is 400x240 pixels; the bottom screen is 320x240. */
-private const val TOP_SCREEN_ASPECT_RATIO = 400f / 240f
-private const val BOTTOM_SCREEN_ASPECT_RATIO = 320f / 240f
+private const val TOP_SCREEN_WIDTH = 400f
+private const val TOP_SCREEN_HEIGHT = 240f
+private const val BOTTOM_SCREEN_WIDTH = 320f
+private const val BOTTOM_SCREEN_HEIGHT = 240f
 
 /**
  * Wraps a bare [SurfaceView] as a Composable and forwards its surface lifecycle to native code.
@@ -67,17 +69,17 @@ private fun EmulationSurfaceView(
 
 /**
  * Arranges the 3DS top and bottom screens as two independent Composables stacked in a [Column],
- * each sized to its own native aspect ratio and packed together with no gap between them, then
- * centered as a unit within the available space. [topFirst] decides which one is displayed
- * first, i.e. the app-level screen swap. Native code never makes this decision: each native
- * window always renders the same fixed screen (top or bottom) regardless of where this layout
- * places it.
+ * both scaled by the same zoom factor (matching the classic 3DS layout: the top screen fills the
+ * shared width; the bottom screen, being narrower at 320 native pixels vs the top's 400, ends up
+ * narrower on screen too, and is centered below it) rather than each independently stretched to
+ * fill the same width, which would distort the bottom screen's proportions. [topFirst] decides
+ * which one is displayed first, i.e. the app-level screen swap. Native code never makes this
+ * decision: each native window always renders the same fixed screen (top or bottom) regardless
+ * of where this layout places it.
  *
- * The shared column width is chosen so the stacked pair fills the available space as much as
- * possible - like CSS's "cover" sizing - taking whichever of a width-driven or a height-driven
- * fit is larger, even if that means the pair overflows (and is cropped at) the other axis, rather
- * than a smaller fit that avoids cropping but leaves large letterboxed margins; [BoxWithConstraints]
- * measures the available space to compute it.
+ * The shared zoom factor is chosen so the stacked pair fits within the available space without
+ * cropping, picking whichever of a width-driven or a height-driven fit is smaller;
+ * [BoxWithConstraints] measures the available space to compute it.
  *
  * Each screen is wrapped in [key] with a stable identity ("top"/"bottom") so that swapping their
  * order only reorders them; without it, Compose's positional slot table would treat the reordered
@@ -98,20 +100,25 @@ fun EmulationScreensLayout(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        val heightPerUnitWidth = 1f / TOP_SCREEN_ASPECT_RATIO + 1f / BOTTOM_SCREEN_ASPECT_RATIO
-        val widthFittingHeight = maxHeight / heightPerUnitWidth
-        val columnWidth = maxOf(maxWidth, widthFittingHeight)
+        val combinedWidth = maxOf(TOP_SCREEN_WIDTH, BOTTOM_SCREEN_WIDTH)
+        val combinedHeight = TOP_SCREEN_HEIGHT + BOTTOM_SCREEN_HEIGHT
+        val zoomFittingWidth = maxWidth / combinedWidth
+        val zoomFittingHeight = maxHeight / combinedHeight
+        val zoom = minOf(zoomFittingWidth, zoomFittingHeight)
+
+        val topScreenWidth = TOP_SCREEN_WIDTH * zoom
+        val topScreenHeight = TOP_SCREEN_HEIGHT * zoom
+        val bottomScreenWidth = BOTTOM_SCREEN_WIDTH * zoom
+        val bottomScreenHeight = BOTTOM_SCREEN_HEIGHT * zoom
 
         Column(
-            modifier = Modifier.width(columnWidth),
+            modifier = Modifier.wrapContentWidth(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val topScreen: @Composable ColumnScope.() -> Unit = {
                 EmulationSurfaceView(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(TOP_SCREEN_ASPECT_RATIO),
+                    modifier = Modifier.width(topScreenWidth).height(topScreenHeight),
                     onSurfaceChanged = onTopSurfaceChanged,
                     onSurfaceDestroyed = onTopSurfaceDestroyed
                 )
@@ -119,8 +126,8 @@ fun EmulationScreensLayout(
             val bottomScreen: @Composable ColumnScope.() -> Unit = {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(BOTTOM_SCREEN_ASPECT_RATIO)
+                        .width(bottomScreenWidth)
+                        .height(bottomScreenHeight)
                         .onGloballyPositioned { coordinates ->
                             onBottomScreenBoundsChanged(coordinates.boundsInWindow())
                         }
