@@ -12,6 +12,13 @@ import org.citra.citra_emu.utils.EmulationMenuSettings
 
 /** Owns the state and user settings exposed by the emulation sidebar. */
 class SidebarViewModel : ViewModel() {
+    enum class Sheet {
+        SAVESTATES,
+        OVERLAY_OPTIONS,
+        AMIIBO,
+        RECORDING_INTERVAL
+    }
+
     val isPaused get() = _isPaused.asStateFlow()
     private val _isPaused = MutableStateFlow(false)
 
@@ -33,6 +40,26 @@ class SidebarViewModel : ViewModel() {
 
     val isRecordingMemory get() = _isRecordingMemory.asStateFlow()
     private val _isRecordingMemory = MutableStateFlow(false)
+
+    val activeSheet get() = _activeSheet.asStateFlow()
+    private val _activeSheet = MutableStateFlow<Sheet?>(null)
+
+    val memoryRecordingIntervalFrames get() = _memoryRecordingIntervalFrames.asStateFlow()
+    private val _memoryRecordingIntervalFrames = MutableStateFlow(
+        EmulationMenuSettings.memoryRecordingIntervalFrames
+    )
+
+    val showOverlay get() = _showOverlay.asStateFlow()
+    private val _showOverlay = MutableStateFlow(EmulationMenuSettings.showOverlay)
+
+    val showFps get() = _showFps.asStateFlow()
+    private val _showFps = MutableStateFlow(EmulationMenuSettings.showFps)
+
+    val joystickRelCenter get() = _joystickRelCenter.asStateFlow()
+    private val _joystickRelCenter = MutableStateFlow(EmulationMenuSettings.joystickRelCenter)
+
+    val dpadSlide get() = _dpadSlide.asStateFlow()
+    private val _dpadSlide = MutableStateFlow(EmulationMenuSettings.dpadSlide)
 
     fun setPaused(value: Boolean) {
         _isPaused.value = value
@@ -67,5 +94,38 @@ class SidebarViewModel : ViewModel() {
 
     fun setRecordingMemory(value: Boolean) {
         _isRecordingMemory.value = value
+    }
+
+    fun showSheet(sheet: Sheet) {
+        _activeSheet.value = sheet
+    }
+
+    fun dismissSheet() {
+        _activeSheet.value = null
+    }
+
+    fun setMemoryRecordingIntervalFrames(value: Int) {
+        EmulationMenuSettings.memoryRecordingIntervalFrames = value
+        _memoryRecordingIntervalFrames.value = value
+    }
+
+    fun toggleShowOverlay() {
+        EmulationMenuSettings.showOverlay = !EmulationMenuSettings.showOverlay
+        _showOverlay.value = EmulationMenuSettings.showOverlay
+    }
+
+    fun toggleShowFps() {
+        EmulationMenuSettings.showFps = !EmulationMenuSettings.showFps
+        _showFps.value = EmulationMenuSettings.showFps
+    }
+
+    fun toggleJoystickRelCenter() {
+        EmulationMenuSettings.joystickRelCenter = !EmulationMenuSettings.joystickRelCenter
+        _joystickRelCenter.value = EmulationMenuSettings.joystickRelCenter
+    }
+
+    fun toggleDpadSlide() {
+        EmulationMenuSettings.dpadSlide = !EmulationMenuSettings.dpadSlide
+        _dpadSlide.value = EmulationMenuSettings.dpadSlide
     }
 }

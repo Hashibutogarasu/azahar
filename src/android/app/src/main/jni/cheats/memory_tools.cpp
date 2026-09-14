@@ -30,9 +30,9 @@ Java_org_citra_citra_1emu_NativeLibrary_dumpCurrentMemory(JNIEnv* env, jclass) {
 }
 
 JNIEXPORT void JNICALL Java_org_citra_citra_1emu_NativeLibrary_startMemoryRecording(
-    JNIEnv* env, jclass, jstring j_output_dir) {
+    JNIEnv* env, jclass, jstring j_output_dir, jint j_interval_frames) {
     const std::string output_dir = GetJString(env, j_output_dir);
-    GetRecorder().StartRecording(output_dir);
+    GetRecorder().StartRecording(output_dir, static_cast<u32>(j_interval_frames));
 }
 
 JNIEXPORT jint JNICALL

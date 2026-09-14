@@ -501,6 +501,14 @@
     <string name="save_current_memory">Save Current Memory</string>
     <string name="start_memory_recording">Start Memory Recording</string>
     <string name="stop_memory_recording">Stop Memory Recording</string>
+    <string name="memory_recording_empty">No memory frames were recorded.</string>
+    <string name="memory_recording_export_error">The memory recording could not be exported.</string>
+    <string name="memory_recording_interval">Recording Interval</string>
+    <string name="memory_recording_interval_every">Every %1$d frames</string>
+    <string name="memory_recording_export_notification_title">Exporting memory recording</string>
+    <string name="memory_recording_export_notification_cancel">Cancel</string>
+    <string name="memory_recording_export_notification_success">Memory recording exported</string>
+    <string name="memory_recording_export_notification_cancelled">Memory recording export cancelled</string>
 
     <!-- Cheats -->
     <string name="cheats">Cheats</string>

@@ -207,12 +207,13 @@ object NativeLibrary {
     external fun dumpCurrentMemory(): ByteArray
 
     /**
-     * Starts capturing one FCRAM snapshot per emulated frame into sequentially numbered
-     * binary files under the given directory.
+     * Starts capturing FCRAM snapshots into sequentially numbered binary files under the given
+     * directory, taking one snapshot every intervalFrames emulated frames.
      *
      * @param outputDirPath absolute path of an existing directory to write frame dumps into.
+     * @param intervalFrames number of emulated frames between successive snapshots.
      */
-    external fun startMemoryRecording(outputDirPath: String)
+    external fun startMemoryRecording(outputDirPath: String, intervalFrames: Int)
 
     /**
      * Stops the active memory recording session.

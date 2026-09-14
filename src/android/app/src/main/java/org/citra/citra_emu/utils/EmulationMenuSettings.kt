@@ -63,6 +63,14 @@ object EmulationMenuSettings {
                 .apply()
         }
 
+    var memoryRecordingIntervalFrames: Int
+        get() = preferences.getInt("EmulationMenuSettings_MemoryRecordingIntervalFrames", 1)
+        set(value) {
+            preferences.edit()
+                .putInt("EmulationMenuSettings_MemoryRecordingIntervalFrames", value)
+                .apply()
+        }
+
     /**
      * Transient (non-persisted) flag indicating the overlay is currently hidden by the
      * auto-disable-on-controller-connect feature rather than by the user's [showOverlay] choice.

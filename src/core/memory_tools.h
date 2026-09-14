@@ -34,7 +34,8 @@ public:
     ~MemoryRecorder();
 
     /// Starts capturing FCRAM snapshots into sequentially numbered files under output_dir.
-    void StartRecording(const std::string& output_dir);
+    /// Snapshots are taken once every interval_frames emulated frames.
+    void StartRecording(const std::string& output_dir, u32 interval_frames);
 
     /// Stops capturing snapshots and returns the number of frames that were written.
     u32 StopRecording();
@@ -51,7 +52,9 @@ private:
     std::atomic_bool recording{false};
 
     std::string output_dir;
+    u32 interval_frames = 1;
     u32 frame_count = 0;
+    u32 skipped_frames = 0;
 
     std::thread writer_thread;
     std::mutex queue_mutex;

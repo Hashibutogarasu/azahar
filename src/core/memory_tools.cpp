@@ -2,8 +2,9 @@
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
 
+#include <algorithm>
+#include <fstream>
 #include <fmt/format.h>
-#include "common/file_util.h"
 #include "common/settings.h"
 #include "core/core.h"
 #include "core/core_timing.h"
@@ -14,6 +15,7 @@ namespace Core {
 
 namespace {
 constexpr u64 memory_recorder_interval_ticks = BASE_CLOCK_RATE_ARM11 / 60;
+constexpr std::size_t kMaxPendingFrames = 2;
 }
 
 std::vector<u8> DumpFCRAM(System& system) {
@@ -36,13 +38,15 @@ bool MemoryRecorder::IsRecording() const {
     return recording;
 }
 
-void MemoryRecorder::StartRecording(const std::string& output_dir_) {
+void MemoryRecorder::StartRecording(const std::string& output_dir_, u32 interval_frames_) {
     if (recording) {
         return;
     }
 
     output_dir = output_dir_;
+    interval_frames = std::max(1u, interval_frames_);
     frame_count = 0;
+    skipped_frames = 0;
     stop_writer = false;
 
     writer_thread = std::thread(&MemoryRecorder::WriterThreadFunc, this);
@@ -50,7 +54,7 @@ void MemoryRecorder::StartRecording(const std::string& output_dir_) {
     event = system.CoreTiming().RegisterEvent(
         "MemoryRecorder::run_event",
         [this](u64 thread_id, s64 cycle_late) { RunCallback(thread_id, cycle_late); });
-    system.CoreTiming().ScheduleEvent(memory_recorder_interval_ticks, event);
+    system.CoreTiming().ScheduleEvent(memory_recorder_interval_ticks * interval_frames, event);
 
     recording = true;
 }
@@ -84,11 +88,16 @@ void MemoryRecorder::RunCallback([[maybe_unused]] std::uintptr_t user_data, s64 
 
     {
         std::scoped_lock lock{queue_mutex};
-        pending_frames.push(DumpFCRAM(system));
+        if (pending_frames.size() < kMaxPendingFrames) {
+            pending_frames.push(DumpFCRAM(system));
+        } else {
+            ++skipped_frames;
+        }
     }
     queue_cv.notify_one();
 
-    system.CoreTiming().ScheduleEvent(memory_recorder_interval_ticks - cycles_late, event);
+    system.CoreTiming().ScheduleEvent(
+        memory_recorder_interval_ticks * interval_frames - cycles_late, event);
 }
 
 void MemoryRecorder::WriterThreadFunc() {
@@ -105,9 +114,16 @@ void MemoryRecorder::WriterThreadFunc() {
         }
 
         const std::string filepath = fmt::format("{}/frame_{:06d}.bin", output_dir, frame_count);
-        FileUtil::IOFile file(filepath, "wb");
-        file.WriteBytes(frame.data(), frame.size());
-        ++frame_count;
+        std::ofstream file(filepath, std::ios::binary | std::ios::trunc);
+        if (!file.is_open()) {
+            continue;
+        }
+
+        file.write(reinterpret_cast<const char*>(frame.data()),
+                   static_cast<std::streamsize>(frame.size()));
+        if (file.good()) {
+            ++frame_count;
+        }
     }
 }
 
