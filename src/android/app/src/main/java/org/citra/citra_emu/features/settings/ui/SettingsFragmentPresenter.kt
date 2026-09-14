@@ -749,18 +749,15 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     IntSetting.CONTROLLER_INPUT_MODE.defaultValue
                 )
             )
-            if (IntSetting.CONTROLLER_INPUT_MODE.int != 0) {
-                add(
-                    SwitchSetting(
-                        BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS,
-                        R.string.invert_controller_left_stick_y_axis,
-                        R.string.invert_controller_left_stick_y_axis_description,
-                        BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS.key,
-                        BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS.defaultValue
-                    )
+            add(
+                SwitchSetting(
+                    BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS,
+                    R.string.invert_controller_left_stick_y_axis,
+                    R.string.invert_controller_left_stick_y_axis_description,
+                    BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS.key,
+                    BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS.defaultValue
                 )
-                return@apply
-            }
+            )
 
             add(HeaderSetting(R.string.generic_buttons))
             Settings.buttonKeys.forEachIndexed { i: Int, key: String ->
