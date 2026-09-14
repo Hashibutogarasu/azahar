@@ -45,6 +45,7 @@ import org.citra.citra_emu.utils.EmulationLifecycleUtil
 import org.citra.citra_emu.utils.EmulationMenuSettings
 import org.citra.citra_emu.utils.ThemeUtil
 import org.citra.citra_emu.viewmodel.EmulationViewModel
+import kotlin.math.abs
 
 class EmulationActivity : AppCompatActivity() {
     private val preferences: SharedPreferences
@@ -234,6 +235,17 @@ class EmulationActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * True if any axis is pushed past a small deadzone, so idle analog stick drift doesn't
+     * count as "the user is using the controller" for [setOverlayAutoHiddenOnControllerInput].
+     */
+    private fun hasSignificantJoystickInput(event: MotionEvent): Boolean {
+        val deadzone = 0.2f
+        return event.device.motionRanges.any { range ->
+            abs(event.getAxisValue(range.axis)) > deadzone
+        }
+    }
+
     // Gets button presses
     @Suppress("DEPRECATION")
     @SuppressLint("GestureBackNavigation")
@@ -304,6 +316,10 @@ class EmulationActivity : AppCompatActivity() {
         // Don't attempt to do anything if we are disconnecting a device.
         if (event.actionMasked == MotionEvent.ACTION_CANCEL) {
             return true
+        }
+
+        if (hasSignificantJoystickInput(event)) {
+            setOverlayAutoHiddenOnControllerInput()
         }
 
         if (IntSetting.CONTROLLER_INPUT_MODE.int != 0 &&
