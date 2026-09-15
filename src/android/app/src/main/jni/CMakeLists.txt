@@ -19,6 +19,8 @@ add_library(citra-android SHARED
     default_ini.h
     emu_window/emu_window.cpp
     emu_window/emu_window.h
+    game_controller_manager.cpp
+    game_controller_manager.h
     game_info.cpp
     id_cache.cpp
     id_cache.h
@@ -33,6 +35,9 @@ add_library(citra-android SHARED
 
 target_link_libraries(citra-android PRIVATE audio_core citra_common citra_core input_common network)
 target_link_libraries(citra-android PRIVATE android camera2ndk inih jnigraphics log mediandk yuv)
+
+find_package(games-controller REQUIRED CONFIG)
+target_link_libraries(citra-android PRIVATE games-controller::paddleboat_static)
 
 if (ENABLE_OPENGL)
     target_sources(citra-android PRIVATE

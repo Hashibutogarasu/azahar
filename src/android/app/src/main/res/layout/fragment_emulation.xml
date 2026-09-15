@@ -11,15 +11,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- This is what everything is rendered to during emulation -->
-        <SurfaceView
-            android:id="@+id/surface_emulation"
+        <!-- This hosts the top and bottom screen Composables, each an independent surface -->
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/compose_emulation_screens"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:defaultFocusHighlightEnabled="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false" />
+            android:layout_gravity="center" />
 
         <!-- This is the onscreen input overlay -->
         <org.citra.citra_emu.overlay.InputOverlay

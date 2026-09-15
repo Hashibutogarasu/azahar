@@ -19,7 +19,9 @@ struct ANativeWindow;
 
 class EmuWindow_Android_OpenGL : public EmuWindow_Android {
 public:
-    EmuWindow_Android_OpenGL(Core::System& system, ANativeWindow* surface);
+    EmuWindow_Android_OpenGL(Core::System& system, ANativeWindow* surface,
+                             bool is_secondary = false,
+                             EGLContext share_context = EGL_NO_CONTEXT);
     ~EmuWindow_Android_OpenGL() override = default;
 
     void TryPresenting() override;
@@ -27,6 +29,11 @@ public:
     void PollEvents() override;
 
     std::unique_ptr<GraphicsContext> CreateSharedContext() const override;
+
+    /// The EGL rendering context other windows can share GL objects (textures, shaders) with.
+    EGLContext GetShareContext() const {
+        return egl_context;
+    }
 
 private:
     bool CreateWindowSurface() override;

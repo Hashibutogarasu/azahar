@@ -580,4 +580,22 @@
         <item>9</item>
     </integer-array>
 
+    <string-array name="controllerInputModes">
+        <item>@string/controller_input_mode_manual</item>
+        <item>@string/controller_input_mode_auto_detect</item>
+    </string-array>
+    <integer-array name="controllerInputModeValues">
+        <item>0</item>
+        <item>1</item>
+    </integer-array>
+
+    <string-array name="gyroInputSources">
+        <item>@string/gyro_input_source_device</item>
+        <item>@string/gyro_input_source_controller</item>
+    </string-array>
+    <integer-array name="gyroInputSourceValues">
+        <item>0</item>
+        <item>1</item>
+    </integer-array>
+
 </resources>

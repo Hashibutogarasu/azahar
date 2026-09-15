@@ -10,6 +10,10 @@
 -keep class org.ini4j.spi.IniBuilder
 -keep class org.ini4j.spi.IniFormatter
 
+# Paddleboat (androidx.games:games-controller) is only reached via JNI FindClass from its
+# native library, invisible to R8's reachability analysis, so it gets stripped without this.
+-keep class com.google.android.games.paddleboat.** { *; }
+
 # Suppress warnings for R8
 -dontwarn org.bouncycastle.jsse.BCSSLParameters
 -dontwarn org.bouncycastle.jsse.BCSSLSocket

@@ -14,6 +14,7 @@
 #include "jni/id_cache.h"
 #include "jni/input_manager.h"
 #include "jni/util.h"
+#include "core/frontend/framebuffer_layout.h"
 #include "network/network.h"
 #include "video_core/renderer_base.h"
 
@@ -25,6 +26,10 @@ bool EmuWindow_Android::OnSurfaceChanged(ANativeWindow* surface) {
     render_window = surface;
     window_info.type = Frontend::WindowSystemType::Android;
     window_info.render_surface = surface;
+    if (surface) {
+        window_width = ANativeWindow_getWidth(surface);
+        window_height = ANativeWindow_getHeight(surface);
+    }
 
     StopPresenting();
     OnFramebufferSizeChanged();
@@ -44,19 +49,18 @@ void EmuWindow_Android::OnTouchMoved(int x, int y) {
     TouchMoved((unsigned)std::max(x, 0), (unsigned)std::max(y, 0));
 }
 
+/// Always fits this window's single screen (top, or bottom when is_secondary) to its own
+/// surface. Layout, sizing and swapping of the two screens on-screen is entirely up to the app
+/// (Compose); this class never consults Settings::values.layout_option/swap_screen.
 void EmuWindow_Android::OnFramebufferSizeChanged() {
-    const bool is_portrait_mode{IsPortraitMode()};
-
-    const int bigger{window_width > window_height ? window_width : window_height};
-    const int smaller{window_width < window_height ? window_width : window_height};
-    if (is_portrait_mode) {
-        UpdateCurrentFramebufferLayout(smaller, bigger, is_portrait_mode);
-    } else {
-        UpdateCurrentFramebufferLayout(bigger, smaller, is_portrait_mode);
-    }
+    const auto layout = Layout::SingleFrameLayout(std::max(window_width, 1),
+                                                  std::max(window_height, 1), is_secondary,
+                                                  Settings::values.upright_screen.GetValue());
+    NotifyFramebufferLayoutChanged(layout);
 }
 
-EmuWindow_Android::EmuWindow_Android(ANativeWindow* surface) : host_window{surface} {
+EmuWindow_Android::EmuWindow_Android(ANativeWindow* surface, bool is_secondary_)
+    : Frontend::EmuWindow(is_secondary_), host_window{surface} {
     LOG_DEBUG(Frontend, "Initializing EmuWindow_Android");
 
     if (!surface) {

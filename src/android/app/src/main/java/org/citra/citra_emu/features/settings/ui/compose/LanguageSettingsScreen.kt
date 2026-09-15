@@ -40,7 +40,7 @@ import java.util.Locale
  * Lets the user pick the app's own display language, reading and writing
  * [SettingsViewModel.appSettings] as the single source of truth (shared with the OS's own
  * per-app language screen on API 33+). Selecting a language only updates that repository's
- * pending selection; [SettingsActivityPresenter] applies it once the user leaves the settings
+ * pending selection; [SettingsViewModel.onStop] applies it once the user leaves the settings
  * screen entirely.
  */
 @Destination<RootGraph>

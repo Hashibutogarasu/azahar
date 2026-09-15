@@ -8,7 +8,7 @@ import org.citra.citra_emu.features.settings.model.Settings
 import org.citra.citra_emu.features.settings.ui.SettingsActivityView
 
 /**
- * Loads everything [org.citra.citra_emu.features.settings.ui.SettingsFragmentPresenter] needs to
+ * Loads everything [org.citra.citra_emu.features.settings.ui.SettingsSectionViewModel] needs to
  * build any settings section's items, once, up front. The settings screen awaits this before
  * showing any section, so individual sections never have to load anything themselves.
  */

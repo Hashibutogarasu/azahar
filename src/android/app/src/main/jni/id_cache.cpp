@@ -31,6 +31,7 @@ static jmethodID s_portrait_screen_layout;
 static jmethodID s_exit_emulation_activity;
 static jmethodID s_request_camera_permission;
 static jmethodID s_request_mic_permission;
+static jmethodID s_on_controller_connection_changed;
 
 static jclass s_cheat_class;
 static jfieldID s_cheat_pointer;
@@ -105,6 +106,10 @@ jmethodID GetRequestCameraPermission() {
 
 jmethodID GetRequestMicPermission() {
     return s_request_mic_permission;
+}
+
+jmethodID GetOnControllerConnectionChanged() {
+    return s_on_controller_connection_changed;
 }
 
 jclass GetCheatClass() {
@@ -183,6 +188,8 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
         env->GetStaticMethodID(s_native_library_class, "requestCameraPermission", "()Z");
     s_request_mic_permission =
         env->GetStaticMethodID(s_native_library_class, "requestMicPermission", "()Z");
+    s_on_controller_connection_changed = env->GetStaticMethodID(
+        s_native_library_class, "onControllerConnectionChanged", "(Z)V");
     env->DeleteLocalRef(native_library_class);
 
     // Initialize Cheat

@@ -19,6 +19,7 @@ import android.view.MotionEvent
 import android.view.SurfaceView
 import android.view.View
 import android.view.View.OnTouchListener
+import androidx.compose.ui.geometry.Rect as ComposeRect
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import org.citra.citra_emu.CitraApplication
@@ -43,6 +44,18 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
     private var isInEditMode = false
     private var buttonBeingConfigured: InputOverlayDrawableButton? = null
     private var dpadBeingConfigured: InputOverlayDrawableDpad? = null
+
+    /** Invoked when the user taps the virtual screen-swap button; set by the owning fragment. */
+    var onSwapScreenRequested: (() -> Unit)? = null
+
+    /**
+     * The current on-screen bounds of the bottom-screen Composable, in window coordinates, as
+     * last reported by [org.citra.citra_emu.ui.emulation.compose.EmulationScreensLayout]. Touch
+     * input is translated into this rect's local coordinate space before being forwarded to
+     * native code, since the bottom-screen surface may be smaller than, or offset from, this
+     * full-screen overlay.
+     */
+    var bottomScreenBoundsInWindow: ComposeRect? = null
     private var joystickBeingConfigured: InputOverlayDrawableJoystick? = null
 
     // Stores the ID of the pointer that interacted with the 3DS touchscreen.
@@ -77,12 +90,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
     }
 
     private fun swapScreen() {
-        val isEnabled = !EmulationMenuSettings.swapScreens
-        EmulationMenuSettings.swapScreens = isEnabled
-        NativeLibrary.swapScreens(
-            isEnabled,
-            (context as Activity).windowManager.defaultDisplay.rotation
-        )
+        onSwapScreenRequested?.invoke()
     }
 
     fun hapticFeedback(type:Int){
@@ -110,29 +118,17 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                 swapScreen()
             }
 
-            NativeLibrary.onGamePadEvent(NativeLibrary.TouchScreenDevice, button.id, button.status)
+            NativeLibrary.setVirtualButton(button.id, button.status == NativeLibrary.ButtonState.PRESSED)
             shouldUpdateView = true
         }
         for (dpad in overlayDpads) {
             if (!dpad.updateStatus(event, EmulationMenuSettings.dpadSlide, this)) {
                 continue
             }
-            NativeLibrary.onGamePadEvent(NativeLibrary.TouchScreenDevice, dpad.upId, dpad.upStatus)
-            NativeLibrary.onGamePadEvent(
-                NativeLibrary.TouchScreenDevice,
-                dpad.downId,
-                dpad.downStatus
-            )
-            NativeLibrary.onGamePadEvent(
-                NativeLibrary.TouchScreenDevice,
-                dpad.leftId,
-                dpad.leftStatus
-            )
-            NativeLibrary.onGamePadEvent(
-                NativeLibrary.TouchScreenDevice,
-                dpad.rightId,
-                dpad.rightStatus
-            )
+            NativeLibrary.setVirtualButton(dpad.upId, dpad.upStatus == NativeLibrary.ButtonState.PRESSED)
+            NativeLibrary.setVirtualButton(dpad.downId, dpad.downStatus == NativeLibrary.ButtonState.PRESSED)
+            NativeLibrary.setVirtualButton(dpad.leftId, dpad.leftStatus == NativeLibrary.ButtonState.PRESSED)
+            NativeLibrary.setVirtualButton(dpad.rightId, dpad.rightStatus == NativeLibrary.ButtonState.PRESSED)
             shouldUpdateView = true
         }
         for (joystick in overlayJoysticks) {
@@ -140,12 +136,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                 continue
             }
             val axisID = joystick.joystickId
-            NativeLibrary.onGamePadMoveEvent(
-                NativeLibrary.TouchScreenDevice,
-                axisID,
-                joystick.xAxis,
-                joystick.yAxis
-            )
+            NativeLibrary.setVirtualStick(axisID, joystick.xAxis, joystick.yAxis)
             shouldUpdateView = true
         }
 
@@ -168,7 +159,8 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
         val isActionUp =
             motionEvent == MotionEvent.ACTION_UP || motionEvent == MotionEvent.ACTION_POINTER_UP
         if (isActionDown && !isTouchInputConsumed(pointerId)) {
-            NativeLibrary.onTouchEvent(xPosition.toFloat(), yPosition.toFloat(), true)
+            val (localX, localY) = toBottomScreenLocal(xPosition, yPosition)
+            NativeLibrary.onTouchEvent(localX, localY, true)
         }
         if (isActionMove) {
             for (i in 0 until event.pointerCount) {
@@ -176,13 +168,28 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                 if (isTouchInputConsumed(fingerId)) {
                     continue
                 }
-                NativeLibrary.onTouchMoved(xPosition.toFloat(), yPosition.toFloat())
+                val (localX, localY) = toBottomScreenLocal(xPosition, yPosition)
+                NativeLibrary.onTouchMoved(localX, localY)
             }
         }
         if (isActionUp && !isTouchInputConsumed(pointerId)) {
             NativeLibrary.onTouchEvent(0f, 0f, false)
         }
         return true
+    }
+
+    /**
+     * Translates a touch position from this (full-screen) overlay's local coordinate space into
+     * the bottom-screen Composable's local coordinate space, since that Composable may be
+     * smaller than, or offset from, this overlay.
+     */
+    private fun toBottomScreenLocal(x: Int, y: Int): Pair<Float, Float> {
+        val bounds = bottomScreenBoundsInWindow ?: return Pair(x.toFloat(), y.toFloat())
+        val locationInWindow = IntArray(2)
+        getLocationInWindow(locationInWindow)
+        val localX = x + locationInWindow[0] - bounds.left
+        val localY = y + locationInWindow[1] - bounds.top
+        return Pair(localX, localY)
     }
 
     private fun isTouchInputConsumed(trackId: Int): Boolean {

@@ -6,12 +6,18 @@
 #include "common/assert.h"
 #include "common/logging/log.h"
 #include "common/vector_math.h"
+#include "jni/game_controller_manager.h"
 #include "jni/ndk_motion.h"
 
 namespace InputManager {
 
 namespace {
 using Common::Vec3;
+
+std::atomic<float> g_gyro_vertical_scale{1.0f};
+std::atomic<float> g_gyro_horizontal_scale{1.0f};
+std::atomic<bool> g_gyro_invert_vertical{false};
+std::atomic<bool> g_gyro_invert_horizontal{false};
 }
 
 class NDKMotion final : public Input::MotionDevice {
@@ -131,11 +137,28 @@ public:
         }
     }
 
+    /**
+     * When a physical controller's gyroscope is preferred (GameControllerManager::
+     * TryGetControllerGyro()), its sample replaces the device's own rotation, converted with the
+     * same rad/s-to-deg/s and axis mapping as ASENSOR_TYPE_GYROSCOPE below, since Paddleboat
+     * reports gyroscope data in that same convention.
+     */
     std::tuple<Vec3<float>, Vec3<float>> GetStatus() const override {
         if (std::thread::id{} == poll_thread.get_id()) {
             Update();
         }
-        return {acceleration, rotation};
+        Vec3<float> final_rotation = rotation;
+        float controller_x, controller_y, controller_z;
+        if (GameControllerManager::TryGetControllerGyro(&controller_x, &controller_y,
+                                                         &controller_z)) {
+            final_rotation = TransformAxes({controller_x, controller_y, controller_z}) * 180.0f /
+                             static_cast<float>(M_PI);
+        }
+        const float vertical_sign = g_gyro_invert_vertical ? -1.0f : 1.0f;
+        const float horizontal_sign = g_gyro_invert_horizontal ? -1.0f : 1.0f;
+        final_rotation.x = final_rotation.x * g_gyro_vertical_scale * vertical_sign;
+        final_rotation.y = final_rotation.y * g_gyro_horizontal_scale * horizontal_sign;
+        return {acceleration, final_rotation};
     }
 
     void EnableSensors() {
@@ -190,6 +213,16 @@ void NDKMotionFactory::EnableSensors() {
 void NDKMotionFactory::DisableSensors() {
     if (ndk_motion_device)
         ndk_motion_device->DisableSensors();
+}
+
+void SetGyroSensitivity(float vertical_scale, float horizontal_scale) {
+    g_gyro_vertical_scale = vertical_scale;
+    g_gyro_horizontal_scale = horizontal_scale;
+}
+
+void SetGyroInvert(bool invert_vertical, bool invert_horizontal) {
+    g_gyro_invert_vertical = invert_vertical;
+    g_gyro_invert_horizontal = invert_horizontal;
 }
 
 } // namespace InputManager

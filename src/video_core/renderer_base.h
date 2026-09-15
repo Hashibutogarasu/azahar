@@ -65,6 +65,11 @@ public:
 
     /// This is called to notify the rendering backend of a surface change
     virtual void NotifySurfaceChanged() {}
+    virtual void NotifySurfaceChanged(bool is_secondary) {
+        if (!is_secondary) {
+            NotifySurfaceChanged();
+        }
+    }
 
     /// Returns the resolution scale factor relative to the native 3DS screen resolution
     u32 GetResolutionScaleFactor();

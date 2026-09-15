@@ -53,8 +53,6 @@ import org.citra.citra_emu.utils.ThemeUtil
 class SettingsActivity : AppCompatActivity(), SettingsActivityView {
     private val settingsViewModel: SettingsViewModel by viewModels()
 
-    private lateinit var presenter: SettingsActivityPresenter
-
     override val settings: Settings get() = settingsViewModel.settings
 
     var currentToolbarTitle by mutableStateOf("")
@@ -67,12 +65,11 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityView {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        presenter = SettingsActivityPresenter(this, settingsViewModel.appSettings)
+        settingsViewModel.restoreState(savedInstanceState)
 
         val launcher = intent
-        val gameID = launcher.getStringExtra(ARG_GAME_ID)
-        val menuTag = launcher.getStringExtra(ARG_MENU_TAG)
-        presenter.onCreate(savedInstanceState, menuTag!!, gameID!!)
+        val gameID = launcher.getStringExtra(ARG_GAME_ID)!!
+        val menuTag = launcher.getStringExtra(ARG_MENU_TAG)!!
 
         setContent {
             AzaharTheme {
@@ -102,24 +99,18 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityView {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        // Critical: If super method is not called, rotations will be busted.
         super.onSaveInstanceState(outState)
-        presenter.saveState(outState)
+        settingsViewModel.saveState(outState)
     }
 
     override fun onPause() {
         super.onPause()
-        presenter.onPause()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        presenter.onResume()
+        settingsViewModel.onPause()
     }
 
     override fun onStart() {
         super.onStart()
-        presenter.onStart()
+        settingsViewModel.onStart()
     }
 
     /**
@@ -129,7 +120,7 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityView {
      */
     override fun onStop() {
         super.onStop()
-        presenter.onStop(isFinishing)
+        settingsViewModel.onStop(isFinishing, this)
     }
 
     override fun onSettingsFileNotFound() {
@@ -145,7 +136,7 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityView {
     }
 
     override fun onSettingChanged() {
-        presenter.onSettingChanged()
+        settingsViewModel.onSettingChanged()
     }
 
     override fun restartApp() {
@@ -156,8 +147,7 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityView {
     }
 
     fun onSettingsReset() {
-        // Prevents saving to a non-existent settings file
-        presenter.onSettingsReset()
+        settingsViewModel.onSettingsReset()
 
         val controllerKeys = Settings.buttonKeys + Settings.circlePadKeys + Settings.cStickKeys +
                 Settings.dPadAxisKeys + Settings.dPadButtonKeys + Settings.triggerKeys
@@ -166,21 +156,17 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityView {
         controllerKeys.forEach { editor.remove(it) }
         editor.apply()
 
-        // Reset the static memory representation of each setting
         BooleanSetting.clear()
         FloatSetting.clear()
         ScaledFloatSetting.clear()
         IntSetting.clear()
         StringSetting.clear()
 
-        // Delete settings file because the user may have changed values that do not exist in the UI
         val settingsFile = SettingsFile.getSettingsFile(SettingsFile.FILE_NAME_CONFIG)
         if (!settingsFile.delete()) {
             throw IOException("Failed to delete $settingsFile")
         }
 
-        // Set the root of the document tree before we create a new config file or the native code
-        // will fail when creating the file.
         if (DirectoryInitialization.setCitraUserDirectory()) {
             CitraApplication.documentsTree.setRoot(Uri.parse(DirectoryInitialization.userPath))
             NativeLibrary.createConfigFile()
@@ -188,7 +174,6 @@ class SettingsActivity : AppCompatActivity(), SettingsActivityView {
             throw IllegalStateException("Azahar directory unavailable when accessing config file!")
         }
 
-        // Set default values for system config file
         SystemSaveGame.apply {
             setUsername("AZAHAR")
             setBirthday(11, 7)

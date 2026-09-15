@@ -13,7 +13,14 @@ class System;
 
 class EmuWindow_Android : public Frontend::EmuWindow {
 public:
-    EmuWindow_Android(ANativeWindow* surface);
+    /**
+     * @param surface The native window to render into.
+     * @param is_secondary_ When true, this window always renders the 3DS bottom screen, fit to
+     *        the whole surface, instead of the top screen. Android renders the top and bottom
+     *        screens into two independent windows/surfaces; layout, sizing and on-screen ordering
+     *        of the two is entirely decided by the app, not by this class.
+     */
+    EmuWindow_Android(ANativeWindow* surface, bool is_secondary_ = false);
     ~EmuWindow_Android();
 
     /// Called by the onSurfaceChanges() method to change the surface

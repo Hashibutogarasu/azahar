@@ -12,6 +12,7 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.os.Build
 import android.text.TextUtils
+import androidx.lifecycle.ViewModel
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlin.math.min
@@ -48,22 +49,25 @@ import org.citra.citra_emu.utils.Log
 import org.citra.citra_emu.utils.SystemSaveGame
 import org.citra.citra_emu.utils.ThemeUtil
 
-class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) {
-    private var menuTag: String? = null
-    private lateinit var gameId: String
+/**
+ * Owns the settings list and its business logic for one section screen (the root menu, or a
+ * sub-section such as General/System/Camera/...). Scoped per menuTag/gameId by its caller
+ * ([org.citra.citra_emu.features.settings.ui.compose.SettingsSectionScreen]), not shared across
+ * sections.
+ */
+class SettingsSectionViewModel(
+    private val fragmentView: SettingsFragmentView,
+    private val menuTag: String,
+    private val gameId: String
+) : ViewModel() {
     private var settingsList: ArrayList<SettingsItem>? = null
 
     private val settingsActivity get() = fragmentView.activityView as SettingsActivity
     private val settings get() = fragmentView.activityView!!.settings
     private lateinit var settingsAdapter: SettingsAdapter
 
-    private lateinit var preferences: SharedPreferences
-
-    fun onCreate(menuTag: String, gameId: String) {
-        this.gameId = gameId
-        this.menuTag = menuTag
-        preferences = PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
-    }
+    private val preferences: SharedPreferences =
+        PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
 
     fun onViewCreated(settingsAdapter: SettingsAdapter) {
         this.settingsAdapter = settingsAdapter
@@ -85,9 +89,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
             settingsActivity.setToolbarTitle("Application Settings: $gameId")
         }
         val sl = ArrayList<SettingsItem>()
-        if (menuTag == null) {
-            return
-        }
         when (menuTag) {
             SettingsFile.FILE_NAME_CONFIG -> addConfigSettings(sl)
             Settings.SECTION_CORE -> addGeneralSettings(sl)
@@ -738,6 +739,82 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
     private fun addControlsSettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.preferences_controls))
         sl.apply {
+            add(
+                SingleChoiceSetting(
+                    IntSetting.CONTROLLER_INPUT_MODE,
+                    R.string.controller_input_mode,
+                    R.string.controller_input_mode_description,
+                    R.array.controllerInputModes,
+                    R.array.controllerInputModeValues,
+                    IntSetting.CONTROLLER_INPUT_MODE.key,
+                    IntSetting.CONTROLLER_INPUT_MODE.defaultValue
+                )
+            )
+            add(
+                SwitchSetting(
+                    BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS,
+                    R.string.invert_controller_left_stick_y_axis,
+                    R.string.invert_controller_left_stick_y_axis_description,
+                    BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS.key,
+                    BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS.defaultValue
+                )
+            )
+
+            add(HeaderSetting(R.string.gyro_settings))
+            add(
+                SingleChoiceSetting(
+                    IntSetting.GYRO_INPUT_SOURCE,
+                    R.string.gyro_input_source,
+                    R.string.gyro_input_source_description,
+                    R.array.gyroInputSources,
+                    R.array.gyroInputSourceValues,
+                    IntSetting.GYRO_INPUT_SOURCE.key,
+                    IntSetting.GYRO_INPUT_SOURCE.defaultValue
+                )
+            )
+            add(
+                SliderSetting(
+                    ScaledFloatSetting.GYRO_SENSITIVITY_VERTICAL,
+                    R.string.gyro_sensitivity_vertical,
+                    R.string.gyro_sensitivity_vertical_description,
+                    0,
+                    200,
+                    "%",
+                    ScaledFloatSetting.GYRO_SENSITIVITY_VERTICAL.key,
+                    ScaledFloatSetting.GYRO_SENSITIVITY_VERTICAL.defaultValue
+                )
+            )
+            add(
+                SwitchSetting(
+                    BooleanSetting.INVERT_GYRO_VERTICAL,
+                    R.string.invert_gyro_vertical,
+                    R.string.invert_gyro_vertical_description,
+                    BooleanSetting.INVERT_GYRO_VERTICAL.key,
+                    BooleanSetting.INVERT_GYRO_VERTICAL.defaultValue
+                )
+            )
+            add(
+                SliderSetting(
+                    ScaledFloatSetting.GYRO_SENSITIVITY_HORIZONTAL,
+                    R.string.gyro_sensitivity_horizontal,
+                    R.string.gyro_sensitivity_horizontal_description,
+                    0,
+                    200,
+                    "%",
+                    ScaledFloatSetting.GYRO_SENSITIVITY_HORIZONTAL.key,
+                    ScaledFloatSetting.GYRO_SENSITIVITY_HORIZONTAL.defaultValue
+                )
+            )
+            add(
+                SwitchSetting(
+                    BooleanSetting.INVERT_GYRO_HORIZONTAL,
+                    R.string.invert_gyro_horizontal,
+                    R.string.invert_gyro_horizontal_description,
+                    BooleanSetting.INVERT_GYRO_HORIZONTAL.key,
+                    BooleanSetting.INVERT_GYRO_HORIZONTAL.defaultValue
+                )
+            )
+
             add(HeaderSetting(R.string.generic_buttons))
             Settings.buttonKeys.forEachIndexed { i: Int, key: String ->
                 val button = getInputObject(key)
@@ -1031,6 +1108,13 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
         }
     }
 
+    /**
+     * The top and bottom screens now always render into two independent Composables (see
+     * EmulationScreensLayout), each native window always fit to its own screen. Arrangement
+     * settings that assumed a single combined surface (screen layout picker, small-screen
+     * position, large-screen proportion, custom pixel-rect layout) no longer have any effect on
+     * Android and are intentionally omitted here rather than left visible but non-functional.
+     */
     private fun addLayoutSettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.preferences_layout))
         sl.apply {
@@ -1043,67 +1127,6 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
                     R.array.screenOrientationValues,
                     IntSetting.ORIENTATION_OPTION.key,
                     IntSetting.ORIENTATION_OPTION.defaultValue
-                )
-            )
-            add(
-                SingleChoiceSetting(
-                    IntSetting.SCREEN_LAYOUT,
-                    R.string.emulation_switch_screen_layout,
-                    0,
-                    R.array.landscapeLayouts,
-                    R.array.landscapeLayoutValues,
-                    IntSetting.SCREEN_LAYOUT.key,
-                    IntSetting.SCREEN_LAYOUT.defaultValue
-                )
-            )
-            add(
-                SingleChoiceSetting(
-                    IntSetting.PORTRAIT_SCREEN_LAYOUT,
-                    R.string.emulation_switch_portrait_layout,
-                    0,
-                    R.array.portraitLayouts,
-                    R.array.portraitLayoutValues,
-                    IntSetting.PORTRAIT_SCREEN_LAYOUT.key,
-                    IntSetting.PORTRAIT_SCREEN_LAYOUT.defaultValue
-                )
-            )
-            add(
-                SingleChoiceSetting(
-                    IntSetting.SMALL_SCREEN_POSITION,
-                    R.string.emulation_small_screen_position,
-                    R.string.small_screen_position_description,
-                    R.array.smallScreenPositions,
-                    R.array.smallScreenPositionValues,
-                    IntSetting.SMALL_SCREEN_POSITION.key,
-                    IntSetting.SMALL_SCREEN_POSITION.defaultValue
-                )
-            )
-            add(
-                SliderSetting(
-                    FloatSetting.LARGE_SCREEN_PROPORTION,
-                    R.string.large_screen_proportion,
-                    R.string.large_screen_proportion_description,
-                    1,
-                    5,
-                    "",
-                    FloatSetting.LARGE_SCREEN_PROPORTION.key,
-                    FloatSetting.LARGE_SCREEN_PROPORTION.defaultValue
-                )
-            )
-            add(
-                SubmenuSetting(
-                    R.string.emulation_landscape_custom_layout,
-                    0,
-                    R.drawable.ic_fit_screen,
-                    Settings.SECTION_CUSTOM_LANDSCAPE
-                )
-            )
-            add(
-                SubmenuSetting(
-                    R.string.emulation_portrait_custom_layout,
-                    0,
-                    R.drawable.ic_portrait_fit_screen,
-                    Settings.SECTION_CUSTOM_PORTRAIT
                 )
             )
         }

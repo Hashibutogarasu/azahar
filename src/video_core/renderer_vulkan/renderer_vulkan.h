@@ -77,6 +77,15 @@ public:
     void NotifySurfaceChanged() override {
         main_window.NotifySurfaceChanged();
     }
+    void NotifySurfaceChanged(bool is_secondary) override {
+        if (is_secondary) {
+            if (second_window) {
+                second_window->NotifySurfaceChanged();
+            }
+        } else {
+            main_window.NotifySurfaceChanged();
+        }
+    }
 
     void SwapBuffers() override;
     void TryPresent(int timeout_ms, bool is_secondary) override {}

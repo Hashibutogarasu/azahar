@@ -6,7 +6,6 @@ package org.citra.citra_emu.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,20 +21,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
-import info.debatty.java.stringsimilarity.Jaccard
-import info.debatty.java.stringsimilarity.JaroWinkler
 import kotlinx.coroutines.launch
-import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.R
 import org.citra.citra_emu.adapters.GameAdapter
 import org.citra.citra_emu.databinding.FragmentSearchBinding
-import org.citra.citra_emu.model.Game
 import org.citra.citra_emu.viewmodel.GamesViewModel
 import org.citra.citra_emu.viewmodel.HomeViewModel
-import java.time.temporal.ChronoField
-import java.util.Locale
 
 class SearchFragment : Fragment() {
     private var _binding: FragmentSearchBinding? = null
@@ -43,8 +35,6 @@ class SearchFragment : Fragment() {
 
     private val gamesViewModel: GamesViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by activityViewModels()
-
-    private lateinit var preferences: SharedPreferences
 
     companion object {
         private const val SEARCH_TEXT = "SearchText"
@@ -64,8 +54,6 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         homeViewModel.setNavigationVisibility(visible = true, animated = true)
         homeViewModel.setStatusBarShadeVisibility(visible = true)
-
-        preferences = PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
 
         if (savedInstanceState != null) {
             binding.searchText.setText(savedInstanceState.getString(SEARCH_TEXT))
@@ -136,56 +124,11 @@ class SearchFragment : Fragment() {
         homeViewModel.setStatusBarShadeVisibility(visible = true)
     }
 
-    private inner class ScoredGame(val score: Double, val item: Game)
-
     private fun filterAndSearch() {
-        if (binding.searchText.text.toString().isEmpty() &&
-            binding.chipGroup.checkedChipId == View.NO_ID
-        ) {
-            gamesViewModel.setSearchedGames(emptyList())
-            return
-        }
-
-        val baseList = gamesViewModel.games.value
-        val filteredList: List<Game> = when (binding.chipGroup.checkedChipId) {
-            R.id.chip_recently_played -> {
-                baseList.filter {
-                    val lastPlayedTime = preferences.getLong(it.keyLastPlayedTime, 0L)
-                    lastPlayedTime > (System.currentTimeMillis() - ChronoField.MILLI_OF_DAY.range().maximum)
-                }
-            }
-
-            R.id.chip_recently_added -> {
-                baseList.filter {
-                    val addedTime = preferences.getLong(it.keyAddedToLibraryTime, 0L)
-                    addedTime > (System.currentTimeMillis() - ChronoField.MILLI_OF_DAY.range().maximum)
-                }
-            }
-
-            R.id.chip_installed -> baseList.filter { it.isInstalled }
-
-            else -> baseList
-        }
-
-        if (binding.searchText.text.toString().isEmpty() &&
-            binding.chipGroup.checkedChipId != View.NO_ID
-        ) {
-            gamesViewModel.setSearchedGames(filteredList)
-            return
-        }
-
-        val searchTerm = binding.searchText.text.toString().lowercase(Locale.getDefault())
-        val searchAlgorithm = if (searchTerm.length > 1) Jaccard(2) else JaroWinkler()
-        val sortedList: List<Game> = filteredList.mapNotNull { game ->
-            val title = game.title.lowercase(Locale.getDefault())
-            val score = searchAlgorithm.similarity(searchTerm, title)
-            if (score > 0.03) {
-                ScoredGame(score, game)
-            } else {
-                null
-            }
-        }.sortedByDescending { it.score }.map { it.item }
-        gamesViewModel.setSearchedGames(sortedList)
+        gamesViewModel.filterAndSearch(
+            binding.searchText.text.toString(),
+            binding.chipGroup.checkedChipId
+        )
     }
 
     override fun onDestroyView() {

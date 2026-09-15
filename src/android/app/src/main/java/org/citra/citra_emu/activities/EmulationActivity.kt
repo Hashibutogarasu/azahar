@@ -45,6 +45,7 @@ import org.citra.citra_emu.utils.EmulationLifecycleUtil
 import org.citra.citra_emu.utils.EmulationMenuSettings
 import org.citra.citra_emu.utils.ThemeUtil
 import org.citra.citra_emu.viewmodel.EmulationViewModel
+import kotlin.math.abs
 
 class EmulationActivity : AppCompatActivity() {
     private val preferences: SharedPreferences
@@ -54,7 +55,7 @@ class EmulationActivity : AppCompatActivity() {
     private val settingsViewModel: SettingsViewModel by viewModels()
 
     private lateinit var binding: ActivityEmulationBinding
-    private lateinit var screenAdjustmentUtil: ScreenAdjustmentUtil
+    lateinit var screenAdjustmentUtil: ScreenAdjustmentUtil
     private lateinit var hotkeyUtility: HotkeyUtility
 
     private val emulationFragment: EmulationFragment
@@ -65,6 +66,14 @@ class EmulationActivity : AppCompatActivity() {
         }
 
     private var isEmulationRunning: Boolean = false
+
+    /**
+     * Forwards an auto-hide request to the currently attached [EmulationFragment]'s overlay, if
+     * any is attached. Safe to call from a native callback at any point in the activity lifecycle.
+     */
+    fun setOverlayAutoHidden(hidden: Boolean) {
+        runCatching { emulationFragment.setOverlayAutoHidden(hidden) }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeUtil.setTheme(this)
@@ -141,6 +150,7 @@ class EmulationActivity : AppCompatActivity() {
         EmulationLifecycleUtil.clear()
         isEmulationRunning = false
         instance = null
+        NativeLibrary.shutdownGameControllerManager()
         super.onDestroy()
     }
 
@@ -210,6 +220,32 @@ class EmulationActivity : AppCompatActivity() {
         screenAdjustmentUtil.changeActivityOrientation(orientationOption)
     }
 
+    private fun isGameControllerSource(source: Int): Boolean {
+        return source and InputDevice.SOURCE_GAMEPAD == InputDevice.SOURCE_GAMEPAD ||
+            source and InputDevice.SOURCE_JOYSTICK == InputDevice.SOURCE_JOYSTICK
+    }
+
+    /**
+     * Re-hides the virtual overlay on the next physical controller button press, since a touch
+     * only restores it until the controller is actually used again.
+     */
+    private fun setOverlayAutoHiddenOnControllerInput() {
+        if (EmulationMenuSettings.autoDisableOverlayOnController) {
+            setOverlayAutoHidden(true)
+        }
+    }
+
+    /**
+     * True if any axis is pushed past a small deadzone, so idle analog stick drift doesn't
+     * count as "the user is using the controller" for [setOverlayAutoHiddenOnControllerInput].
+     */
+    private fun hasSignificantJoystickInput(event: MotionEvent): Boolean {
+        val deadzone = 0.2f
+        return event.device.motionRanges.any { range ->
+            abs(event.getAxisValue(range.axis)) > deadzone
+        }
+    }
+
     // Gets button presses
     @Suppress("DEPRECATION")
     @SuppressLint("GestureBackNavigation")
@@ -221,6 +257,16 @@ class EmulationActivity : AppCompatActivity() {
 
         if (emulationFragment.isDrawerOpen()) {
             return super.dispatchKeyEvent(event)
+        }
+
+        if (isGameControllerSource(event.source) && event.action == KeyEvent.ACTION_DOWN) {
+            setOverlayAutoHiddenOnControllerInput()
+        }
+
+        if (IntSetting.CONTROLLER_INPUT_MODE.int != 0 && isGameControllerSource(event.source) &&
+            NativeLibrary.onGameControllerKeyEvent(event)
+        ) {
+            return true
         }
 
         val button =
@@ -271,6 +317,17 @@ class EmulationActivity : AppCompatActivity() {
         if (event.actionMasked == MotionEvent.ACTION_CANCEL) {
             return true
         }
+
+        if (hasSignificantJoystickInput(event)) {
+            setOverlayAutoHiddenOnControllerInput()
+        }
+
+        if (IntSetting.CONTROLLER_INPUT_MODE.int != 0 &&
+            NativeLibrary.onGameControllerMotionEvent(event)
+        ) {
+            return true
+        }
+
         val input = event.device
         val motions = input.motionRanges
         val axisValuesCirclePad = floatArrayOf(0.0f, 0.0f)

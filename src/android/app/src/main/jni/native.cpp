@@ -52,6 +52,7 @@
 #ifdef ENABLE_VULKAN
 #include "jni/emu_window/emu_window_vk.h"
 #endif
+#include "jni/game_controller_manager.h"
 #include "jni/id_cache.h"
 #include "jni/input_manager.h"
 #include "jni/ndk_motion.h"
@@ -67,9 +68,11 @@
 namespace {
 
 ANativeWindow* s_surf;
+ANativeWindow* s_surf_secondary;
 
 std::shared_ptr<Common::DynamicLibrary> vulkan_library{};
 std::unique_ptr<EmuWindow_Android> window;
+std::unique_ptr<EmuWindow_Android> secondary_window;
 
 std::atomic<bool> stop_run{true};
 std::atomic<bool> pause_emulation{false};
@@ -79,6 +82,13 @@ std::mutex running_mutex;
 std::condition_variable running_cv;
 
 } // Anonymous namespace
+
+/// The 3DS touchscreen is always the bottom screen, so touch input always targets
+/// secondary_window when it exists (dual-surface mode), falling back to the single window
+/// otherwise. Which Composable the app displays the bottom screen in is irrelevant here.
+static EmuWindow_Android* GetTouchscreenWindow() {
+    return secondary_window ? secondary_window.get() : window.get();
+}
 
 static jobject ToJavaCoreError(Core::System::ResultStatus result) {
     static const std::map<Core::System::ResultStatus, const char*> CoreErrorNameMap{
@@ -120,9 +130,14 @@ static void TryShutdown() {
     }
 
     window->DoneCurrent();
+    if (secondary_window) {
+        secondary_window->DoneCurrent();
+    }
     Core::System::GetInstance().Shutdown();
+    secondary_window.reset();
     window.reset();
     InputManager::Shutdown();
+    GameControllerManager::Shutdown(IDCache::GetEnvForThread());
     MicroProfileShutdown();
 }
 
@@ -151,11 +166,20 @@ static Core::System::ResultStatus RunCitra(const std::string& filepath) {
 #ifdef ENABLE_OPENGL
     case Settings::GraphicsAPI::OpenGL:
         window = std::make_unique<EmuWindow_Android_OpenGL>(system, s_surf);
+        if (s_surf_secondary) {
+            secondary_window = std::make_unique<EmuWindow_Android_OpenGL>(
+                system, s_surf_secondary, true,
+                static_cast<EmuWindow_Android_OpenGL*>(window.get())->GetShareContext());
+        }
         break;
 #endif
 #ifdef ENABLE_VULKAN
     case Settings::GraphicsAPI::Vulkan:
         window = std::make_unique<EmuWindow_Android_Vulkan>(s_surf, vulkan_library);
+        if (s_surf_secondary) {
+            secondary_window = std::make_unique<EmuWindow_Android_Vulkan>(
+                s_surf_secondary, vulkan_library, true);
+        }
         break;
 #endif
     default:
@@ -164,8 +188,17 @@ static Core::System::ResultStatus RunCitra(const std::string& filepath) {
                      graphics_api);
 #ifdef ENABLE_OPENGL
         window = std::make_unique<EmuWindow_Android_OpenGL>(system, s_surf);
+        if (s_surf_secondary) {
+            secondary_window = std::make_unique<EmuWindow_Android_OpenGL>(
+                system, s_surf_secondary, true,
+                static_cast<EmuWindow_Android_OpenGL*>(window.get())->GetShareContext());
+        }
 #elif ENABLE_VULKAN
         window = std::make_unique<EmuWindow_Android_Vulkan>(s_surf, vulkan_library);
+        if (s_surf_secondary) {
+            secondary_window = std::make_unique<EmuWindow_Android_Vulkan>(
+                s_surf_secondary, vulkan_library, true);
+        }
 #else
 // TODO: Add a null renderer backend for this, perhaps.
 #error "At least one renderer must be enabled."
@@ -204,7 +237,12 @@ static Core::System::ResultStatus RunCitra(const std::string& filepath) {
     InputManager::Init();
 
     window->MakeCurrent();
-    const Core::System::ResultStatus load_result{system.Load(*window, filepath)};
+    if (secondary_window) {
+        secondary_window->MakeCurrent();
+        window->MakeCurrent();
+    }
+    const Core::System::ResultStatus load_result{
+        system.Load(*window, filepath, secondary_window.get())};
     if (load_result != Core::System::ResultStatus::Success) {
         return load_result;
     }
@@ -325,6 +363,34 @@ void Java_org_citra_citra_1emu_NativeLibrary_surfaceDestroyed([[maybe_unused]] J
     }
 }
 
+void Java_org_citra_citra_1emu_NativeLibrary_surfaceChangedSecondary(
+    JNIEnv* env, [[maybe_unused]] jobject obj, jobject surf) {
+    s_surf_secondary = ANativeWindow_fromSurface(env, surf);
+
+    bool notify = false;
+    if (secondary_window) {
+        notify = secondary_window->OnSurfaceChanged(s_surf_secondary);
+    }
+
+    auto& system = Core::System::GetInstance();
+    if (notify && system.IsPoweredOn()) {
+        system.GPU().Renderer().NotifySurfaceChanged(true);
+    }
+
+    LOG_INFO(Frontend, "Secondary surface changed");
+}
+
+void Java_org_citra_citra_1emu_NativeLibrary_surfaceDestroyedSecondary(
+    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj) {
+    if (s_surf_secondary != nullptr) {
+        ANativeWindow_release(s_surf_secondary);
+        s_surf_secondary = nullptr;
+        if (secondary_window) {
+            secondary_window->OnSurfaceChanged(s_surf_secondary);
+        }
+    }
+}
+
 void Java_org_citra_citra_1emu_NativeLibrary_doFrame([[maybe_unused]] JNIEnv* env,
                                                      [[maybe_unused]] jobject obj) {
     if (stop_run || pause_emulation) {
@@ -333,6 +399,82 @@ void Java_org_citra_citra_1emu_NativeLibrary_doFrame([[maybe_unused]] JNIEnv* en
     if (window) {
         window->TryPresenting();
     }
+}
+
+void Java_org_citra_citra_1emu_NativeLibrary_doFrameSecondary([[maybe_unused]] JNIEnv* env,
+                                                               [[maybe_unused]] jobject obj) {
+    if (stop_run || pause_emulation) {
+        return;
+    }
+    if (secondary_window) {
+        secondary_window->TryPresenting();
+    }
+}
+
+void Java_org_citra_citra_1emu_NativeLibrary_initGameControllerManager(JNIEnv* env,
+                                                                        [[maybe_unused]] jobject obj,
+                                                                        jobject context) {
+    GameControllerManager::Init(env, context);
+}
+
+void Java_org_citra_citra_1emu_NativeLibrary_shutdownGameControllerManager(JNIEnv* env,
+                                                                            [[maybe_unused]] jobject
+                                                                                obj) {
+    GameControllerManager::Shutdown(env);
+}
+
+void Java_org_citra_citra_1emu_NativeLibrary_updateGameControllers(
+    JNIEnv* env, [[maybe_unused]] jobject obj, jboolean invert_left_stick_y,
+    jboolean read_physical_controllers) {
+    GameControllerManager::Update(env, invert_left_stick_y != JNI_FALSE,
+                                  read_physical_controllers != JNI_FALSE);
+}
+
+void Java_org_citra_citra_1emu_NativeLibrary_setVirtualButton(
+    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jint button, jboolean pressed) {
+    GameControllerManager::SetVirtualButton(button, pressed == JNI_TRUE);
+}
+
+/** Forwards virtual stick input to GameControllerManager, normalized like onGamePadMoveEvent(). */
+void Java_org_citra_citra_1emu_NativeLibrary_setVirtualStick(
+    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jint axis, jfloat x, jfloat y) {
+    x = std::clamp(x, -1.f, 1.f);
+    y = std::clamp(-y, -1.f, 1.f);
+
+    float r = x * x + y * y;
+    if (r > 1.0f) {
+        r = std::sqrt(r);
+        x /= r;
+        y /= r;
+    }
+    GameControllerManager::SetVirtualStick(axis, x, y);
+}
+
+void Java_org_citra_citra_1emu_NativeLibrary_setGyroPreferExternalController(
+    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jboolean prefer) {
+    GameControllerManager::SetGyroPreferExternalController(prefer == JNI_TRUE);
+}
+
+void Java_org_citra_citra_1emu_NativeLibrary_setGyroSensitivity(
+    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jfloat vertical_scale,
+    jfloat horizontal_scale) {
+    InputManager::SetGyroSensitivity(vertical_scale, horizontal_scale);
+}
+
+void Java_org_citra_citra_1emu_NativeLibrary_setGyroInvert(
+    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jboolean invert_vertical,
+    jboolean invert_horizontal) {
+    InputManager::SetGyroInvert(invert_vertical == JNI_TRUE, invert_horizontal == JNI_TRUE);
+}
+
+jboolean Java_org_citra_citra_1emu_NativeLibrary_onGameControllerKeyEvent(
+    JNIEnv* env, [[maybe_unused]] jobject obj, jobject key_event) {
+    return static_cast<jboolean>(GameControllerManager::ProcessKeyEvent(env, key_event));
+}
+
+jboolean Java_org_citra_citra_1emu_NativeLibrary_onGameControllerMotionEvent(
+    JNIEnv* env, [[maybe_unused]] jobject obj, jobject motion_event) {
+    return static_cast<jboolean>(GameControllerManager::ProcessMotionEvent(env, motion_event));
 }
 
 void JNICALL Java_org_citra_citra_1emu_NativeLibrary_initializeGpuDriver(
@@ -568,14 +710,14 @@ jboolean Java_org_citra_citra_1emu_NativeLibrary_onTouchEvent([[maybe_unused]] J
                                                               [[maybe_unused]] jobject obj,
                                                               jfloat x, jfloat y,
                                                               jboolean pressed) {
-    return static_cast<jboolean>(
-        window->OnTouchEvent(static_cast<int>(x + 0.5), static_cast<int>(y + 0.5), pressed));
+    return static_cast<jboolean>(GetTouchscreenWindow()->OnTouchEvent(
+        static_cast<int>(x + 0.5), static_cast<int>(y + 0.5), pressed));
 }
 
 void Java_org_citra_citra_1emu_NativeLibrary_onTouchMoved([[maybe_unused]] JNIEnv* env,
                                                           [[maybe_unused]] jobject obj, jfloat x,
                                                           jfloat y) {
-    window->OnTouchMoved((int)x, (int)y);
+    GetTouchscreenWindow()->OnTouchMoved((int)x, (int)y);
 }
 
 jlong Java_org_citra_citra_1emu_NativeLibrary_getTitleId(JNIEnv* env, [[maybe_unused]] jobject obj,
