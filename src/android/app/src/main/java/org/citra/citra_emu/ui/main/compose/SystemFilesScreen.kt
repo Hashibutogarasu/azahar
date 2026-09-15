@@ -4,6 +4,7 @@
 
 package org.citra.citra_emu.ui.main.compose
 
+import android.app.Activity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -50,7 +51,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.preference.PreferenceManager
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -62,7 +62,6 @@ import org.citra.citra_emu.repository.EmulationLaunchRepository
 import org.citra.citra_emu.repository.SystemSaveGameRepository
 import org.citra.citra_emu.ui.compose.HtmlText
 import org.citra.citra_emu.viewmodel.GamesViewModel
-import org.citra.citra_emu.viewmodel.HomeViewModel
 
 private sealed class SystemFilesDialog {
     data object None : SystemFilesDialog()
@@ -81,8 +80,6 @@ private sealed class SystemFilesDialog {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SystemFilesScreen(
-    navigator: DestinationsNavigator,
-    homeViewModel: HomeViewModel,
     gamesViewModel: GamesViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -90,15 +87,13 @@ fun SystemFilesScreen(
     var runSystemSetup by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        homeViewModel.setNavigationVisibility(visible = false, animated = true)
-        homeViewModel.setStatusBarShadeVisibility(visible = false)
         systemSaveGameRepository.ensureLoaded()
         runSystemSetup = systemSaveGameRepository.isSystemSetupNeeded()
     }
 
     val context = LocalContext.current
     val emulationLaunchRepository = remember { EmulationLaunchRepository() }
-    val onNavigateBack: () -> Unit = { navigator.navigateUp() }
+    val onNavigateBack: () -> Unit = { (context as Activity).finish() }
     val onLaunchEmulation: (Game) -> Unit =
         { game -> context.startActivity(emulationLaunchRepository.createLaunchIntent(game)) }
     val preferences = remember {

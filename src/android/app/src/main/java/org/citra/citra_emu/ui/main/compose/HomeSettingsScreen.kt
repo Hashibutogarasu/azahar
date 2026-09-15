@@ -55,10 +55,6 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.generated.destinations.AboutScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.DriverManagerScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.SystemFilesScreenDestination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.R
 import org.citra.citra_emu.contracts.OpenFileResultContract
@@ -68,6 +64,9 @@ import org.citra.citra_emu.features.settings.model.Settings
 import org.citra.citra_emu.model.Game
 import org.citra.citra_emu.model.HomeSetting
 import org.citra.citra_emu.repository.EmulationLaunchRepository
+import org.citra.citra_emu.ui.main.AboutActivity
+import org.citra.citra_emu.ui.main.DriverManagerActivity
+import org.citra.citra_emu.ui.main.SystemFilesActivity
 import org.citra.citra_emu.ui.main.compose.dialogs.MessageDialog
 import org.citra.citra_emu.utils.CiaInstallWorker
 import org.citra.citra_emu.utils.CitraDirectoryHelper
@@ -86,7 +85,6 @@ import org.citra.citra_emu.viewmodel.HomeViewModel
 @Destination<RootGraph>
 @Composable
 fun HomeSettingsScreen(
-    navigator: DestinationsNavigator,
     homeViewModel: HomeViewModel,
     driverViewModel: DriverViewModel,
     modifier: Modifier = Modifier
@@ -105,12 +103,9 @@ fun HomeSettingsScreen(
 
     val onOpenSettings: () -> Unit = { SettingsActivity.launch(context, SettingsFile.FILE_NAME_CONFIG, "") }
     val onOpenThemeSettings: () -> Unit = { SettingsActivity.launch(context, Settings.SECTION_THEME, "") }
-    val onNavigateToSystemFiles: () -> Unit =
-        { navigator.navigate(SystemFilesScreenDestination) { launchSingleTop = true } }
-    val onNavigateToDriverManager: () -> Unit =
-        { navigator.navigate(DriverManagerScreenDestination) { launchSingleTop = true } }
-    val onNavigateToAbout: () -> Unit =
-        { navigator.navigate(AboutScreenDestination) { launchSingleTop = true } }
+    val onNavigateToSystemFiles: () -> Unit = { SystemFilesActivity.launch(context) }
+    val onNavigateToDriverManager: () -> Unit = { DriverManagerActivity.launch(context) }
+    val onNavigateToAbout: () -> Unit = { AboutActivity.launch(context) }
     val onConnectArticBase: (String) -> Unit = { address ->
         val articBaseGame =
             Game(title = context.getString(R.string.artic_base), path = "articbase://$address", filename = "")

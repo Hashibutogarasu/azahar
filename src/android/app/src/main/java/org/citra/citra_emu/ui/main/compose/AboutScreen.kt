@@ -4,6 +4,7 @@
 
 package org.citra.citra_emu.ui.main.compose
 
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -30,7 +31,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -43,7 +43,6 @@ import com.ramcosta.composedestinations.generated.destinations.LicensesScreenDes
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.citra.citra_emu.BuildConfig
 import org.citra.citra_emu.R
-import org.citra.citra_emu.viewmodel.HomeViewModel
 
 /** Mirrors the legacy `AboutFragment`. */
 @Destination<RootGraph>
@@ -51,16 +50,10 @@ import org.citra.citra_emu.viewmodel.HomeViewModel
 @Composable
 fun AboutScreen(
     navigator: DestinationsNavigator,
-    homeViewModel: HomeViewModel,
     modifier: Modifier = Modifier
 ) {
-    LaunchedEffect(Unit) {
-        homeViewModel.setNavigationVisibility(visible = false, animated = true)
-        homeViewModel.setStatusBarShadeVisibility(visible = false)
-    }
-
     val context = LocalContext.current
-    val onNavigateBack: () -> Unit = { navigator.navigateUp() }
+    val onNavigateBack: () -> Unit = { (context as Activity).finish() }
     val onNavigateToLicenses: () -> Unit = { navigator.navigate(LicensesScreenDestination) }
 
     Scaffold(
