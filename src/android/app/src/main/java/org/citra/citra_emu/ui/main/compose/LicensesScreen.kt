@@ -24,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,7 +39,6 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.citra.citra_emu.R
 import org.citra.citra_emu.model.License
-import org.citra.citra_emu.viewmodel.HomeViewModel
 
 private val LICENSES = listOf(
     License(
@@ -161,14 +159,8 @@ private val LICENSES = listOf(
 @Composable
 fun LicensesScreen(
     navigator: DestinationsNavigator,
-    homeViewModel: HomeViewModel,
     modifier: Modifier = Modifier
 ) {
-    LaunchedEffect(Unit) {
-        homeViewModel.setNavigationVisibility(visible = false, animated = true)
-        homeViewModel.setStatusBarShadeVisibility(visible = false)
-    }
-
     val onNavigateBack: () -> Unit = { navigator.navigateUp() }
 
     var selectedLicense by remember { mutableStateOf<License?>(null) }
