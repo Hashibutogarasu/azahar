@@ -11,12 +11,12 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.citra.citra_emu.features.cheats.model.CheatsViewModel
-import org.citra.citra_emu.features.cheats.ui.compose.CheatsScreen
+import org.citra.citra_emu.features.cheats.ui.compose.CheatsWidget
 
 /**
- * Navigation destination wrapper around [CheatsScreen] for MainActivity's Compose graph.
+ * Navigation destination wrapper around [CheatsWidget] for MainActivity's Compose graph.
  *
- * [CheatsScreen] itself stays plain-parameterized (a [CheatsViewModel] plus callbacks) since
+ * [CheatsWidget] itself stays plain-parameterized (a [CheatsViewModel] plus callbacks) since
  * `CheatsActivity` also renders it directly, outside of any navigation graph. This route owns a
  * back-stack-entry-scoped [CheatsViewModel] and initializes it from the navigation argument.
  */
@@ -25,7 +25,7 @@ import org.citra.citra_emu.features.cheats.ui.compose.CheatsScreen
 fun CheatsRoute(titleId: Long, navigator: DestinationsNavigator) {
     val cheatsViewModel: CheatsViewModel = viewModel()
     LaunchedEffect(titleId) { cheatsViewModel.initialize(titleId) }
-    CheatsScreen(
+    CheatsWidget(
         cheatsViewModel = cheatsViewModel,
         onNavigateBack = { navigator.navigateUp() }
     )
