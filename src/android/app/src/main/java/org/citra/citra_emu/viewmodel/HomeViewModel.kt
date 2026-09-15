@@ -98,12 +98,12 @@ class HomeViewModel : ViewModel() {
     }
 
     fun setUserDir(activity: FragmentActivity, dir: String) {
-        ViewModelProvider(activity)[GamesViewModel::class.java].reloadGames(true)
+        ViewModelProvider(activity)[GamesViewModel::class.java].reloadGames()
         _userDir.value = dir
     }
 
     fun setGamesDir(activity: FragmentActivity, dir: String) {
-        ViewModelProvider(activity)[GamesViewModel::class.java].reloadGames(true)
+        ViewModelProvider(activity)[GamesViewModel::class.java].reloadGames()
         _gamesDir.value = dir
     }
 

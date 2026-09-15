@@ -134,7 +134,7 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
                 Toast.LENGTH_LONG
             ).show()
 
-            ViewModelProvider(activity)[GamesViewModel::class.java].reloadGames(true)
+            ViewModelProvider(activity)[GamesViewModel::class.java].reloadGames()
             false
         } else {
             true

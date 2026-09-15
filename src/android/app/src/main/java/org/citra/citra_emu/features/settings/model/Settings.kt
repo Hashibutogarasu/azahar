@@ -220,7 +220,6 @@ class Settings {
         const val PREF_MATERIAL_YOU = "MaterialYouTheme"
         const val PREF_THEME_MODE = "ThemeMode"
         const val PREF_BLACK_BACKGROUNDS = "BlackBackgrounds"
-        const val PREF_SHOW_HOME_APPS = "ShowHomeApps"
         const val PREF_STATIC_THEME_COLOR = "StaticThemeColor"
 
         private val configFileSectionsMap: MutableMap<String, List<String>> = HashMap()
