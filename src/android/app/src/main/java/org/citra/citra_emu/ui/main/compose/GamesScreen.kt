@@ -84,6 +84,7 @@ import java.util.Locale
 import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.R
 import org.citra.citra_emu.model.Game
+import org.citra.citra_emu.repository.EmulationLaunchRepository
 import org.citra.citra_emu.ui.compose.HtmlText
 import org.citra.citra_emu.utils.GameIconUtils
 import org.citra.citra_emu.viewmodel.GamesViewModel
@@ -103,7 +104,9 @@ fun GamesScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val onGameClick: (Game) -> Unit = { game -> context.startActivity(game.launchIntent) }
+    val emulationLaunchRepository = remember { EmulationLaunchRepository() }
+    val onGameClick: (Game) -> Unit =
+        { game -> context.startActivity(emulationLaunchRepository.createLaunchIntent(game)) }
     val onCheatsClick: (Game) -> Unit = { game ->
         navigator.navigate(CheatsRouteDestination(titleId = game.titleId))
     }
@@ -392,6 +395,7 @@ private fun AboutGameBottomSheet(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val emulationLaunchRepository = remember { EmulationLaunchRepository() }
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState()) {
         Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
             Row {
@@ -430,7 +434,10 @@ private fun AboutGameBottomSheet(
                         val shortcut = ShortcutInfo.Builder(context, game.title)
                             .setShortLabel(game.title)
                             .apply { if (icon != null) setIcon(icon) }
-                            .setIntent(game.launchIntent.apply { putExtra("launched_from_shortcut", true) })
+                            .setIntent(
+                                emulationLaunchRepository.createLaunchIntent(game)
+                                    .apply { putExtra("launched_from_shortcut", true) }
+                            )
                             .build()
                         shortcutManager?.requestPinShortcut(shortcut, null)
                     }

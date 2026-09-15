@@ -58,8 +58,9 @@ import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.NativeLibrary
 import org.citra.citra_emu.R
 import org.citra.citra_emu.model.Game
+import org.citra.citra_emu.repository.EmulationLaunchRepository
+import org.citra.citra_emu.repository.SystemSaveGameRepository
 import org.citra.citra_emu.ui.compose.HtmlText
-import org.citra.citra_emu.utils.SystemSaveGame
 import org.citra.citra_emu.viewmodel.GamesViewModel
 import org.citra.citra_emu.viewmodel.HomeViewModel
 
@@ -85,21 +86,26 @@ fun SystemFilesScreen(
     gamesViewModel: GamesViewModel,
     modifier: Modifier = Modifier
 ) {
+    val systemSaveGameRepository = remember { SystemSaveGameRepository() }
+    var runSystemSetup by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         homeViewModel.setNavigationVisibility(visible = false, animated = true)
         homeViewModel.setStatusBarShadeVisibility(visible = false)
-        SystemSaveGame.load()
+        systemSaveGameRepository.ensureLoaded()
+        runSystemSetup = systemSaveGameRepository.isSystemSetupNeeded()
     }
 
     val context = LocalContext.current
+    val emulationLaunchRepository = remember { EmulationLaunchRepository() }
     val onNavigateBack: () -> Unit = { navigator.navigateUp() }
-    val onLaunchEmulation: (Game) -> Unit = { game -> context.startActivity(game.launchIntent) }
+    val onLaunchEmulation: (Game) -> Unit =
+        { game -> context.startActivity(emulationLaunchRepository.createLaunchIntent(game)) }
     val preferences = remember {
         PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
     }
     val scope = rememberCoroutineScope()
 
-    var runSystemSetup by remember { mutableStateOf(SystemSaveGame.getIsSystemSetupNeeded()) }
     val showApps by gamesViewModel.showHomeApps.collectAsStateWithLifecycle()
     var consoleLinked by remember { mutableStateOf(NativeLibrary.isFullConsoleLinked()) }
     var dialog by remember { mutableStateOf<SystemFilesDialog>(SystemFilesDialog.None) }
@@ -221,7 +227,7 @@ fun SystemFilesScreen(
                 checked = runSystemSetup,
                 onCheckedChange = {
                     runSystemSetup = it
-                    SystemSaveGame.setSystemSetupNeeded(it)
+                    systemSaveGameRepository.setSystemSetupNeeded(it)
                 }
             )
             SwitchRow(

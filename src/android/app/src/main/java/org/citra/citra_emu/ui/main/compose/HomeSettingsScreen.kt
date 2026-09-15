@@ -67,6 +67,7 @@ import org.citra.citra_emu.features.settings.utils.SettingsFile
 import org.citra.citra_emu.features.settings.model.Settings
 import org.citra.citra_emu.model.Game
 import org.citra.citra_emu.model.HomeSetting
+import org.citra.citra_emu.repository.EmulationLaunchRepository
 import org.citra.citra_emu.ui.main.compose.dialogs.MessageDialog
 import org.citra.citra_emu.utils.CiaInstallWorker
 import org.citra.citra_emu.utils.CitraDirectoryHelper
@@ -98,6 +99,7 @@ fun HomeSettingsScreen(
 
     val context = LocalContext.current
     val activity = context as AppCompatActivity
+    val emulationLaunchRepository = remember { EmulationLaunchRepository() }
     var showArticDialog by remember { mutableStateOf(false) }
     var disabledOption by remember { mutableStateOf<HomeSetting?>(null) }
 
@@ -110,9 +112,9 @@ fun HomeSettingsScreen(
     val onNavigateToAbout: () -> Unit =
         { navigator.navigate(AboutScreenDestination) { launchSingleTop = true } }
     val onConnectArticBase: (String) -> Unit = { address ->
-        context.startActivity(
-            Game(title = context.getString(R.string.artic_base), path = "articbase://$address", filename = "").launchIntent
-        )
+        val articBaseGame =
+            Game(title = context.getString(R.string.artic_base), path = "articbase://$address", filename = "")
+        context.startActivity(emulationLaunchRepository.createLaunchIntent(articBaseGame))
     }
 
     val ciaFileInstaller = rememberLauncherForActivityResult(OpenFileResultContract()) { result: Intent? ->
