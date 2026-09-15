@@ -24,11 +24,10 @@ import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.mutableStateOf
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -43,10 +42,16 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.preference.PreferenceManager
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.Slider
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.EmulationNavigationDirections
 import org.citra.citra_emu.NativeLibrary
@@ -65,17 +70,25 @@ import org.citra.citra_emu.features.settings.model.SettingsViewModel
 import org.citra.citra_emu.features.settings.ui.SettingsActivity
 import org.citra.citra_emu.features.settings.utils.SettingsFile
 import org.citra.citra_emu.model.Game
-import org.citra.citra_emu.ui.emulation.compose.EmulationScreensLayout
+import org.citra.citra_emu.ui.emulation.compose.EmulationWidget
+import org.citra.citra_emu.ui.emulation.compose.SidebarActions
+import org.citra.citra_emu.ui.emulation.compose.SidebarSavestateSlot
+import org.citra.citra_emu.ui.emulation.compose.SidebarWidget
+import org.citra.citra_emu.ui.compose.theme.AzaharTheme
 import org.citra.citra_emu.utils.DirectoryInitialization
 import org.citra.citra_emu.utils.DirectoryInitialization.DirectoryInitializationState
+import org.citra.citra_emu.utils.FileUtil.outputStream
+import java.io.File
 import org.citra.citra_emu.utils.EmulationMenuSettings
 import org.citra.citra_emu.utils.FileUtil
 import org.citra.citra_emu.utils.GameHelper
 import org.citra.citra_emu.utils.GameIconUtils
 import org.citra.citra_emu.utils.EmulationLifecycleUtil
 import org.citra.citra_emu.utils.Log
+import org.citra.citra_emu.utils.MemoryRecordingExportWorker
 import org.citra.citra_emu.utils.ViewUtils
 import org.citra.citra_emu.viewmodel.EmulationViewModel
+import org.citra.citra_emu.viewmodel.SidebarViewModel
 
 class EmulationFragment : Fragment(), Choreographer.FrameCallback {
     private val preferences: SharedPreferences
@@ -107,6 +120,37 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
      * it also merges in the virtual (touch overlay) controller.
      */
     private var gameControllerManagerActive = false
+
+    private val sidebarViewModel: SidebarViewModel by viewModels()
+
+    /**
+     * Whether a memory recording session ([NativeLibrary.startMemoryRecording]) is currently
+     * active.
+     */
+    private var isRecordingMemory = false
+
+    /**
+     * Directory holding the per-frame memory dumps of the in-progress recording session, if any.
+     */
+    private var memoryRecordingTempDir: File? = null
+
+    /**
+     * Memory dump bytes awaiting a user-chosen destination from [saveMemoryDumpLauncher].
+     */
+    private var pendingMemoryDump: ByteArray? = null
+
+    private val saveMemoryDumpLauncher =
+        registerForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri ->
+            uri?.let { writeMemoryDumpToUri(it) }
+        }
+
+    private val saveMemoryRecordingLauncher =
+        registerForActivityResult(ActivityResultContracts.CreateDocument("application/zip")) { uri ->
+            uri?.let { exportMemoryRecordingZipToUri(it) } ?: memoryRecordingTempDir?.let {
+                it.deleteRecursively()
+                memoryRecordingTempDir = null
+            }
+        }
 
     private val emulationViewModel: EmulationViewModel by activityViewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
@@ -196,7 +240,6 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
             return
         }
 
-        // So this fragment doesn't restart on configuration changes; i.e. rotation.
         retainInstance = true
         emulationState = EmulationState(game.path)
         emulationActivity = requireActivity() as EmulationActivity
@@ -215,7 +258,6 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
         return binding.root
     }
 
-    // This is using the correct scope, lint is just acting up
     @SuppressLint("UnsafeRepeatOnLifecycleDetector")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -224,7 +266,7 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
         }
 
         binding.composeEmulationScreens.setContent {
-            EmulationScreensLayout(
+            EmulationWidget(
                 topFirst = topFirstState.value,
                 onTopSurfaceChanged = { emulationState.newSurface(it) },
                 onTopSurfaceDestroyed = { emulationState.clearSurface() },
@@ -241,7 +283,6 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
             binding.surfaceInputOverlay.setIsInEditMode(false)
         }
 
-        // Show/hide the "Show FPS" overlay
         updateShowFpsOverlay()
 
         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
@@ -274,166 +315,106 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
             }
 
             override fun onDrawerStateChanged(newState: Int) {
-                // No op
             }
         })
-        binding.inGameMenu.menu.findItem(R.id.menu_lock_drawer).apply {
-            val titleId =
-                if (EmulationMenuSettings.drawerLockMode == DrawerLayout.LOCK_MODE_LOCKED_CLOSED) {
-                    R.string.unlock_drawer
-                } else {
-                    R.string.lock_drawer
-                }
-            val iconId =
-                if (EmulationMenuSettings.drawerLockMode == DrawerLayout.LOCK_MODE_UNLOCKED) {
-                    R.drawable.ic_unlocked
-                } else {
-                    R.drawable.ic_lock
-                }
-
-            title = getString(titleId)
-            icon = ResourcesCompat.getDrawable(
-                resources,
-                iconId,
-                requireContext().theme
-            )
-        }
-        binding.inGameMenu.menu.findItem(R.id.menu_haptic_feedback).isChecked =
-            EmulationMenuSettings.hapticFeedback
-        binding.inGameMenu.menu.findItem(R.id.menu_auto_disable_overlay_on_controller).isChecked =
-            EmulationMenuSettings.autoDisableOverlayOnController
-
-        binding.inGameMenu.getHeaderView(0).findViewById<TextView>(R.id.text_game_title).text =
-            game.title
-        binding.inGameMenu.setNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.menu_emulation_pause -> {
-                    if (emulationState.isPaused) {
-                        emulationState.unpause()
-                        it.title = resources.getString(R.string.pause_emulation)
-                        it.icon = ResourcesCompat.getDrawable(
-                            resources,
-                            R.drawable.ic_pause,
-                            requireContext().theme
-                        )
-                    } else {
-                        emulationState.pause()
-                        it.title = resources.getString(R.string.resume_emulation)
-                        it.icon = ResourcesCompat.getDrawable(
-                            resources,
-                            R.drawable.ic_play,
-                            requireContext().theme
-                        )
-                    }
-                    true
-                }
-
-                R.id.menu_emulation_savestates -> {
-                    showSavestateMenu()
-                    true
-                }
-
-                R.id.menu_overlay_options -> {
-                    showOverlayMenu()
-                    true
-                }
-
-                R.id.menu_amiibo -> {
-                    showAmiiboMenu()
-                    true
-                }
-
-                R.id.menu_landscape_screen_layout -> {
-                    showLandscapeScreenLayoutMenu()
-                    true
-                }
-
-                R.id.menu_portrait_screen_layout -> {
-                    showPortraitScreenLayoutMenu()
-                    true
-                }
-
-                R.id.menu_swap_screens -> {
-                    screenAdjustmentUtil.swapScreen()
-                    true
-                }
-
-                R.id.menu_haptic_feedback -> {
-                    EmulationMenuSettings.hapticFeedback = !EmulationMenuSettings.hapticFeedback
-                    it.isChecked = EmulationMenuSettings.hapticFeedback
-                    true
-                }
-
-                R.id.menu_auto_disable_overlay_on_controller -> {
-                    EmulationMenuSettings.autoDisableOverlayOnController =
-                        !EmulationMenuSettings.autoDisableOverlayOnController
-                    it.isChecked = EmulationMenuSettings.autoDisableOverlayOnController
-                    if (!EmulationMenuSettings.autoDisableOverlayOnController) {
-                        binding.surfaceInputOverlay.setAutoHidden(false)
-                    }
-                    true
-                }
-
-                R.id.menu_lock_drawer -> {
-                    when (EmulationMenuSettings.drawerLockMode) {
-                        DrawerLayout.LOCK_MODE_UNLOCKED -> {
-                            EmulationMenuSettings.drawerLockMode =
-                                DrawerLayout.LOCK_MODE_LOCKED_CLOSED
-                            it.title = resources.getString(R.string.unlock_drawer)
-                            it.icon = ResourcesCompat.getDrawable(
-                                resources,
-                                R.drawable.ic_lock,
-                                requireContext().theme
+        sidebarViewModel.setPaused(emulationState.isPaused)
+        sidebarViewModel.setSavestatesAvailable(NativeLibrary.getSavestateInfo() != null)
+        binding.inGameMenu.setContent {
+            AzaharTheme {
+                SidebarWidget(
+                    gameTitle = game.title,
+                    viewModel = sidebarViewModel,
+                    savestateSlotsProvider = { buildSavestateSlots() },
+                    actions = SidebarActions(
+                        onPauseResume = {
+                            if (emulationState.isPaused) {
+                                emulationState.unpause()
+                                sidebarViewModel.setPaused(false)
+                            } else {
+                                emulationState.pause()
+                                sidebarViewModel.setPaused(true)
+                            }
+                        },
+                        onAdvanceFrame = { NativeLibrary.advanceFrame() },
+                        onSwapScreens = { screenAdjustmentUtil.swapScreen() },
+                        onHapticFeedbackChanged = {
+                            sidebarViewModel.toggleHapticFeedback()
+                        },
+                        onAutoDisableOverlayChanged = {
+                            sidebarViewModel.toggleAutoDisableOverlayOnController()
+                            if (!sidebarViewModel.autoDisableOverlayOnController.value) {
+                                binding.surfaceInputOverlay.setAutoHidden(false)
+                            }
+                        },
+                        onDrawerLockChanged = {
+                            sidebarViewModel.toggleDrawerLock()
+                        },
+                        onCheats = {
+                            val action = EmulationNavigationDirections
+                                .actionGlobalCheatsActivity(NativeLibrary.getRunningTitleId())
+                            binding.root.findNavController().navigate(action)
+                        },
+                        onSaveMemory = {
+                            pendingMemoryDump = NativeLibrary.dumpCurrentMemory()
+                            saveMemoryDumpLauncher.launch("memory_dump.bin")
+                        },
+                        onRecordMemory = {
+                            toggleMemoryRecording()
+                        },
+                        onSettings = {
+                            SettingsActivity.launch(
+                                requireContext(),
+                                SettingsFile.FILE_NAME_CONFIG,
+                                ""
                             )
-                        }
-
-                        DrawerLayout.LOCK_MODE_LOCKED_CLOSED -> {
-                            EmulationMenuSettings.drawerLockMode = DrawerLayout.LOCK_MODE_UNLOCKED
-                            it.title = resources.getString(R.string.lock_drawer)
-                            it.icon = ResourcesCompat.getDrawable(
-                                resources,
-                                R.drawable.ic_unlocked,
-                                requireContext().theme
-                            )
-                        }
-                    }
-                    true
-                }
-
-                R.id.menu_cheats -> {
-                    val action = EmulationNavigationDirections
-                        .actionGlobalCheatsActivity(NativeLibrary.getRunningTitleId())
-                    binding.root.findNavController().navigate(action)
-                    true
-                }
-
-                R.id.menu_settings -> {
-                    SettingsActivity.launch(
-                        requireContext(),
-                        SettingsFile.FILE_NAME_CONFIG,
-                        ""
+                        },
+                        onCloseGame = {
+                            NativeLibrary.pauseEmulation()
+                            MaterialAlertDialogBuilder(requireContext())
+                                .setTitle(R.string.emulation_close_game)
+                                .setMessage(R.string.emulation_close_game_message)
+                                .setPositiveButton(android.R.string.ok) { _: DialogInterface?, _: Int ->
+                                    EmulationLifecycleUtil.closeGame()
+                                }
+                                .setNegativeButton(android.R.string.cancel) { _: DialogInterface?, _: Int ->
+                                    NativeLibrary.unPauseEmulation()
+                                }
+                                .setOnCancelListener { NativeLibrary.unPauseEmulation() }
+                                .show()
+                        },
+                        onSaveState = { slot -> NativeLibrary.saveState(slot) },
+                        onLoadState = { slot ->
+                            NativeLibrary.loadState(slot)
+                            binding.drawerLayout.close()
+                            Toast.makeText(
+                                context,
+                                getString(R.string.quickload_loading),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        },
+                        onShowOverlayChanged = {
+                            sidebarViewModel.toggleShowOverlay()
+                            binding.surfaceInputOverlay.refreshControls()
+                        },
+                        onShowFpsChanged = {
+                            sidebarViewModel.toggleShowFps()
+                            updateShowFpsOverlay()
+                        },
+                        onEditLayout = {
+                            editControlsPlacement()
+                            binding.drawerLayout.close()
+                        },
+                        onToggleControls = { showToggleControlsDialog() },
+                        onAdjustScale = { target -> showAdjustScaleDialog(target) },
+                        onResetAllScales = { resetAllScales() },
+                        onAdjustOpacity = { showAdjustOpacityDialog() },
+                        onJoystickRelCenterChanged = { sidebarViewModel.toggleJoystickRelCenter() },
+                        onDpadSlideChanged = { sidebarViewModel.toggleDpadSlide() },
+                        onResetOverlay = { showResetOverlayDialog() },
+                        onLoadAmiibo = { emulationActivity.openFileLauncher.launch(false) },
+                        onRemoveAmiibo = { NativeLibrary.removeAmiibo() }
                     )
-
-                    true
-                }
-
-                R.id.menu_exit -> {
-                    NativeLibrary.pauseEmulation()
-                    MaterialAlertDialogBuilder(requireContext())
-                        .setTitle(R.string.emulation_close_game)
-                        .setMessage(R.string.emulation_close_game_message)
-                        .setPositiveButton(android.R.string.ok) { _: DialogInterface?, _: Int ->
-                            EmulationLifecycleUtil.closeGame()
-                        }
-                        .setNegativeButton(android.R.string.cancel) { _: DialogInterface?, _: Int ->
-                            NativeLibrary.unPauseEmulation()
-                        }
-                        .setOnCancelListener { NativeLibrary.unPauseEmulation() }
-                        .show()
-                    true
-                }
-
-                else -> true
+                )
             }
         }
 
@@ -505,8 +486,9 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
                         if (started) {
                             ViewUtils.hideView(binding.loadingIndicator)
                             ViewUtils.showView(binding.surfaceInputOverlay)
-                            binding.inGameMenu.menu.findItem(R.id.menu_emulation_savestates)
-                                .setVisible(NativeLibrary.getSavestateInfo() != null)
+                            sidebarViewModel.setSavestatesAvailable(
+                                NativeLibrary.getSavestateInfo() != null
+                            )
                             binding.drawerLayout.setDrawerLockMode(EmulationMenuSettings.drawerLockMode)
                         }
                     }
@@ -524,8 +506,10 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
     private fun togglePause() {
         if (emulationState.isPaused) {
             emulationState.unpause()
+            sidebarViewModel.setPaused(false)
         } else {
             emulationState.pause()
+            sidebarViewModel.setPaused(true)
         }
     }
 
@@ -540,6 +524,7 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
         }
         if (NativeLibrary.isRunning()) {
             NativeLibrary.unPauseEmulation()
+            sidebarViewModel.setPaused(false)
             return
         }
 
@@ -553,6 +538,7 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
     override fun onPause() {
         if (NativeLibrary.isRunning()) {
             emulationState.pause()
+            sidebarViewModel.setPaused(true)
         }
         inputManager.unregisterInputDeviceListener(controllerDeviceListener)
         Choreographer.getInstance().removeFrameCallback(this)
@@ -586,108 +572,25 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
         }
     }
 
-    private fun showSavestateMenu() {
-        val popupMenu = PopupMenu(
-            requireContext(),
-            binding.inGameMenu.findViewById(R.id.menu_emulation_savestates)
-        )
-
-        popupMenu.menuInflater.inflate(R.menu.menu_savestates, popupMenu.menu)
-
-        popupMenu.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.menu_emulation_save_state -> {
-                    showStateSubmenu(true)
-                    true
-                }
-
-                R.id.menu_emulation_load_state -> {
-                    showStateSubmenu(false)
-                    true
-                }
-
-                else -> true
+    private fun buildSavestateSlots(): List<SidebarSavestateSlot> {
+        val occupied = NativeLibrary.getSavestateInfo()?.associateBy { it.slot } ?: emptyMap()
+        return (0 until NativeLibrary.SAVESTATE_SLOT_COUNT).map { slot ->
+            val isQuickSave = slot == NativeLibrary.QUICKSAVE_SLOT
+            val info = occupied[slot]
+            val emptyLabel = if (isQuickSave) {
+                getString(R.string.emulation_quicksave_slot)
+            } else {
+                getString(R.string.emulation_empty_state_slot, slot)
             }
-        }
-
-        popupMenu.show()
-    }
-
-    private fun showStateSubmenu(isSaving: Boolean) {
-
-        val savestates = NativeLibrary.getSavestateInfo()
-
-        val popupMenu = PopupMenu(
-            requireContext(),
-            binding.inGameMenu.findViewById(R.id.menu_emulation_savestates)
-        )
-
-        popupMenu.menu.apply {
-            for (i in 0 until NativeLibrary.SAVESTATE_SLOT_COUNT) {
-                val slot = i
-                var enableClick = isSaving
-                val text = if (slot == NativeLibrary.QUICKSAVE_SLOT) {
-                    enableClick = false
-                    getString(R.string.emulation_quicksave_slot)
+            val occupiedLabel = info?.let {
+                if (isQuickSave) {
+                    getString(R.string.emulation_occupied_quicksave_slot, it.time)
                 } else {
-                    getString(R.string.emulation_empty_state_slot, slot)
-                }
-
-                add(text).setEnabled(enableClick).setOnMenuItemClickListener {
-                    if(isSaving) {
-                        NativeLibrary.saveState(slot)
-                    } else {
-                        NativeLibrary.loadState(slot)
-                        binding.drawerLayout.close()
-                        Toast.makeText(context,
-                            getString(R.string.quickload_loading),
-                            Toast.LENGTH_SHORT).show()
-                    }
-                    true
+                    getString(R.string.emulation_occupied_state_slot, it.slot, it.time)
                 }
             }
+            SidebarSavestateSlot(slot, isQuickSave, emptyLabel, occupiedLabel)
         }
-
-        savestates?.forEach {
-            var enableClick = true
-            val text = if(it.slot == NativeLibrary.QUICKSAVE_SLOT) {
-                // do not allow saving in quicksave slot
-                enableClick = !isSaving
-                getString(R.string.emulation_occupied_quicksave_slot, it.time)
-            } else{
-                getString(R.string.emulation_occupied_state_slot, it.slot, it.time)
-            }
-            popupMenu.menu.getItem(it.slot).setTitle(text).setEnabled(enableClick)
-        }
-
-        popupMenu.show()
-    }
-
-    private fun showLoadStateSubmenu() {
-        val savestates = NativeLibrary.getSavestateInfo()
-
-        val popupMenu = PopupMenu(
-            requireContext(),
-            binding.inGameMenu.findViewById(R.id.menu_emulation_savestates)
-        )
-
-        popupMenu.menu.apply {
-            for (i in 0 until NativeLibrary.SAVESTATE_SLOT_COUNT) {
-                val slot = i + 1
-                val text = getString(R.string.emulation_empty_state_slot, slot)
-                add(text).setEnabled(false).setOnMenuItemClickListener {
-                    NativeLibrary.loadState(slot)
-                    true
-                }
-            }
-        }
-
-        savestates?.forEach {
-            val text = getString(R.string.emulation_occupied_state_slot, it.slot, it.time)
-            popupMenu.menu.getItem(it.slot - 1).setTitle(text).setEnabled(true)
-        }
-
-        popupMenu.show()
     }
 
     private fun displaySavestateWarning() {
@@ -708,194 +611,91 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
             .show()
     }
 
-    private fun showOverlayMenu() {
-        val popupMenu = PopupMenu(
-            requireContext(),
-            binding.inGameMenu.findViewById(R.id.menu_overlay_options)
-        )
-
-        popupMenu.menuInflater.inflate(R.menu.menu_overlay_options, popupMenu.menu)
-
-        popupMenu.menu.apply {
-            findItem(R.id.menu_show_overlay).isChecked = EmulationMenuSettings.showOverlay
-            findItem(R.id.menu_show_fps).isChecked = EmulationMenuSettings.showFps
-            findItem(R.id.menu_haptic_feedback).isChecked = EmulationMenuSettings.hapticFeedback
-            findItem(R.id.menu_emulation_joystick_rel_center).isChecked =
-                EmulationMenuSettings.joystickRelCenter
-            findItem(R.id.menu_emulation_dpad_slide_enable).isChecked =
-                EmulationMenuSettings.dpadSlide
-        }
-
-        popupMenu.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.menu_show_overlay -> {
-                    EmulationMenuSettings.showOverlay = !EmulationMenuSettings.showOverlay
-                    binding.surfaceInputOverlay.refreshControls()
-                    true
-                }
-
-                R.id.menu_show_fps -> {
-                    EmulationMenuSettings.showFps = !EmulationMenuSettings.showFps
-                    updateShowFpsOverlay()
-                    true
-                }
-
-                R.id.menu_haptic_feedback -> {
-                    EmulationMenuSettings.hapticFeedback = !EmulationMenuSettings.hapticFeedback
-                    updateShowFpsOverlay()
-                    true
-                }
-
-                R.id.menu_emulation_edit_layout -> {
-                    editControlsPlacement()
-                    binding.drawerLayout.close()
-                    true
-                }
-
-                R.id.menu_emulation_toggle_controls -> {
-                    showToggleControlsDialog()
-                    true
-                }
-
-                R.id.menu_emulation_adjust_scale_reset_all -> {
-                    resetAllScales()
-                    true
-                }
-
-                R.id.menu_emulation_adjust_scale -> {
-                    showAdjustScaleDialog("controlScale")
-                    true
-                }
-
-                R.id.menu_emulation_adjust_scale_button_a -> {
-                    showAdjustScaleDialog("controlScale-" + NativeLibrary.ButtonType.BUTTON_A)
-                    true
-                }
-
-                R.id.menu_emulation_adjust_scale_button_b -> {
-                    showAdjustScaleDialog("controlScale-" + NativeLibrary.ButtonType.BUTTON_B)
-                    true
-                }
-
-                R.id.menu_emulation_adjust_scale_button_x -> {
-                    showAdjustScaleDialog("controlScale-" + NativeLibrary.ButtonType.BUTTON_X)
-                    true
-                }
-
-                R.id.menu_emulation_adjust_scale_button_y -> {
-                    showAdjustScaleDialog("controlScale-" + NativeLibrary.ButtonType.BUTTON_Y)
-                    true
-                }
-
-                R.id.menu_emulation_adjust_scale_button_l -> {
-                    showAdjustScaleDialog("controlScale-" + NativeLibrary.ButtonType.TRIGGER_L)
-                    true
-                }
-
-                R.id.menu_emulation_adjust_scale_button_r -> {
-                    showAdjustScaleDialog("controlScale-" + NativeLibrary.ButtonType.TRIGGER_R)
-                    true
-                }
-
-                R.id.menu_emulation_adjust_scale_button_zl -> {
-                    showAdjustScaleDialog("controlScale-" + NativeLibrary.ButtonType.BUTTON_ZL)
-                    true
-                }
-
-                R.id.menu_emulation_adjust_scale_button_zr -> {
-                    showAdjustScaleDialog("controlScale-" + NativeLibrary.ButtonType.BUTTON_ZR)
-                    true
-                }
-
-                R.id.menu_emulation_adjust_scale_button_start -> {
-                    showAdjustScaleDialog("controlScale-" + NativeLibrary.ButtonType.BUTTON_START)
-                    true
-                }
-
-                R.id.menu_emulation_adjust_scale_button_select -> {
-                    showAdjustScaleDialog("controlScale-" + NativeLibrary.ButtonType.BUTTON_SELECT)
-                    true
-                }
-
-                R.id.menu_emulation_adjust_scale_controller_dpad -> {
-                    showAdjustScaleDialog("controlScale-" + NativeLibrary.ButtonType.DPAD)
-                    true
-                }
-
-                R.id.menu_emulation_adjust_scale_controller_circlepad -> {
-                    showAdjustScaleDialog("controlScale-" + NativeLibrary.ButtonType.STICK_LEFT)
-                    true
-                }
-
-                R.id.menu_emulation_adjust_scale_controller_c -> {
-                    showAdjustScaleDialog("controlScale-" + NativeLibrary.ButtonType.STICK_C)
-                    true
-                }
-
-                R.id.menu_emulation_adjust_scale_button_home -> {
-                    showAdjustScaleDialog("controlScale-" + NativeLibrary.ButtonType.BUTTON_HOME)
-                    true
-                }
-
-                R.id.menu_emulation_adjust_scale_button_swap -> {
-                    showAdjustScaleDialog("controlScale-" + NativeLibrary.ButtonType.BUTTON_SWAP)
-                    true
-                }
-
-                R.id.menu_emulation_adjust_opacity -> {
-                    showAdjustOpacityDialog()
-                    true
-                }
-
-                R.id.menu_emulation_joystick_rel_center -> {
-                    EmulationMenuSettings.joystickRelCenter =
-                        !EmulationMenuSettings.joystickRelCenter
-                    true
-                }
-
-                R.id.menu_emulation_dpad_slide_enable -> {
-                    EmulationMenuSettings.dpadSlide = !EmulationMenuSettings.dpadSlide
-                    true
-                }
-
-                R.id.menu_emulation_reset_overlay -> {
-                    showResetOverlayDialog()
-                    true
-                }
-
-                else -> true
+    private fun toggleMemoryRecording() {
+        if (isRecordingMemory) {
+            val frameCount = NativeLibrary.stopMemoryRecording()
+            isRecordingMemory = false
+            sidebarViewModel.setRecordingMemory(false)
+            if (frameCount > 0 && memoryRecordingTempDir?.let { hasFrameFiles(it) } == true) {
+                saveMemoryRecordingLauncher.launch("memory_recording.zip")
+            } else {
+                memoryRecordingTempDir?.deleteRecursively()
+                memoryRecordingTempDir = null
+                Toast.makeText(
+                    requireContext(),
+                    R.string.memory_recording_empty,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
+        } else {
+            val recordingsRoot = File(requireContext().cacheDir, "memory_recordings")
+            recordingsRoot.deleteRecursively()
+            val tempDir = File(recordingsRoot, SystemClock.elapsedRealtime().toString())
+            tempDir.mkdirs()
+            memoryRecordingTempDir = tempDir
+            NativeLibrary.startMemoryRecording(
+                tempDir.absolutePath,
+                sidebarViewModel.memoryRecordingIntervalFrames.value
+            )
+            isRecordingMemory = true
+            sidebarViewModel.setRecordingMemory(true)
         }
-
-        popupMenu.show()
     }
 
-    private fun showAmiiboMenu() {
-        val popupMenu = PopupMenu(
-            requireContext(),
-            binding.inGameMenu.findViewById(R.id.menu_amiibo)
-        )
-
-        popupMenu.menuInflater.inflate(R.menu.menu_amiibo_options, popupMenu.menu)
-
-        popupMenu.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.menu_emulation_amiibo_load -> {
-                    emulationActivity.openFileLauncher.launch(false)
-                    true
+    private fun writeMemoryDumpToUri(uri: Uri) {
+        val data = pendingMemoryDump ?: return
+        pendingMemoryDump = null
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            val stagingFile = File(requireContext().cacheDir, "memory_dump_export.bin.tmp")
+            val written = runCatching {
+                stagingFile.outputStream().use { it.write(data) }
+                uri.outputStream().use { destination ->
+                    stagingFile.inputStream().use { it.copyTo(destination) }
                 }
+            }.isSuccess
+            stagingFile.delete()
 
-                R.id.menu_emulation_amiibo_remove -> {
-                    NativeLibrary.removeAmiibo()
-                    true
+            if (!written) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        requireContext(),
+                        R.string.memory_recording_export_error,
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
-
-                else -> true
             }
         }
-
-        popupMenu.show()
     }
+
+    private fun exportMemoryRecordingZipToUri(uri: Uri) {
+        val tempDir = memoryRecordingTempDir ?: return
+        memoryRecordingTempDir = null
+
+        if (!hasFrameFiles(tempDir)) {
+            tempDir.deleteRecursively()
+            Toast.makeText(
+                requireContext(),
+                R.string.memory_recording_empty,
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        val inputData = Data.Builder()
+            .putString(MemoryRecordingExportWorker.KEY_TEMP_DIR_PATH, tempDir.absolutePath)
+            .putString(MemoryRecordingExportWorker.KEY_DESTINATION_URI, uri.toString())
+            .build()
+        WorkManager.getInstance(requireContext()).enqueueUniqueWork(
+            MemoryRecordingExportWorker.UNIQUE_WORK_NAME,
+            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            OneTimeWorkRequest.Builder(MemoryRecordingExportWorker::class.java)
+                .setInputData(inputData)
+                .build()
+        )
+    }
+
+    private fun hasFrameFiles(dir: File): Boolean =
+        dir.listFiles()?.any { it.isFile && it.length() > 0 } == true
 
     private fun showLandscapeScreenLayoutMenu() {
         val popupMenu = PopupMenu(
@@ -1029,7 +829,6 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
         val editor = preferences.edit()
         val enabledButtons = BooleanArray(15)
         enabledButtons.forEachIndexed { i: Int, _: Boolean ->
-            // Buttons that are disabled by default
             var defaultValue = true
             when (i) {
                 6, 7, 12, 13, 14 -> defaultValue = false
@@ -1296,9 +1095,8 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
                 right = cutInsets.right
             }
 
-            v.setPadding(left, cutInsets.top, right, 0)
+            v.setPadding(left, 0, right, 0)
 
-            // Ensure FPS text doesn't get cut off by rounded display corners
             val sidePadding = resources.getDimensionPixelSize(R.dimen.spacing_large)
             if (cutInsets.left == 0) {
                 binding.showFpsText.setPadding(
@@ -1325,7 +1123,6 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
         private var secondarySurface: Surface? = null
 
         init {
-            // Starting state is stopped.
             state = State.STOPPED
         }
 
@@ -1335,7 +1132,6 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
 
         @get:Synchronized
         val isPaused: Boolean
-            // Getters for the current state
             get() = state == State.PAUSED
 
         @get:Synchronized
@@ -1353,7 +1149,6 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
             }
         }
 
-        // State changing methods
         @Synchronized
         fun pause() {
             if (state != State.PAUSED) {

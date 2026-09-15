@@ -476,6 +476,8 @@ add_library(citra_core STATIC
     loader/smdh.h
     memory.cpp
     memory.h
+    memory_tools.cpp
+    memory_tools.h
     movie.cpp
     movie.h
     nus_download.cpp

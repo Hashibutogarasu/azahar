@@ -7,6 +7,12 @@
         android:title="@string/pause_emulation" />
 
     <item
+        android:id="@+id/menu_advance_frame"
+        android:icon="@drawable/ic_step_forward"
+        android:title="@string/advance_frame"
+        android:visible="false" />
+
+    <item
         android:id="@+id/menu_emulation_savestates"
         android:icon="@drawable/ic_save"
         android:title="@string/savestates"
@@ -58,9 +64,24 @@
         android:title="@string/lock_drawer" />
 
     <item
-        android:id="@+id/menu_cheats"
+        android:id="@+id/menu_tools_header"
+        android:title="@string/tools"
+        android:enabled="false" />
+
+    <item
+        android:id="@+id/menu_tools_cheats"
         android:icon="@drawable/ic_code"
         android:title="@string/cheats" />
+
+    <item
+        android:id="@+id/menu_tools_save_memory"
+        android:icon="@drawable/ic_save"
+        android:title="@string/save_current_memory" />
+
+    <item
+        android:id="@+id/menu_tools_record_memory"
+        android:icon="@drawable/ic_record"
+        android:title="@string/start_memory_recording" />
 
     <item
         android:id="@+id/menu_settings"

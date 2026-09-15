@@ -76,6 +76,7 @@ std::unique_ptr<EmuWindow_Android> secondary_window;
 
 std::atomic<bool> stop_run{true};
 std::atomic<bool> pause_emulation{false};
+std::atomic<bool> advance_frame_requested{false};
 
 std::mutex paused_mutex;
 std::mutex running_mutex;
@@ -293,8 +294,16 @@ static Core::System::ResultStatus RunCitra(const std::string& filepath) {
             Settings::values.volume = 0;
 
             std::unique_lock pause_lock{paused_mutex};
-            running_cv.wait(pause_lock, [] { return !pause_emulation || stop_run; });
-            window->PollEvents();
+            running_cv.wait(pause_lock, [] {
+                return !pause_emulation || stop_run || advance_frame_requested;
+            });
+            if (advance_frame_requested && pause_emulation && !stop_run) {
+                pause_lock.unlock();
+                static_cast<void>(system.RunLoop());
+                advance_frame_requested = false;
+            } else {
+                window->PollEvents();
+            }
         }
     }
 
@@ -630,6 +639,7 @@ jboolean JNICALL Java_org_citra_citra_1emu_utils_GpuDriverHelper_supportsCustomD
 void Java_org_citra_citra_1emu_NativeLibrary_unPauseEmulation([[maybe_unused]] JNIEnv* env,
                                                               [[maybe_unused]] jobject obj) {
     pause_emulation = false;
+    Core::System::GetInstance().frame_limiter.SetFrameAdvancing(false);
     running_cv.notify_all();
     auto* handler = InputManager::NDKMotionHandler();
     if (handler) {
@@ -640,6 +650,7 @@ void Java_org_citra_citra_1emu_NativeLibrary_unPauseEmulation([[maybe_unused]] J
 void Java_org_citra_citra_1emu_NativeLibrary_pauseEmulation([[maybe_unused]] JNIEnv* env,
                                                             [[maybe_unused]] jobject obj) {
     pause_emulation = true;
+    Core::System::GetInstance().frame_limiter.SetFrameAdvancing(true);
     auto* handler = InputManager::NDKMotionHandler();
     if (handler) {
         handler->DisableSensors();
@@ -650,7 +661,15 @@ void Java_org_citra_citra_1emu_NativeLibrary_stopEmulation([[maybe_unused]] JNIE
                                                            [[maybe_unused]] jobject obj) {
     stop_run = true;
     pause_emulation = false;
+    advance_frame_requested = false;
     window->StopPresenting();
+    running_cv.notify_all();
+}
+
+void Java_org_citra_citra_1emu_NativeLibrary_advanceFrame([[maybe_unused]] JNIEnv* env,
+                                                           [[maybe_unused]] jobject obj) {
+    Core::System::GetInstance().frame_limiter.AdvanceFrame();
+    advance_frame_requested = true;
     running_cv.notify_all();
 }
 
