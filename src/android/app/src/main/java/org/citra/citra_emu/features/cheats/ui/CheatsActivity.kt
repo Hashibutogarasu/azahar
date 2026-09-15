@@ -10,7 +10,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import org.citra.citra_emu.features.cheats.model.CheatsViewModel
-import org.citra.citra_emu.features.cheats.ui.compose.CheatsScreen
+import org.citra.citra_emu.features.cheats.ui.compose.CheatsWidget
 import org.citra.citra_emu.ui.compose.theme.AzaharTheme
 import org.citra.citra_emu.utils.ThemeUtil
 
@@ -28,7 +28,7 @@ class CheatsActivity : AppCompatActivity() {
 
         setContent {
             AzaharTheme {
-                CheatsScreen(
+                CheatsWidget(
                     cheatsViewModel = cheatsViewModel,
                     onNavigateBack = { finish() }
                 )
@@ -44,6 +44,6 @@ class CheatsActivity : AppCompatActivity() {
     companion object {
         /** Matches the `titleId` argument name used by the `cheatsActivity`
          *  destination in `emulation_navigation.xml`. */
-        private const val EXTRA_TITLE_ID = "titleId"
+        const val EXTRA_TITLE_ID = "titleId"
     }
 }

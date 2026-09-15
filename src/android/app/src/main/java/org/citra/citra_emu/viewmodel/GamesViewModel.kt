@@ -5,14 +5,10 @@
 package org.citra.citra_emu.viewmodel
 
 import android.net.Uri
-import android.view.View
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
-import info.debatty.java.stringsimilarity.Jaccard
-import info.debatty.java.stringsimilarity.JaroWinkler
-import java.time.temporal.ChronoField
 import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,33 +18,26 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.citra.citra_emu.CitraApplication
-import org.citra.citra_emu.R
 import org.citra.citra_emu.model.Game
+import org.citra.citra_emu.repository.GamesRepository
 import org.citra.citra_emu.utils.GameHelper
 
-class GamesViewModel : ViewModel() {
+class GamesViewModel(private val gamesRepository: GamesRepository = GamesRepository()) : ViewModel() {
     val games get() = _games.asStateFlow()
     private val _games = MutableStateFlow(emptyList<Game>())
-
-    val searchedGames get() = _searchedGames.asStateFlow()
-    private val _searchedGames = MutableStateFlow(emptyList<Game>())
+    private var allGames = emptyList<Game>()
 
     val isReloading get() = _isReloading.asStateFlow()
     private val _isReloading = MutableStateFlow(false)
 
-    val shouldSwapData get() = _shouldSwapData.asStateFlow()
-    private val _shouldSwapData = MutableStateFlow(false)
-
     val shouldScrollToTop get() = _shouldScrollToTop.asStateFlow()
     private val _shouldScrollToTop = MutableStateFlow(false)
 
-    val searchFocused get() = _searchFocused.asStateFlow()
-    private val _searchFocused = MutableStateFlow(false)
+    val showHomeApps get() = _showHomeApps.asStateFlow()
+    private val _showHomeApps = MutableStateFlow(gamesRepository.isShowHomeAppsEnabled())
 
     private val preferences =
         PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
-
-    private class ScoredGame(val score: Double, val item: Game)
 
     init {
         // Retrieve list of cached games
@@ -74,43 +63,30 @@ class GamesViewModel : ViewModel() {
             }
             setGames(deserializedGames.toList())
         }
-        reloadGames(false)
+        reloadGames()
     }
 
     fun setGames(games: List<Game>) {
-        val sortedList = games.sortedWith(
+        allGames = games.sortedWith(
             compareBy(
                 { it.title.lowercase(Locale.getDefault()) },
                 { it.path }
             )
         )
-        val filteredList = sortedList.filter {
-            if (it.isSystemTitle) {
-                it.isVisibleSystemTitle
-            }
-            true
-        }
-
-        _games.value = filteredList
-    }
-
-    fun setSearchedGames(games: List<Game>) {
-        _searchedGames.value = games
-    }
-
-    fun setShouldSwapData(shouldSwap: Boolean) {
-        _shouldSwapData.value = shouldSwap
+        _games.value = gamesRepository.filterVisibleGames(allGames)
     }
 
     fun setShouldScrollToTop(shouldScroll: Boolean) {
         _shouldScrollToTop.value = shouldScroll
     }
 
-    fun setSearchFocused(searchFocused: Boolean) {
-        _searchFocused.value = searchFocused
+    fun setShowHomeApps(enabled: Boolean) {
+        gamesRepository.setShowHomeAppsEnabled(enabled)
+        _showHomeApps.value = enabled
+        _games.value = gamesRepository.filterVisibleGames(allGames)
     }
 
-    fun reloadGames(directoryChanged: Boolean) {
+    fun reloadGames() {
         if (isReloading.value) {
             return
         }
@@ -118,64 +94,9 @@ class GamesViewModel : ViewModel() {
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                setGames(GameHelper.getGames())
+                setGames(gamesRepository.getAllGames())
                 _isReloading.value = false
-
-                if (directoryChanged) {
-                    setShouldSwapData(true)
-                }
             }
         }
-    }
-
-    /**
-     * Filters [games] by [selectedChipId] (recently played/added, installed) and, when
-     * [searchTerm] is non-empty, ranks the result by title similarity (Jaccard for multi-char
-     * terms, JaroWinkler otherwise), then publishes the result via [searchedGames].
-     */
-    fun filterAndSearch(searchTerm: String, selectedChipId: Int) {
-        if (searchTerm.isEmpty() && selectedChipId == View.NO_ID) {
-            setSearchedGames(emptyList())
-            return
-        }
-
-        val baseList = games.value
-        val filteredList: List<Game> = when (selectedChipId) {
-            R.id.chip_recently_played -> {
-                baseList.filter {
-                    val lastPlayedTime = preferences.getLong(it.keyLastPlayedTime, 0L)
-                    lastPlayedTime > (System.currentTimeMillis() - ChronoField.MILLI_OF_DAY.range().maximum)
-                }
-            }
-
-            R.id.chip_recently_added -> {
-                baseList.filter {
-                    val addedTime = preferences.getLong(it.keyAddedToLibraryTime, 0L)
-                    addedTime > (System.currentTimeMillis() - ChronoField.MILLI_OF_DAY.range().maximum)
-                }
-            }
-
-            R.id.chip_installed -> baseList.filter { it.isInstalled }
-
-            else -> baseList
-        }
-
-        if (searchTerm.isEmpty() && selectedChipId != View.NO_ID) {
-            setSearchedGames(filteredList)
-            return
-        }
-
-        val lowerSearchTerm = searchTerm.lowercase(Locale.getDefault())
-        val searchAlgorithm = if (lowerSearchTerm.length > 1) Jaccard(2) else JaroWinkler()
-        val sortedList: List<Game> = filteredList.mapNotNull { game ->
-            val title = game.title.lowercase(Locale.getDefault())
-            val score = searchAlgorithm.similarity(lowerSearchTerm, title)
-            if (score > 0.03) {
-                ScoredGame(score, game)
-            } else {
-                null
-            }
-        }.sortedByDescending { it.score }.map { it.item }
-        setSearchedGames(sortedList)
     }
 }
