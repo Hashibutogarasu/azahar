@@ -64,7 +64,6 @@ import com.ramcosta.composedestinations.animations.NavHostAnimatedDestinationSty
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.generated.destinations.GamesScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.HomeSettingsScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.SearchScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.SetupScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.dependency
@@ -312,18 +311,6 @@ private fun MainBottomNavigation(
                 Icon(painterResource(iconId), contentDescription = null)
             },
             label = { Text(stringResource(R.string.home_games)) }
-        )
-        NavigationBarItem(
-            selected = currentDestination == SearchScreenDestination,
-            onClick = {
-                if (currentDestination == SearchScreenDestination) {
-                    gamesViewModel.setSearchFocused(true)
-                } else {
-                    navigator.navigate(SearchScreenDestination) { launchSingleTop = true }
-                }
-            },
-            icon = { Icon(painterResource(R.drawable.ic_search), contentDescription = null) },
-            label = { Text(stringResource(R.string.home_search)) }
         )
         NavigationBarItem(
             selected = currentDestination == HomeSettingsScreenDestination,

@@ -29,6 +29,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon as M3Icon
@@ -38,6 +39,8 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -49,8 +52,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.integerResource
@@ -70,12 +75,14 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.CheatsRouteDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import info.debatty.java.stringsimilarity.Jaccard
+import info.debatty.java.stringsimilarity.JaroWinkler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.R
-import org.citra.citra_emu.features.settings.model.Settings
 import org.citra.citra_emu.model.Game
 import org.citra.citra_emu.ui.compose.HtmlText
 import org.citra.citra_emu.utils.GameIconUtils
@@ -101,50 +108,45 @@ fun GamesScreen(
         navigator.navigate(CheatsRouteDestination(titleId = game.titleId))
     }
 
-    val allGames by gamesViewModel.games.collectAsStateWithLifecycle()
+    val visibleGames by gamesViewModel.games.collectAsStateWithLifecycle()
     val isReloading by gamesViewModel.isReloading.collectAsStateWithLifecycle()
-    val shouldSwapData by gamesViewModel.shouldSwapData.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         homeViewModel.setNavigationVisibility(visible = true, animated = true)
         homeViewModel.setStatusBarShadeVisibility(visible = true)
     }
 
-    var showHomeApps by remember {
-        mutableStateOf(
-            PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
-                .getBoolean(Settings.PREF_SHOW_HOME_APPS, false)
-        )
-    }
-    LaunchedEffect(shouldSwapData) {
-        if (shouldSwapData) {
-            showHomeApps = PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
-                .getBoolean(Settings.PREF_SHOW_HOME_APPS, false)
-            gamesViewModel.setShouldSwapData(false)
-        }
-    }
-    val games = remember(allGames, showHomeApps) {
-        if (showHomeApps) allGames else allGames.filter { !it.isSystemTitle }
-    }
+    var query by rememberSaveable { mutableStateOf("") }
+    val games = remember(visibleGames, query) { searchGames(visibleGames, query) }
 
     var show3DSFileWarning by rememberSaveable { mutableStateOf(true) }
 
-    Box(modifier.fillMaxSize()) {
-        PullToRefreshBox(
-            isRefreshing = isReloading,
-            onRefresh = { gamesViewModel.reloadGames(false) },
-            modifier = Modifier.fillMaxSize()
-        ) {
-            if (games.isEmpty() && !isReloading) {
-                Text(
-                    stringResource(R.string.empty_gamelist),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(24.dp),
-                    textAlign = TextAlign.Center
-                )
-            } else {
-                GameGrid(games = games, onGameClick = onGameClick, onCheatsClick = onCheatsClick)
+    Column(modifier.fillMaxSize()) {
+        HomeSearchField(
+            query = query,
+            onQueryChange = { query = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 12.dp)
+        )
+
+        Box(Modifier.fillMaxSize()) {
+            PullToRefreshBox(
+                isRefreshing = isReloading,
+                onRefresh = { gamesViewModel.reloadGames() },
+                modifier = Modifier.fillMaxSize()
+            ) {
+                if (games.isEmpty() && !isReloading) {
+                    Text(
+                        stringResource(R.string.empty_gamelist),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(24.dp),
+                        textAlign = TextAlign.Center
+                    )
+                } else {
+                    GameGrid(games = games, onGameClick = onGameClick, onCheatsClick = onCheatsClick)
+                }
             }
         }
     }
@@ -171,6 +173,74 @@ private fun Warning3DSFilesDialog(onDismiss: () -> Unit) {
             TextButton(onClick = onDismiss) { Text(stringResource(R.string.dont_show_again)) }
         }
     )
+}
+
+/**
+ * Search box shown at the top of [GamesScreen]. Filtering happens in place in the game grid
+ * below it — there is no separate search screen or destination to navigate to.
+ */
+@Composable
+private fun HomeSearchField(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        modifier = modifier
+    ) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            M3Icon(
+                painterResource(R.drawable.ic_search),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp)
+                    .size(28.dp)
+            )
+            TextField(
+                value = query,
+                onValueChange = onQueryChange,
+                placeholder = { Text(stringResource(R.string.home_search_games)) },
+                singleLine = true,
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                ),
+                modifier = Modifier.weight(1f)
+            )
+            if (query.isNotEmpty()) {
+                IconButton(onClick = { onQueryChange("") }) {
+                    M3Icon(painterResource(R.drawable.ic_clear), contentDescription = null)
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Ranks [games] by title similarity to [query] (Jaccard for multi-char terms, JaroWinkler
+ * otherwise); returns [games] unchanged when [query] is empty.
+ */
+private fun searchGames(games: List<Game>, query: String): List<Game> {
+    if (query.isEmpty()) return games
+
+    val searchTerm = query.lowercase(Locale.getDefault())
+    val searchAlgorithm = if (searchTerm.length > 1) Jaccard(2) else JaroWinkler()
+    return games.mapNotNull { game ->
+        val title = game.title.lowercase(Locale.getDefault())
+        val score = searchAlgorithm.similarity(searchTerm, title)
+        if (score > 0.03) score to game else null
+    }.sortedByDescending { it.first }.map { it.second }
 }
 
 @Composable

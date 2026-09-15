@@ -46,6 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.preference.PreferenceManager
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
@@ -56,7 +57,6 @@ import kotlinx.coroutines.withContext
 import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.NativeLibrary
 import org.citra.citra_emu.R
-import org.citra.citra_emu.features.settings.model.Settings
 import org.citra.citra_emu.model.Game
 import org.citra.citra_emu.ui.compose.HtmlText
 import org.citra.citra_emu.utils.SystemSaveGame
@@ -100,9 +100,7 @@ fun SystemFilesScreen(
     val scope = rememberCoroutineScope()
 
     var runSystemSetup by remember { mutableStateOf(SystemSaveGame.getIsSystemSetupNeeded()) }
-    var showApps by remember {
-        mutableStateOf(preferences.getBoolean(Settings.PREF_SHOW_HOME_APPS, false))
-    }
+    val showApps by gamesViewModel.showHomeApps.collectAsStateWithLifecycle()
     var consoleLinked by remember { mutableStateOf(NativeLibrary.isFullConsoleLinked()) }
     var dialog by remember { mutableStateOf<SystemFilesDialog>(SystemFilesDialog.None) }
     var articAddress by remember {
@@ -229,11 +227,7 @@ fun SystemFilesScreen(
             SwitchRow(
                 titleId = R.string.show_home_apps,
                 checked = showApps,
-                onCheckedChange = {
-                    showApps = it
-                    preferences.edit().putBoolean(Settings.PREF_SHOW_HOME_APPS, it).apply()
-                    gamesViewModel.setShouldSwapData(true)
-                }
+                onCheckedChange = { gamesViewModel.setShowHomeApps(it) }
             )
         }
     }
