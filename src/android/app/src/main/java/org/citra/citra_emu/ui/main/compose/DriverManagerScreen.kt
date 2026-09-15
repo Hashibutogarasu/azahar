@@ -4,6 +4,7 @@
 
 package org.citra.citra_emu.ui.main.compose
 
+import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
@@ -49,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.citra.citra_emu.R
 import org.citra.citra_emu.ui.main.compose.dialogs.DriversLoadingDialog
 import org.citra.citra_emu.ui.main.compose.dialogs.IndeterminateProgressDialog
@@ -57,7 +57,6 @@ import org.citra.citra_emu.utils.FileUtil.inputStream
 import org.citra.citra_emu.utils.GpuDriverHelper
 import org.citra.citra_emu.utils.GpuDriverMetadata
 import org.citra.citra_emu.viewmodel.DriverViewModel
-import org.citra.citra_emu.viewmodel.HomeViewModel
 import org.citra.citra_emu.viewmodel.TaskViewModel
 import java.io.IOException
 
@@ -66,15 +65,11 @@ import java.io.IOException
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DriverManagerScreen(
-    navigator: DestinationsNavigator,
-    homeViewModel: HomeViewModel,
     driverViewModel: DriverViewModel,
     taskViewModel: TaskViewModel,
     modifier: Modifier = Modifier
 ) {
     LaunchedEffect(Unit) {
-        homeViewModel.setNavigationVisibility(visible = false, animated = true)
-        homeViewModel.setStatusBarShadeVisibility(visible = false)
         driverViewModel.loadDrivers()
     }
     DisposableEffect(Unit) {
@@ -82,7 +77,7 @@ fun DriverManagerScreen(
     }
 
     val context = LocalContext.current
-    val onNavigateBack: () -> Unit = { navigator.navigateUp() }
+    val onNavigateBack: () -> Unit = { (context as Activity).finish() }
     val drivers by driverViewModel.driverList.collectAsStateWithLifecycle()
     val selectedDriver by driverViewModel.selectedDriverFlow.collectAsStateWithLifecycle()
     val areDriversLoading by driverViewModel.areDriversLoading.collectAsStateWithLifecycle()

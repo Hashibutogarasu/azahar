@@ -86,6 +86,19 @@ class GamesViewModel(private val gamesRepository: GamesRepository = GamesReposit
         _games.value = gamesRepository.filterVisibleGames(allGames)
     }
 
+    /**
+     * Re-reads the "show HOME menu apps" preference and the game list from disk.
+     *
+     * Screens that mutate this state (e.g. the System Files screen's toggle) may now run in a
+     * separate Activity with their own [GamesViewModel] instance, so this instance's in-memory
+     * state can go stale while such a screen is open. Call this when returning to the home
+     * screen to pick up any changes made elsewhere.
+     */
+    fun refresh() {
+        _showHomeApps.value = gamesRepository.isShowHomeAppsEnabled()
+        reloadGames()
+    }
+
     fun reloadGames() {
         if (isReloading.value) {
             return

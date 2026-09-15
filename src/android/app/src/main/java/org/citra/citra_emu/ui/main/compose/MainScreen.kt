@@ -163,6 +163,8 @@ fun MainScreen(
             if (event == Lifecycle.Event.ON_RESUME) {
                 checkUserPermissions()
                 ThemeUtil.setCorrectTheme(activity)
+                gamesViewModel.refresh()
+                driverViewModel.refresh()
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)

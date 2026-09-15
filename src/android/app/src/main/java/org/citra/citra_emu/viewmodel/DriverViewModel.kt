@@ -89,6 +89,19 @@ class DriverViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Forces the installed GPU driver list and current selection to be re-read from disk, even
+     * if already loaded once.
+     *
+     * The Driver Manager screen may now run in a separate Activity with its own [DriverViewModel]
+     * instance, so this instance's in-memory driver list/selection can go stale while that screen
+     * is open. Call this when returning to the home screen to pick up any changes made there.
+     */
+    fun refresh() {
+        driversLoaded = false
+        loadDrivers()
+    }
+
     fun setSelectedDriverIndex(value: Int) {
         if (selectedDriver != -1) {
             previouslySelectedDriver = selectedDriver

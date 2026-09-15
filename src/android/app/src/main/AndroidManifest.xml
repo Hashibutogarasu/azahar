@@ -72,6 +72,24 @@
             android:label="@string/preferences_settings"/>
 
         <activity
+            android:name="org.citra.citra_emu.ui.main.SystemFilesActivity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:theme="@style/Theme.Citra.Main"
+            android:label="@string/setup_system_files"/>
+
+        <activity
+            android:name="org.citra.citra_emu.ui.main.DriverManagerActivity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:theme="@style/Theme.Citra.Main"
+            android:label="@string/gpu_driver_manager"/>
+
+        <activity
+            android:name="org.citra.citra_emu.ui.main.AboutActivity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:theme="@style/Theme.Citra.Main"
+            android:label="@string/about"/>
+
+        <activity
             android:name="org.citra.citra_emu.activities.EmulationActivity"
             android:exported="true"
             android:theme="@style/Theme.Citra.Main"
