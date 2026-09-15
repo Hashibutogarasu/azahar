@@ -17,12 +17,12 @@ import android.widget.ImageView
 import android.widget.Toast
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.Bitmap
+import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.DiffUtil
@@ -36,12 +36,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.CoroutineScope
-import org.citra.citra_emu.HomeNavigationDirections
 import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.R
 import org.citra.citra_emu.adapters.GameAdapter.GameViewHolder
 import org.citra.citra_emu.databinding.CardGameBinding
-import org.citra.citra_emu.features.cheats.ui.CheatsFragmentDirections
+import org.citra.citra_emu.features.cheats.ui.CheatsActivity
 import org.citra.citra_emu.features.settings.ui.SettingsActivity
 import org.citra.citra_emu.features.settings.utils.SettingsFile
 import org.citra.citra_emu.model.Game
@@ -93,8 +92,7 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
             )
             .apply()
 
-        val action = HomeNavigationDirections.actionGlobalEmulationActivity(holder.game)
-        view.findNavController().navigate(action)
+        view.context.startActivity(holder.game.launchIntent)
     }
 
     /**
@@ -217,8 +215,7 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
         GameIconUtils.loadGameIcon(activity, game, bottomSheetView.findViewById(R.id.game_icon))
 
         bottomSheetView.findViewById<MaterialButton>(R.id.about_game_play).setOnClickListener {
-            val action = HomeNavigationDirections.actionGlobalEmulationActivity(holder.game)
-            view.findNavController().navigate(action)
+            view.context.startActivity(holder.game.launchIntent)
         }
 
         bottomSheetView.findViewById<MaterialButton>(R.id.game_shortcut).setOnClickListener {
@@ -240,8 +237,9 @@ class GameAdapter(private val activity: AppCompatActivity, private val inflater:
         }
 
         bottomSheetView.findViewById<MaterialButton>(R.id.cheats).setOnClickListener {
-            val action = CheatsFragmentDirections.actionGlobalCheatsFragment(holder.game.titleId)
-            view.findNavController().navigate(action)
+            val intent = Intent(context, CheatsActivity::class.java)
+                .putExtra(CheatsActivity.EXTRA_TITLE_ID, holder.game.titleId)
+            context.startActivity(intent)
             bottomSheetDialog.dismiss()
         }
 
