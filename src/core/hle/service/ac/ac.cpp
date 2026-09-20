@@ -4,9 +4,10 @@
 
 #include <algorithm>
 #include <array>
+#include <chrono>
 #include <cstring>
 #include <mutex>
-#include <type_traits>
+#include <optional>
 #include <vector>
 #include "common/archives.h"
 #include "common/common_types.h"
@@ -34,78 +35,56 @@ namespace Service::AC {
 
 namespace {
 
-constexpr std::size_t MaxScanEntries = 32;
-constexpr std::size_t MaxSsidLength = 0x20;
-constexpr std::size_t DefaultAccessPointCount = 6;
-
-/**
- * Access point entry of the AC::ScanAPs output buffer.
- * The layout was recovered from a previous local implementation and is not verified against
- * hardware, so the fields after the BSSID are provisional.
- */
-struct ApInfo {
-    u32_le ssid_length;
-    std::array<char, MaxSsidLength> ssid;
-    std::array<u8, 6> bssid;
-    std::array<u8, 2> padding0;
-    s16_le rssi;
-    u8 link_level;
-    u8 padding1;
-    u32_le reserved;
-};
-static_assert(sizeof(ApInfo) == 0x34, "ApInfo has an incorrect size");
-static_assert(std::is_trivially_copyable_v<ApInfo>);
+constexpr std::chrono::nanoseconds ScanDuration{3'210'000'000};
 
 std::mutex host_wifi_scanner_mutex;
 HostWifiScanner host_wifi_scanner;
 
 /**
  * Runs the registered host scanner.
- * @return The access points seen by the host, empty when no scanner is registered.
+ * @return The access points seen by the host, nothing when no scanner is registered or when the
+ * host cannot scan.
  */
-std::vector<HostApInfo> ScanHostAccessPoints() {
+std::optional<std::vector<HostApInfo>> ScanHostAccessPoints() {
     HostWifiScanner scanner;
     {
         std::scoped_lock lock{host_wifi_scanner_mutex};
         scanner = host_wifi_scanner;
     }
     if (!scanner) {
-        return {};
+        return std::nullopt;
     }
     return scanner();
 }
 
 /**
- * Builds the access points reported when the host cannot provide any.
+ * Builds the access points reported when the host cannot scan.
  * The guest still receives a well formed list, so that games relying on nearby networks keep
  * working without wireless access.
  */
 std::vector<HostApInfo> MakeDefaultAccessPoints() {
+    struct DefaultAccessPoint {
+        u8 channel;
+        s16 rssi;
+    };
+    static constexpr std::array<DefaultAccessPoint, 4> default_access_points{{
+        {1, -60},
+        {6, -68},
+        {11, -77},
+        {1, -85},
+    }};
+
     std::vector<HostApInfo> access_points;
-    access_points.reserve(DefaultAccessPointCount);
-    for (std::size_t i = 0; i < DefaultAccessPointCount; ++i) {
+    for (std::size_t i = 0; i < default_access_points.size(); ++i) {
         HostApInfo info;
         info.ssid = "AzaharAP" + std::to_string(i + 1);
-        info.bssid = {0x02, 0x00, 0x00, 0x00, 0x00, static_cast<u8>(i + 1)};
-        info.rssi = static_cast<s16>(-45 - 8 * static_cast<int>(i));
-        info.link_level = static_cast<u8>(3 - i / 2);
+        info.bssid = {0x00, 0x1A, 0x2B, 0x3C, 0x4D, static_cast<u8>(i + 1)};
+        info.rssi = default_access_points[i].rssi;
+        info.channel = default_access_points[i].channel;
+        info.security = ApSecurity::Secured;
         access_points.push_back(std::move(info));
     }
     return access_points;
-}
-
-/**
- * Converts a host access point to the guest representation.
- */
-ApInfo ToApInfo(const HostApInfo& host) {
-    ApInfo entry{};
-    const std::size_t length = std::min(host.ssid.size(), MaxSsidLength);
-    entry.ssid_length = static_cast<u32>(length);
-    std::memcpy(entry.ssid.data(), host.ssid.data(), length);
-    entry.bssid = host.bssid;
-    entry.rssi = host.rssi;
-    entry.link_level = host.link_level;
-    return entry;
 }
 
 } // namespace
@@ -285,35 +264,46 @@ void Module::Interface::SetClientVersion(Kernel::HLERequestContext& ctx) {
 void Module::Interface::ScanAPs(Kernel::HLERequestContext& ctx) {
     IPC::RequestParser rp(ctx);
 
-    const u32 out_size = rp.Pop<u32>();
+    const u32 out_size = rp.Pop<u32>() & 0xFFFF;
     rp.Skip(2, false);
+    const u16 command_id = static_cast<u16>(ctx.CommandHeader().command_id.Value());
 
-    std::vector<HostApInfo> access_points;
-    if (Settings::values.scan_real_wifi_networks.GetValue()) {
-        access_points = ScanHostAccessPoints();
-    }
-    const bool from_host = !access_points.empty();
-    if (!from_host) {
-        access_points = MakeDefaultAccessPoints();
-    }
+    struct ScanState {
+        std::vector<ApInfo> list;
+        bool from_host = false;
+    };
+    const auto scan = std::make_shared<ScanState>();
 
-    const std::size_t count =
-        std::min({out_size / sizeof(ApInfo), MaxScanEntries, access_points.size()});
+    ctx.RunAsync(
+        [scan, out_size](Kernel::HLERequestContext&) {
+            std::optional<std::vector<HostApInfo>> found;
+            if (Settings::values.scan_real_wifi_networks.GetValue()) {
+                found = ScanHostAccessPoints();
+            }
+            scan->from_host = found.has_value();
+            scan->list = BuildApList(found ? std::move(*found) : MakeDefaultAccessPoints(),
+                                     out_size / sizeof(ApInfo));
+            return static_cast<s64>(ScanDuration.count());
+        },
+        [scan, out_size, command_id](Kernel::HLERequestContext& ctx) {
+            std::vector<u8> buffer(out_size);
+            std::memcpy(buffer.data(), scan->list.data(), scan->list.size() * sizeof(ApInfo));
 
-    std::vector<u8> buffer(out_size);
-    for (std::size_t i = 0; i < count; ++i) {
-        const ApInfo entry = ToApInfo(access_points[i]);
-        std::memcpy(buffer.data() + i * sizeof(ApInfo), &entry, sizeof(ApInfo));
-        LOG_DEBUG(Service_AC, "entry {}: ssid=\"{}\" rssi={} link_level={}", i,
-                  access_points[i].ssid, access_points[i].rssi, access_points[i].link_level);
-    }
+            IPC::RequestBuilder rb(ctx, command_id, 2, 2);
+            rb.Push(ResultSuccess);
+            rb.Push<u32>(static_cast<u32>(scan->list.size()));
+            rb.PushStaticBuffer(std::move(buffer), 0);
 
-    IPC::RequestBuilder rb = rp.MakeBuilder(1, 2);
-    rb.Push(ResultSuccess);
-    rb.PushStaticBuffer(std::move(buffer), 0);
-
-    LOG_INFO(Service_AC, "called, size=0x{:X}, host_scan={}, reported {} access point(s)", out_size,
-             from_host, count);
+            LOG_INFO(Service_AC, "size=0x{:X}, host_scan={}, reported {} access point(s)", out_size,
+                     scan->from_host, scan->list.size());
+            for (std::size_t i = 0; i < scan->list.size(); ++i) {
+                const ApInfo& entry = scan->list[i];
+                LOG_DEBUG(Service_AC, "entry {}: ssid_length={} strength={} level={} channel={}", i,
+                          static_cast<u32>(entry.ssid_length),
+                          static_cast<u16>(entry.signal_strength), entry.link_level,
+                          entry.channel);
+            }
+        });
 }
 
 Module::Interface::Interface(std::shared_ptr<Module> ac, const char* name, u32 max_session)

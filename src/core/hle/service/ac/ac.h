@@ -7,9 +7,11 @@
 #include <array>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 #include "common/common_types.h"
+#include "core/hle/service/ac/ap_list.h"
 #include "core/hle/service/service.h"
 
 namespace Core {
@@ -23,23 +25,11 @@ class Event;
 namespace Service::AC {
 
 /**
- * Description of a wireless access point found by the host.
- * The SSID holds raw bytes and only the first 32 of them are reported to the guest.
- * The BSSID is the hardware address of the access point, the RSSI is the received signal strength
- * in dBm and the link level ranges from 0 (none) to 3 (best).
+ * Callback that scans the wireless networks around the host. It is invoked on a thread other than
+ * the emulation thread. It returns nothing when the host cannot scan, and an empty list when it
+ * scanned and found no network.
  */
-struct HostApInfo {
-    std::string ssid;
-    std::array<u8, 6> bssid{};
-    s16 rssi = -100;
-    u8 link_level = 0;
-};
-
-/**
- * Callback that scans the wireless networks around the host.
- * It is invoked on the emulation thread and may return an empty list when scanning is unavailable.
- */
-using HostWifiScanner = std::function<std::vector<HostApInfo>()>;
+using HostWifiScanner = std::function<std::optional<std::vector<HostApInfo>>()>;
 
 /**
  * Registers the scanner used to answer AC::ScanAPs with the access points seen by the host.
@@ -194,8 +184,9 @@ public:
          *      3 : ProcessId
          *  Outputs:
          *      1 : Result of function, 0 on success, otherwise error code
-         *      2 : Output buffer size << 14 | 2
-         *      3 : Pointer to the access point list
+         *      2 : Number of access points in the list
+         *      3 : Output buffer size << 14 | 2
+         *      4 : Pointer to the access point list
          */
         void ScanAPs(Kernel::HLERequestContext& ctx);
 

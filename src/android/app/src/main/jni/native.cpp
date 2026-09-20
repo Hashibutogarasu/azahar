@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <array>
+#include <atomic>
 #include <charconv>
 #include <codecvt>
 #include <cstdio>
@@ -156,11 +157,11 @@ static bool CheckMicPermission() {
 
 /**
  * Parses an access point reported by NativeLibrary.scanWifiAccessPoints.
- * The expected format is "bssid|rssi|level|ssid", where the SSID comes last so that it may
- * contain the separator itself.
+ * The expected format is "bssid|rssi|channel|security|ssid", where the SSID comes last so that it
+ * may contain the separator itself.
  */
 static std::optional<Service::AC::HostApInfo> ParseHostWifiEntry(const std::string& text) {
-    std::array<std::size_t, 3> separators{};
+    std::array<std::size_t, 4> separators{};
     std::size_t position = 0;
     for (auto& separator : separators) {
         position = text.find('|', position);
@@ -181,44 +182,45 @@ static std::optional<Service::AC::HostApInfo> ParseHostWifiEntry(const std::stri
         info.bssid[i] = static_cast<u8>(bssid[i]);
     }
 
-    int rssi = 0;
-    int level = 0;
-    const char* rssi_begin = text.data() + separators[0] + 1;
-    const char* level_begin = text.data() + separators[1] + 1;
-    if (std::from_chars(rssi_begin, text.data() + separators[1], rssi).ec != std::errc{} ||
-        std::from_chars(level_begin, text.data() + separators[2], level).ec != std::errc{}) {
-        return std::nullopt;
+    std::array<int, 3> numbers{};
+    for (std::size_t i = 0; i < numbers.size(); ++i) {
+        const char* begin = text.data() + separators[i] + 1;
+        const char* end = text.data() + separators[i + 1];
+        if (std::from_chars(begin, end, numbers[i]).ec != std::errc{}) {
+            return std::nullopt;
+        }
     }
-    info.rssi = static_cast<s16>(rssi);
-    info.link_level = static_cast<u8>(std::clamp(level, 0, 3));
-    info.ssid = text.substr(separators[2] + 1);
+    info.rssi = static_cast<s16>(numbers[0]);
+    info.channel = static_cast<u8>(std::clamp(numbers[1], 0, 255));
+    info.security = static_cast<Service::AC::ApSecurity>(std::clamp(numbers[2], 0, 2));
+    info.ssid = text.substr(separators[3] + 1);
     return info;
 }
 
 /**
  * Scans the wireless networks around the device.
  * The location permission is requested once per process, later calls only read the scan results.
- * @return The access points seen by the device, empty when the scan is unavailable.
+ * @return The access points seen by the device, nothing when the scan is unavailable.
  */
-static std::vector<Service::AC::HostApInfo> ScanHostWifiNetworks() {
+static std::optional<std::vector<Service::AC::HostApInfo>> ScanHostWifiNetworks() {
     JNIEnv* env = IDCache::GetEnvForThread();
-    static bool permission_requested = false;
-    if (!permission_requested) {
-        permission_requested = true;
+    static std::atomic<bool> permission_requested{false};
+    if (!permission_requested.exchange(true)) {
         env->CallStaticBooleanMethod(IDCache::GetNativeLibraryClass(),
                                      IDCache::GetRequestWifiPermission());
     }
 
-    std::vector<Service::AC::HostApInfo> access_points;
     auto* entries = static_cast<jobjectArray>(env->CallStaticObjectMethod(
         IDCache::GetNativeLibraryClass(), IDCache::GetScanWifiAccessPoints()));
     if (env->ExceptionCheck()) {
         env->ExceptionClear();
-        return access_points;
+        return std::nullopt;
     }
     if (entries == nullptr) {
-        return access_points;
+        return std::nullopt;
     }
+
+    std::vector<Service::AC::HostApInfo> access_points;
 
     const jsize count = env->GetArrayLength(entries);
     for (jsize i = 0; i < count; ++i) {
