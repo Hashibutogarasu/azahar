@@ -469,6 +469,7 @@ struct Values {
     Setting<bool> plugin_loader_enabled{false, "plugin_loader"};
     Setting<bool> allow_plugin_loader{true, "allow_plugin_loader"};
     Setting<u16> steps_per_hour{0, "steps_per_hour"};
+    Setting<bool> scan_real_wifi_networks{true, "scan_real_wifi_networks"};
 
     // Renderer
     SwitchableSetting<GraphicsAPI, true> graphics_api{

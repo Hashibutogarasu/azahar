@@ -5,7 +5,11 @@
 #pragma once
 
 #include <array>
+#include <functional>
 #include <memory>
+#include <string>
+#include <vector>
+#include "common/common_types.h"
 #include "core/hle/service/service.h"
 
 namespace Core {
@@ -17,6 +21,32 @@ class Event;
 }
 
 namespace Service::AC {
+
+/**
+ * Description of a wireless access point found by the host.
+ * The SSID holds raw bytes and only the first 32 of them are reported to the guest.
+ * The BSSID is the hardware address of the access point, the RSSI is the received signal strength
+ * in dBm and the link level ranges from 0 (none) to 3 (best).
+ */
+struct HostApInfo {
+    std::string ssid;
+    std::array<u8, 6> bssid{};
+    s16 rssi = -100;
+    u8 link_level = 0;
+};
+
+/**
+ * Callback that scans the wireless networks around the host.
+ * It is invoked on the emulation thread and may return an empty list when scanning is unavailable.
+ */
+using HostWifiScanner = std::function<std::vector<HostApInfo>()>;
+
+/**
+ * Registers the scanner used to answer AC::ScanAPs with the access points seen by the host.
+ * Passing an empty callback unregisters it.
+ */
+void RegisterHostWifiScanner(HostWifiScanner scanner);
+
 class Module final {
 public:
     explicit Module(Core::System& system_);
@@ -155,6 +185,19 @@ public:
          *      1 : Result of function, 0 on success, otherwise error code
          */
         void SetClientVersion(Kernel::HLERequestContext& ctx);
+
+        /**
+         * AC::ScanAPs service function
+         *  Inputs:
+         *      1 : Output buffer size in bytes, each access point takes 0x34 bytes
+         *      2 : ProcessId Header
+         *      3 : ProcessId
+         *  Outputs:
+         *      1 : Result of function, 0 on success, otherwise error code
+         *      2 : Output buffer size << 14 | 2
+         *      3 : Pointer to the access point list
+         */
+        void ScanAPs(Kernel::HLERequestContext& ctx);
 
     protected:
         std::shared_ptr<Module> ac;
