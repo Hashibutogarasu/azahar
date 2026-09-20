@@ -205,6 +205,8 @@ add_library(citra_core STATIC
     hle/service/ac/ac_i.h
     hle/service/ac/ac_u.cpp
     hle/service/ac/ac_u.h
+    hle/service/ac/ap_list.cpp
+    hle/service/ac/ap_list.h
     hle/service/act/act.cpp
     hle/service/act/act.h
     hle/service/act/act_errors.cpp
