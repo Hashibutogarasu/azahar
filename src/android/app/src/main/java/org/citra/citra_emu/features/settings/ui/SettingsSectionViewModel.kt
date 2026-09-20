@@ -436,6 +436,15 @@ class SettingsSectionViewModel(
                 )
             )
             add(
+                SwitchSetting(
+                    BooleanSetting.SCAN_REAL_WIFI_NETWORKS,
+                    R.string.scan_real_wifi_networks,
+                    R.string.scan_real_wifi_networks_description,
+                    BooleanSetting.SCAN_REAL_WIFI_NETWORKS.key,
+                    BooleanSetting.SCAN_REAL_WIFI_NETWORKS.defaultValue
+                )
+            )
+            add(
                 RunnableSetting(
                     R.string.console_id,
                     0,

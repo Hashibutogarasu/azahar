@@ -250,6 +250,7 @@ void Config::ReadValues() {
     ReadSetting("System", Settings::values.plugin_loader_enabled);
     ReadSetting("System", Settings::values.allow_plugin_loader);
     ReadSetting("System", Settings::values.steps_per_hour);
+    ReadSetting("System", Settings::values.scan_real_wifi_networks);
 
     // Camera
     using namespace Service::CAM;
