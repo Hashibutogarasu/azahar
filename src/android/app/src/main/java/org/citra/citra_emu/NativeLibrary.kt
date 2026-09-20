@@ -11,7 +11,9 @@ import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
+import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.os.SystemClock
 import android.text.Html
 import android.text.method.LinkMovementMethod
 import android.view.KeyEvent
@@ -614,6 +616,111 @@ object NativeLibrary {
     fun micPermissionResult(granted: Boolean) {
         micPermissionGranted = granted
         synchronized(micPermissionLock) { micPermissionLock.notify() }
+    }
+
+    private val wifiPermissionLock = Object()
+    private var wifiPermissionGranted = false
+    private var wifiPermissionPending = false
+    const val REQUEST_CODE_NATIVE_WIFI = 1000
+
+    private const val WIFI_SCAN_INTERVAL_MS = 30_000L
+    private var lastWifiScanTime = 0L
+
+    /**
+     * Requests the location permission that Android requires to read Wi-Fi scan results, and
+     * blocks the calling thread until the user has answered.
+     *
+     * @return True if the permission is granted.
+     */
+    @Keep
+    @JvmStatic
+    fun requestWifiPermission(): Boolean {
+        val emulationActivity = sEmulationActivity.get()
+        if (emulationActivity == null) {
+            Log.error("[NativeLibrary] EmulationActivity not present")
+            return false
+        }
+        if (ContextCompat.checkSelfPermission(emulationActivity, permission.ACCESS_FINE_LOCATION) ==
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            return true
+        }
+
+        synchronized(wifiPermissionLock) {
+            wifiPermissionPending = true
+            emulationActivity.requestPermissions(
+                arrayOf(permission.ACCESS_FINE_LOCATION),
+                REQUEST_CODE_NATIVE_WIFI
+            )
+            while (wifiPermissionPending) {
+                try {
+                    wifiPermissionLock.wait()
+                } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                    return false
+                }
+            }
+            return wifiPermissionGranted
+        }
+    }
+
+    fun wifiPermissionResult(granted: Boolean) {
+        synchronized(wifiPermissionLock) {
+            wifiPermissionGranted = granted
+            wifiPermissionPending = false
+            wifiPermissionLock.notifyAll()
+        }
+    }
+
+    /**
+     * Returns the Wi-Fi access points seen by the device, strongest first.
+     *
+     * Every entry has the form "bssid|rssi|level|ssid". The level ranges from 1 to 3, because an
+     * access point that shows up in a scan is always in range. A new scan is requested at most
+     * once every 30 seconds to stay within the scan throttling of Android, the cached results are
+     * returned in between.
+     *
+     * @return The access points, empty when the permission is missing or the scan is unavailable.
+     */
+    @Keep
+    @JvmStatic
+    @Suppress("DEPRECATION")
+    fun scanWifiAccessPoints(): Array<String> {
+        val context = sEmulationActivity.get() ?: return emptyArray()
+        if (ContextCompat.checkSelfPermission(context, permission.ACCESS_FINE_LOCATION) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            return emptyArray()
+        }
+        val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE)
+            as? WifiManager ?: return emptyArray()
+
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastWifiScanTime >= WIFI_SCAN_INTERVAL_MS) {
+            lastWifiScanTime = now
+            try {
+                wifiManager.startScan()
+            } catch (e: SecurityException) {
+                Log.error("[NativeLibrary] Wi-Fi scan request denied: ${e.message}")
+            }
+        }
+
+        val results = try {
+            wifiManager.scanResults
+        } catch (e: SecurityException) {
+            Log.error("[NativeLibrary] Wi-Fi scan results denied: ${e.message}")
+            return emptyArray()
+        }
+
+        return results
+            .filter { !it.SSID.isNullOrEmpty() && it.SSID != "<unknown ssid>" && it.BSSID != null }
+            .distinctBy { it.BSSID }
+            .sortedByDescending { it.level }
+            .map {
+                val level = WifiManager.calculateSignalLevel(it.level, 4).coerceAtLeast(1)
+                "${it.BSSID}|${it.level}|$level|${it.SSID}"
+            }
+            .toTypedArray()
     }
 
     // Notifies that the activity is now in foreground and camera devices can now be reloaded

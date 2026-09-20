@@ -188,6 +188,12 @@ class EmulationActivity : AppCompatActivity() {
                 )
             }
 
+            NativeLibrary.REQUEST_CODE_NATIVE_WIFI -> {
+                NativeLibrary.wifiPermissionResult(
+                    grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
+                )
+            }
+
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }

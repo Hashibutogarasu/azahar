@@ -31,6 +31,8 @@ static jmethodID s_portrait_screen_layout;
 static jmethodID s_exit_emulation_activity;
 static jmethodID s_request_camera_permission;
 static jmethodID s_request_mic_permission;
+static jmethodID s_request_wifi_permission;
+static jmethodID s_scan_wifi_access_points;
 static jmethodID s_on_controller_connection_changed;
 
 static jclass s_cheat_class;
@@ -106,6 +108,14 @@ jmethodID GetRequestCameraPermission() {
 
 jmethodID GetRequestMicPermission() {
     return s_request_mic_permission;
+}
+
+jmethodID GetRequestWifiPermission() {
+    return s_request_wifi_permission;
+}
+
+jmethodID GetScanWifiAccessPoints() {
+    return s_scan_wifi_access_points;
 }
 
 jmethodID GetOnControllerConnectionChanged() {
@@ -188,6 +198,11 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
         env->GetStaticMethodID(s_native_library_class, "requestCameraPermission", "()Z");
     s_request_mic_permission =
         env->GetStaticMethodID(s_native_library_class, "requestMicPermission", "()Z");
+    s_request_wifi_permission =
+        env->GetStaticMethodID(s_native_library_class, "requestWifiPermission", "()Z");
+    s_scan_wifi_access_points = env->GetStaticMethodID(s_native_library_class,
+                                                       "scanWifiAccessPoints",
+                                                       "()[Ljava/lang/String;");
     s_on_controller_connection_changed = env->GetStaticMethodID(
         s_native_library_class, "onControllerConnectionChanged", "(Z)V");
     env->DeleteLocalRef(native_library_class);

@@ -3,8 +3,14 @@
 // Refer to the license.txt file included.
 
 #include <algorithm>
+#include <array>
+#include <charconv>
 #include <codecvt>
+#include <cstdio>
+#include <optional>
+#include <string>
 #include <thread>
+#include <vector>
 #include <dlfcn.h>
 
 #include <android/api-level.h>
@@ -34,6 +40,7 @@
 #include "core/core.h"
 #include "core/frontend/applets/default_applets.h"
 #include "core/frontend/camera/factory.h"
+#include "core/hle/service/ac/ac.h"
 #include "core/hle/service/am/am.h"
 #include "core/hle/service/nfc/nfc.h"
 #include "core/hw/unique_data.h"
@@ -147,6 +154,85 @@ static bool CheckMicPermission() {
                                                                IDCache::GetRequestMicPermission());
 }
 
+/**
+ * Parses an access point reported by NativeLibrary.scanWifiAccessPoints.
+ * The expected format is "bssid|rssi|level|ssid", where the SSID comes last so that it may
+ * contain the separator itself.
+ */
+static std::optional<Service::AC::HostApInfo> ParseHostWifiEntry(const std::string& text) {
+    std::array<std::size_t, 3> separators{};
+    std::size_t position = 0;
+    for (auto& separator : separators) {
+        position = text.find('|', position);
+        if (position == std::string::npos) {
+            return std::nullopt;
+        }
+        separator = position++;
+    }
+
+    Service::AC::HostApInfo info;
+    unsigned int bssid[6]{};
+    const std::string bssid_text = text.substr(0, separators[0]);
+    if (std::sscanf(bssid_text.c_str(), "%2x:%2x:%2x:%2x:%2x:%2x", &bssid[0], &bssid[1], &bssid[2],
+                    &bssid[3], &bssid[4], &bssid[5]) != 6) {
+        return std::nullopt;
+    }
+    for (std::size_t i = 0; i < info.bssid.size(); ++i) {
+        info.bssid[i] = static_cast<u8>(bssid[i]);
+    }
+
+    int rssi = 0;
+    int level = 0;
+    const char* rssi_begin = text.data() + separators[0] + 1;
+    const char* level_begin = text.data() + separators[1] + 1;
+    if (std::from_chars(rssi_begin, text.data() + separators[1], rssi).ec != std::errc{} ||
+        std::from_chars(level_begin, text.data() + separators[2], level).ec != std::errc{}) {
+        return std::nullopt;
+    }
+    info.rssi = static_cast<s16>(rssi);
+    info.link_level = static_cast<u8>(std::clamp(level, 0, 3));
+    info.ssid = text.substr(separators[2] + 1);
+    return info;
+}
+
+/**
+ * Scans the wireless networks around the device.
+ * The location permission is requested once per process, later calls only read the scan results.
+ * @return The access points seen by the device, empty when the scan is unavailable.
+ */
+static std::vector<Service::AC::HostApInfo> ScanHostWifiNetworks() {
+    JNIEnv* env = IDCache::GetEnvForThread();
+    static bool permission_requested = false;
+    if (!permission_requested) {
+        permission_requested = true;
+        env->CallStaticBooleanMethod(IDCache::GetNativeLibraryClass(),
+                                     IDCache::GetRequestWifiPermission());
+    }
+
+    std::vector<Service::AC::HostApInfo> access_points;
+    auto* entries = static_cast<jobjectArray>(env->CallStaticObjectMethod(
+        IDCache::GetNativeLibraryClass(), IDCache::GetScanWifiAccessPoints()));
+    if (env->ExceptionCheck()) {
+        env->ExceptionClear();
+        return access_points;
+    }
+    if (entries == nullptr) {
+        return access_points;
+    }
+
+    const jsize count = env->GetArrayLength(entries);
+    for (jsize i = 0; i < count; ++i) {
+        auto* entry = static_cast<jstring>(env->GetObjectArrayElement(entries, i));
+        const std::string text = GetJString(env, entry);
+        env->DeleteLocalRef(entry);
+        if (auto info = ParseHostWifiEntry(text)) {
+            access_points.push_back(std::move(*info));
+        }
+    }
+    env->DeleteLocalRef(entries);
+    return access_points;
+}
+
 static Core::System::ResultStatus RunCitra(const std::string& filepath) {
     // Citra core only supports a single running instance
     std::scoped_lock lock(running_mutex);
@@ -233,6 +319,8 @@ static Core::System::ResultStatus RunCitra(const std::string& filepath) {
 
     // Register microphone permission check
     system.RegisterMicPermissionCheck(&CheckMicPermission);
+
+    Service::AC::RegisterHostWifiScanner(&ScanHostWifiNetworks);
 
     Pica::g_debug_context = Pica::DebugContext::Construct();
     InputManager::Init();
