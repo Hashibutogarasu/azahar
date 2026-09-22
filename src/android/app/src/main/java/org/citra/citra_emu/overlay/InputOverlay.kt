@@ -192,6 +192,32 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
         return Pair(localX, localY)
     }
 
+    /**
+     * Releases any overlay button, d-pad direction, or joystick that is currently being tracked
+     * (i.e. mid-touch), so a control being actively held when the overlay is rebuilt doesn't
+     * leave a stale "pressed" entry behind in GameControllerManager's virtual input state.
+     */
+    private fun releasePressedVirtualInputs() {
+        overlayButtons.forEach {
+            if (it.trackId != -1) {
+                NativeLibrary.setVirtualButton(it.id, false)
+            }
+        }
+        overlayDpads.forEach {
+            if (it.trackId != -1) {
+                NativeLibrary.setVirtualButton(it.upId, false)
+                NativeLibrary.setVirtualButton(it.downId, false)
+                NativeLibrary.setVirtualButton(it.leftId, false)
+                NativeLibrary.setVirtualButton(it.rightId, false)
+            }
+        }
+        overlayJoysticks.forEach {
+            if (it.trackId != -1) {
+                NativeLibrary.setVirtualStick(it.joystickId, 0f, 0f)
+            }
+        }
+    }
+
     private fun isTouchInputConsumed(trackId: Int): Boolean {
         overlayButtons.forEach {
             if (it.trackId == trackId) {
@@ -484,7 +510,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
     }
 
     fun refreshControls() {
-        // Remove all the overlay buttons from the HashSet.
+        releasePressedVirtualInputs()
         overlayButtons.clear()
         overlayDpads.clear()
         overlayJoysticks.clear()
@@ -495,7 +521,6 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                 ""
             }
 
-        // Add all the enabled overlay items back to the HashSet.
         if (EmulationMenuSettings.showOverlay && !EmulationMenuSettings.overlayAutoHidden) {
             addOverlayControls(orientation)
         }

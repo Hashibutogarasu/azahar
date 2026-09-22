@@ -90,6 +90,9 @@ object NativeLibrary {
     /** Records a virtual (touch overlay) stick's position, merged by GameControllerManager. */
     external fun setVirtualStick(axis: Int, xAxis: Float, yAxis: Float)
 
+    /** Releases every virtual (touch overlay) button/stick tracked by GameControllerManager. */
+    external fun clearVirtualControllerInputs()
+
     /**
      * Selects whether a gyroscope-capable physical controller's gyroscope should be used in
      * place of the Android device's own gyroscope. Has no effect when no such controller is

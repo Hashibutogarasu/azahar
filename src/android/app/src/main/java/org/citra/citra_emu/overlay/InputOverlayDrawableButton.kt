@@ -29,7 +29,9 @@ class InputOverlayDrawableButton(
     val id: Int,
     val opacity: Int
 ) {
-    var trackId: Int
+    private val touchTracker = TouchTracker()
+    val trackId: Int
+        get() = touchTracker.pointerId
     private var previousTouchX = 0
     private var previousTouchY = 0
     private var controlPositionX = 0
@@ -43,7 +45,6 @@ class InputOverlayDrawableButton(
     init {
         this.defaultStateBitmap = BitmapDrawable(res, defaultStateBitmap)
         this.pressedStateBitmap = BitmapDrawable(res, pressedStateBitmap)
-        trackId = -1
         width = this.defaultStateBitmap.intrinsicWidth
         height = this.defaultStateBitmap.intrinsicHeight
     }
@@ -54,30 +55,13 @@ class InputOverlayDrawableButton(
      * @return true if value was changed
      */
     fun updateStatus(event: MotionEvent, overlay:InputOverlay): Boolean {
-        val pointerIndex = event.actionIndex
-        val xPosition = event.getX(pointerIndex).toInt()
-        val yPosition = event.getY(pointerIndex).toInt()
-        val pointerId = event.getPointerId(pointerIndex)
-        val motionEvent = event.action and MotionEvent.ACTION_MASK
-        val isActionDown =
-            motionEvent == MotionEvent.ACTION_DOWN || motionEvent == MotionEvent.ACTION_POINTER_DOWN
-        val isActionUp =
-            motionEvent == MotionEvent.ACTION_UP || motionEvent == MotionEvent.ACTION_POINTER_UP
-        if (isActionDown) {
-            if (!bounds.contains(xPosition, yPosition)) {
-                return false
-            }
+        if (touchTracker.tryClaim(event, bounds::contains)) {
             pressedState = true
-            trackId = pointerId
             overlay.hapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
             return true
         }
-        if (isActionUp) {
-            if (trackId != pointerId) {
-                return false
-            }
+        if (touchTracker.consumeRelease(event)) {
             pressedState = false
-            trackId = -1
             overlay.hapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY_RELEASE)
             return true
         }

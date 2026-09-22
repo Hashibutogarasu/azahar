@@ -38,7 +38,9 @@ class InputOverlayDrawableDpad(
     val rightId: Int,
     val opacity: Int
 ) {
-    var trackId: Int
+    private val touchTracker = TouchTracker()
+    val trackId: Int
+        get() = touchTracker.pointerId
     private var previousTouchX = 0
     private var previousTouchY = 0
     private var controlPositionX = 0
@@ -59,32 +61,16 @@ class InputOverlayDrawableDpad(
         this.pressedTwoDirectionsStateBitmap = BitmapDrawable(res, pressedTwoDirectionsStateBitmap)
         width = this.defaultStateBitmap.intrinsicWidth
         height = this.defaultStateBitmap.intrinsicHeight
-        trackId = -1
     }
 
+    /**
+     * Updates the d-pad's pressed directions from a touch event.
+     *
+     * @return true if a direction's pressed state changed.
+     */
     fun updateStatus(event: MotionEvent, dpadSlide: Boolean, overlay:InputOverlay): Boolean {
-        var isDown = false
-        val pointerIndex = event.actionIndex
-        val xPosition = event.getX(pointerIndex).toInt()
-        val yPosition = event.getY(pointerIndex).toInt()
-        val pointerId = event.getPointerId(pointerIndex)
-        val motionEvent = event.action and MotionEvent.ACTION_MASK
-        val isActionDown =
-            motionEvent == MotionEvent.ACTION_DOWN || motionEvent == MotionEvent.ACTION_POINTER_DOWN
-        val isActionUp =
-            motionEvent == MotionEvent.ACTION_UP || motionEvent == MotionEvent.ACTION_POINTER_UP
-        if (isActionDown) {
-            if (!bounds.contains(xPosition, yPosition)) {
-                return false
-            }
-            isDown = true
-            trackId = pointerId
-        }
-        if (isActionUp) {
-            if (trackId != pointerId) {
-                return false
-            }
-            trackId = -1
+        val claimed = touchTracker.tryClaim(event, bounds::contains)
+        if (touchTracker.consumeRelease(event)) {
             upButtonState = false
             downButtonState = false
             leftButtonState = false
@@ -92,45 +78,27 @@ class InputOverlayDrawableDpad(
             overlay.hapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY_RELEASE)
             return true
         }
-        if (trackId == -1) {
+        if (!dpadSlide && !claimed) {
             return false
         }
-        if (!dpadSlide && !isActionDown) {
-            return false
-        }
-        for (i in 0 until event.pointerCount) {
-            if (trackId != event.getPointerId(i)) {
-                continue
-            }
-            var touchX = event.getX(i)
-            var touchY = event.getY(i)
-            var maxY = bounds.bottom.toFloat()
-            var maxX = bounds.right.toFloat()
-            touchX -= bounds.centerX().toFloat()
-            maxX -= bounds.centerX().toFloat()
-            touchY -= bounds.centerY().toFloat()
-            maxY -= bounds.centerY().toFloat()
-            val xAxis = touchX / maxX
-            val yAxis = touchY / maxY
-            val upState = upButtonState
-            val downState = downButtonState
-            val leftState = leftButtonState
-            val rightState = rightButtonState
-            upButtonState = yAxis < -VIRT_AXIS_DEADZONE
-            downButtonState = yAxis > VIRT_AXIS_DEADZONE
-            leftButtonState = xAxis < -VIRT_AXIS_DEADZONE
-            rightButtonState = xAxis > VIRT_AXIS_DEADZONE
+        val axis = touchTracker.normalizedAxisInEvent(event, bounds) ?: return false
+        val upState = upButtonState
+        val downState = downButtonState
+        val leftState = leftButtonState
+        val rightState = rightButtonState
+        upButtonState = axis.y < -VIRT_AXIS_DEADZONE
+        downButtonState = axis.y > VIRT_AXIS_DEADZONE
+        leftButtonState = axis.x < -VIRT_AXIS_DEADZONE
+        rightButtonState = axis.x > VIRT_AXIS_DEADZONE
 
-            val stateChanged = upState != upButtonState || downState != downButtonState || leftState != leftButtonState || rightState != rightButtonState
+        val stateChanged = upState != upButtonState || downState != downButtonState || leftState != leftButtonState || rightState != rightButtonState
 
-            if(stateChanged)
-                overlay.hapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-            else if(isDown)
-                overlay.hapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+        if(stateChanged)
+            overlay.hapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+        else if(claimed)
+            overlay.hapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
 
-            return stateChanged
-        }
-        return false
+        return stateChanged
     }
 
     fun draw(canvas: Canvas) {

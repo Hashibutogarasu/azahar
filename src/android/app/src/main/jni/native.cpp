@@ -549,6 +549,12 @@ void Java_org_citra_citra_1emu_NativeLibrary_setVirtualStick(
     GameControllerManager::SetVirtualStick(axis, x, y);
 }
 
+/** Releases every virtual button/stick tracked by GameControllerManager. */
+void Java_org_citra_citra_1emu_NativeLibrary_clearVirtualControllerInputs(
+    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj) {
+    GameControllerManager::ClearVirtualInputs();
+}
+
 void Java_org_citra_citra_1emu_NativeLibrary_setGyroPreferExternalController(
     [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jboolean prefer) {
     GameControllerManager::SetGyroPreferExternalController(prefer == JNI_TRUE);

@@ -264,6 +264,15 @@ void SetVirtualStick(int n3ds_analog_id, float x, float y) {
     g_virtual_sticks[n3ds_analog_id] = {x, y};
 }
 
+void ClearVirtualInputs() {
+    for (auto& entry : g_virtual_buttons) {
+        entry.second = false;
+    }
+    for (auto& entry : g_virtual_sticks) {
+        entry.second = {0.f, 0.f};
+    }
+}
+
 void SetGyroPreferExternalController(bool prefer) {
     g_gyro_prefer_external = prefer;
     if (!prefer) {

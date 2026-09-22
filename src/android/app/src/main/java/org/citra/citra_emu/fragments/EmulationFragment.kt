@@ -536,6 +536,7 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
     }
 
     override fun onPause() {
+        NativeLibrary.clearVirtualControllerInputs()
         if (NativeLibrary.isRunning()) {
             emulationState.pause()
             sidebarViewModel.setPaused(true)

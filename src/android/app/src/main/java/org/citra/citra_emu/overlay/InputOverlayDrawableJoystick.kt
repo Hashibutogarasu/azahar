@@ -41,7 +41,9 @@ class InputOverlayDrawableJoystick(
     val joystickId: Int,
     val opacity: Int
 ) {
-    var trackId = -1
+    private val touchTracker = TouchTracker()
+    val trackId: Int
+        get() = touchTracker.pointerId
     var xAxis = 0f
     var yAxis = 0f
     var angle = 0f
@@ -93,37 +95,27 @@ class InputOverlayDrawableJoystick(
         currentStateBitmapDrawable.draw(canvas)
     }
 
+    /**
+     * Updates the joystick's axis from a touch event.
+     *
+     * @return true if the axis or the joystick's pressed state changed.
+     */
     fun updateStatus(event: MotionEvent, overlay:InputOverlay): Boolean {
-        val pointerIndex = event.actionIndex
-        val xPosition = event.getX(pointerIndex).toInt()
-        val yPosition = event.getY(pointerIndex).toInt()
-        val pointerId = event.getPointerId(pointerIndex)
-        val motionEvent = event.action and MotionEvent.ACTION_MASK
-        val isActionDown =
-            motionEvent == MotionEvent.ACTION_DOWN || motionEvent == MotionEvent.ACTION_POINTER_DOWN
-        val isActionUp =
-            motionEvent == MotionEvent.ACTION_UP || motionEvent == MotionEvent.ACTION_POINTER_UP
-        if (isActionDown) {
-            if (!bounds.contains(xPosition, yPosition)) {
-                return false
-            }
+        if (touchTracker.tryClaim(event, bounds::contains)) {
+            val position = touchTracker.positionInEvent(event)!!
             pressedState = true
             outerBitmap.alpha = 0
             boundsBoxBitmap.alpha = opacity
             if (EmulationMenuSettings.joystickRelCenter) {
                 virtBounds.offset(
-                    xPosition - virtBounds.centerX(),
-                    yPosition - virtBounds.centerY()
+                    position.x.toInt() - virtBounds.centerX(),
+                    position.y.toInt() - virtBounds.centerY()
                 )
             }
             boundsBoxBitmap.bounds = virtBounds
-            trackId = pointerId
             overlay.hapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
         }
-        if (isActionUp) {
-            if (trackId != pointerId) {
-                return false
-            }
+        if (touchTracker.consumeRelease(event)) {
             pressedState = false
             xAxis = 0.0f
             yAxis = 0.0f
@@ -134,51 +126,35 @@ class InputOverlayDrawableJoystick(
             virtBounds = Rect(origBounds.left, origBounds.top, origBounds.right, origBounds.bottom)
             bounds = Rect(origBounds.left, origBounds.top, origBounds.right, origBounds.bottom)
             setInnerBounds()
-            trackId = -1
             overlay.hapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY_RELEASE)
             return true
         }
-        if (trackId == -1) return false
-        for (i in 0 until event.pointerCount) {
-            if (trackId != event.getPointerId(i)) {
-                continue
-            }
-            var touchX = event.getX(i)
-            var touchY = event.getY(i)
-            var maxY = virtBounds.bottom.toFloat()
-            var maxX = virtBounds.right.toFloat()
-            touchX -= virtBounds.centerX().toFloat()
-            maxX -= virtBounds.centerX().toFloat()
-            touchY -= virtBounds.centerY().toFloat()
-            maxY -= virtBounds.centerY().toFloat()
-            val xAxis = touchX / maxX
-            val yAxis = touchY / maxY
-            val oldXAxis = this.xAxis
-            val oldYAxis = this.yAxis
-            val oldAngle = this.angle
-            val oldRadius = this.radius
+        val axis = touchTracker.normalizedAxisInEvent(event, virtBounds) ?: return false
+        val xAxis = axis.x
+        val yAxis = axis.y
+        val oldXAxis = this.xAxis
+        val oldYAxis = this.yAxis
+        val oldAngle = this.angle
+        val oldRadius = this.radius
 
-            // Clamp the circle pad input to a circle
-            val angle = atan2(yAxis.toDouble(), xAxis.toDouble()).toFloat()
-            var radius = sqrt((xAxis * xAxis + yAxis * yAxis).toDouble()).toFloat()
-            if (radius > 1.0f) {
-                radius = 1.0f
-            }
-            this.xAxis = cos(angle.toDouble()).toFloat() * radius
-            this.yAxis = sin(angle.toDouble()).toFloat() * radius
-            setInnerBounds()
-
-            if (kotlin.math.abs(oldRadius - radius) > .34f
-                    || radius > .5f && kotlin.math.abs(oldAngle - angle) > kotlin.math.PI / 8) {
-                this.radius = radius
-                this.angle = angle
-
-                overlay.hapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
-            }
-
-            return oldXAxis != this.xAxis && oldYAxis != this.yAxis
+        val angle = atan2(yAxis.toDouble(), xAxis.toDouble()).toFloat()
+        var radius = sqrt((xAxis * xAxis + yAxis * yAxis).toDouble()).toFloat()
+        if (radius > 1.0f) {
+            radius = 1.0f
         }
-        return false
+        this.xAxis = cos(angle.toDouble()).toFloat() * radius
+        this.yAxis = sin(angle.toDouble()).toFloat() * radius
+        setInnerBounds()
+
+        if (kotlin.math.abs(oldRadius - radius) > .34f
+                || radius > .5f && kotlin.math.abs(oldAngle - angle) > kotlin.math.PI / 8) {
+            this.radius = radius
+            this.angle = angle
+
+            overlay.hapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+        }
+
+        return oldXAxis != this.xAxis && oldYAxis != this.yAxis
     }
 
     fun onConfigureTouch(event: MotionEvent): Boolean {

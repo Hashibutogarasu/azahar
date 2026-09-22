@@ -37,6 +37,13 @@ void SetVirtualButton(int n3ds_button_id, bool pressed);
 void SetVirtualStick(int n3ds_analog_id, float x, float y);
 
 /**
+ * Forces every virtual button/stick back to released/centered, so the next Update() releases
+ * whatever was still pressed. Intended as a safety net for touch/window events that leave the
+ * overlay unable to report its own release (e.g. the app losing focus mid-touch).
+ */
+void ClearVirtualInputs();
+
+/**
  * Sets whether a physical controller's gyroscope should be used in place of the Android device's
  * own gyroscope, when the currently connected controller reports gyroscope support. Safe to call
  * whether or not Init() has been called.
