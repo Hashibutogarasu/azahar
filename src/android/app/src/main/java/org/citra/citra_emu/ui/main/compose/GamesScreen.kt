@@ -11,7 +11,9 @@ import android.content.pm.ShortcutManager
 import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.SystemClock
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,12 +35,15 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon as M3Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -338,6 +343,74 @@ private fun gameStillExists(game: Game): Boolean {
 }
 
 /**
+ * The well-known folders bundled with an installed [Game], mirroring the desktop client's game
+ * list context menu (`GameList::AddGamePopup` in `game_list.cpp`). Paths are relative to the
+ * Citra user directory's `sdmc/` root, the same convention [Game.path] itself uses for installed
+ * titles.
+ */
+private data class GameDirectories(
+    val gameDir: String,
+    val saveDir: String,
+    val modsDir: String,
+    val texturesDir: String,
+    val appDir: String,
+    val dlcDir: String,
+    val updatesDir: String,
+    val extraDir: String
+)
+
+private fun getGameDirectories(game: Game): GameDirectories {
+    val basePath =
+        "sdmc/Nintendo 3DS/00000000000000000000000000000000/00000000000000000000000000000000"
+    val titleIdHex = String.format("%016x", game.titleId).lowercase()
+    return GameDirectories(
+        gameDir = game.path.substringBeforeLast("/"),
+        saveDir = "$basePath/title/${titleIdHex.substring(0, 8)}/${titleIdHex.substring(8)}" +
+            "/data/00000001",
+        modsDir = "load/mods/${String.format("%016X", game.titleId)}",
+        texturesDir = "load/textures/${String.format("%016X", game.titleId)}",
+        appDir = game.path.substringBeforeLast("/").split("/").filter { it.isNotEmpty() }
+            .joinToString("/"),
+        dlcDir = "$basePath/title/0004008c/${titleIdHex.substring(8)}/content",
+        updatesDir = "$basePath/title/0004000e/${titleIdHex.substring(8)}/content",
+        extraDir = "$basePath/extdata/00000000/" +
+            String.format("%016X", game.titleId).substring(8, 14).padStart(8, '0')
+    )
+}
+
+/**
+ * Deletes the disk shader cache [titleId] has built up for the given graphics [backend], mirroring
+ * `NativeLibrary.deleteOpenGLShaderCache`/`deleteVulkanShaderCache` on the file paths those native
+ * functions operate on (`FileUtil::UserPath::ShaderDir`, i.e. `shaders/` under the same user
+ * directory root [getGameDirectories]'s `sdmc/` paths are already relative to), done through the
+ * SAF-backed [org.citra.citra_emu.utils.DocumentsTree] instead of a native call.
+ */
+private fun deleteShaderCache(titleId: Long, backend: ShaderCacheBackend) {
+    val tree = CitraApplication.documentsTree
+    val titleIdHex = String.format("%016X", titleId)
+    when (backend) {
+        ShaderCacheBackend.OPENGL -> {
+            listOf("separable", "conventional").forEach { cacheType ->
+                tree.deleteDocument("shaders/opengl/precompiled/$cacheType/$titleIdHex.bin")
+            }
+            tree.deleteDocument("shaders/opengl/transferable/$titleIdHex.bin")
+        }
+
+        ShaderCacheBackend.VULKAN -> {
+            listOf("vs", "fs", "gs", "pl").forEach { cacheType ->
+                tree.deleteDocument("shaders/vulkan/transferable/${titleIdHex}_$cacheType.vkch")
+            }
+            tree.getFilesName("shaders/vulkan/pipeline")
+                .filterNotNull()
+                .filter { it.startsWith(titleIdHex) }
+                .forEach { tree.deleteDocument("shaders/vulkan/pipeline/$it") }
+        }
+    }
+}
+
+private enum class ShaderCacheBackend { OPENGL, VULKAN }
+
+/**
  * Builds the intent a pinned shortcut for [game] should launch.
  *
  * [ShortcutInfo] stores its intent's extras in a [android.os.PersistableBundle], which only
@@ -466,6 +539,12 @@ private fun AboutGameBottomSheet(
                     Text(stringResource(R.string.play))
                 }
                 Spacer(Modifier.width(8.dp))
+                if (game.isInstalled) {
+                    OpenFolderMenuButton(game)
+                    Spacer(Modifier.width(8.dp))
+                    UninstallMenuButton(game, onUninstalled = onDismiss)
+                    Spacer(Modifier.width(8.dp))
+                }
                 IconButton(onClick = {
                     val shortcutManager = context.getSystemService(ShortcutManager::class.java)
                     scope.launch {
@@ -487,7 +566,194 @@ private fun AboutGameBottomSheet(
                 }
             }
             Spacer(Modifier.height(16.dp))
-            Button(onClick = onCheats) { Text(stringResource(R.string.cheats)) }
+            Row {
+                Button(onClick = onCheats) { Text(stringResource(R.string.cheats)) }
+                if (game.isInstalled) {
+                    Spacer(Modifier.width(8.dp))
+                    DeleteShaderCacheButton(game.titleId)
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Mirrors the desktop client's "Delete Shader Cache" action: asks which graphics backend's cache
+ * to delete, then removes it via [deleteShaderCache].
+ */
+@Composable
+private fun DeleteShaderCacheButton(titleId: Long) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var showBackendPicker by remember { mutableStateOf(false) }
+    var selectedBackend by remember { mutableStateOf<ShaderCacheBackend?>(null) }
+
+    Button(onClick = { showBackendPicker = true; selectedBackend = null }) {
+        Text(stringResource(R.string.delete_shader_cache))
+    }
+
+    if (showBackendPicker) {
+        AlertDialog(
+            onDismissRequest = { showBackendPicker = false },
+            title = { Text(stringResource(R.string.delete_cache_select_backend)) },
+            text = {
+                Column {
+                    listOf(
+                        ShaderCacheBackend.VULKAN to R.string.vulkan,
+                        ShaderCacheBackend.OPENGL to R.string.opengles
+                    ).forEach { (backend, labelRes) ->
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable { selectedBackend = backend },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = selectedBackend == backend,
+                                onClick = { selectedBackend = backend }
+                            )
+                            Text(stringResource(labelRes))
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    enabled = selectedBackend != null,
+                    onClick = {
+                        val backend = selectedBackend!!
+                        showBackendPicker = false
+                        scope.launch(Dispatchers.IO) {
+                            deleteShaderCache(titleId, backend)
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    context,
+                                    R.string.shader_cache_deleted,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+                ) {
+                    Text(stringResource(android.R.string.ok))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showBackendPicker = false }) {
+                    Text(stringResource(android.R.string.cancel))
+                }
+            }
+        )
+    }
+}
+
+/**
+ * Mirrors the desktop client's "Open" submenu (`GameList::AddGamePopup`'s `open_menu`): shows the
+ * SAF-backed folders [game] has, opening the chosen one in a file manager. Application/Save
+ * Data/Updates/DLC/Extra Data only enable once their folder exists; Textures/Mods stay enabled
+ * and are created on demand when opened, matching `GameAdapter.showOpenContextMenu`.
+ */
+@Composable
+private fun OpenFolderMenuButton(game: Game) {
+    val context = LocalContext.current
+    var expanded by remember { mutableStateOf(false) }
+    val dirs = remember(game) { getGameDirectories(game) }
+    val checkedEntries = remember(dirs) {
+        listOf(
+            R.string.game_context_open_app to dirs.appDir,
+            R.string.game_context_open_save_dir to dirs.saveDir,
+            R.string.game_context_open_updates to dirs.updatesDir,
+            R.string.game_context_open_dlc to dirs.dlcDir,
+            R.string.game_context_open_extra to dirs.extraDir
+        )
+    }
+    val createOnOpenEntries = remember(dirs) {
+        listOf(
+            R.string.game_context_open_textures to dirs.texturesDir,
+            R.string.game_context_open_mods to dirs.modsDir
+        )
+    }
+
+    fun open(dir: String, createIfNotExists: Boolean) {
+        val uri = CitraApplication.documentsTree.folderUriHelper(dir, createIfNotExists) ?: return
+        context.startActivity(
+            Intent(Intent.ACTION_VIEW)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .setDataAndType(uri, "*/*")
+        )
+    }
+
+    Box {
+        IconButton(onClick = { expanded = true }) {
+            M3Icon(painterResource(R.drawable.ic_folder), contentDescription = null)
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            checkedEntries.forEach { (labelRes, dir) ->
+                val exists = CitraApplication.documentsTree.folderUriHelper(dir)?.let {
+                    DocumentFile.fromTreeUri(context, it)?.exists()
+                } ?: false
+                DropdownMenuItem(
+                    text = { Text(stringResource(labelRes)) },
+                    enabled = exists,
+                    onClick = {
+                        expanded = false
+                        open(dir, createIfNotExists = false)
+                    }
+                )
+            }
+            createOnOpenEntries.forEach { (labelRes, dir) ->
+                DropdownMenuItem(
+                    text = { Text(stringResource(labelRes)) },
+                    onClick = {
+                        expanded = false
+                        open(dir, createIfNotExists = true)
+                    }
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Mirrors the desktop client's "Uninstall" submenu (`GameList::AddGamePopup`'s `uninstall_menu`):
+ * removes the content folder of [game] itself, its updates or its DLC. This is the same effect as
+ * `Service::AM::UninstallProgram` (it only ever deletes a title's `content/` folder), done directly
+ * through the SAF-backed [org.citra.citra_emu.utils.DocumentsTree] instead of a native call.
+ */
+@Composable
+private fun UninstallMenuButton(game: Game, onUninstalled: () -> Unit) {
+    val context = LocalContext.current
+    var expanded by remember { mutableStateOf(false) }
+    val dirs = remember(game) { getGameDirectories(game) }
+    val entries = remember(dirs) {
+        listOf(
+            R.string.uninstall_cia to dirs.gameDir,
+            R.string.game_context_uninstall_updates to dirs.updatesDir,
+            R.string.game_context_uninstall_dlc to dirs.dlcDir
+        )
+    }
+
+    Box {
+        IconButton(onClick = { expanded = true }) {
+            M3Icon(painterResource(R.drawable.ic_delete), contentDescription = null)
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            entries.forEach { (labelRes, dir) ->
+                val exists = CitraApplication.documentsTree.folderUriHelper(dir)?.let {
+                    DocumentFile.fromTreeUri(context, it)?.exists()
+                } ?: false
+                DropdownMenuItem(
+                    text = { Text(stringResource(labelRes)) },
+                    enabled = exists,
+                    onClick = {
+                        expanded = false
+                        if (CitraApplication.documentsTree.deleteDocument(dir)) {
+                            onUninstalled()
+                        }
+                    }
+                )
+            }
         }
     }
 }
