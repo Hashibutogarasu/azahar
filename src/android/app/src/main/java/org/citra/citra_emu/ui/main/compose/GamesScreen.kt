@@ -4,6 +4,8 @@
 
 package org.citra.citra_emu.ui.main.compose
 
+import android.content.Context
+import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.graphics.drawable.Icon
@@ -83,8 +85,8 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Locale
 import org.citra.citra_emu.CitraApplication
-import org.citra.citra_emu.NativeLibrary
 import org.citra.citra_emu.R
+import org.citra.citra_emu.activities.EmulationActivity
 import org.citra.citra_emu.model.Game
 import org.citra.citra_emu.repository.EmulationLaunchRepository
 import org.citra.citra_emu.ui.compose.HtmlText
@@ -152,12 +154,7 @@ fun GamesScreen(
                         textAlign = TextAlign.Center
                     )
                 } else {
-                    GameGrid(
-                        games = games,
-                        onGameClick = onGameClick,
-                        onCheatsClick = onCheatsClick,
-                        onUninstalled = { gamesViewModel.reloadGames() }
-                    )
+                    GameGrid(games = games, onGameClick = onGameClick, onCheatsClick = onCheatsClick)
                 }
             }
         }
@@ -260,7 +257,6 @@ private fun GameGrid(
     games: List<Game>,
     onGameClick: (Game) -> Unit,
     onCheatsClick: (Game) -> Unit,
-    onUninstalled: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val iconLoader = GameIconUtils.rememberGameIconLoader()
@@ -315,10 +311,6 @@ private fun GameGrid(
             onCheats = {
                 aboutGame = null
                 onCheatsClick(game)
-            },
-            onUninstalled = {
-                aboutGame = null
-                onUninstalled()
             }
         )
     }
@@ -343,6 +335,26 @@ private fun gameStillExists(game: Game): Boolean {
         Log.error("[GamesScreen] ROM file does not exist: ${game.path}")
     }
     return exists
+}
+
+/**
+ * Builds the intent a pinned shortcut for [game] should launch.
+ *
+ * [ShortcutInfo] stores its intent's extras in a [android.os.PersistableBundle], which only
+ * accepts primitive values, so this can't reuse [EmulationLaunchRepository.createLaunchIntent]
+ * as is: that intent's `game` extra is the whole [Game] object, and handing it to
+ * [ShortcutInfo.Builder.build] throws `IllegalArgumentException`. Carrying only the launch URI is
+ * enough: `EmulationFragment` already reconstructs the [Game] from it when no `game` extra is
+ * present, the same path "open with" uses.
+ */
+private fun buildShortcutIntent(
+    context: Context,
+    game: Game,
+    emulationLaunchRepository: EmulationLaunchRepository
+): Intent = Intent(context, EmulationActivity::class.java).apply {
+    action = Intent.ACTION_VIEW
+    data = emulationLaunchRepository.createLaunchIntent(game).data
+    putExtra("launched_from_shortcut", true)
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -420,14 +432,11 @@ private fun AboutGameBottomSheet(
     iconLoader: ImageLoader,
     onDismiss: () -> Unit,
     onPlay: () -> Unit,
-    onCheats: () -> Unit,
-    onUninstalled: () -> Unit
+    onCheats: () -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val emulationLaunchRepository = remember { EmulationLaunchRepository() }
-    var pendingUninstall by remember { mutableStateOf(false) }
-    var uninstallFailed by remember { mutableStateOf(false) }
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState()) {
         Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
             Row {
@@ -466,10 +475,7 @@ private fun AboutGameBottomSheet(
                         val shortcut = ShortcutInfo.Builder(context, game.title)
                             .setShortLabel(game.title)
                             .apply { if (icon != null) setIcon(icon) }
-                            .setIntent(
-                                emulationLaunchRepository.createLaunchIntent(game)
-                                    .apply { putExtra("launched_from_shortcut", true) }
-                            )
+                            .setIntent(buildShortcutIntent(context, game, emulationLaunchRepository))
                             .build()
                         shortcutManager?.requestPinShortcut(shortcut, null)
                     }
@@ -482,50 +488,6 @@ private fun AboutGameBottomSheet(
             }
             Spacer(Modifier.height(16.dp))
             Button(onClick = onCheats) { Text(stringResource(R.string.cheats)) }
-            if (game.isInstalled) {
-                Spacer(Modifier.height(8.dp))
-                TextButton(onClick = { pendingUninstall = true }) {
-                    Text(stringResource(R.string.game_context_uninstall))
-                }
-            }
         }
-    }
-
-    if (pendingUninstall) {
-        AlertDialog(
-            onDismissRequest = { pendingUninstall = false },
-            title = { Text(stringResource(R.string.game_context_uninstall)) },
-            text = { Text(stringResource(R.string.uninstall_cia_confirmation, game.title)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    pendingUninstall = false
-                    if (NativeLibrary.uninstallProgram(game.titleId)) {
-                        onUninstalled()
-                    } else {
-                        uninstallFailed = true
-                    }
-                }) {
-                    Text(stringResource(android.R.string.ok))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { pendingUninstall = false }) {
-                    Text(stringResource(android.R.string.cancel))
-                }
-            }
-        )
-    }
-
-    if (uninstallFailed) {
-        AlertDialog(
-            onDismissRequest = { uninstallFailed = false },
-            title = { Text(stringResource(R.string.game_context_uninstall)) },
-            text = { Text(stringResource(R.string.uninstall_cia_failed)) },
-            confirmButton = {
-                TextButton(onClick = { uninstallFailed = false }) {
-                    Text(stringResource(android.R.string.ok))
-                }
-            }
-        )
     }
 }

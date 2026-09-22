@@ -492,9 +492,6 @@
     <!-- About Game Dialog -->
     <string name="play">Play</string>
     <string name="shortcut">Shortcut</string>
-    <string name="game_context_uninstall">Uninstall</string>
-    <string name="uninstall_cia_confirmation">This permanently removes \"%1$s\" from the emulated console.</string>
-    <string name="uninstall_cia_failed">Uninstalling failed. The content may already be missing.</string>
 
     <!-- Tools -->
     <string name="tools">Tools</string>
