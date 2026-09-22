@@ -1,3 +1,6 @@
+# Local per-machine environment (JDK/SDK paths, scratch dirs)
+.env.sh
+
 # Build directory
 [Bb]uild*/
 doc-build/
