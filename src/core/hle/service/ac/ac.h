@@ -5,7 +5,13 @@
 #pragma once
 
 #include <array>
+#include <functional>
 #include <memory>
+#include <optional>
+#include <string>
+#include <vector>
+#include "common/common_types.h"
+#include "core/hle/service/ac/ap_list.h"
 #include "core/hle/service/service.h"
 
 namespace Core {
@@ -17,6 +23,20 @@ class Event;
 }
 
 namespace Service::AC {
+
+/**
+ * Callback that scans the wireless networks around the host. It is invoked on a thread other than
+ * the emulation thread. It returns nothing when the host cannot scan, and an empty list when it
+ * scanned and found no network.
+ */
+using HostWifiScanner = std::function<std::optional<std::vector<HostApInfo>>()>;
+
+/**
+ * Registers the scanner used to answer AC::ScanAPs with the access points seen by the host.
+ * Passing an empty callback unregisters it.
+ */
+void RegisterHostWifiScanner(HostWifiScanner scanner);
+
 class Module final {
 public:
     explicit Module(Core::System& system_);
@@ -155,6 +175,20 @@ public:
          *      1 : Result of function, 0 on success, otherwise error code
          */
         void SetClientVersion(Kernel::HLERequestContext& ctx);
+
+        /**
+         * AC::ScanAPs service function
+         *  Inputs:
+         *      1 : Output buffer size in bytes, each access point takes 0x34 bytes
+         *      2 : ProcessId Header
+         *      3 : ProcessId
+         *  Outputs:
+         *      1 : Result of function, 0 on success, otherwise error code
+         *      2 : Number of access points in the list
+         *      3 : Output buffer size << 14 | 2
+         *      4 : Pointer to the access point list
+         */
+        void ScanAPs(Kernel::HLERequestContext& ctx);
 
     protected:
         std::shared_ptr<Module> ac;

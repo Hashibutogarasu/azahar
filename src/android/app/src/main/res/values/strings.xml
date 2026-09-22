@@ -192,6 +192,8 @@
     <string name="play_coins">Play Coins</string>
     <string name="steps_per_hour">Pedometer Steps per Hour</string>
     <string name="steps_per_hour_description">Number of steps per hour reported by the pedometer. Range from 0 to 65,535.</string>
+    <string name="scan_real_wifi_networks">Scan Real Wi-Fi Networks</string>
+    <string name="scan_real_wifi_networks_description">Reports the Wi-Fi networks around the device to applications that scan for access points. Requires the location permission. When disabled, or when the scan is unavailable, a fixed set of access points is reported instead.</string>
     <string name="console_id">Console ID</string>
     <string name="regenerate_console_id">Regenerate Console ID</string>
     <string name="regenerate_console_id_description">This will replace your current virtual 3DS console ID with a new one. Your current virtual 3DS console ID will not be recoverable. This might have unexpected effects inside applications. This might fail if you use an outdated config save. Continue?</string>
@@ -490,6 +492,9 @@
     <!-- About Game Dialog -->
     <string name="play">Play</string>
     <string name="shortcut">Shortcut</string>
+    <string name="game_context_uninstall">Uninstall</string>
+    <string name="uninstall_cia_confirmation">This permanently removes \"%1$s\" from the emulated console.</string>
+    <string name="uninstall_cia_failed">Uninstalling failed. The content may already be missing.</string>
 
     <!-- Tools -->
     <string name="tools">Tools</string>

@@ -368,6 +368,11 @@ init_ticks_override =
 # Defaults to 0.
 steps_per_hour =
 
+# Report the Wi-Fi networks around the device to applications that scan for access points.
+# When disabled, or when the device cannot scan, a fixed set of access points is reported instead.
+# 0: Disabled, 1 (default): Enabled
+scan_real_wifi_networks =
+
 # Plugin loader state, if enabled plugins will be loaded from the SD card.
 # You can also set if homebrew apps are allowed to enable the plugin loader
 plugin_loader =

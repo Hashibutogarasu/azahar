@@ -2,11 +2,18 @@
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
 
+#include <algorithm>
+#include <array>
+#include <chrono>
+#include <cstring>
+#include <mutex>
+#include <optional>
 #include <vector>
 #include "common/archives.h"
 #include "common/common_types.h"
 #include "common/logging/log.h"
 #include "common/settings.h"
+#include "common/swap.h"
 #include "core/core.h"
 #include "core/hle/ipc.h"
 #include "core/hle/ipc_helpers.h"
@@ -25,6 +32,68 @@ SERIALIZE_EXPORT_IMPL(Service::AC::Module)
 SERVICE_CONSTRUCT_IMPL(Service::AC::Module)
 
 namespace Service::AC {
+
+namespace {
+
+constexpr std::chrono::nanoseconds ScanDuration{3'210'000'000};
+
+std::mutex host_wifi_scanner_mutex;
+HostWifiScanner host_wifi_scanner;
+
+/**
+ * Runs the registered host scanner.
+ * @return The access points seen by the host, nothing when no scanner is registered or when the
+ * host cannot scan.
+ */
+std::optional<std::vector<HostApInfo>> ScanHostAccessPoints() {
+    HostWifiScanner scanner;
+    {
+        std::scoped_lock lock{host_wifi_scanner_mutex};
+        scanner = host_wifi_scanner;
+    }
+    if (!scanner) {
+        return std::nullopt;
+    }
+    return scanner();
+}
+
+/**
+ * Builds the access points reported when the host cannot scan.
+ * The guest still receives a well formed list, so that games relying on nearby networks keep
+ * working without wireless access.
+ */
+std::vector<HostApInfo> MakeDefaultAccessPoints() {
+    struct DefaultAccessPoint {
+        u8 channel;
+        s16 rssi;
+    };
+    static constexpr std::array<DefaultAccessPoint, 4> default_access_points{{
+        {1, -60},
+        {6, -68},
+        {11, -77},
+        {1, -85},
+    }};
+
+    std::vector<HostApInfo> access_points;
+    for (std::size_t i = 0; i < default_access_points.size(); ++i) {
+        HostApInfo info;
+        info.ssid = "AzaharAP" + std::to_string(i + 1);
+        info.bssid = {0x00, 0x1A, 0x2B, 0x3C, 0x4D, static_cast<u8>(i + 1)};
+        info.rssi = default_access_points[i].rssi;
+        info.channel = default_access_points[i].channel;
+        info.security = ApSecurity::Secured;
+        access_points.push_back(std::move(info));
+    }
+    return access_points;
+}
+
+} // namespace
+
+void RegisterHostWifiScanner(HostWifiScanner scanner) {
+    std::scoped_lock lock{host_wifi_scanner_mutex};
+    host_wifi_scanner = std::move(scanner);
+}
+
 void Module::Interface::CreateDefaultConfig(Kernel::HLERequestContext& ctx) {
     IPC::RequestParser rp(ctx);
 
@@ -190,6 +259,51 @@ void Module::Interface::SetClientVersion(Kernel::HLERequestContext& ctx) {
 
     IPC::RequestBuilder rb = rp.MakeBuilder(1, 0);
     rb.Push(ResultSuccess);
+}
+
+void Module::Interface::ScanAPs(Kernel::HLERequestContext& ctx) {
+    IPC::RequestParser rp(ctx);
+
+    const u32 out_size = rp.Pop<u32>() & 0xFFFF;
+    rp.Skip(2, false);
+    const u16 command_id = static_cast<u16>(ctx.CommandHeader().command_id.Value());
+
+    struct ScanState {
+        std::vector<ApInfo> list;
+        bool from_host = false;
+    };
+    const auto scan = std::make_shared<ScanState>();
+
+    ctx.RunAsync(
+        [scan, out_size](Kernel::HLERequestContext&) {
+            std::optional<std::vector<HostApInfo>> found;
+            if (Settings::values.scan_real_wifi_networks.GetValue()) {
+                found = ScanHostAccessPoints();
+            }
+            scan->from_host = found.has_value();
+            scan->list = BuildApList(found ? std::move(*found) : MakeDefaultAccessPoints(),
+                                     out_size / sizeof(ApInfo));
+            return static_cast<s64>(ScanDuration.count());
+        },
+        [scan, out_size, command_id](Kernel::HLERequestContext& ctx) {
+            std::vector<u8> buffer(out_size);
+            std::memcpy(buffer.data(), scan->list.data(), scan->list.size() * sizeof(ApInfo));
+
+            IPC::RequestBuilder rb(ctx, command_id, 2, 2);
+            rb.Push(ResultSuccess);
+            rb.Push<u32>(static_cast<u32>(scan->list.size()));
+            rb.PushStaticBuffer(std::move(buffer), 0);
+
+            LOG_INFO(Service_AC, "size=0x{:X}, host_scan={}, reported {} access point(s)", out_size,
+                     scan->from_host, scan->list.size());
+            for (std::size_t i = 0; i < scan->list.size(); ++i) {
+                const ApInfo& entry = scan->list[i];
+                LOG_DEBUG(Service_AC, "entry {}: ssid_length={} strength={} level={} channel={}", i,
+                          static_cast<u32>(entry.ssid_length),
+                          static_cast<u16>(entry.signal_strength), entry.link_level,
+                          entry.channel);
+            }
+        });
 }
 
 Module::Interface::Interface(std::shared_ptr<Module> ac, const char* name, u32 max_session)

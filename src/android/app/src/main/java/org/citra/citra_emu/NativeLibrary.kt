@@ -11,7 +11,9 @@ import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
+import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.os.SystemClock
 import android.text.Html
 import android.text.method.LinkMovementMethod
 import android.view.KeyEvent
@@ -263,6 +265,15 @@ object NativeLibrary {
     external fun areSystemTitlesInstalled(): BooleanArray
 
     external fun uninstallSystemFiles(old3DS: Boolean)
+
+    /**
+     * Uninstalls the installed title with the given [titleId], mirroring the desktop client's
+     * `Service::AM::UninstallProgram` (its media type is looked up from the title ID itself, the
+     * same way the installer picks it).
+     *
+     * @return whether the title's content was found and removed.
+     */
+    external fun uninstallProgram(titleId: Long): Boolean
 
     external fun isFullConsoleLinked(): Boolean
 
@@ -614,6 +625,127 @@ object NativeLibrary {
     fun micPermissionResult(granted: Boolean) {
         micPermissionGranted = granted
         synchronized(micPermissionLock) { micPermissionLock.notify() }
+    }
+
+    private val wifiPermissionLock = Object()
+    private var wifiPermissionGranted = false
+    private var wifiPermissionPending = false
+    const val REQUEST_CODE_NATIVE_WIFI = 1000
+
+    private const val WIFI_SCAN_INTERVAL_MS = 30_000L
+    private val WIFI_24_GHZ_RANGE = 2400..2499
+    private const val WIFI_CHANNEL_0_FREQUENCY = 2407
+    private const val WIFI_CHANNEL_14_FREQUENCY = 2484
+    private const val WIFI_CHANNEL_WIDTH = 5
+    private val WIFI_SECURITY_KEYS = listOf("WPA", "RSN", "WEP", "SAE")
+    private var lastWifiScanTime = 0L
+
+    /**
+     * Requests the location permission that Android requires to read Wi-Fi scan results, and
+     * blocks the calling thread until the user has answered.
+     *
+     * @return True if the permission is granted.
+     */
+    @Keep
+    @JvmStatic
+    fun requestWifiPermission(): Boolean {
+        val emulationActivity = sEmulationActivity.get()
+        if (emulationActivity == null) {
+            Log.error("[NativeLibrary] EmulationActivity not present")
+            return false
+        }
+        if (ContextCompat.checkSelfPermission(emulationActivity, permission.ACCESS_FINE_LOCATION) ==
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            return true
+        }
+
+        synchronized(wifiPermissionLock) {
+            wifiPermissionPending = true
+            emulationActivity.requestPermissions(
+                arrayOf(permission.ACCESS_FINE_LOCATION),
+                REQUEST_CODE_NATIVE_WIFI
+            )
+            while (wifiPermissionPending) {
+                try {
+                    wifiPermissionLock.wait()
+                } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                    return false
+                }
+            }
+            return wifiPermissionGranted
+        }
+    }
+
+    fun wifiPermissionResult(granted: Boolean) {
+        synchronized(wifiPermissionLock) {
+            wifiPermissionGranted = granted
+            wifiPermissionPending = false
+            wifiPermissionLock.notifyAll()
+        }
+    }
+
+    /**
+     * Returns the Wi-Fi access points of the 2.4 GHz band seen by the device, including the hidden
+     * networks.
+     *
+     * Every entry has the form "bssid|rssi|channel|security|ssid", where the security is 0 for an
+     * open network, 1 for a secured one and 2 when TKIP is allowed. A new scan is requested at
+     * most once every 30 seconds to stay within the scan throttling of Android, the cached results
+     * are returned in between.
+     *
+     * @return The access points, an empty array when the scan found none, and null when the scan
+     * is unavailable because the permission is missing.
+     */
+    @Keep
+    @JvmStatic
+    @Suppress("DEPRECATION")
+    fun scanWifiAccessPoints(): Array<String>? {
+        val context = sEmulationActivity.get() ?: return null
+        if (ContextCompat.checkSelfPermission(context, permission.ACCESS_FINE_LOCATION) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            return null
+        }
+        val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE)
+            as? WifiManager ?: return null
+
+        val now = SystemClock.elapsedRealtime()
+        if (now - lastWifiScanTime >= WIFI_SCAN_INTERVAL_MS) {
+            lastWifiScanTime = now
+            try {
+                wifiManager.startScan()
+            } catch (e: SecurityException) {
+                Log.error("[NativeLibrary] Wi-Fi scan request denied: ${e.message}")
+            }
+        }
+
+        val results = try {
+            wifiManager.scanResults
+        } catch (e: SecurityException) {
+            Log.error("[NativeLibrary] Wi-Fi scan results denied: ${e.message}")
+            return null
+        }
+
+        return results
+            .filter { it.BSSID != null && it.frequency in WIFI_24_GHZ_RANGE }
+            .map {
+                val channel = if (it.frequency == WIFI_CHANNEL_14_FREQUENCY) {
+                    14
+                } else {
+                    (it.frequency - WIFI_CHANNEL_0_FREQUENCY) / WIFI_CHANNEL_WIDTH
+                }
+                val capabilities = it.capabilities.orEmpty()
+                val security = when {
+                    WIFI_SECURITY_KEYS.none { key -> capabilities.contains(key) } -> 0
+                    capabilities.contains("TKIP") -> 2
+                    else -> 1
+                }
+                val ssid = if (it.SSID == "<unknown ssid>") "" else it.SSID.orEmpty()
+                "${it.BSSID}|${it.level}|$channel|$security|$ssid"
+            }
+            .toTypedArray()
     }
 
     // Notifies that the activity is now in foreground and camera devices can now be reloaded
