@@ -8,11 +8,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.SystemClock
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -44,6 +49,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -63,6 +69,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.integerResource
@@ -72,6 +79,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.scale
 import androidx.core.text.HtmlCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -379,6 +387,159 @@ private fun getGameDirectories(game: Game): GameDirectories {
 }
 
 /**
+ * Icon button that opens [CreateShortcutDialog], mirroring the desktop-ported `game_shortcut`
+ * button of the pre-Compose `GameAdapter`.
+ */
+@Composable
+private fun CreateShortcutMenuButton(
+    game: Game,
+    emulationLaunchRepository: EmulationLaunchRepository
+) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    IconButton(onClick = { showDialog = true }) {
+        M3Icon(
+            painterResource(R.drawable.ic_shortcut),
+            contentDescription = stringResource(R.string.shortcut)
+        )
+    }
+
+    if (showDialog) {
+        CreateShortcutDialog(
+            game = game,
+            emulationLaunchRepository = emulationLaunchRepository,
+            onDismiss = { showDialog = false }
+        )
+    }
+}
+
+/**
+ * Lets the user rename the shortcut and, optionally, replace its icon with a picked image before
+ * pinning it, mirroring `GameAdapter.showAboutGameDialog`'s `game_shortcut` flow and
+ * `refreshShortcutDialogIcon`.
+ */
+@Composable
+private fun CreateShortcutDialog(
+    game: Game,
+    emulationLaunchRepository: EmulationLaunchRepository,
+    onDismiss: () -> Unit
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    var shortcutName by remember { mutableStateOf(game.title) }
+    var nameError by remember { mutableStateOf(false) }
+    var customImageUri by remember { mutableStateOf<Uri?>(null) }
+    var stretchImage by remember { mutableStateOf(false) }
+    var previewBitmap by remember { mutableStateOf<Bitmap?>(null) }
+
+    LaunchedEffect(game) {
+        previewBitmap = withContext(Dispatchers.IO) { GameIconUtils.loadGameIconBitmapBlocking(game) }
+    }
+    LaunchedEffect(customImageUri, stretchImage) {
+        val uri = customImageUri ?: return@LaunchedEffect
+        previewBitmap = withContext(Dispatchers.IO) {
+            context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it) }
+                ?.let { scaleShortcutIcon(it, stretchImage) }
+        }
+    }
+
+    val pickImage = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri -> if (uri != null) customImageUri = uri }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.create_shortcut)) },
+        text = {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                previewBitmap?.let {
+                    Image(
+                        it.asImageBitmap(),
+                        contentDescription = stringResource(R.string.edit_icon),
+                        modifier = Modifier
+                            .size(96.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { pickImage.launch("image/*") }
+                    )
+                }
+                Row(
+                    Modifier.padding(top = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(stringResource(R.string.shortcut_image_stretch_toggle))
+                    Switch(
+                        checked = stretchImage,
+                        enabled = customImageUri != null,
+                        onCheckedChange = { stretchImage = it }
+                    )
+                }
+                TextField(
+                    value = shortcutName,
+                    onValueChange = { shortcutName = it; nameError = false },
+                    label = { Text(stringResource(R.string.shortcut_name)) },
+                    isError = nameError,
+                    singleLine = true,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                if (shortcutName.isEmpty()) {
+                    nameError = true
+                    Toast.makeText(context, R.string.shortcut_name_empty, Toast.LENGTH_LONG).show()
+                    return@TextButton
+                }
+                val icon = previewBitmap
+                onDismiss()
+                scope.launch(Dispatchers.IO) {
+                    val shortcutManager = context.getSystemService(ShortcutManager::class.java)
+                    val shortcut = ShortcutInfo.Builder(context, shortcutName)
+                        .setShortLabel(shortcutName)
+                        .apply { if (icon != null) setIcon(Icon.createWithBitmap(icon)) }
+                        .setIntent(buildShortcutIntent(context, game, emulationLaunchRepository))
+                        .build()
+                    shortcutManager?.requestPinShortcut(shortcut, null)
+                }
+            }) {
+                Text(stringResource(android.R.string.ok))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(android.R.string.cancel)) }
+        }
+    )
+}
+
+/**
+ * Scales a user-picked shortcut icon to the 108x108 adaptive-icon canvas, mirroring
+ * `GameAdapter.refreshShortcutDialogIcon`: [stretch] squashes the whole image to fit, otherwise
+ * the image is scaled to cover the canvas and center-cropped to it, preserving its aspect ratio.
+ */
+private fun scaleShortcutIcon(source: Bitmap, stretch: Boolean): Bitmap {
+    val targetSize = 108
+    if (stretch) {
+        return source.scale(targetSize, targetSize)
+    }
+    val width = source.width
+    val height = source.height
+    return if (width > height) {
+        val scaleFactor = targetSize.toFloat() / height
+        val scaledWidth = (width * scaleFactor).toInt()
+        val scaled = source.scale(scaledWidth, targetSize)
+        val startX = (scaledWidth - targetSize) / 2
+        Bitmap.createBitmap(scaled, startX, 0, targetSize, targetSize)
+    } else {
+        val scaleFactor = targetSize.toFloat() / width
+        val scaledHeight = (height * scaleFactor).toInt()
+        val scaled = source.scale(targetSize, scaledHeight)
+        val startY = (scaledHeight - targetSize) / 2
+        Bitmap.createBitmap(scaled, 0, startY, targetSize, targetSize)
+    }
+}
+
+/**
  * Deletes the disk shader cache [titleId] has built up for the given graphics [backend], mirroring
  * `NativeLibrary.deleteOpenGLShaderCache`/`deleteVulkanShaderCache` on the file paths those native
  * functions operate on (`FileUtil::UserPath::ShaderDir`, i.e. `shaders/` under the same user
@@ -545,25 +706,7 @@ private fun AboutGameBottomSheet(
                     UninstallMenuButton(game, onUninstalled = onDismiss)
                     Spacer(Modifier.width(8.dp))
                 }
-                IconButton(onClick = {
-                    val shortcutManager = context.getSystemService(ShortcutManager::class.java)
-                    scope.launch {
-                        val icon = withContext(Dispatchers.IO) {
-                            GameIconUtils.loadGameIconBitmapBlocking(game)
-                        }?.let { Icon.createWithBitmap(it) }
-                        val shortcut = ShortcutInfo.Builder(context, game.title)
-                            .setShortLabel(game.title)
-                            .apply { if (icon != null) setIcon(icon) }
-                            .setIntent(buildShortcutIntent(context, game, emulationLaunchRepository))
-                            .build()
-                        shortcutManager?.requestPinShortcut(shortcut, null)
-                    }
-                }) {
-                    M3Icon(
-                        painterResource(R.drawable.ic_shortcut),
-                        contentDescription = stringResource(R.string.shortcut)
-                    )
-                }
+                CreateShortcutMenuButton(game, emulationLaunchRepository)
             }
             Spacer(Modifier.height(16.dp))
             Row {
