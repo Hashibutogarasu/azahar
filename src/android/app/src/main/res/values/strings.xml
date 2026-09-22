@@ -488,13 +488,31 @@
     <!-- Disk Shader Cache -->
     <string name="preparing_shaders">Preparing Shaders</string>
     <string name="building_shaders">Building Shaders</string>
+    <string name="delete_shader_cache">Delete Shader Cache</string>
+    <string name="delete_cache_select_backend">Select which graphics API to delete the shader cache</string>
+    <string name="deleting_shader_cache">Deleting shader cache for title, please wait…</string>
+    <string name="shader_cache_deleted">Shader cache deleted</string>
 
     <!-- About Game Dialog -->
     <string name="play">Play</string>
+    <string name="compress">Compress</string>
+    <string name="uninstall_cia">Uninstall Application</string>
+    <string name="uninstalling">Uninstalling...</string>
+    <string name="game_context_open_save_dir">Open Save Data Folder</string>
+    <string name="game_context_open_app">Open Application Folder</string>
+    <string name="game_context_open_mods">Open Mods Folder</string>
+    <string name="game_context_open_textures">Open Textures Folder</string>
+    <string name="game_context_open_dlc">Open DLC Folder</string>
+    <string name="game_context_open_updates">Open Updates Folder</string>
+    <string name="game_context_open_extra">Open Extra Folder</string>
+    <string name="game_context_uninstall_dlc">Uninstall DLC</string>
+    <string name="game_context_uninstall_updates">Uninstall Updates</string>
     <string name="shortcut">Shortcut</string>
-    <string name="game_context_uninstall">Uninstall</string>
-    <string name="uninstall_cia_confirmation">This permanently removes \"%1$s\" from the emulated console.</string>
-    <string name="uninstall_cia_failed">Uninstalling failed. The content may already be missing.</string>
+    <string name="shortcut_name">Shortcut Name</string>
+    <string name="edit_icon">Edit icon</string>
+    <string name="create_shortcut">Create Shortcut</string>
+    <string name="shortcut_name_empty">Shortcut name cannot be empty</string>
+    <string name="shortcut_image_stretch_toggle">Stretch to fit image</string>
 
     <!-- Tools -->
     <string name="tools">Tools</string>
