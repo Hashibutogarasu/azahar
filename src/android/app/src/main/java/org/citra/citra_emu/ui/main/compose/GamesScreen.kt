@@ -43,6 +43,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon as M3Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -710,9 +711,15 @@ private fun AboutGameBottomSheet(
             }
             Spacer(Modifier.height(16.dp))
             Row {
-                Button(onClick = onCheats) { Text(stringResource(R.string.cheats)) }
-                if (game.isInstalled) {
-                    Spacer(Modifier.width(8.dp))
+                FilledTonalButton(onClick = onCheats) { Text(stringResource(R.string.cheats)) }
+                Spacer(Modifier.width(8.dp))
+                FilledTonalButton(onClick = {}, enabled = false) {
+                    Text(stringResource(R.string.compress))
+                }
+            }
+            if (game.isInstalled) {
+                Spacer(Modifier.height(16.dp))
+                Row {
                     DeleteShaderCacheButton(game.titleId)
                 }
             }
@@ -731,7 +738,7 @@ private fun DeleteShaderCacheButton(titleId: Long) {
     var showBackendPicker by remember { mutableStateOf(false) }
     var selectedBackend by remember { mutableStateOf<ShaderCacheBackend?>(null) }
 
-    Button(onClick = { showBackendPicker = true; selectedBackend = null }) {
+    FilledTonalButton(onClick = { showBackendPicker = true; selectedBackend = null }) {
         Text(stringResource(R.string.delete_shader_cache))
     }
 
