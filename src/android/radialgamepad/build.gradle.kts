@@ -3,7 +3,7 @@
 // Refer to the license.txt file included.
 
 /**
- * Builds Swordfish90/RadialGamePad's `library` module (the `externals/RadialGamePad` git
+ * Builds Swordfish90/RadialGamePad's `library` module (the `externals/radial-gamepad` git
  * submodule) against this project's own Android/Kotlin toolchain, instead of applying that
  * submodule's own build.gradle, which targets `kotlin-android-extensions` — a plugin removed
  * from modern Kotlin Gradle Plugin releases. Only the submodule's Kotlin/Java sources are
@@ -33,7 +33,7 @@ android {
 
     sourceSets {
         named("main") {
-            java.srcDir("../../externals/RadialGamePad/library/src/main/java")
+            java.srcDir("../../externals/radial-gamepad/library/src/main/java")
         }
     }
 }

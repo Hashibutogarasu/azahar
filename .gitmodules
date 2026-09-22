@@ -94,6 +94,6 @@
 [submodule "compatibility-list"]
 	path = dist/compatibility_list
 	url = https://github.com/azahar-emu/compatibility-list
-[submodule "externals/RadialGamePad"]
-	path = externals/RadialGamePad
+[submodule "radial-gamepad"]
+	path = externals/radial-gamepad
 	url = git@github.com:Hashibutogarasu/RadialGamePad.git
