@@ -266,6 +266,15 @@ object NativeLibrary {
 
     external fun uninstallSystemFiles(old3DS: Boolean)
 
+    /**
+     * Uninstalls the installed title with the given [titleId], mirroring the desktop client's
+     * `Service::AM::UninstallProgram` (its media type is looked up from the title ID itself, the
+     * same way the installer picks it).
+     *
+     * @return whether the title's content was found and removed.
+     */
+    external fun uninstallProgram(titleId: Long): Boolean
+
     external fun isFullConsoleLinked(): Boolean
 
     external fun unlinkConsole()

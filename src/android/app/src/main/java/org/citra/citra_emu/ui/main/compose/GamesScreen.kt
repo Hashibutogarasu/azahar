@@ -80,13 +80,17 @@ import info.debatty.java.stringsimilarity.JaroWinkler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.Locale
 import org.citra.citra_emu.CitraApplication
+import org.citra.citra_emu.NativeLibrary
 import org.citra.citra_emu.R
 import org.citra.citra_emu.model.Game
 import org.citra.citra_emu.repository.EmulationLaunchRepository
 import org.citra.citra_emu.ui.compose.HtmlText
+import org.citra.citra_emu.utils.FileUtil
 import org.citra.citra_emu.utils.GameIconUtils
+import org.citra.citra_emu.utils.Log
 import org.citra.citra_emu.viewmodel.GamesViewModel
 import org.citra.citra_emu.viewmodel.HomeViewModel
 
@@ -148,7 +152,12 @@ fun GamesScreen(
                         textAlign = TextAlign.Center
                     )
                 } else {
-                    GameGrid(games = games, onGameClick = onGameClick, onCheatsClick = onCheatsClick)
+                    GameGrid(
+                        games = games,
+                        onGameClick = onGameClick,
+                        onCheatsClick = onCheatsClick,
+                        onUninstalled = { gamesViewModel.reloadGames() }
+                    )
                 }
             }
         }
@@ -251,6 +260,7 @@ private fun GameGrid(
     games: List<Game>,
     onGameClick: (Game) -> Unit,
     onCheatsClick: (Game) -> Unit,
+    onUninstalled: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val iconLoader = GameIconUtils.rememberGameIconLoader()
@@ -305,15 +315,34 @@ private fun GameGrid(
             onCheats = {
                 aboutGame = null
                 onCheatsClick(game)
+            },
+            onUninstalled = {
+                aboutGame = null
+                onUninstalled()
             }
         )
     }
 }
 
-/** Triggers a library refresh if the user interacts with stale data, mirroring `gameExists`. */
+/**
+ * Triggers a library refresh if the user interacts with stale data, mirroring `gameExists`.
+ *
+ * Native (non-SAF) paths must be checked with [File.exists], not [DocumentFile]: handing a
+ * schemeless native path to [DocumentFile.fromSingleUri] makes its `exists()` query a non-content
+ * URI, which [android.content.ContentResolver] rejects with an uncaught `IllegalArgumentException`
+ * and crashes the app.
+ */
 private fun gameStillExists(game: Game): Boolean {
     if (game.isInstalled) return true
-    return DocumentFile.fromSingleUri(CitraApplication.appContext, Uri.parse(game.path))?.exists() == true
+    val exists = if (FileUtil.isNativePath(game.path)) {
+        File(game.path).exists()
+    } else {
+        DocumentFile.fromSingleUri(CitraApplication.appContext, Uri.parse(game.path))?.exists() == true
+    }
+    if (!exists) {
+        Log.error("[GamesScreen] ROM file does not exist: ${game.path}")
+    }
+    return exists
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -391,11 +420,14 @@ private fun AboutGameBottomSheet(
     iconLoader: ImageLoader,
     onDismiss: () -> Unit,
     onPlay: () -> Unit,
-    onCheats: () -> Unit
+    onCheats: () -> Unit,
+    onUninstalled: () -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val emulationLaunchRepository = remember { EmulationLaunchRepository() }
+    var pendingUninstall by remember { mutableStateOf(false) }
+    var uninstallFailed by remember { mutableStateOf(false) }
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState()) {
         Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
             Row {
@@ -450,6 +482,50 @@ private fun AboutGameBottomSheet(
             }
             Spacer(Modifier.height(16.dp))
             Button(onClick = onCheats) { Text(stringResource(R.string.cheats)) }
+            if (game.isInstalled) {
+                Spacer(Modifier.height(8.dp))
+                TextButton(onClick = { pendingUninstall = true }) {
+                    Text(stringResource(R.string.game_context_uninstall))
+                }
+            }
         }
+    }
+
+    if (pendingUninstall) {
+        AlertDialog(
+            onDismissRequest = { pendingUninstall = false },
+            title = { Text(stringResource(R.string.game_context_uninstall)) },
+            text = { Text(stringResource(R.string.uninstall_cia_confirmation, game.title)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    pendingUninstall = false
+                    if (NativeLibrary.uninstallProgram(game.titleId)) {
+                        onUninstalled()
+                    } else {
+                        uninstallFailed = true
+                    }
+                }) {
+                    Text(stringResource(android.R.string.ok))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { pendingUninstall = false }) {
+                    Text(stringResource(android.R.string.cancel))
+                }
+            }
+        )
+    }
+
+    if (uninstallFailed) {
+        AlertDialog(
+            onDismissRequest = { uninstallFailed = false },
+            title = { Text(stringResource(R.string.game_context_uninstall)) },
+            text = { Text(stringResource(R.string.uninstall_cia_failed)) },
+            confirmButton = {
+                TextButton(onClick = { uninstallFailed = false }) {
+                    Text(stringResource(android.R.string.ok))
+                }
+            }
+        )
     }
 }

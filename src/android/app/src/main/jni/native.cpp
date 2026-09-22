@@ -705,6 +705,14 @@ void Java_org_citra_citra_1emu_NativeLibrary_uninstallSystemFiles(JNIEnv* env,
                                       : Core::SystemTitleSet::New3ds);
 }
 
+jboolean Java_org_citra_citra_1emu_NativeLibrary_uninstallProgram(
+    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jlong titleId) {
+    const u64 title_id = static_cast<u64>(titleId);
+    const auto media_type = Service::AM::GetTitleMediaType(title_id);
+    const auto result = Service::AM::UninstallProgram(media_type, title_id);
+    return static_cast<jboolean>(!result.IsError());
+}
+
 [[maybe_unused]] static bool CheckKgslPresent() {
     constexpr auto KgslPath{"/dev/kgsl-3d0"};
 
