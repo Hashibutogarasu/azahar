@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'sections/general_settings_page.dart';
 import 'sections/graphics_settings_page.dart';
+import 'sections/system_settings_page.dart';
 import 'settings_menu_page.dart';
 
 part 'settings_routes.g.dart';
@@ -34,5 +35,15 @@ class GraphicsSettingsRoute extends GoRouteData with $GraphicsSettingsRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const GraphicsSettingsPage();
+  }
+}
+
+@TypedGoRoute<SystemSettingsRoute>(path: '/settings/system')
+class SystemSettingsRoute extends GoRouteData with $SystemSettingsRoute {
+  const SystemSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const SystemSettingsPage();
   }
 }

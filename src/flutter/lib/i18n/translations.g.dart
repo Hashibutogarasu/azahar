@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 1
-/// Strings: 133
+/// Strings: 337
 ///
-/// Built on 2026-09-23 at 09:34 UTC
+/// Built on 2026-09-23 at 15:57 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint, unused_import
@@ -97,7 +97,7 @@ Translations get t => LocaleSettings.instance.currentTranslations;
 /// Step 1:
 /// wrap your App with
 /// TranslationProvider(
-///   child: MyApp()
+/// 	child: MyApp()
 /// );
 ///
 /// Step 2:

@@ -50,6 +50,10 @@ class _SettingsMenuPageState extends State<SettingsMenuPage> {
         onTap: (context) => const GeneralSettingsRoute().push(context),
       ),
       SettingsItem.submenu(
+        title: t.settings.system.title,
+        onTap: (context) => const SystemSettingsRoute().push(context),
+      ),
+      SettingsItem.submenu(
         title: t.settings.graphics.title,
         onTap: (context) => const GraphicsSettingsRoute().push(context),
       ),

@@ -239,6 +239,8 @@ class Translations$settings$en {
       Translations$settings$general$en.internal(_root);
   late final Translations$settings$graphics$en graphics =
       Translations$settings$graphics$en.internal(_root);
+  late final Translations$settings$system$en system =
+      Translations$settings$system$en.internal(_root);
 }
 
 // Path: setup.welcome
@@ -720,6 +722,625 @@ class Translations$settings$graphics$en {
   String get textureSamplingLinear => 'Linear';
 }
 
+// Path: settings.system
+class Translations$settings$system$en {
+  Translations$settings$system$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'System'
+  String get title => 'System';
+
+  /// en: 'Emulation Settings'
+  String get emulationSettings => 'Emulation Settings';
+
+  /// en: 'New 3DS Mode'
+  String get new3ds => 'New 3DS Mode';
+
+  /// en: 'Enables New 3DS exclusive features that are not present on the Old 3DS.'
+  String get new3dsDescription =>
+      'Enables New 3DS exclusive features that are not present on the Old 3DS.';
+
+  /// en: 'LLE Applets'
+  String get lleApplets => 'LLE Applets';
+
+  /// en: 'Uses low level emulation of the system applets when available, instead of high level emulation.'
+  String get lleAppletsDescription =>
+      'Uses low level emulation of the system applets when available, instead of high level emulation.';
+
+  /// en: 'Enable Required Online LLE Modules'
+  String get requiredOnlineLleModules => 'Enable Required Online LLE Modules';
+
+  /// en: 'Uses low level emulation for modules required for online features, even if LLE Applets is disabled.'
+  String get requiredOnlineLleModulesDescription =>
+      'Uses low level emulation for modules required for online features, even if LLE Applets is disabled.';
+
+  /// en: 'Profile Settings'
+  String get profileSettings => 'Profile Settings';
+
+  /// en: 'Emulated Region'
+  String get emulatedRegion => 'Emulated Region';
+
+  /// en: 'Auto-Select'
+  String get regionAutoSelect => 'Auto-Select';
+
+  /// en: 'JPN'
+  String get regionJapan => 'JPN';
+
+  /// en: 'USA'
+  String get regionUsa => 'USA';
+
+  /// en: 'EUR'
+  String get regionEurope => 'EUR';
+
+  /// en: 'AUS'
+  String get regionAustralia => 'AUS';
+
+  /// en: 'CHN'
+  String get regionChina => 'CHN';
+
+  /// en: 'KOR'
+  String get regionKorea => 'KOR';
+
+  /// en: 'TWN'
+  String get regionTaiwan => 'TWN';
+
+  /// en: 'Country'
+  String get country => 'Country';
+
+  /// en: 'Emulated Language'
+  String get emulatedLanguage => 'Emulated Language';
+
+  /// en: 'Japanese (日本語)'
+  String get languageJapanese => 'Japanese (日本語)';
+
+  /// en: 'English'
+  String get languageEnglish => 'English';
+
+  /// en: 'French (Français)'
+  String get languageFrench => 'French (Français)';
+
+  /// en: 'German (Deutsch)'
+  String get languageGerman => 'German (Deutsch)';
+
+  /// en: 'Italian (Italiano)'
+  String get languageItalian => 'Italian (Italiano)';
+
+  /// en: 'Spanish (Español)'
+  String get languageSpanish => 'Spanish (Español)';
+
+  /// en: 'Simplified Chinese (简体中文)'
+  String get languageSimplifiedChinese => 'Simplified Chinese (简体中文)';
+
+  /// en: 'Korean (한국어)'
+  String get languageKorean => 'Korean (한국어)';
+
+  /// en: 'Dutch (Nederlands)'
+  String get languageDutch => 'Dutch (Nederlands)';
+
+  /// en: 'Portuguese (Português)'
+  String get languagePortuguese => 'Portuguese (Português)';
+
+  /// en: 'Russian (Русский)'
+  String get languageRussian => 'Russian (Русский)';
+
+  /// en: 'Traditional Chinese (正體中文)'
+  String get languageTraditionalChinese => 'Traditional Chinese (正體中文)';
+
+  /// en: 'Username'
+  String get username => 'Username';
+
+  /// en: 'Play Coins'
+  String get playCoins => 'Play Coins';
+
+  /// en: 'Steps per Hour'
+  String get stepsPerHour => 'Steps per Hour';
+
+  /// en: 'The average number of steps to be generated per hour, for pedometer-based features.'
+  String get stepsPerHourDescription =>
+      'The average number of steps to be generated per hour, for pedometer-based features.';
+
+  /// en: 'Scan for Real Wi-Fi Networks'
+  String get scanRealWifiNetworks => 'Scan for Real Wi-Fi Networks';
+
+  /// en: 'Reports real nearby Wi-Fi networks as 3DS StreetPass/SpotPass-compatible networks, instead of fake ones.'
+  String get scanRealWifiNetworksDescription =>
+      'Reports real nearby Wi-Fi networks as 3DS StreetPass/SpotPass-compatible networks, instead of fake ones.';
+
+  /// en: 'Console ID'
+  String get consoleId => 'Console ID';
+
+  /// en: 'Tap to regenerate the console ID. Some applications may use this as a form of parental lock.'
+  String get consoleIdDescription =>
+      'Tap to regenerate the console ID. Some applications may use this as a form of parental lock.';
+
+  /// en: 'MAC Address'
+  String get macAddress => 'MAC Address';
+
+  /// en: 'Tap to regenerate the network MAC address.'
+  String get macAddressDescription =>
+      'Tap to regenerate the network MAC address.';
+
+  /// en: 'Birthday'
+  String get birthday => 'Birthday';
+
+  /// en: 'Birthday Month'
+  String get birthdayMonth => 'Birthday Month';
+
+  /// en: 'Birthday Day'
+  String get birthdayDay => 'Birthday Day';
+
+  /// en: 'January'
+  String get monthJanuary => 'January';
+
+  /// en: 'February'
+  String get monthFebruary => 'February';
+
+  /// en: 'March'
+  String get monthMarch => 'March';
+
+  /// en: 'April'
+  String get monthApril => 'April';
+
+  /// en: 'May'
+  String get monthMay => 'May';
+
+  /// en: 'June'
+  String get monthJune => 'June';
+
+  /// en: 'July'
+  String get monthJuly => 'July';
+
+  /// en: 'August'
+  String get monthAugust => 'August';
+
+  /// en: 'September'
+  String get monthSeptember => 'September';
+
+  /// en: 'October'
+  String get monthOctober => 'October';
+
+  /// en: 'November'
+  String get monthNovember => 'November';
+
+  /// en: 'December'
+  String get monthDecember => 'December';
+
+  /// en: 'Clock'
+  String get clock => 'Clock';
+
+  /// en: 'Initial Clock'
+  String get initClock => 'Initial Clock';
+
+  /// en: 'Device Clock'
+  String get initClockDeviceClock => 'Device Clock';
+
+  /// en: 'Simulated Clock'
+  String get initClockSimulatedClock => 'Simulated Clock';
+
+  /// en: 'Simulated Clock'
+  String get simulatedClock => 'Simulated Clock';
+
+  /// en: 'Plugin Loader'
+  String get pluginLoader => 'Plugin Loader';
+
+  /// en: 'Plugin Loader'
+  String get pluginLoaderEnable => 'Plugin Loader';
+
+  /// en: 'Allows arbitrary plugins to be loaded into the emulated game.'
+  String get pluginLoaderEnableDescription =>
+      'Allows arbitrary plugins to be loaded into the emulated game.';
+
+  /// en: 'Allow Plugin Loader'
+  String get allowPluginLoader => 'Allow Plugin Loader';
+
+  /// en: 'Allows the game itself to request plugins to be loaded.'
+  String get allowPluginLoaderDescription =>
+      'Allows the game itself to request plugins to be loaded.';
+
+  /// en: 'Japan'
+  String get countryJapan => 'Japan';
+
+  /// en: 'Anguilla'
+  String get countryAnguilla => 'Anguilla';
+
+  /// en: 'Antigua and Barbuda'
+  String get countryAntiguaAndBarbuda => 'Antigua and Barbuda';
+
+  /// en: 'Argentina'
+  String get countryArgentina => 'Argentina';
+
+  /// en: 'Aruba'
+  String get countryAruba => 'Aruba';
+
+  /// en: 'Bahamas'
+  String get countryBahamas => 'Bahamas';
+
+  /// en: 'Barbados'
+  String get countryBarbados => 'Barbados';
+
+  /// en: 'Belize'
+  String get countryBelize => 'Belize';
+
+  /// en: 'Bolivia'
+  String get countryBolivia => 'Bolivia';
+
+  /// en: 'Brazil'
+  String get countryBrazil => 'Brazil';
+
+  /// en: 'British Virgin Islands'
+  String get countryBritishVirginIslands => 'British Virgin Islands';
+
+  /// en: 'Canada'
+  String get countryCanada => 'Canada';
+
+  /// en: 'Cayman Islands'
+  String get countryCaymanIslands => 'Cayman Islands';
+
+  /// en: 'Chile'
+  String get countryChile => 'Chile';
+
+  /// en: 'Colombia'
+  String get countryColombia => 'Colombia';
+
+  /// en: 'Costa Rica'
+  String get countryCostaRica => 'Costa Rica';
+
+  /// en: 'Dominica'
+  String get countryDominica => 'Dominica';
+
+  /// en: 'Dominican Republic'
+  String get countryDominicanRepublic => 'Dominican Republic';
+
+  /// en: 'Ecuador'
+  String get countryEcuador => 'Ecuador';
+
+  /// en: 'El Salvador'
+  String get countryElSalvador => 'El Salvador';
+
+  /// en: 'French Guiana'
+  String get countryFrenchGuiana => 'French Guiana';
+
+  /// en: 'Grenada'
+  String get countryGrenada => 'Grenada';
+
+  /// en: 'Guadeloupe'
+  String get countryGuadeloupe => 'Guadeloupe';
+
+  /// en: 'Guatemala'
+  String get countryGuatemala => 'Guatemala';
+
+  /// en: 'Guyana'
+  String get countryGuyana => 'Guyana';
+
+  /// en: 'Haiti'
+  String get countryHaiti => 'Haiti';
+
+  /// en: 'Honduras'
+  String get countryHonduras => 'Honduras';
+
+  /// en: 'Jamaica'
+  String get countryJamaica => 'Jamaica';
+
+  /// en: 'Martinique'
+  String get countryMartinique => 'Martinique';
+
+  /// en: 'Mexico'
+  String get countryMexico => 'Mexico';
+
+  /// en: 'Montserrat'
+  String get countryMontserrat => 'Montserrat';
+
+  /// en: 'Netherlands Antilles'
+  String get countryNetherlandsAntilles => 'Netherlands Antilles';
+
+  /// en: 'Nicaragua'
+  String get countryNicaragua => 'Nicaragua';
+
+  /// en: 'Panama'
+  String get countryPanama => 'Panama';
+
+  /// en: 'Paraguay'
+  String get countryParaguay => 'Paraguay';
+
+  /// en: 'Peru'
+  String get countryPeru => 'Peru';
+
+  /// en: 'Saint Kitts and Nevis'
+  String get countrySaintKittsAndNevis => 'Saint Kitts and Nevis';
+
+  /// en: 'Saint Lucia'
+  String get countrySaintLucia => 'Saint Lucia';
+
+  /// en: 'Saint Vincent and the Grenadines'
+  String get countrySaintVincentAndTheGrenadines =>
+      'Saint Vincent and the Grenadines';
+
+  /// en: 'Suriname'
+  String get countrySuriname => 'Suriname';
+
+  /// en: 'Trinidad and Tobago'
+  String get countryTrinidadAndTobago => 'Trinidad and Tobago';
+
+  /// en: 'Turks and Caicos Islands'
+  String get countryTurksAndCaicosIslands => 'Turks and Caicos Islands';
+
+  /// en: 'United States'
+  String get countryUnitedStates => 'United States';
+
+  /// en: 'Uruguay'
+  String get countryUruguay => 'Uruguay';
+
+  /// en: 'US Virgin Islands'
+  String get countryUsVirginIslands => 'US Virgin Islands';
+
+  /// en: 'Venezuela'
+  String get countryVenezuela => 'Venezuela';
+
+  /// en: 'Albania'
+  String get countryAlbania => 'Albania';
+
+  /// en: 'Australia'
+  String get countryAustralia => 'Australia';
+
+  /// en: 'Austria'
+  String get countryAustria => 'Austria';
+
+  /// en: 'Belgium'
+  String get countryBelgium => 'Belgium';
+
+  /// en: 'Bosnia and Herzegovina'
+  String get countryBosniaAndHerzegovina => 'Bosnia and Herzegovina';
+
+  /// en: 'Botswana'
+  String get countryBotswana => 'Botswana';
+
+  /// en: 'Bulgaria'
+  String get countryBulgaria => 'Bulgaria';
+
+  /// en: 'Croatia'
+  String get countryCroatia => 'Croatia';
+
+  /// en: 'Cyprus'
+  String get countryCyprus => 'Cyprus';
+
+  /// en: 'Czech Republic'
+  String get countryCzechRepublic => 'Czech Republic';
+
+  /// en: 'Denmark'
+  String get countryDenmark => 'Denmark';
+
+  /// en: 'Estonia'
+  String get countryEstonia => 'Estonia';
+
+  /// en: 'Finland'
+  String get countryFinland => 'Finland';
+
+  /// en: 'France'
+  String get countryFrance => 'France';
+
+  /// en: 'Germany'
+  String get countryGermany => 'Germany';
+
+  /// en: 'Greece'
+  String get countryGreece => 'Greece';
+
+  /// en: 'Hungary'
+  String get countryHungary => 'Hungary';
+
+  /// en: 'Iceland'
+  String get countryIceland => 'Iceland';
+
+  /// en: 'Ireland'
+  String get countryIreland => 'Ireland';
+
+  /// en: 'Italy'
+  String get countryItaly => 'Italy';
+
+  /// en: 'Latvia'
+  String get countryLatvia => 'Latvia';
+
+  /// en: 'Lesotho'
+  String get countryLesotho => 'Lesotho';
+
+  /// en: 'Liechtenstein'
+  String get countryLiechtenstein => 'Liechtenstein';
+
+  /// en: 'Lithuania'
+  String get countryLithuania => 'Lithuania';
+
+  /// en: 'Luxembourg'
+  String get countryLuxembourg => 'Luxembourg';
+
+  /// en: 'Macedonia'
+  String get countryMacedonia => 'Macedonia';
+
+  /// en: 'Malta'
+  String get countryMalta => 'Malta';
+
+  /// en: 'Montenegro'
+  String get countryMontenegro => 'Montenegro';
+
+  /// en: 'Mozambique'
+  String get countryMozambique => 'Mozambique';
+
+  /// en: 'Namibia'
+  String get countryNamibia => 'Namibia';
+
+  /// en: 'Netherlands'
+  String get countryNetherlands => 'Netherlands';
+
+  /// en: 'New Zealand'
+  String get countryNewZealand => 'New Zealand';
+
+  /// en: 'Norway'
+  String get countryNorway => 'Norway';
+
+  /// en: 'Poland'
+  String get countryPoland => 'Poland';
+
+  /// en: 'Portugal'
+  String get countryPortugal => 'Portugal';
+
+  /// en: 'Romania'
+  String get countryRomania => 'Romania';
+
+  /// en: 'Russia'
+  String get countryRussia => 'Russia';
+
+  /// en: 'Serbia'
+  String get countrySerbia => 'Serbia';
+
+  /// en: 'Slovakia'
+  String get countrySlovakia => 'Slovakia';
+
+  /// en: 'Slovenia'
+  String get countrySlovenia => 'Slovenia';
+
+  /// en: 'South Africa'
+  String get countrySouthAfrica => 'South Africa';
+
+  /// en: 'Spain'
+  String get countrySpain => 'Spain';
+
+  /// en: 'Swaziland'
+  String get countrySwaziland => 'Swaziland';
+
+  /// en: 'Sweden'
+  String get countrySweden => 'Sweden';
+
+  /// en: 'Switzerland'
+  String get countrySwitzerland => 'Switzerland';
+
+  /// en: 'Turkey'
+  String get countryTurkey => 'Turkey';
+
+  /// en: 'United Kingdom'
+  String get countryUnitedKingdom => 'United Kingdom';
+
+  /// en: 'Zambia'
+  String get countryZambia => 'Zambia';
+
+  /// en: 'Zimbabwe'
+  String get countryZimbabwe => 'Zimbabwe';
+
+  /// en: 'Azerbaijan'
+  String get countryAzerbaijan => 'Azerbaijan';
+
+  /// en: 'Mauritania'
+  String get countryMauritania => 'Mauritania';
+
+  /// en: 'Mali'
+  String get countryMali => 'Mali';
+
+  /// en: 'Niger'
+  String get countryNiger => 'Niger';
+
+  /// en: 'Chad'
+  String get countryChad => 'Chad';
+
+  /// en: 'Sudan'
+  String get countrySudan => 'Sudan';
+
+  /// en: 'Eritrea'
+  String get countryEritrea => 'Eritrea';
+
+  /// en: 'Djibouti'
+  String get countryDjibouti => 'Djibouti';
+
+  /// en: 'Somalia'
+  String get countrySomalia => 'Somalia';
+
+  /// en: 'Andorra'
+  String get countryAndorra => 'Andorra';
+
+  /// en: 'Gibraltar'
+  String get countryGibraltar => 'Gibraltar';
+
+  /// en: 'Guernsey'
+  String get countryGuernsey => 'Guernsey';
+
+  /// en: 'Isle of Man'
+  String get countryIsleOfMan => 'Isle of Man';
+
+  /// en: 'Jersey'
+  String get countryJersey => 'Jersey';
+
+  /// en: 'Monaco'
+  String get countryMonaco => 'Monaco';
+
+  /// en: 'Taiwan'
+  String get countryTaiwan => 'Taiwan';
+
+  /// en: 'South Korea'
+  String get countrySouthKorea => 'South Korea';
+
+  /// en: 'Hong Kong'
+  String get countryHongKong => 'Hong Kong';
+
+  /// en: 'Macau'
+  String get countryMacau => 'Macau';
+
+  /// en: 'Indonesia'
+  String get countryIndonesia => 'Indonesia';
+
+  /// en: 'Singapore'
+  String get countrySingapore => 'Singapore';
+
+  /// en: 'Thailand'
+  String get countryThailand => 'Thailand';
+
+  /// en: 'Philippines'
+  String get countryPhilippines => 'Philippines';
+
+  /// en: 'Malaysia'
+  String get countryMalaysia => 'Malaysia';
+
+  /// en: 'China'
+  String get countryChina => 'China';
+
+  /// en: 'United Arab Emirates'
+  String get countryUnitedArabEmirates => 'United Arab Emirates';
+
+  /// en: 'India'
+  String get countryIndia => 'India';
+
+  /// en: 'Egypt'
+  String get countryEgypt => 'Egypt';
+
+  /// en: 'Oman'
+  String get countryOman => 'Oman';
+
+  /// en: 'Qatar'
+  String get countryQatar => 'Qatar';
+
+  /// en: 'Kuwait'
+  String get countryKuwait => 'Kuwait';
+
+  /// en: 'Saudi Arabia'
+  String get countrySaudiArabia => 'Saudi Arabia';
+
+  /// en: 'Syria'
+  String get countrySyria => 'Syria';
+
+  /// en: 'Bahrain'
+  String get countryBahrain => 'Bahrain';
+
+  /// en: 'Jordan'
+  String get countryJordan => 'Jordan';
+
+  /// en: 'San Marino'
+  String get countrySanMarino => 'San Marino';
+
+  /// en: 'Vatican City'
+  String get countryVaticanCity => 'Vatican City';
+
+  /// en: 'Bermuda'
+  String get countryBermuda => 'Bermuda';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -906,6 +1527,220 @@ extension on Translations {
       'settings.graphics.textureSamplingGameControlled' => 'Game Controlled',
       'settings.graphics.textureSamplingNearestNeighbor' => 'Nearest Neighbor',
       'settings.graphics.textureSamplingLinear' => 'Linear',
+      'settings.system.title' => 'System',
+      'settings.system.emulationSettings' => 'Emulation Settings',
+      'settings.system.new3ds' => 'New 3DS Mode',
+      'settings.system.new3dsDescription' =>
+        'Enables New 3DS exclusive features that are not present on the Old 3DS.',
+      'settings.system.lleApplets' => 'LLE Applets',
+      'settings.system.lleAppletsDescription' =>
+        'Uses low level emulation of the system applets when available, instead of high level emulation.',
+      'settings.system.requiredOnlineLleModules' =>
+        'Enable Required Online LLE Modules',
+      'settings.system.requiredOnlineLleModulesDescription' =>
+        'Uses low level emulation for modules required for online features, even if LLE Applets is disabled.',
+      'settings.system.profileSettings' => 'Profile Settings',
+      'settings.system.emulatedRegion' => 'Emulated Region',
+      'settings.system.regionAutoSelect' => 'Auto-Select',
+      'settings.system.regionJapan' => 'JPN',
+      'settings.system.regionUsa' => 'USA',
+      'settings.system.regionEurope' => 'EUR',
+      'settings.system.regionAustralia' => 'AUS',
+      'settings.system.regionChina' => 'CHN',
+      'settings.system.regionKorea' => 'KOR',
+      'settings.system.regionTaiwan' => 'TWN',
+      'settings.system.country' => 'Country',
+      'settings.system.emulatedLanguage' => 'Emulated Language',
+      'settings.system.languageJapanese' => 'Japanese (日本語)',
+      'settings.system.languageEnglish' => 'English',
+      'settings.system.languageFrench' => 'French (Français)',
+      'settings.system.languageGerman' => 'German (Deutsch)',
+      'settings.system.languageItalian' => 'Italian (Italiano)',
+      'settings.system.languageSpanish' => 'Spanish (Español)',
+      'settings.system.languageSimplifiedChinese' =>
+        'Simplified Chinese (简体中文)',
+      'settings.system.languageKorean' => 'Korean (한국어)',
+      'settings.system.languageDutch' => 'Dutch (Nederlands)',
+      'settings.system.languagePortuguese' => 'Portuguese (Português)',
+      'settings.system.languageRussian' => 'Russian (Русский)',
+      'settings.system.languageTraditionalChinese' =>
+        'Traditional Chinese (正體中文)',
+      'settings.system.username' => 'Username',
+      'settings.system.playCoins' => 'Play Coins',
+      'settings.system.stepsPerHour' => 'Steps per Hour',
+      'settings.system.stepsPerHourDescription' =>
+        'The average number of steps to be generated per hour, for pedometer-based features.',
+      'settings.system.scanRealWifiNetworks' => 'Scan for Real Wi-Fi Networks',
+      'settings.system.scanRealWifiNetworksDescription' =>
+        'Reports real nearby Wi-Fi networks as 3DS StreetPass/SpotPass-compatible networks, instead of fake ones.',
+      'settings.system.consoleId' => 'Console ID',
+      'settings.system.consoleIdDescription' =>
+        'Tap to regenerate the console ID. Some applications may use this as a form of parental lock.',
+      'settings.system.macAddress' => 'MAC Address',
+      'settings.system.macAddressDescription' =>
+        'Tap to regenerate the network MAC address.',
+      'settings.system.birthday' => 'Birthday',
+      'settings.system.birthdayMonth' => 'Birthday Month',
+      'settings.system.birthdayDay' => 'Birthday Day',
+      'settings.system.monthJanuary' => 'January',
+      'settings.system.monthFebruary' => 'February',
+      'settings.system.monthMarch' => 'March',
+      'settings.system.monthApril' => 'April',
+      'settings.system.monthMay' => 'May',
+      'settings.system.monthJune' => 'June',
+      'settings.system.monthJuly' => 'July',
+      'settings.system.monthAugust' => 'August',
+      'settings.system.monthSeptember' => 'September',
+      'settings.system.monthOctober' => 'October',
+      'settings.system.monthNovember' => 'November',
+      'settings.system.monthDecember' => 'December',
+      'settings.system.clock' => 'Clock',
+      'settings.system.initClock' => 'Initial Clock',
+      'settings.system.initClockDeviceClock' => 'Device Clock',
+      'settings.system.initClockSimulatedClock' => 'Simulated Clock',
+      'settings.system.simulatedClock' => 'Simulated Clock',
+      'settings.system.pluginLoader' => 'Plugin Loader',
+      'settings.system.pluginLoaderEnable' => 'Plugin Loader',
+      'settings.system.pluginLoaderEnableDescription' =>
+        'Allows arbitrary plugins to be loaded into the emulated game.',
+      'settings.system.allowPluginLoader' => 'Allow Plugin Loader',
+      'settings.system.allowPluginLoaderDescription' =>
+        'Allows the game itself to request plugins to be loaded.',
+      'settings.system.countryJapan' => 'Japan',
+      'settings.system.countryAnguilla' => 'Anguilla',
+      'settings.system.countryAntiguaAndBarbuda' => 'Antigua and Barbuda',
+      'settings.system.countryArgentina' => 'Argentina',
+      'settings.system.countryAruba' => 'Aruba',
+      'settings.system.countryBahamas' => 'Bahamas',
+      'settings.system.countryBarbados' => 'Barbados',
+      'settings.system.countryBelize' => 'Belize',
+      'settings.system.countryBolivia' => 'Bolivia',
+      'settings.system.countryBrazil' => 'Brazil',
+      'settings.system.countryBritishVirginIslands' => 'British Virgin Islands',
+      'settings.system.countryCanada' => 'Canada',
+      'settings.system.countryCaymanIslands' => 'Cayman Islands',
+      'settings.system.countryChile' => 'Chile',
+      'settings.system.countryColombia' => 'Colombia',
+      'settings.system.countryCostaRica' => 'Costa Rica',
+      'settings.system.countryDominica' => 'Dominica',
+      'settings.system.countryDominicanRepublic' => 'Dominican Republic',
+      'settings.system.countryEcuador' => 'Ecuador',
+      'settings.system.countryElSalvador' => 'El Salvador',
+      'settings.system.countryFrenchGuiana' => 'French Guiana',
+      'settings.system.countryGrenada' => 'Grenada',
+      'settings.system.countryGuadeloupe' => 'Guadeloupe',
+      'settings.system.countryGuatemala' => 'Guatemala',
+      'settings.system.countryGuyana' => 'Guyana',
+      'settings.system.countryHaiti' => 'Haiti',
+      'settings.system.countryHonduras' => 'Honduras',
+      'settings.system.countryJamaica' => 'Jamaica',
+      'settings.system.countryMartinique' => 'Martinique',
+      'settings.system.countryMexico' => 'Mexico',
+      'settings.system.countryMontserrat' => 'Montserrat',
+      'settings.system.countryNetherlandsAntilles' => 'Netherlands Antilles',
+      'settings.system.countryNicaragua' => 'Nicaragua',
+      'settings.system.countryPanama' => 'Panama',
+      'settings.system.countryParaguay' => 'Paraguay',
+      'settings.system.countryPeru' => 'Peru',
+      'settings.system.countrySaintKittsAndNevis' => 'Saint Kitts and Nevis',
+      'settings.system.countrySaintLucia' => 'Saint Lucia',
+      'settings.system.countrySaintVincentAndTheGrenadines' =>
+        'Saint Vincent and the Grenadines',
+      'settings.system.countrySuriname' => 'Suriname',
+      'settings.system.countryTrinidadAndTobago' => 'Trinidad and Tobago',
+      'settings.system.countryTurksAndCaicosIslands' =>
+        'Turks and Caicos Islands',
+      'settings.system.countryUnitedStates' => 'United States',
+      'settings.system.countryUruguay' => 'Uruguay',
+      'settings.system.countryUsVirginIslands' => 'US Virgin Islands',
+      'settings.system.countryVenezuela' => 'Venezuela',
+      'settings.system.countryAlbania' => 'Albania',
+      'settings.system.countryAustralia' => 'Australia',
+      'settings.system.countryAustria' => 'Austria',
+      'settings.system.countryBelgium' => 'Belgium',
+      'settings.system.countryBosniaAndHerzegovina' => 'Bosnia and Herzegovina',
+      'settings.system.countryBotswana' => 'Botswana',
+      'settings.system.countryBulgaria' => 'Bulgaria',
+      'settings.system.countryCroatia' => 'Croatia',
+      'settings.system.countryCyprus' => 'Cyprus',
+      'settings.system.countryCzechRepublic' => 'Czech Republic',
+      'settings.system.countryDenmark' => 'Denmark',
+      'settings.system.countryEstonia' => 'Estonia',
+      'settings.system.countryFinland' => 'Finland',
+      'settings.system.countryFrance' => 'France',
+      'settings.system.countryGermany' => 'Germany',
+      'settings.system.countryGreece' => 'Greece',
+      'settings.system.countryHungary' => 'Hungary',
+      'settings.system.countryIceland' => 'Iceland',
+      'settings.system.countryIreland' => 'Ireland',
+      'settings.system.countryItaly' => 'Italy',
+      'settings.system.countryLatvia' => 'Latvia',
+      'settings.system.countryLesotho' => 'Lesotho',
+      'settings.system.countryLiechtenstein' => 'Liechtenstein',
+      'settings.system.countryLithuania' => 'Lithuania',
+      'settings.system.countryLuxembourg' => 'Luxembourg',
+      'settings.system.countryMacedonia' => 'Macedonia',
+      'settings.system.countryMalta' => 'Malta',
+      'settings.system.countryMontenegro' => 'Montenegro',
+      'settings.system.countryMozambique' => 'Mozambique',
+      'settings.system.countryNamibia' => 'Namibia',
+      'settings.system.countryNetherlands' => 'Netherlands',
+      'settings.system.countryNewZealand' => 'New Zealand',
+      'settings.system.countryNorway' => 'Norway',
+      'settings.system.countryPoland' => 'Poland',
+      'settings.system.countryPortugal' => 'Portugal',
+      'settings.system.countryRomania' => 'Romania',
+      'settings.system.countryRussia' => 'Russia',
+      'settings.system.countrySerbia' => 'Serbia',
+      'settings.system.countrySlovakia' => 'Slovakia',
+      'settings.system.countrySlovenia' => 'Slovenia',
+      'settings.system.countrySouthAfrica' => 'South Africa',
+      'settings.system.countrySpain' => 'Spain',
+      'settings.system.countrySwaziland' => 'Swaziland',
+      'settings.system.countrySweden' => 'Sweden',
+      'settings.system.countrySwitzerland' => 'Switzerland',
+      'settings.system.countryTurkey' => 'Turkey',
+      'settings.system.countryUnitedKingdom' => 'United Kingdom',
+      'settings.system.countryZambia' => 'Zambia',
+      'settings.system.countryZimbabwe' => 'Zimbabwe',
+      'settings.system.countryAzerbaijan' => 'Azerbaijan',
+      'settings.system.countryMauritania' => 'Mauritania',
+      'settings.system.countryMali' => 'Mali',
+      'settings.system.countryNiger' => 'Niger',
+      'settings.system.countryChad' => 'Chad',
+      'settings.system.countrySudan' => 'Sudan',
+      'settings.system.countryEritrea' => 'Eritrea',
+      'settings.system.countryDjibouti' => 'Djibouti',
+      'settings.system.countrySomalia' => 'Somalia',
+      'settings.system.countryAndorra' => 'Andorra',
+      'settings.system.countryGibraltar' => 'Gibraltar',
+      'settings.system.countryGuernsey' => 'Guernsey',
+      'settings.system.countryIsleOfMan' => 'Isle of Man',
+      'settings.system.countryJersey' => 'Jersey',
+      'settings.system.countryMonaco' => 'Monaco',
+      'settings.system.countryTaiwan' => 'Taiwan',
+      'settings.system.countrySouthKorea' => 'South Korea',
+      'settings.system.countryHongKong' => 'Hong Kong',
+      'settings.system.countryMacau' => 'Macau',
+      'settings.system.countryIndonesia' => 'Indonesia',
+      'settings.system.countrySingapore' => 'Singapore',
+      'settings.system.countryThailand' => 'Thailand',
+      'settings.system.countryPhilippines' => 'Philippines',
+      'settings.system.countryMalaysia' => 'Malaysia',
+      'settings.system.countryChina' => 'China',
+      'settings.system.countryUnitedArabEmirates' => 'United Arab Emirates',
+      'settings.system.countryIndia' => 'India',
+      'settings.system.countryEgypt' => 'Egypt',
+      'settings.system.countryOman' => 'Oman',
+      'settings.system.countryQatar' => 'Qatar',
+      'settings.system.countryKuwait' => 'Kuwait',
+      'settings.system.countrySaudiArabia' => 'Saudi Arabia',
+      'settings.system.countrySyria' => 'Syria',
+      'settings.system.countryBahrain' => 'Bahrain',
+      'settings.system.countryJordan' => 'Jordan',
+      'settings.system.countrySanMarino' => 'San Marino',
+      'settings.system.countryVaticanCity' => 'Vatican City',
+      'settings.system.countryBermuda' => 'Bermuda',
       _ => null,
     };
   }
