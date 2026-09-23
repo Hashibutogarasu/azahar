@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../screens/games/games_list_page.dart';
 import '../screens/home/app_shell.dart';
+import '../screens/options/about_page.dart';
 import '../screens/options/options_page.dart';
 import '../screens/setup/setup_wizard_page.dart';
 
@@ -15,6 +16,16 @@ class SetupRoute extends GoRouteData with $SetupRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const SetupWizardPage();
+  }
+}
+
+@TypedGoRoute<AboutRoute>(path: '/about')
+class AboutRoute extends GoRouteData with $AboutRoute {
+  const AboutRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const AboutPage();
   }
 }
 

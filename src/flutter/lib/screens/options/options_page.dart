@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/settings/user_directories_provider.dart';
 import '../../i18n/translations.g.dart';
+import '../../routing/app_routes.dart';
 import '../settings/settings_routes.dart';
 import '../setup/dialogs/citra_directory_dialog.dart';
 import '../setup/dialogs/copy_dir_progress_dialog.dart';
@@ -49,6 +50,12 @@ class OptionsPage extends ConsumerWidget {
               title: t.options.selectGamesFolder,
               description: t.options.selectGamesFolderDescription,
               onTap: () => _selectGamesFolder(context, ref.read(userDirectoriesProvider)),
+            ),
+            _OptionCard(
+              icon: Icons.info_outline,
+              title: t.options.about,
+              description: t.options.aboutDescription,
+              onTap: () => const AboutRoute().push(context),
             ),
           ],
         ),

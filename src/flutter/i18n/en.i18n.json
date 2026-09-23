@@ -92,7 +92,18 @@
     "selectUserFolder": "Select Azahar User Folder",
     "selectUserFolderDescription": "Change the folder Azahar stores its user data in",
     "selectGamesFolder": "Select Applications Folder",
-    "selectGamesFolderDescription": "Change the folder Azahar looks for applications in"
+    "selectGamesFolderDescription": "Change the folder Azahar looks for applications in",
+    "about": "About",
+    "aboutDescription": "View app info, credits and licenses"
+  },
+  "about": {
+    "title": "About",
+    "description": "An open-source 3DS emulator",
+    "contributors": "Contributors",
+    "contributorsDescription": "Contributors who made Azahar possible",
+    "licenses": "Licenses",
+    "licensesDescription": "Projects used by Azahar",
+    "build": "Build"
   },
   "settings": {
     "title": "Settings",

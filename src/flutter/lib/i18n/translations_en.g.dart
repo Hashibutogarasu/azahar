@@ -73,6 +73,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$options$en options = Translations$options$en.internal(
     _root,
   );
+  late final Translations$about$en about = Translations$about$en.internal(
+    _root,
+  );
   late final Translations$settings$en settings =
       Translations$settings$en.internal(_root);
 }
@@ -240,6 +243,42 @@ class Translations$options$en {
   /// en: 'Change the folder Azahar looks for applications in'
   String get selectGamesFolderDescription =>
       'Change the folder Azahar looks for applications in';
+
+  /// en: 'About'
+  String get about => 'About';
+
+  /// en: 'View app info, credits and licenses'
+  String get aboutDescription => 'View app info, credits and licenses';
+}
+
+// Path: about
+class Translations$about$en {
+  Translations$about$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'About'
+  String get title => 'About';
+
+  /// en: 'An open-source 3DS emulator'
+  String get description => 'An open-source 3DS emulator';
+
+  /// en: 'Contributors'
+  String get contributors => 'Contributors';
+
+  /// en: 'Contributors who made Azahar possible'
+  String get contributorsDescription => 'Contributors who made Azahar possible';
+
+  /// en: 'Licenses'
+  String get licenses => 'Licenses';
+
+  /// en: 'Projects used by Azahar'
+  String get licensesDescription => 'Projects used by Azahar';
+
+  /// en: 'Build'
+  String get build => 'Build';
 }
 
 // Path: settings
@@ -1984,6 +2023,16 @@ extension on Translations {
       'options.selectGamesFolder' => 'Select Applications Folder',
       'options.selectGamesFolderDescription' =>
         'Change the folder Azahar looks for applications in',
+      'options.about' => 'About',
+      'options.aboutDescription' => 'View app info, credits and licenses',
+      'about.title' => 'About',
+      'about.description' => 'An open-source 3DS emulator',
+      'about.contributors' => 'Contributors',
+      'about.contributorsDescription' =>
+        'Contributors who made Azahar possible',
+      'about.licenses' => 'Licenses',
+      'about.licensesDescription' => 'Projects used by Azahar',
+      'about.build' => 'Build',
       'settings.title' => 'Settings',
       'settings.resetToDefault' => 'Reset to Default',
       'settings.resetToDefaultDialog.title' => 'Reset to Default?',
