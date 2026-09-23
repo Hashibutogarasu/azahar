@@ -169,6 +169,14 @@ List<SettingsItem> buildSystemSettingsItems(
       units: '',
       store: systemSaveStore,
     ),
+    SettingsItem.header(title: s.clock),
+    SettingsItem.singleChoice(
+      title: s.initClock,
+      setting: SystemSettingKeys.initClock,
+      choiceLabels: [s.initClockDeviceClock, s.initClockSimulatedClock],
+      choiceValues: const [0, 1],
+    ),
+    SettingsItem.dateTime(title: s.simulatedClock, setting: SystemSettingKeys.initTime),
   ];
 }
 
