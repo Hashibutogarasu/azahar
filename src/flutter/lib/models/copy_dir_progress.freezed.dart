@@ -183,7 +183,7 @@ return copying(_that.filename,_that.progress,_that.max);case _:
 
 class CopyDirSearching implements CopyDirProgress {
   const CopyDirSearching(this.directoryName);
-
+  
 
  final  String directoryName;
 
@@ -249,7 +249,7 @@ as String,
 
 class CopyDirCopying implements CopyDirProgress {
   const CopyDirCopying(this.filename, this.progress, this.max);
-
+  
 
  final  String filename;
  final  int progress;

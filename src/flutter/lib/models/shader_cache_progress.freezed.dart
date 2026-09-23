@@ -210,7 +210,7 @@ return $default(_that.stage,_that.progress,_that.max);case _:
 
 class _ShaderCacheProgress implements ShaderCacheProgress {
   const _ShaderCacheProgress({required this.stage, required this.progress, required this.max});
-
+  
 
 @override final  ShaderCacheStage stage;
 @override final  int progress;

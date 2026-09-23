@@ -218,7 +218,7 @@ return $default(_that.title,_that.description,_that.path,_that.titleId,_that.com
 
 class _Game implements Game {
   const _Game({required this.title, required this.description, required this.path, required this.titleId, required this.company, required this.regions, required this.isInstalled, required this.isSystemTitle, required this.isVisibleSystemTitle, required this.filename, this.iconPath});
-
+  
 
 @override final  String title;
 @override final  String description;

@@ -41,7 +41,27 @@ abstract final class SettingsKeys {
   static const String gamePath = 'game_path';
 }
 
-@DriftDatabase(tables: [Games, AppSettings])
+class ControlBindings extends Table {
+  TextColumn get key => text()();
+  TextColumn get value => text()();
+
+  @override
+  Set<Column> get primaryKey => {key};
+}
+
+class InputLayoutElements extends Table {
+  TextColumn get orientation => text()();
+  TextColumn get elementId => text()();
+  IntColumn get x => integer()();
+  IntColumn get y => integer()();
+  IntColumn get width => integer()();
+  IntColumn get height => integer()();
+
+  @override
+  Set<Column> get primaryKey => {orientation, elementId};
+}
+
+@DriftDatabase(tables: [Games, AppSettings, ControlBindings, InputLayoutElements])
 class AppDatabase extends _$AppDatabase {
   AppDatabase._(super.e);
 

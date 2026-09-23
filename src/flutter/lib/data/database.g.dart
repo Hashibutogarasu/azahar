@@ -1019,16 +1019,640 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
   }
 }
 
+class $ControlBindingsTable extends ControlBindings
+    with TableInfo<$ControlBindingsTable, ControlBinding> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ControlBindingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _keyMeta = const VerificationMeta('key');
+  @override
+  late final GeneratedColumn<String> key = GeneratedColumn<String>(
+    'key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _valueMeta = const VerificationMeta('value');
+  @override
+  late final GeneratedColumn<String> value = GeneratedColumn<String>(
+    'value',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [key, value];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'control_bindings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ControlBinding> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('key')) {
+      context.handle(
+        _keyMeta,
+        key.isAcceptableOrUnknown(data['key']!, _keyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_keyMeta);
+    }
+    if (data.containsKey('value')) {
+      context.handle(
+        _valueMeta,
+        value.isAcceptableOrUnknown(data['value']!, _valueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_valueMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {key};
+  @override
+  ControlBinding map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ControlBinding(
+      key: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}key'],
+      )!,
+      value: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}value'],
+      )!,
+    );
+  }
+
+  @override
+  $ControlBindingsTable createAlias(String alias) {
+    return $ControlBindingsTable(attachedDatabase, alias);
+  }
+}
+
+class ControlBinding extends DataClass implements Insertable<ControlBinding> {
+  final String key;
+  final String value;
+  const ControlBinding({required this.key, required this.value});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['key'] = Variable<String>(key);
+    map['value'] = Variable<String>(value);
+    return map;
+  }
+
+  ControlBindingsCompanion toCompanion(bool nullToAbsent) {
+    return ControlBindingsCompanion(key: Value(key), value: Value(value));
+  }
+
+  factory ControlBinding.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ControlBinding(
+      key: serializer.fromJson<String>(json['key']),
+      value: serializer.fromJson<String>(json['value']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'key': serializer.toJson<String>(key),
+      'value': serializer.toJson<String>(value),
+    };
+  }
+
+  ControlBinding copyWith({String? key, String? value}) =>
+      ControlBinding(key: key ?? this.key, value: value ?? this.value);
+  ControlBinding copyWithCompanion(ControlBindingsCompanion data) {
+    return ControlBinding(
+      key: data.key.present ? data.key.value : this.key,
+      value: data.value.present ? data.value.value : this.value,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ControlBinding(')
+          ..write('key: $key, ')
+          ..write('value: $value')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(key, value);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ControlBinding &&
+          other.key == this.key &&
+          other.value == this.value);
+}
+
+class ControlBindingsCompanion extends UpdateCompanion<ControlBinding> {
+  final Value<String> key;
+  final Value<String> value;
+  final Value<int> rowid;
+  const ControlBindingsCompanion({
+    this.key = const Value.absent(),
+    this.value = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ControlBindingsCompanion.insert({
+    required String key,
+    required String value,
+    this.rowid = const Value.absent(),
+  }) : key = Value(key),
+       value = Value(value);
+  static Insertable<ControlBinding> custom({
+    Expression<String>? key,
+    Expression<String>? value,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (key != null) 'key': key,
+      if (value != null) 'value': value,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ControlBindingsCompanion copyWith({
+    Value<String>? key,
+    Value<String>? value,
+    Value<int>? rowid,
+  }) {
+    return ControlBindingsCompanion(
+      key: key ?? this.key,
+      value: value ?? this.value,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (key.present) {
+      map['key'] = Variable<String>(key.value);
+    }
+    if (value.present) {
+      map['value'] = Variable<String>(value.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ControlBindingsCompanion(')
+          ..write('key: $key, ')
+          ..write('value: $value, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $InputLayoutElementsTable extends InputLayoutElements
+    with TableInfo<$InputLayoutElementsTable, InputLayoutElement> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $InputLayoutElementsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _orientationMeta = const VerificationMeta(
+    'orientation',
+  );
+  @override
+  late final GeneratedColumn<String> orientation = GeneratedColumn<String>(
+    'orientation',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _elementIdMeta = const VerificationMeta(
+    'elementId',
+  );
+  @override
+  late final GeneratedColumn<String> elementId = GeneratedColumn<String>(
+    'element_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _xMeta = const VerificationMeta('x');
+  @override
+  late final GeneratedColumn<int> x = GeneratedColumn<int>(
+    'x',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _yMeta = const VerificationMeta('y');
+  @override
+  late final GeneratedColumn<int> y = GeneratedColumn<int>(
+    'y',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _widthMeta = const VerificationMeta('width');
+  @override
+  late final GeneratedColumn<int> width = GeneratedColumn<int>(
+    'width',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _heightMeta = const VerificationMeta('height');
+  @override
+  late final GeneratedColumn<int> height = GeneratedColumn<int>(
+    'height',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    orientation,
+    elementId,
+    x,
+    y,
+    width,
+    height,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'input_layout_elements';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<InputLayoutElement> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('orientation')) {
+      context.handle(
+        _orientationMeta,
+        orientation.isAcceptableOrUnknown(
+          data['orientation']!,
+          _orientationMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_orientationMeta);
+    }
+    if (data.containsKey('element_id')) {
+      context.handle(
+        _elementIdMeta,
+        elementId.isAcceptableOrUnknown(data['element_id']!, _elementIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_elementIdMeta);
+    }
+    if (data.containsKey('x')) {
+      context.handle(_xMeta, x.isAcceptableOrUnknown(data['x']!, _xMeta));
+    } else if (isInserting) {
+      context.missing(_xMeta);
+    }
+    if (data.containsKey('y')) {
+      context.handle(_yMeta, y.isAcceptableOrUnknown(data['y']!, _yMeta));
+    } else if (isInserting) {
+      context.missing(_yMeta);
+    }
+    if (data.containsKey('width')) {
+      context.handle(
+        _widthMeta,
+        width.isAcceptableOrUnknown(data['width']!, _widthMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_widthMeta);
+    }
+    if (data.containsKey('height')) {
+      context.handle(
+        _heightMeta,
+        height.isAcceptableOrUnknown(data['height']!, _heightMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_heightMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {orientation, elementId};
+  @override
+  InputLayoutElement map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return InputLayoutElement(
+      orientation: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}orientation'],
+      )!,
+      elementId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}element_id'],
+      )!,
+      x: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}x'],
+      )!,
+      y: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}y'],
+      )!,
+      width: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}width'],
+      )!,
+      height: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}height'],
+      )!,
+    );
+  }
+
+  @override
+  $InputLayoutElementsTable createAlias(String alias) {
+    return $InputLayoutElementsTable(attachedDatabase, alias);
+  }
+}
+
+class InputLayoutElement extends DataClass
+    implements Insertable<InputLayoutElement> {
+  final String orientation;
+  final String elementId;
+  final int x;
+  final int y;
+  final int width;
+  final int height;
+  const InputLayoutElement({
+    required this.orientation,
+    required this.elementId,
+    required this.x,
+    required this.y,
+    required this.width,
+    required this.height,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['orientation'] = Variable<String>(orientation);
+    map['element_id'] = Variable<String>(elementId);
+    map['x'] = Variable<int>(x);
+    map['y'] = Variable<int>(y);
+    map['width'] = Variable<int>(width);
+    map['height'] = Variable<int>(height);
+    return map;
+  }
+
+  InputLayoutElementsCompanion toCompanion(bool nullToAbsent) {
+    return InputLayoutElementsCompanion(
+      orientation: Value(orientation),
+      elementId: Value(elementId),
+      x: Value(x),
+      y: Value(y),
+      width: Value(width),
+      height: Value(height),
+    );
+  }
+
+  factory InputLayoutElement.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return InputLayoutElement(
+      orientation: serializer.fromJson<String>(json['orientation']),
+      elementId: serializer.fromJson<String>(json['elementId']),
+      x: serializer.fromJson<int>(json['x']),
+      y: serializer.fromJson<int>(json['y']),
+      width: serializer.fromJson<int>(json['width']),
+      height: serializer.fromJson<int>(json['height']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'orientation': serializer.toJson<String>(orientation),
+      'elementId': serializer.toJson<String>(elementId),
+      'x': serializer.toJson<int>(x),
+      'y': serializer.toJson<int>(y),
+      'width': serializer.toJson<int>(width),
+      'height': serializer.toJson<int>(height),
+    };
+  }
+
+  InputLayoutElement copyWith({
+    String? orientation,
+    String? elementId,
+    int? x,
+    int? y,
+    int? width,
+    int? height,
+  }) => InputLayoutElement(
+    orientation: orientation ?? this.orientation,
+    elementId: elementId ?? this.elementId,
+    x: x ?? this.x,
+    y: y ?? this.y,
+    width: width ?? this.width,
+    height: height ?? this.height,
+  );
+  InputLayoutElement copyWithCompanion(InputLayoutElementsCompanion data) {
+    return InputLayoutElement(
+      orientation: data.orientation.present
+          ? data.orientation.value
+          : this.orientation,
+      elementId: data.elementId.present ? data.elementId.value : this.elementId,
+      x: data.x.present ? data.x.value : this.x,
+      y: data.y.present ? data.y.value : this.y,
+      width: data.width.present ? data.width.value : this.width,
+      height: data.height.present ? data.height.value : this.height,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InputLayoutElement(')
+          ..write('orientation: $orientation, ')
+          ..write('elementId: $elementId, ')
+          ..write('x: $x, ')
+          ..write('y: $y, ')
+          ..write('width: $width, ')
+          ..write('height: $height')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(orientation, elementId, x, y, width, height);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is InputLayoutElement &&
+          other.orientation == this.orientation &&
+          other.elementId == this.elementId &&
+          other.x == this.x &&
+          other.y == this.y &&
+          other.width == this.width &&
+          other.height == this.height);
+}
+
+class InputLayoutElementsCompanion extends UpdateCompanion<InputLayoutElement> {
+  final Value<String> orientation;
+  final Value<String> elementId;
+  final Value<int> x;
+  final Value<int> y;
+  final Value<int> width;
+  final Value<int> height;
+  final Value<int> rowid;
+  const InputLayoutElementsCompanion({
+    this.orientation = const Value.absent(),
+    this.elementId = const Value.absent(),
+    this.x = const Value.absent(),
+    this.y = const Value.absent(),
+    this.width = const Value.absent(),
+    this.height = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  InputLayoutElementsCompanion.insert({
+    required String orientation,
+    required String elementId,
+    required int x,
+    required int y,
+    required int width,
+    required int height,
+    this.rowid = const Value.absent(),
+  }) : orientation = Value(orientation),
+       elementId = Value(elementId),
+       x = Value(x),
+       y = Value(y),
+       width = Value(width),
+       height = Value(height);
+  static Insertable<InputLayoutElement> custom({
+    Expression<String>? orientation,
+    Expression<String>? elementId,
+    Expression<int>? x,
+    Expression<int>? y,
+    Expression<int>? width,
+    Expression<int>? height,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (orientation != null) 'orientation': orientation,
+      if (elementId != null) 'element_id': elementId,
+      if (x != null) 'x': x,
+      if (y != null) 'y': y,
+      if (width != null) 'width': width,
+      if (height != null) 'height': height,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  InputLayoutElementsCompanion copyWith({
+    Value<String>? orientation,
+    Value<String>? elementId,
+    Value<int>? x,
+    Value<int>? y,
+    Value<int>? width,
+    Value<int>? height,
+    Value<int>? rowid,
+  }) {
+    return InputLayoutElementsCompanion(
+      orientation: orientation ?? this.orientation,
+      elementId: elementId ?? this.elementId,
+      x: x ?? this.x,
+      y: y ?? this.y,
+      width: width ?? this.width,
+      height: height ?? this.height,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (orientation.present) {
+      map['orientation'] = Variable<String>(orientation.value);
+    }
+    if (elementId.present) {
+      map['element_id'] = Variable<String>(elementId.value);
+    }
+    if (x.present) {
+      map['x'] = Variable<int>(x.value);
+    }
+    if (y.present) {
+      map['y'] = Variable<int>(y.value);
+    }
+    if (width.present) {
+      map['width'] = Variable<int>(width.value);
+    }
+    if (height.present) {
+      map['height'] = Variable<int>(height.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InputLayoutElementsCompanion(')
+          ..write('orientation: $orientation, ')
+          ..write('elementId: $elementId, ')
+          ..write('x: $x, ')
+          ..write('y: $y, ')
+          ..write('width: $width, ')
+          ..write('height: $height, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $GamesTable games = $GamesTable(this);
   late final $AppSettingsTable appSettings = $AppSettingsTable(this);
+  late final $ControlBindingsTable controlBindings = $ControlBindingsTable(
+    this,
+  );
+  late final $InputLayoutElementsTable inputLayoutElements =
+      $InputLayoutElementsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [games, appSettings];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    games,
+    appSettings,
+    controlBindings,
+    inputLayoutElements,
+  ];
 }
 
 typedef $$GamesTableCreateCompanionBuilder =
@@ -1545,6 +2169,412 @@ typedef $$AppSettingsTableProcessedTableManager =
       AppSetting,
       PrefetchHooks Function()
     >;
+typedef $$ControlBindingsTableCreateCompanionBuilder =
+    ControlBindingsCompanion Function({
+      required String key,
+      required String value,
+      Value<int> rowid,
+    });
+typedef $$ControlBindingsTableUpdateCompanionBuilder =
+    ControlBindingsCompanion Function({
+      Value<String> key,
+      Value<String> value,
+      Value<int> rowid,
+    });
+
+class $$ControlBindingsTableFilterComposer
+    extends Composer<_$AppDatabase, $ControlBindingsTable> {
+  $$ControlBindingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get key => $composableBuilder(
+    column: $table.key,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get value => $composableBuilder(
+    column: $table.value,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ControlBindingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ControlBindingsTable> {
+  $$ControlBindingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get key => $composableBuilder(
+    column: $table.key,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get value => $composableBuilder(
+    column: $table.value,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ControlBindingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ControlBindingsTable> {
+  $$ControlBindingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get key =>
+      $composableBuilder(column: $table.key, builder: (column) => column);
+
+  GeneratedColumn<String> get value =>
+      $composableBuilder(column: $table.value, builder: (column) => column);
+}
+
+class $$ControlBindingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ControlBindingsTable,
+          ControlBinding,
+          $$ControlBindingsTableFilterComposer,
+          $$ControlBindingsTableOrderingComposer,
+          $$ControlBindingsTableAnnotationComposer,
+          $$ControlBindingsTableCreateCompanionBuilder,
+          $$ControlBindingsTableUpdateCompanionBuilder,
+          (
+            ControlBinding,
+            BaseReferences<
+              _$AppDatabase,
+              $ControlBindingsTable,
+              ControlBinding
+            >,
+          ),
+          ControlBinding,
+          PrefetchHooks Function()
+        > {
+  $$ControlBindingsTableTableManager(
+    _$AppDatabase db,
+    $ControlBindingsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ControlBindingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ControlBindingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ControlBindingsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> key = const Value.absent(),
+                Value<String> value = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ControlBindingsCompanion(
+                key: key,
+                value: value,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String key,
+                required String value,
+                Value<int> rowid = const Value.absent(),
+              }) => ControlBindingsCompanion.insert(
+                key: key,
+                value: value,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ControlBindingsTable, ControlBinding>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $ControlBindingsTable,
+                    ControlBinding
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ControlBindingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ControlBindingsTable,
+      ControlBinding,
+      $$ControlBindingsTableFilterComposer,
+      $$ControlBindingsTableOrderingComposer,
+      $$ControlBindingsTableAnnotationComposer,
+      $$ControlBindingsTableCreateCompanionBuilder,
+      $$ControlBindingsTableUpdateCompanionBuilder,
+      (
+        ControlBinding,
+        BaseReferences<_$AppDatabase, $ControlBindingsTable, ControlBinding>,
+      ),
+      ControlBinding,
+      PrefetchHooks Function()
+    >;
+typedef $$InputLayoutElementsTableCreateCompanionBuilder =
+    InputLayoutElementsCompanion Function({
+      required String orientation,
+      required String elementId,
+      required int x,
+      required int y,
+      required int width,
+      required int height,
+      Value<int> rowid,
+    });
+typedef $$InputLayoutElementsTableUpdateCompanionBuilder =
+    InputLayoutElementsCompanion Function({
+      Value<String> orientation,
+      Value<String> elementId,
+      Value<int> x,
+      Value<int> y,
+      Value<int> width,
+      Value<int> height,
+      Value<int> rowid,
+    });
+
+class $$InputLayoutElementsTableFilterComposer
+    extends Composer<_$AppDatabase, $InputLayoutElementsTable> {
+  $$InputLayoutElementsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get orientation => $composableBuilder(
+    column: $table.orientation,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get elementId => $composableBuilder(
+    column: $table.elementId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get x => $composableBuilder(
+    column: $table.x,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get y => $composableBuilder(
+    column: $table.y,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get width => $composableBuilder(
+    column: $table.width,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get height => $composableBuilder(
+    column: $table.height,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$InputLayoutElementsTableOrderingComposer
+    extends Composer<_$AppDatabase, $InputLayoutElementsTable> {
+  $$InputLayoutElementsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get orientation => $composableBuilder(
+    column: $table.orientation,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get elementId => $composableBuilder(
+    column: $table.elementId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get x => $composableBuilder(
+    column: $table.x,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get y => $composableBuilder(
+    column: $table.y,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get width => $composableBuilder(
+    column: $table.width,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get height => $composableBuilder(
+    column: $table.height,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$InputLayoutElementsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $InputLayoutElementsTable> {
+  $$InputLayoutElementsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get orientation => $composableBuilder(
+    column: $table.orientation,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get elementId =>
+      $composableBuilder(column: $table.elementId, builder: (column) => column);
+
+  GeneratedColumn<int> get x =>
+      $composableBuilder(column: $table.x, builder: (column) => column);
+
+  GeneratedColumn<int> get y =>
+      $composableBuilder(column: $table.y, builder: (column) => column);
+
+  GeneratedColumn<int> get width =>
+      $composableBuilder(column: $table.width, builder: (column) => column);
+
+  GeneratedColumn<int> get height =>
+      $composableBuilder(column: $table.height, builder: (column) => column);
+}
+
+class $$InputLayoutElementsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $InputLayoutElementsTable,
+          InputLayoutElement,
+          $$InputLayoutElementsTableFilterComposer,
+          $$InputLayoutElementsTableOrderingComposer,
+          $$InputLayoutElementsTableAnnotationComposer,
+          $$InputLayoutElementsTableCreateCompanionBuilder,
+          $$InputLayoutElementsTableUpdateCompanionBuilder,
+          (
+            InputLayoutElement,
+            BaseReferences<
+              _$AppDatabase,
+              $InputLayoutElementsTable,
+              InputLayoutElement
+            >,
+          ),
+          InputLayoutElement,
+          PrefetchHooks Function()
+        > {
+  $$InputLayoutElementsTableTableManager(
+    _$AppDatabase db,
+    $InputLayoutElementsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$InputLayoutElementsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$InputLayoutElementsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$InputLayoutElementsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> orientation = const Value.absent(),
+                Value<String> elementId = const Value.absent(),
+                Value<int> x = const Value.absent(),
+                Value<int> y = const Value.absent(),
+                Value<int> width = const Value.absent(),
+                Value<int> height = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => InputLayoutElementsCompanion(
+                orientation: orientation,
+                elementId: elementId,
+                x: x,
+                y: y,
+                width: width,
+                height: height,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String orientation,
+                required String elementId,
+                required int x,
+                required int y,
+                required int width,
+                required int height,
+                Value<int> rowid = const Value.absent(),
+              }) => InputLayoutElementsCompanion.insert(
+                orientation: orientation,
+                elementId: elementId,
+                x: x,
+                y: y,
+                width: width,
+                height: height,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$InputLayoutElementsTable, InputLayoutElement>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $InputLayoutElementsTable,
+                    InputLayoutElement
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$InputLayoutElementsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $InputLayoutElementsTable,
+      InputLayoutElement,
+      $$InputLayoutElementsTableFilterComposer,
+      $$InputLayoutElementsTableOrderingComposer,
+      $$InputLayoutElementsTableAnnotationComposer,
+      $$InputLayoutElementsTableCreateCompanionBuilder,
+      $$InputLayoutElementsTableUpdateCompanionBuilder,
+      (
+        InputLayoutElement,
+        BaseReferences<
+          _$AppDatabase,
+          $InputLayoutElementsTable,
+          InputLayoutElement
+        >,
+      ),
+      InputLayoutElement,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -1553,4 +2583,8 @@ class $AppDatabaseManager {
       $$GamesTableTableManager(_db, _db.games);
   $$AppSettingsTableTableManager get appSettings =>
       $$AppSettingsTableTableManager(_db, _db.appSettings);
+  $$ControlBindingsTableTableManager get controlBindings =>
+      $$ControlBindingsTableTableManager(_db, _db.controlBindings);
+  $$InputLayoutElementsTableTableManager get inputLayoutElements =>
+      $$InputLayoutElementsTableTableManager(_db, _db.inputLayoutElements);
 }
