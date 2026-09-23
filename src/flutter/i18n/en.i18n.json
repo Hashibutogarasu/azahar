@@ -478,6 +478,26 @@
       "soundOutputModeMono": "Mono",
       "soundOutputModeStereo": "Stereo",
       "soundOutputModeSurround": "Surround"
+    },
+    "debug": {
+      "title": "Debug",
+      "warning": "These settings are for debugging purposes only. Changing them may cause instability.",
+      "cpuClockSpeed": "CPU Clock Speed",
+      "cpuClockSpeedDescription": "Over/Underclocks the emulated CPU. Not recommended.",
+      "cpuJit": "CPU JIT",
+      "cpuJitDescription": "Uses the Just-In-Time (JIT) compiler for CPU emulation. When disabled, a much slower interpreter is used instead.",
+      "hwShaders": "Hardware Shaders",
+      "hwShadersDescription": "Uses hardware shaders to emulate 3DS shaders, instead of the software renderer. Disabling this greatly reduces performance.",
+      "vsync": "VSync",
+      "vsyncDescription": "Synchronizes rendering with the host device's display refresh rate.",
+      "rendererDebug": "Renderer Debug",
+      "rendererDebugDescription": "Enables additional renderer debugging features. Reduces performance.",
+      "instantDebugLog": "Instant Debug Log",
+      "instantDebugLogDescription": "Writes to the debug log immediately instead of buffering. Reduces performance.",
+      "delayStartLleModules": "Delay Start for LLE Modules",
+      "delayStartLleModulesDescription": "Delays the start of LLE modules to work around race conditions.",
+      "deterministicAsyncOperations": "Deterministic Async Operations",
+      "deterministicAsyncOperationsDescription": "Forces asynchronous operations to run in a deterministic order. Reduces performance."
     }
   }
 }

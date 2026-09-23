@@ -80,6 +80,11 @@ class _SettingsMenuPageState extends State<SettingsMenuPage> {
         icon: Icons.volume_up,
         onTap: (context) => const AudioSettingsRoute().push(context),
       ),
+      SettingsItem.submenu(
+        title: t.settings.debug.title,
+        icon: Icons.code,
+        onTap: (context) => const DebugSettingsRoute().push(context),
+      ),
     ];
   }
 }

@@ -251,6 +251,8 @@ class Translations$settings$en {
       Translations$settings$layout$en.internal(_root);
   late final Translations$settings$audio$en audio =
       Translations$settings$audio$en.internal(_root);
+  late final Translations$settings$debug$en debug =
+      Translations$settings$debug$en.internal(_root);
 }
 
 // Path: setup.welcome
@@ -1680,6 +1682,78 @@ class Translations$settings$audio$en {
   String get soundOutputModeSurround => 'Surround';
 }
 
+// Path: settings.debug
+class Translations$settings$debug$en {
+  Translations$settings$debug$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Debug'
+  String get title => 'Debug';
+
+  /// en: 'These settings are for debugging purposes only. Changing them may cause instability.'
+  String get warning =>
+      'These settings are for debugging purposes only. Changing them may cause instability.';
+
+  /// en: 'CPU Clock Speed'
+  String get cpuClockSpeed => 'CPU Clock Speed';
+
+  /// en: 'Over/Underclocks the emulated CPU. Not recommended.'
+  String get cpuClockSpeedDescription =>
+      'Over/Underclocks the emulated CPU. Not recommended.';
+
+  /// en: 'CPU JIT'
+  String get cpuJit => 'CPU JIT';
+
+  /// en: 'Uses the Just-In-Time (JIT) compiler for CPU emulation. When disabled, a much slower interpreter is used instead.'
+  String get cpuJitDescription =>
+      'Uses the Just-In-Time (JIT) compiler for CPU emulation. When disabled, a much slower interpreter is used instead.';
+
+  /// en: 'Hardware Shaders'
+  String get hwShaders => 'Hardware Shaders';
+
+  /// en: 'Uses hardware shaders to emulate 3DS shaders, instead of the software renderer. Disabling this greatly reduces performance.'
+  String get hwShadersDescription =>
+      'Uses hardware shaders to emulate 3DS shaders, instead of the software renderer. Disabling this greatly reduces performance.';
+
+  /// en: 'VSync'
+  String get vsync => 'VSync';
+
+  /// en: 'Synchronizes rendering with the host device's display refresh rate.'
+  String get vsyncDescription =>
+      'Synchronizes rendering with the host device\'s display refresh rate.';
+
+  /// en: 'Renderer Debug'
+  String get rendererDebug => 'Renderer Debug';
+
+  /// en: 'Enables additional renderer debugging features. Reduces performance.'
+  String get rendererDebugDescription =>
+      'Enables additional renderer debugging features. Reduces performance.';
+
+  /// en: 'Instant Debug Log'
+  String get instantDebugLog => 'Instant Debug Log';
+
+  /// en: 'Writes to the debug log immediately instead of buffering. Reduces performance.'
+  String get instantDebugLogDescription =>
+      'Writes to the debug log immediately instead of buffering. Reduces performance.';
+
+  /// en: 'Delay Start for LLE Modules'
+  String get delayStartLleModules => 'Delay Start for LLE Modules';
+
+  /// en: 'Delays the start of LLE modules to work around race conditions.'
+  String get delayStartLleModulesDescription =>
+      'Delays the start of LLE modules to work around race conditions.';
+
+  /// en: 'Deterministic Async Operations'
+  String get deterministicAsyncOperations => 'Deterministic Async Operations';
+
+  /// en: 'Forces asynchronous operations to run in a deterministic order. Reduces performance.'
+  String get deterministicAsyncOperationsDescription =>
+      'Forces asynchronous operations to run in a deterministic order. Reduces performance.';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -2180,6 +2254,34 @@ extension on Translations {
       'settings.audio.soundOutputModeMono' => 'Mono',
       'settings.audio.soundOutputModeStereo' => 'Stereo',
       'settings.audio.soundOutputModeSurround' => 'Surround',
+      'settings.debug.title' => 'Debug',
+      'settings.debug.warning' =>
+        'These settings are for debugging purposes only. Changing them may cause instability.',
+      'settings.debug.cpuClockSpeed' => 'CPU Clock Speed',
+      'settings.debug.cpuClockSpeedDescription' =>
+        'Over/Underclocks the emulated CPU. Not recommended.',
+      'settings.debug.cpuJit' => 'CPU JIT',
+      'settings.debug.cpuJitDescription' =>
+        'Uses the Just-In-Time (JIT) compiler for CPU emulation. When disabled, a much slower interpreter is used instead.',
+      'settings.debug.hwShaders' => 'Hardware Shaders',
+      'settings.debug.hwShadersDescription' =>
+        'Uses hardware shaders to emulate 3DS shaders, instead of the software renderer. Disabling this greatly reduces performance.',
+      'settings.debug.vsync' => 'VSync',
+      'settings.debug.vsyncDescription' =>
+        'Synchronizes rendering with the host device\'s display refresh rate.',
+      'settings.debug.rendererDebug' => 'Renderer Debug',
+      'settings.debug.rendererDebugDescription' =>
+        'Enables additional renderer debugging features. Reduces performance.',
+      'settings.debug.instantDebugLog' => 'Instant Debug Log',
+      'settings.debug.instantDebugLogDescription' =>
+        'Writes to the debug log immediately instead of buffering. Reduces performance.',
+      'settings.debug.delayStartLleModules' => 'Delay Start for LLE Modules',
+      'settings.debug.delayStartLleModulesDescription' =>
+        'Delays the start of LLE modules to work around race conditions.',
+      'settings.debug.deterministicAsyncOperations' =>
+        'Deterministic Async Operations',
+      'settings.debug.deterministicAsyncOperationsDescription' =>
+        'Forces asynchronous operations to run in a deterministic order. Reduces performance.',
       _ => null,
     };
   }

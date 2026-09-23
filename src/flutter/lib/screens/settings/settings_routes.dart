@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'sections/audio_settings_page.dart';
 import 'sections/camera_settings_page.dart';
 import 'sections/controls_settings_page.dart';
+import 'sections/debug_settings_page.dart';
 import 'sections/general_settings_page.dart';
 import 'sections/graphics_settings_page.dart';
 import 'sections/layout_settings_page.dart';
@@ -111,5 +112,15 @@ class AudioSettingsRoute extends GoRouteData with $AudioSettingsRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const AudioSettingsPage();
+  }
+}
+
+@TypedGoRoute<DebugSettingsRoute>(path: '/settings/debug')
+class DebugSettingsRoute extends GoRouteData with $DebugSettingsRoute {
+  const DebugSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const DebugSettingsPage();
   }
 }
