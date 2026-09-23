@@ -140,6 +140,35 @@ List<SettingsItem> buildSystemSettingsItems(
         onChanged();
       },
     ),
+    SettingsItem.header(title: s.birthday),
+    SettingsItem.singleChoice(
+      title: s.birthdayMonth,
+      setting: SystemSettingKeys.birthdayMonth,
+      choiceLabels: [
+        s.monthJanuary,
+        s.monthFebruary,
+        s.monthMarch,
+        s.monthApril,
+        s.monthMay,
+        s.monthJune,
+        s.monthJuly,
+        s.monthAugust,
+        s.monthSeptember,
+        s.monthOctober,
+        s.monthNovember,
+        s.monthDecember,
+      ],
+      choiceValues: const [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      store: systemSaveStore,
+    ),
+    SettingsItem.slider(
+      title: s.birthdayDay,
+      setting: SystemSettingKeys.birthdayDay,
+      min: 1,
+      max: 31,
+      units: '',
+      store: systemSaveStore,
+    ),
   ];
 }
 
