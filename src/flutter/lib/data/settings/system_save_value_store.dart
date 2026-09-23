@@ -71,4 +71,8 @@ class SystemSaveValueStore implements SettingsValueStore {
       _ => Future.value(),
     };
   }
+
+  Future<void> regenerateConsoleId() => _repository.regenerateConsoleId();
+
+  Future<void> regenerateMac() => _repository.regenerateMac();
 }

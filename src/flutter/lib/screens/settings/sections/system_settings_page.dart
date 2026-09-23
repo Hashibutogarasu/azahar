@@ -35,7 +35,7 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
           if (snapshot.connectionState != ConnectionState.done) {
             return const Center(child: CircularProgressIndicator());
           }
-          return SettingsList(items: buildSystemSettingsItems(t, _store));
+          return SettingsList(items: buildSystemSettingsItems(t, _store, () => setState(() {})));
         },
       ),
     );
