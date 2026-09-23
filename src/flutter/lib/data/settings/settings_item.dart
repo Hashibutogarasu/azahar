@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'emulator_setting_key.dart';
+import 'settings_value_store.dart';
 
 part 'settings_item.freezed.dart';
 
@@ -14,6 +15,7 @@ sealed class SettingsItem with _$SettingsItem {
     required String title,
     String? description,
     required IntBoolKey setting,
+    SettingsValueStore? store,
   }) = SettingsSwitchItem;
 
   const factory SettingsItem.slider({
@@ -23,6 +25,7 @@ sealed class SettingsItem with _$SettingsItem {
     required int min,
     required int max,
     required String units,
+    SettingsValueStore? store,
   }) = SettingsSliderItem;
 
   const factory SettingsItem.singleChoice({
@@ -31,6 +34,7 @@ sealed class SettingsItem with _$SettingsItem {
     required IntKey setting,
     required List<String> choiceLabels,
     required List<int> choiceValues,
+    SettingsValueStore? store,
   }) = SettingsSingleChoiceItem;
 
   const factory SettingsItem.floatSlider({
@@ -40,6 +44,7 @@ sealed class SettingsItem with _$SettingsItem {
     required double min,
     required double max,
     required String units,
+    SettingsValueStore? store,
   }) = SettingsFloatSliderItem;
 
   const factory SettingsItem.stringSingleChoice({
@@ -48,6 +53,7 @@ sealed class SettingsItem with _$SettingsItem {
     required StringKey setting,
     required List<String> choiceLabels,
     required List<String> choiceValues,
+    SettingsValueStore? store,
   }) = SettingsStringSingleChoiceItem;
 
   const factory SettingsItem.stringInput({
@@ -55,12 +61,14 @@ sealed class SettingsItem with _$SettingsItem {
     String? description,
     required StringKey setting,
     int? maxLength,
+    SettingsValueStore? store,
   }) = SettingsStringInputItem;
 
   const factory SettingsItem.dateTime({
     required String title,
     String? description,
     required StringKey setting,
+    SettingsValueStore? store,
   }) = SettingsDateTimeItem;
 
   const factory SettingsItem.action({

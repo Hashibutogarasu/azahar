@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../app_services.dart';
 import '../../../data/settings/settings_item.dart';
+import '../../../data/settings/settings_value_store.dart';
 import '../../../errors/app_exception.dart';
 import '../../../i18n/translations.g.dart';
 
@@ -18,6 +19,8 @@ class SettingsList extends StatefulWidget {
 
 class _SettingsListState extends State<SettingsList> {
   final _repository = AppServices.emulatorSettingsRepository;
+
+  SettingsValueStore _storeFor(SettingsValueStore? store) => store ?? _repository;
 
   @override
   Widget build(BuildContext context) {
@@ -37,16 +40,16 @@ class _SettingsListState extends State<SettingsList> {
       SettingsSwitchItem() => SwitchListTile(
         title: Text(item.title),
         subtitle: item.description == null ? null : Text(item.description!),
-        value: _repository.readBool(item.setting),
+        value: _storeFor(item.store).readBool(item.setting),
         onChanged: (value) async {
-          await _repository.writeBool(item.setting, value);
+          await _storeFor(item.store).writeBool(item.setting, value);
           setState(() {});
         },
       ),
       SettingsSliderItem() => ListTile(
         title: Text(item.title),
         subtitle: item.description == null ? null : Text(item.description!),
-        trailing: Text('${_repository.readInt(item.setting)}${item.units}'),
+        trailing: Text('${_storeFor(item.store).readInt(item.setting)}${item.units}'),
         onTap: () => _showSliderDialog(item),
       ),
       SettingsSingleChoiceItem() => ListTile(
@@ -58,7 +61,9 @@ class _SettingsListState extends State<SettingsList> {
       SettingsFloatSliderItem() => ListTile(
         title: Text(item.title),
         subtitle: item.description == null ? null : Text(item.description!),
-        trailing: Text('${_repository.readFloat(item.setting).round()}${item.units}'),
+        trailing: Text(
+          '${_storeFor(item.store).readFloat(item.setting).round()}${item.units}',
+        ),
         onTap: () => _showFloatSliderDialog(item),
       ),
       SettingsStringSingleChoiceItem() => ListTile(
@@ -70,7 +75,7 @@ class _SettingsListState extends State<SettingsList> {
       SettingsStringInputItem() => ListTile(
         title: Text(item.title),
         subtitle: item.description == null ? null : Text(item.description!),
-        trailing: Text(_repository.readString(item.setting)),
+        trailing: Text(_storeFor(item.store).readString(item.setting)),
         onTap: () => _showStringInputDialog(item),
       ),
       SettingsDateTimeItem() => ListTile(
@@ -94,19 +99,19 @@ class _SettingsListState extends State<SettingsList> {
   }
 
   String _singleChoiceLabel(SettingsSingleChoiceItem item) {
-    final value = _repository.readInt(item.setting);
+    final value = _storeFor(item.store).readInt(item.setting);
     final index = item.choiceValues.indexOf(value);
     return index == -1 ? '' : item.choiceLabels[index];
   }
 
   String _stringSingleChoiceLabel(SettingsStringSingleChoiceItem item) {
-    final value = _repository.readString(item.setting);
+    final value = _storeFor(item.store).readString(item.setting);
     final index = item.choiceValues.indexOf(value);
     return index == -1 ? '' : item.choiceLabels[index];
   }
 
   String _dateTimeLabel(SettingsDateTimeItem item) {
-    final raw = _repository.readString(item.setting);
+    final raw = _storeFor(item.store).readString(item.setting);
     final seconds = int.tryParse(raw);
     if (seconds == null) return raw;
     final dateTime = DateTime.fromMillisecondsSinceEpoch(seconds * 1000, isUtc: true).toLocal();
@@ -114,7 +119,8 @@ class _SettingsListState extends State<SettingsList> {
   }
 
   Future<void> _showSliderDialog(SettingsSliderItem item) async {
-    final initial = _repository.readInt(item.setting);
+    final store = _storeFor(item.store);
+    final initial = store.readInt(item.setting);
     var sliderValue = initial;
     var pendingText = initial.toString();
     final t = context.t;
@@ -197,12 +203,13 @@ class _SettingsListState extends State<SettingsList> {
     );
     textController.dispose();
     if (result == null) return;
-    await _repository.writeInt(item.setting, result);
+    await store.writeInt(item.setting, result);
     setState(() {});
   }
 
   Future<void> _showSingleChoiceDialog(SettingsSingleChoiceItem item) async {
-    final current = _repository.readInt(item.setting);
+    final store = _storeFor(item.store);
+    final current = store.readInt(item.setting);
     final result = await showDialog<int>(
       context: context,
       builder: (context) {
@@ -228,12 +235,13 @@ class _SettingsListState extends State<SettingsList> {
       },
     );
     if (result == null) return;
-    await _repository.writeInt(item.setting, result);
+    await store.writeInt(item.setting, result);
     setState(() {});
   }
 
   Future<void> _showFloatSliderDialog(SettingsFloatSliderItem item) async {
-    final initial = _repository.readFloat(item.setting).round();
+    final store = _storeFor(item.store);
+    final initial = store.readFloat(item.setting).round();
     var sliderValue = initial;
     var pendingText = initial.toString();
     final t = context.t;
@@ -319,12 +327,13 @@ class _SettingsListState extends State<SettingsList> {
     );
     textController.dispose();
     if (result == null) return;
-    await _repository.writeFloat(item.setting, result.toDouble());
+    await store.writeFloat(item.setting, result.toDouble());
     setState(() {});
   }
 
   Future<void> _showStringSingleChoiceDialog(SettingsStringSingleChoiceItem item) async {
-    final current = _repository.readString(item.setting);
+    final store = _storeFor(item.store);
+    final current = store.readString(item.setting);
     final result = await showDialog<String>(
       context: context,
       builder: (context) {
@@ -350,13 +359,14 @@ class _SettingsListState extends State<SettingsList> {
       },
     );
     if (result == null) return;
-    await _repository.writeString(item.setting, result);
+    await store.writeString(item.setting, result);
     setState(() {});
   }
 
   Future<void> _showStringInputDialog(SettingsStringInputItem item) async {
+    final store = _storeFor(item.store);
     final localizations = MaterialLocalizations.of(context);
-    final textController = TextEditingController(text: _repository.readString(item.setting));
+    final textController = TextEditingController(text: store.readString(item.setting));
     final result = await showDialog<String>(
       context: context,
       builder: (context) {
@@ -378,12 +388,13 @@ class _SettingsListState extends State<SettingsList> {
     );
     textController.dispose();
     if (result == null) return;
-    await _repository.writeString(item.setting, result);
+    await store.writeString(item.setting, result);
     setState(() {});
   }
 
   Future<void> _showDateTimeDialog(SettingsDateTimeItem item) async {
-    final raw = _repository.readString(item.setting);
+    final store = _storeFor(item.store);
+    final raw = store.readString(item.setting);
     final seconds = int.tryParse(raw);
     final initial = seconds == null
         ? DateTime.now()
@@ -401,7 +412,7 @@ class _SettingsListState extends State<SettingsList> {
     );
     if (time == null) return;
     final combined = DateTime(date.year, date.month, date.day, time.hour, time.minute);
-    await _repository.writeString(
+    await store.writeString(
       item.setting,
       (combined.toUtc().millisecondsSinceEpoch ~/ 1000).toString(),
     );

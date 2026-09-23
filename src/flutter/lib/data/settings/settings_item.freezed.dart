@@ -176,17 +176,17 @@ return submenu(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String title,  String? description)?  header,TResult Function( String title,  String? description,  IntBoolKey setting)?  switch_,TResult Function( String title,  String? description,  IntKey setting,  int min,  int max,  String units)?  slider,TResult Function( String title,  String? description,  IntKey setting,  List<String> choiceLabels,  List<int> choiceValues)?  singleChoice,TResult Function( String title,  String? description,  FloatKey setting,  double min,  double max,  String units)?  floatSlider,TResult Function( String title,  String? description,  StringKey setting,  List<String> choiceLabels,  List<String> choiceValues)?  stringSingleChoice,TResult Function( String title,  String? description,  StringKey setting,  int? maxLength)?  stringInput,TResult Function( String title,  String? description,  StringKey setting)?  dateTime,TResult Function( String title,  String? description,  void Function(BuildContext context) onTap)?  action,TResult Function( String title,  String? description,  void Function(BuildContext context) onTap)?  submenu,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String title,  String? description)?  header,TResult Function( String title,  String? description,  IntBoolKey setting,  SettingsValueStore? store)?  switch_,TResult Function( String title,  String? description,  IntKey setting,  int min,  int max,  String units,  SettingsValueStore? store)?  slider,TResult Function( String title,  String? description,  IntKey setting,  List<String> choiceLabels,  List<int> choiceValues,  SettingsValueStore? store)?  singleChoice,TResult Function( String title,  String? description,  FloatKey setting,  double min,  double max,  String units,  SettingsValueStore? store)?  floatSlider,TResult Function( String title,  String? description,  StringKey setting,  List<String> choiceLabels,  List<String> choiceValues,  SettingsValueStore? store)?  stringSingleChoice,TResult Function( String title,  String? description,  StringKey setting,  int? maxLength,  SettingsValueStore? store)?  stringInput,TResult Function( String title,  String? description,  StringKey setting,  SettingsValueStore? store)?  dateTime,TResult Function( String title,  String? description,  void Function(BuildContext context) onTap)?  action,TResult Function( String title,  String? description,  void Function(BuildContext context) onTap)?  submenu,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case SettingsHeaderItem() when header != null:
 return header(_that.title,_that.description);case SettingsSwitchItem() when switch_ != null:
-return switch_(_that.title,_that.description,_that.setting);case SettingsSliderItem() when slider != null:
-return slider(_that.title,_that.description,_that.setting,_that.min,_that.max,_that.units);case SettingsSingleChoiceItem() when singleChoice != null:
-return singleChoice(_that.title,_that.description,_that.setting,_that.choiceLabels,_that.choiceValues);case SettingsFloatSliderItem() when floatSlider != null:
-return floatSlider(_that.title,_that.description,_that.setting,_that.min,_that.max,_that.units);case SettingsStringSingleChoiceItem() when stringSingleChoice != null:
-return stringSingleChoice(_that.title,_that.description,_that.setting,_that.choiceLabels,_that.choiceValues);case SettingsStringInputItem() when stringInput != null:
-return stringInput(_that.title,_that.description,_that.setting,_that.maxLength);case SettingsDateTimeItem() when dateTime != null:
-return dateTime(_that.title,_that.description,_that.setting);case SettingsActionItem() when action != null:
+return switch_(_that.title,_that.description,_that.setting,_that.store);case SettingsSliderItem() when slider != null:
+return slider(_that.title,_that.description,_that.setting,_that.min,_that.max,_that.units,_that.store);case SettingsSingleChoiceItem() when singleChoice != null:
+return singleChoice(_that.title,_that.description,_that.setting,_that.choiceLabels,_that.choiceValues,_that.store);case SettingsFloatSliderItem() when floatSlider != null:
+return floatSlider(_that.title,_that.description,_that.setting,_that.min,_that.max,_that.units,_that.store);case SettingsStringSingleChoiceItem() when stringSingleChoice != null:
+return stringSingleChoice(_that.title,_that.description,_that.setting,_that.choiceLabels,_that.choiceValues,_that.store);case SettingsStringInputItem() when stringInput != null:
+return stringInput(_that.title,_that.description,_that.setting,_that.maxLength,_that.store);case SettingsDateTimeItem() when dateTime != null:
+return dateTime(_that.title,_that.description,_that.setting,_that.store);case SettingsActionItem() when action != null:
 return action(_that.title,_that.description,_that.onTap);case SettingsSubmenuItem() when submenu != null:
 return submenu(_that.title,_that.description,_that.onTap);case _:
   return orElse();
@@ -206,17 +206,17 @@ return submenu(_that.title,_that.description,_that.onTap);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String title,  String? description)  header,required TResult Function( String title,  String? description,  IntBoolKey setting)  switch_,required TResult Function( String title,  String? description,  IntKey setting,  int min,  int max,  String units)  slider,required TResult Function( String title,  String? description,  IntKey setting,  List<String> choiceLabels,  List<int> choiceValues)  singleChoice,required TResult Function( String title,  String? description,  FloatKey setting,  double min,  double max,  String units)  floatSlider,required TResult Function( String title,  String? description,  StringKey setting,  List<String> choiceLabels,  List<String> choiceValues)  stringSingleChoice,required TResult Function( String title,  String? description,  StringKey setting,  int? maxLength)  stringInput,required TResult Function( String title,  String? description,  StringKey setting)  dateTime,required TResult Function( String title,  String? description,  void Function(BuildContext context) onTap)  action,required TResult Function( String title,  String? description,  void Function(BuildContext context) onTap)  submenu,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String title,  String? description)  header,required TResult Function( String title,  String? description,  IntBoolKey setting,  SettingsValueStore? store)  switch_,required TResult Function( String title,  String? description,  IntKey setting,  int min,  int max,  String units,  SettingsValueStore? store)  slider,required TResult Function( String title,  String? description,  IntKey setting,  List<String> choiceLabels,  List<int> choiceValues,  SettingsValueStore? store)  singleChoice,required TResult Function( String title,  String? description,  FloatKey setting,  double min,  double max,  String units,  SettingsValueStore? store)  floatSlider,required TResult Function( String title,  String? description,  StringKey setting,  List<String> choiceLabels,  List<String> choiceValues,  SettingsValueStore? store)  stringSingleChoice,required TResult Function( String title,  String? description,  StringKey setting,  int? maxLength,  SettingsValueStore? store)  stringInput,required TResult Function( String title,  String? description,  StringKey setting,  SettingsValueStore? store)  dateTime,required TResult Function( String title,  String? description,  void Function(BuildContext context) onTap)  action,required TResult Function( String title,  String? description,  void Function(BuildContext context) onTap)  submenu,}) {final _that = this;
 switch (_that) {
 case SettingsHeaderItem():
 return header(_that.title,_that.description);case SettingsSwitchItem():
-return switch_(_that.title,_that.description,_that.setting);case SettingsSliderItem():
-return slider(_that.title,_that.description,_that.setting,_that.min,_that.max,_that.units);case SettingsSingleChoiceItem():
-return singleChoice(_that.title,_that.description,_that.setting,_that.choiceLabels,_that.choiceValues);case SettingsFloatSliderItem():
-return floatSlider(_that.title,_that.description,_that.setting,_that.min,_that.max,_that.units);case SettingsStringSingleChoiceItem():
-return stringSingleChoice(_that.title,_that.description,_that.setting,_that.choiceLabels,_that.choiceValues);case SettingsStringInputItem():
-return stringInput(_that.title,_that.description,_that.setting,_that.maxLength);case SettingsDateTimeItem():
-return dateTime(_that.title,_that.description,_that.setting);case SettingsActionItem():
+return switch_(_that.title,_that.description,_that.setting,_that.store);case SettingsSliderItem():
+return slider(_that.title,_that.description,_that.setting,_that.min,_that.max,_that.units,_that.store);case SettingsSingleChoiceItem():
+return singleChoice(_that.title,_that.description,_that.setting,_that.choiceLabels,_that.choiceValues,_that.store);case SettingsFloatSliderItem():
+return floatSlider(_that.title,_that.description,_that.setting,_that.min,_that.max,_that.units,_that.store);case SettingsStringSingleChoiceItem():
+return stringSingleChoice(_that.title,_that.description,_that.setting,_that.choiceLabels,_that.choiceValues,_that.store);case SettingsStringInputItem():
+return stringInput(_that.title,_that.description,_that.setting,_that.maxLength,_that.store);case SettingsDateTimeItem():
+return dateTime(_that.title,_that.description,_that.setting,_that.store);case SettingsActionItem():
 return action(_that.title,_that.description,_that.onTap);case SettingsSubmenuItem():
 return submenu(_that.title,_that.description,_that.onTap);}
 }
@@ -232,17 +232,17 @@ return submenu(_that.title,_that.description,_that.onTap);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String title,  String? description)?  header,TResult? Function( String title,  String? description,  IntBoolKey setting)?  switch_,TResult? Function( String title,  String? description,  IntKey setting,  int min,  int max,  String units)?  slider,TResult? Function( String title,  String? description,  IntKey setting,  List<String> choiceLabels,  List<int> choiceValues)?  singleChoice,TResult? Function( String title,  String? description,  FloatKey setting,  double min,  double max,  String units)?  floatSlider,TResult? Function( String title,  String? description,  StringKey setting,  List<String> choiceLabels,  List<String> choiceValues)?  stringSingleChoice,TResult? Function( String title,  String? description,  StringKey setting,  int? maxLength)?  stringInput,TResult? Function( String title,  String? description,  StringKey setting)?  dateTime,TResult? Function( String title,  String? description,  void Function(BuildContext context) onTap)?  action,TResult? Function( String title,  String? description,  void Function(BuildContext context) onTap)?  submenu,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String title,  String? description)?  header,TResult? Function( String title,  String? description,  IntBoolKey setting,  SettingsValueStore? store)?  switch_,TResult? Function( String title,  String? description,  IntKey setting,  int min,  int max,  String units,  SettingsValueStore? store)?  slider,TResult? Function( String title,  String? description,  IntKey setting,  List<String> choiceLabels,  List<int> choiceValues,  SettingsValueStore? store)?  singleChoice,TResult? Function( String title,  String? description,  FloatKey setting,  double min,  double max,  String units,  SettingsValueStore? store)?  floatSlider,TResult? Function( String title,  String? description,  StringKey setting,  List<String> choiceLabels,  List<String> choiceValues,  SettingsValueStore? store)?  stringSingleChoice,TResult? Function( String title,  String? description,  StringKey setting,  int? maxLength,  SettingsValueStore? store)?  stringInput,TResult? Function( String title,  String? description,  StringKey setting,  SettingsValueStore? store)?  dateTime,TResult? Function( String title,  String? description,  void Function(BuildContext context) onTap)?  action,TResult? Function( String title,  String? description,  void Function(BuildContext context) onTap)?  submenu,}) {final _that = this;
 switch (_that) {
 case SettingsHeaderItem() when header != null:
 return header(_that.title,_that.description);case SettingsSwitchItem() when switch_ != null:
-return switch_(_that.title,_that.description,_that.setting);case SettingsSliderItem() when slider != null:
-return slider(_that.title,_that.description,_that.setting,_that.min,_that.max,_that.units);case SettingsSingleChoiceItem() when singleChoice != null:
-return singleChoice(_that.title,_that.description,_that.setting,_that.choiceLabels,_that.choiceValues);case SettingsFloatSliderItem() when floatSlider != null:
-return floatSlider(_that.title,_that.description,_that.setting,_that.min,_that.max,_that.units);case SettingsStringSingleChoiceItem() when stringSingleChoice != null:
-return stringSingleChoice(_that.title,_that.description,_that.setting,_that.choiceLabels,_that.choiceValues);case SettingsStringInputItem() when stringInput != null:
-return stringInput(_that.title,_that.description,_that.setting,_that.maxLength);case SettingsDateTimeItem() when dateTime != null:
-return dateTime(_that.title,_that.description,_that.setting);case SettingsActionItem() when action != null:
+return switch_(_that.title,_that.description,_that.setting,_that.store);case SettingsSliderItem() when slider != null:
+return slider(_that.title,_that.description,_that.setting,_that.min,_that.max,_that.units,_that.store);case SettingsSingleChoiceItem() when singleChoice != null:
+return singleChoice(_that.title,_that.description,_that.setting,_that.choiceLabels,_that.choiceValues,_that.store);case SettingsFloatSliderItem() when floatSlider != null:
+return floatSlider(_that.title,_that.description,_that.setting,_that.min,_that.max,_that.units,_that.store);case SettingsStringSingleChoiceItem() when stringSingleChoice != null:
+return stringSingleChoice(_that.title,_that.description,_that.setting,_that.choiceLabels,_that.choiceValues,_that.store);case SettingsStringInputItem() when stringInput != null:
+return stringInput(_that.title,_that.description,_that.setting,_that.maxLength,_that.store);case SettingsDateTimeItem() when dateTime != null:
+return dateTime(_that.title,_that.description,_that.setting,_that.store);case SettingsActionItem() when action != null:
 return action(_that.title,_that.description,_that.onTap);case SettingsSubmenuItem() when submenu != null:
 return submenu(_that.title,_that.description,_that.onTap);case _:
   return null;
@@ -257,7 +257,7 @@ return submenu(_that.title,_that.description,_that.onTap);case _:
 
 class SettingsHeaderItem implements SettingsItem {
   const SettingsHeaderItem({required this.title, this.description});
-
+  
 
 @override final  String title;
 @override final  String? description;
@@ -324,12 +324,13 @@ as String?,
 
 
 class SettingsSwitchItem implements SettingsItem {
-  const SettingsSwitchItem({required this.title, this.description, required this.setting});
-
+  const SettingsSwitchItem({required this.title, this.description, required this.setting, this.store});
+  
 
 @override final  String title;
 @override final  String? description;
  final  IntBoolKey setting;
+ final  SettingsValueStore? store;
 
 /// Create a copy of SettingsItem
 /// with the given fields replaced by the non-null parameter values.
@@ -341,16 +342,16 @@ $SettingsSwitchItemCopyWith<SettingsSwitchItem> get copyWith => _$SettingsSwitch
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsSwitchItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsSwitchItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.store, store) || other.store == store));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,setting);
+int get hashCode => Object.hash(runtimeType,title,description,setting,store);
 
 @override
 String toString() {
-  return 'SettingsItem.switch_(title: $title, description: $description, setting: $setting)';
+  return 'SettingsItem.switch_(title: $title, description: $description, setting: $setting, store: $store)';
 }
 
 
@@ -361,7 +362,7 @@ abstract mixin class $SettingsSwitchItemCopyWith<$Res> implements $SettingsItemC
   factory $SettingsSwitchItemCopyWith(SettingsSwitchItem value, $Res Function(SettingsSwitchItem) _then) = _$SettingsSwitchItemCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String? description, IntBoolKey setting
+ String title, String? description, IntBoolKey setting, SettingsValueStore? store
 });
 
 
@@ -378,12 +379,13 @@ class _$SettingsSwitchItemCopyWithImpl<$Res>
 
 /// Create a copy of SettingsItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? setting = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? setting = null,Object? store = freezed,}) {
   return _then(SettingsSwitchItem(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,setting: null == setting ? _self.setting : setting // ignore: cast_nullable_to_non_nullable
-as IntBoolKey,
+as IntBoolKey,store: freezed == store ? _self.store : store // ignore: cast_nullable_to_non_nullable
+as SettingsValueStore?,
   ));
 }
 
@@ -394,8 +396,8 @@ as IntBoolKey,
 
 
 class SettingsSliderItem implements SettingsItem {
-  const SettingsSliderItem({required this.title, this.description, required this.setting, required this.min, required this.max, required this.units});
-
+  const SettingsSliderItem({required this.title, this.description, required this.setting, required this.min, required this.max, required this.units, this.store});
+  
 
 @override final  String title;
 @override final  String? description;
@@ -403,6 +405,7 @@ class SettingsSliderItem implements SettingsItem {
  final  int min;
  final  int max;
  final  String units;
+ final  SettingsValueStore? store;
 
 /// Create a copy of SettingsItem
 /// with the given fields replaced by the non-null parameter values.
@@ -414,16 +417,16 @@ $SettingsSliderItemCopyWith<SettingsSliderItem> get copyWith => _$SettingsSlider
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsSliderItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.min, min) || other.min == min)&&(identical(other.max, max) || other.max == max)&&(identical(other.units, units) || other.units == units));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsSliderItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.min, min) || other.min == min)&&(identical(other.max, max) || other.max == max)&&(identical(other.units, units) || other.units == units)&&(identical(other.store, store) || other.store == store));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,setting,min,max,units);
+int get hashCode => Object.hash(runtimeType,title,description,setting,min,max,units,store);
 
 @override
 String toString() {
-  return 'SettingsItem.slider(title: $title, description: $description, setting: $setting, min: $min, max: $max, units: $units)';
+  return 'SettingsItem.slider(title: $title, description: $description, setting: $setting, min: $min, max: $max, units: $units, store: $store)';
 }
 
 
@@ -434,7 +437,7 @@ abstract mixin class $SettingsSliderItemCopyWith<$Res> implements $SettingsItemC
   factory $SettingsSliderItemCopyWith(SettingsSliderItem value, $Res Function(SettingsSliderItem) _then) = _$SettingsSliderItemCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String? description, IntKey setting, int min, int max, String units
+ String title, String? description, IntKey setting, int min, int max, String units, SettingsValueStore? store
 });
 
 
@@ -451,7 +454,7 @@ class _$SettingsSliderItemCopyWithImpl<$Res>
 
 /// Create a copy of SettingsItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? setting = null,Object? min = null,Object? max = null,Object? units = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? setting = null,Object? min = null,Object? max = null,Object? units = null,Object? store = freezed,}) {
   return _then(SettingsSliderItem(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
@@ -459,7 +462,8 @@ as String?,setting: null == setting ? _self.setting : setting // ignore: cast_nu
 as IntKey,min: null == min ? _self.min : min // ignore: cast_nullable_to_non_nullable
 as int,max: null == max ? _self.max : max // ignore: cast_nullable_to_non_nullable
 as int,units: null == units ? _self.units : units // ignore: cast_nullable_to_non_nullable
-as String,
+as String,store: freezed == store ? _self.store : store // ignore: cast_nullable_to_non_nullable
+as SettingsValueStore?,
   ));
 }
 
@@ -470,8 +474,8 @@ as String,
 
 
 class SettingsSingleChoiceItem implements SettingsItem {
-  const SettingsSingleChoiceItem({required this.title, this.description, required this.setting, required  List<String> choiceLabels, required  List<int> choiceValues}): _choiceLabels = choiceLabels,_choiceValues = choiceValues;
-
+  const SettingsSingleChoiceItem({required this.title, this.description, required this.setting, required  List<String> choiceLabels, required  List<int> choiceValues, this.store}): _choiceLabels = choiceLabels,_choiceValues = choiceValues;
+  
 
 @override final  String title;
 @override final  String? description;
@@ -490,6 +494,7 @@ class SettingsSingleChoiceItem implements SettingsItem {
   return EqualUnmodifiableListView(_choiceValues);
 }
 
+ final  SettingsValueStore? store;
 
 /// Create a copy of SettingsItem
 /// with the given fields replaced by the non-null parameter values.
@@ -501,16 +506,16 @@ $SettingsSingleChoiceItemCopyWith<SettingsSingleChoiceItem> get copyWith => _$Se
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsSingleChoiceItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&const DeepCollectionEquality().equals(other._choiceLabels, _choiceLabels)&&const DeepCollectionEquality().equals(other._choiceValues, _choiceValues));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsSingleChoiceItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&const DeepCollectionEquality().equals(other._choiceLabels, _choiceLabels)&&const DeepCollectionEquality().equals(other._choiceValues, _choiceValues)&&(identical(other.store, store) || other.store == store));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,setting,const DeepCollectionEquality().hash(_choiceLabels),const DeepCollectionEquality().hash(_choiceValues));
+int get hashCode => Object.hash(runtimeType,title,description,setting,const DeepCollectionEquality().hash(_choiceLabels),const DeepCollectionEquality().hash(_choiceValues),store);
 
 @override
 String toString() {
-  return 'SettingsItem.singleChoice(title: $title, description: $description, setting: $setting, choiceLabels: $choiceLabels, choiceValues: $choiceValues)';
+  return 'SettingsItem.singleChoice(title: $title, description: $description, setting: $setting, choiceLabels: $choiceLabels, choiceValues: $choiceValues, store: $store)';
 }
 
 
@@ -521,7 +526,7 @@ abstract mixin class $SettingsSingleChoiceItemCopyWith<$Res> implements $Setting
   factory $SettingsSingleChoiceItemCopyWith(SettingsSingleChoiceItem value, $Res Function(SettingsSingleChoiceItem) _then) = _$SettingsSingleChoiceItemCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String? description, IntKey setting, List<String> choiceLabels, List<int> choiceValues
+ String title, String? description, IntKey setting, List<String> choiceLabels, List<int> choiceValues, SettingsValueStore? store
 });
 
 
@@ -538,14 +543,15 @@ class _$SettingsSingleChoiceItemCopyWithImpl<$Res>
 
 /// Create a copy of SettingsItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? setting = null,Object? choiceLabels = null,Object? choiceValues = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? setting = null,Object? choiceLabels = null,Object? choiceValues = null,Object? store = freezed,}) {
   return _then(SettingsSingleChoiceItem(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,setting: null == setting ? _self.setting : setting // ignore: cast_nullable_to_non_nullable
 as IntKey,choiceLabels: null == choiceLabels ? _self._choiceLabels : choiceLabels // ignore: cast_nullable_to_non_nullable
 as List<String>,choiceValues: null == choiceValues ? _self._choiceValues : choiceValues // ignore: cast_nullable_to_non_nullable
-as List<int>,
+as List<int>,store: freezed == store ? _self.store : store // ignore: cast_nullable_to_non_nullable
+as SettingsValueStore?,
   ));
 }
 
@@ -556,8 +562,8 @@ as List<int>,
 
 
 class SettingsFloatSliderItem implements SettingsItem {
-  const SettingsFloatSliderItem({required this.title, this.description, required this.setting, required this.min, required this.max, required this.units});
-
+  const SettingsFloatSliderItem({required this.title, this.description, required this.setting, required this.min, required this.max, required this.units, this.store});
+  
 
 @override final  String title;
 @override final  String? description;
@@ -565,6 +571,7 @@ class SettingsFloatSliderItem implements SettingsItem {
  final  double min;
  final  double max;
  final  String units;
+ final  SettingsValueStore? store;
 
 /// Create a copy of SettingsItem
 /// with the given fields replaced by the non-null parameter values.
@@ -576,16 +583,16 @@ $SettingsFloatSliderItemCopyWith<SettingsFloatSliderItem> get copyWith => _$Sett
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsFloatSliderItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.min, min) || other.min == min)&&(identical(other.max, max) || other.max == max)&&(identical(other.units, units) || other.units == units));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsFloatSliderItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.min, min) || other.min == min)&&(identical(other.max, max) || other.max == max)&&(identical(other.units, units) || other.units == units)&&(identical(other.store, store) || other.store == store));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,setting,min,max,units);
+int get hashCode => Object.hash(runtimeType,title,description,setting,min,max,units,store);
 
 @override
 String toString() {
-  return 'SettingsItem.floatSlider(title: $title, description: $description, setting: $setting, min: $min, max: $max, units: $units)';
+  return 'SettingsItem.floatSlider(title: $title, description: $description, setting: $setting, min: $min, max: $max, units: $units, store: $store)';
 }
 
 
@@ -596,7 +603,7 @@ abstract mixin class $SettingsFloatSliderItemCopyWith<$Res> implements $Settings
   factory $SettingsFloatSliderItemCopyWith(SettingsFloatSliderItem value, $Res Function(SettingsFloatSliderItem) _then) = _$SettingsFloatSliderItemCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String? description, FloatKey setting, double min, double max, String units
+ String title, String? description, FloatKey setting, double min, double max, String units, SettingsValueStore? store
 });
 
 
@@ -613,7 +620,7 @@ class _$SettingsFloatSliderItemCopyWithImpl<$Res>
 
 /// Create a copy of SettingsItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? setting = null,Object? min = null,Object? max = null,Object? units = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? setting = null,Object? min = null,Object? max = null,Object? units = null,Object? store = freezed,}) {
   return _then(SettingsFloatSliderItem(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
@@ -621,7 +628,8 @@ as String?,setting: null == setting ? _self.setting : setting // ignore: cast_nu
 as FloatKey,min: null == min ? _self.min : min // ignore: cast_nullable_to_non_nullable
 as double,max: null == max ? _self.max : max // ignore: cast_nullable_to_non_nullable
 as double,units: null == units ? _self.units : units // ignore: cast_nullable_to_non_nullable
-as String,
+as String,store: freezed == store ? _self.store : store // ignore: cast_nullable_to_non_nullable
+as SettingsValueStore?,
   ));
 }
 
@@ -632,8 +640,8 @@ as String,
 
 
 class SettingsStringSingleChoiceItem implements SettingsItem {
-  const SettingsStringSingleChoiceItem({required this.title, this.description, required this.setting, required  List<String> choiceLabels, required  List<String> choiceValues}): _choiceLabels = choiceLabels,_choiceValues = choiceValues;
-
+  const SettingsStringSingleChoiceItem({required this.title, this.description, required this.setting, required  List<String> choiceLabels, required  List<String> choiceValues, this.store}): _choiceLabels = choiceLabels,_choiceValues = choiceValues;
+  
 
 @override final  String title;
 @override final  String? description;
@@ -652,6 +660,7 @@ class SettingsStringSingleChoiceItem implements SettingsItem {
   return EqualUnmodifiableListView(_choiceValues);
 }
 
+ final  SettingsValueStore? store;
 
 /// Create a copy of SettingsItem
 /// with the given fields replaced by the non-null parameter values.
@@ -663,16 +672,16 @@ $SettingsStringSingleChoiceItemCopyWith<SettingsStringSingleChoiceItem> get copy
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsStringSingleChoiceItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&const DeepCollectionEquality().equals(other._choiceLabels, _choiceLabels)&&const DeepCollectionEquality().equals(other._choiceValues, _choiceValues));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsStringSingleChoiceItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&const DeepCollectionEquality().equals(other._choiceLabels, _choiceLabels)&&const DeepCollectionEquality().equals(other._choiceValues, _choiceValues)&&(identical(other.store, store) || other.store == store));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,setting,const DeepCollectionEquality().hash(_choiceLabels),const DeepCollectionEquality().hash(_choiceValues));
+int get hashCode => Object.hash(runtimeType,title,description,setting,const DeepCollectionEquality().hash(_choiceLabels),const DeepCollectionEquality().hash(_choiceValues),store);
 
 @override
 String toString() {
-  return 'SettingsItem.stringSingleChoice(title: $title, description: $description, setting: $setting, choiceLabels: $choiceLabels, choiceValues: $choiceValues)';
+  return 'SettingsItem.stringSingleChoice(title: $title, description: $description, setting: $setting, choiceLabels: $choiceLabels, choiceValues: $choiceValues, store: $store)';
 }
 
 
@@ -683,7 +692,7 @@ abstract mixin class $SettingsStringSingleChoiceItemCopyWith<$Res> implements $S
   factory $SettingsStringSingleChoiceItemCopyWith(SettingsStringSingleChoiceItem value, $Res Function(SettingsStringSingleChoiceItem) _then) = _$SettingsStringSingleChoiceItemCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String? description, StringKey setting, List<String> choiceLabels, List<String> choiceValues
+ String title, String? description, StringKey setting, List<String> choiceLabels, List<String> choiceValues, SettingsValueStore? store
 });
 
 
@@ -700,14 +709,15 @@ class _$SettingsStringSingleChoiceItemCopyWithImpl<$Res>
 
 /// Create a copy of SettingsItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? setting = null,Object? choiceLabels = null,Object? choiceValues = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? setting = null,Object? choiceLabels = null,Object? choiceValues = null,Object? store = freezed,}) {
   return _then(SettingsStringSingleChoiceItem(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,setting: null == setting ? _self.setting : setting // ignore: cast_nullable_to_non_nullable
 as StringKey,choiceLabels: null == choiceLabels ? _self._choiceLabels : choiceLabels // ignore: cast_nullable_to_non_nullable
 as List<String>,choiceValues: null == choiceValues ? _self._choiceValues : choiceValues // ignore: cast_nullable_to_non_nullable
-as List<String>,
+as List<String>,store: freezed == store ? _self.store : store // ignore: cast_nullable_to_non_nullable
+as SettingsValueStore?,
   ));
 }
 
@@ -718,13 +728,14 @@ as List<String>,
 
 
 class SettingsStringInputItem implements SettingsItem {
-  const SettingsStringInputItem({required this.title, this.description, required this.setting, this.maxLength});
-
+  const SettingsStringInputItem({required this.title, this.description, required this.setting, this.maxLength, this.store});
+  
 
 @override final  String title;
 @override final  String? description;
  final  StringKey setting;
  final  int? maxLength;
+ final  SettingsValueStore? store;
 
 /// Create a copy of SettingsItem
 /// with the given fields replaced by the non-null parameter values.
@@ -736,16 +747,16 @@ $SettingsStringInputItemCopyWith<SettingsStringInputItem> get copyWith => _$Sett
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsStringInputItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.maxLength, maxLength) || other.maxLength == maxLength));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsStringInputItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.maxLength, maxLength) || other.maxLength == maxLength)&&(identical(other.store, store) || other.store == store));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,setting,maxLength);
+int get hashCode => Object.hash(runtimeType,title,description,setting,maxLength,store);
 
 @override
 String toString() {
-  return 'SettingsItem.stringInput(title: $title, description: $description, setting: $setting, maxLength: $maxLength)';
+  return 'SettingsItem.stringInput(title: $title, description: $description, setting: $setting, maxLength: $maxLength, store: $store)';
 }
 
 
@@ -756,7 +767,7 @@ abstract mixin class $SettingsStringInputItemCopyWith<$Res> implements $Settings
   factory $SettingsStringInputItemCopyWith(SettingsStringInputItem value, $Res Function(SettingsStringInputItem) _then) = _$SettingsStringInputItemCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String? description, StringKey setting, int? maxLength
+ String title, String? description, StringKey setting, int? maxLength, SettingsValueStore? store
 });
 
 
@@ -773,13 +784,14 @@ class _$SettingsStringInputItemCopyWithImpl<$Res>
 
 /// Create a copy of SettingsItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? setting = null,Object? maxLength = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? setting = null,Object? maxLength = freezed,Object? store = freezed,}) {
   return _then(SettingsStringInputItem(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,setting: null == setting ? _self.setting : setting // ignore: cast_nullable_to_non_nullable
 as StringKey,maxLength: freezed == maxLength ? _self.maxLength : maxLength // ignore: cast_nullable_to_non_nullable
-as int?,
+as int?,store: freezed == store ? _self.store : store // ignore: cast_nullable_to_non_nullable
+as SettingsValueStore?,
   ));
 }
 
@@ -790,12 +802,13 @@ as int?,
 
 
 class SettingsDateTimeItem implements SettingsItem {
-  const SettingsDateTimeItem({required this.title, this.description, required this.setting});
-
+  const SettingsDateTimeItem({required this.title, this.description, required this.setting, this.store});
+  
 
 @override final  String title;
 @override final  String? description;
  final  StringKey setting;
+ final  SettingsValueStore? store;
 
 /// Create a copy of SettingsItem
 /// with the given fields replaced by the non-null parameter values.
@@ -807,16 +820,16 @@ $SettingsDateTimeItemCopyWith<SettingsDateTimeItem> get copyWith => _$SettingsDa
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsDateTimeItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsDateTimeItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.store, store) || other.store == store));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,setting);
+int get hashCode => Object.hash(runtimeType,title,description,setting,store);
 
 @override
 String toString() {
-  return 'SettingsItem.dateTime(title: $title, description: $description, setting: $setting)';
+  return 'SettingsItem.dateTime(title: $title, description: $description, setting: $setting, store: $store)';
 }
 
 
@@ -827,7 +840,7 @@ abstract mixin class $SettingsDateTimeItemCopyWith<$Res> implements $SettingsIte
   factory $SettingsDateTimeItemCopyWith(SettingsDateTimeItem value, $Res Function(SettingsDateTimeItem) _then) = _$SettingsDateTimeItemCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String? description, StringKey setting
+ String title, String? description, StringKey setting, SettingsValueStore? store
 });
 
 
@@ -844,12 +857,13 @@ class _$SettingsDateTimeItemCopyWithImpl<$Res>
 
 /// Create a copy of SettingsItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? setting = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? setting = null,Object? store = freezed,}) {
   return _then(SettingsDateTimeItem(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,setting: null == setting ? _self.setting : setting // ignore: cast_nullable_to_non_nullable
-as StringKey,
+as StringKey,store: freezed == store ? _self.store : store // ignore: cast_nullable_to_non_nullable
+as SettingsValueStore?,
   ));
 }
 
@@ -861,7 +875,7 @@ as StringKey,
 
 class SettingsActionItem implements SettingsItem {
   const SettingsActionItem({required this.title, this.description, required this.onTap});
-
+  
 
 @override final  String title;
 @override final  String? description;
@@ -931,7 +945,7 @@ as void Function(BuildContext context),
 
 class SettingsSubmenuItem implements SettingsItem {
   const SettingsSubmenuItem({required this.title, this.description, required this.onTap});
-
+  
 
 @override final  String title;
 @override final  String? description;

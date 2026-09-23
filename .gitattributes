@@ -2,3 +2,8 @@ dist/languages/* linguist-vendored
 dist/qt_themes/* linguist-vendored
 externals/* linguist-vendored
 *.h linguist-language=cpp
+
+# Generated code is exempt from the repo's trailing-whitespace policy since it isn't
+# hand-written and its formatting is dictated by the generator, not by contributors.
+src/flutter/lib/**/*.freezed.dart -whitespace
+src/flutter/lib/**/*.g.dart -whitespace
