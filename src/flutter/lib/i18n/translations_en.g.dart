@@ -73,6 +73,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$options$en options = Translations$options$en.internal(
     _root,
   );
+  late final Translations$systemFiles$en systemFiles =
+      Translations$systemFiles$en.internal(_root);
   late final Translations$gpuDriverManager$en gpuDriverManager =
       Translations$gpuDriverManager$en.internal(_root);
   late final Translations$articBaseConnectDialog$en articBaseConnectDialog =
@@ -282,6 +284,75 @@ class Translations$options$en {
   /// en: 'Install a CIA file to the emulated system'
   String get installGameContentDescription =>
       'Install a CIA file to the emulated system';
+
+  /// en: 'Setup System Files'
+  String get setupSystemFiles => 'Setup System Files';
+
+  /// en: 'Set up the 3DS Home Menu and applets'
+  String get setupSystemFilesDescription =>
+      'Set up the 3DS Home Menu and applets';
+}
+
+// Path: systemFiles
+class Translations$systemFiles$en {
+  Translations$systemFiles$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Setup System Files'
+  String get title => 'Setup System Files';
+
+  /// en: 'This will set up the 3DS system files needed to run the Home Menu and other system applets, using an Artic Base server.'
+  String get preamble =>
+      'This will set up the 3DS system files needed to run the Home Menu and other system applets, using an Artic Base server.';
+
+  /// en: 'Connect to Setup Tool'
+  String get connectSetupTool => 'Connect to Setup Tool';
+
+  /// en: 'Delete System Files'
+  String get deleteSystemFiles => 'Delete System Files';
+
+  /// en: 'This will delete the installed 3DS system files. This cannot be undone.'
+  String get deleteSystemFilesDescription =>
+      'This will delete the installed 3DS system files. This cannot be undone.';
+
+  /// en: 'Boot Home Menu'
+  String get bootHomeMenu => 'Boot Home Menu';
+
+  /// en: 'Start'
+  String get start => 'Start';
+
+  /// en: 'Run System Setup on Boot'
+  String get runSystemSetup => 'Run System Setup on Boot';
+
+  /// en: 'Show Home Menu Applications'
+  String get showHomeApps => 'Show Home Menu Applications';
+
+  /// en: 'Detecting installed system titles…'
+  String get detecting => 'Detecting installed system titles…';
+
+  /// en: 'Preparing system files…'
+  String get preparing => 'Preparing system files…';
+
+  /// en: 'Enter Artic Base Address'
+  String get enterAddress => 'Enter Artic Base Address';
+
+  /// en: 'Old 3DS'
+  String get old3ds => 'Old 3DS';
+
+  /// en: 'New 3DS'
+  String get new3ds => 'New 3DS';
+
+  /// en: 'Not yet installed'
+  String get statusPossible => 'Not yet installed';
+
+  /// en: 'Already installed'
+  String get statusCompleted => 'Already installed';
+
+  /// en: 'Install Old 3DS system files first'
+  String get statusOld3dsNeeded => 'Install Old 3DS system files first';
 }
 
 // Path: gpuDriverManager
@@ -2013,595 +2084,642 @@ class Translations$settings$language$en {
 extension on Translations {
   dynamic _flatMapFunction(String path) {
     return switch (path) {
-      'appName' => 'Azahar',
-      'setup.next' => 'Next',
-      'setup.back' => 'Back',
-      'setup.stepComplete' => 'Complete!',
-      'setup.warningSkip' => 'Skip',
-      'setup.warningCancel' => 'Cancel',
-      'setup.warningHelp' => 'Help',
-      'setup.close' => 'Close',
-      'setup.welcome.title' => 'Welcome!',
-      'setup.welcome.description' =>
-        'Learn how to set up Azahar and jump into emulation.',
-      'setup.welcome.getStarted' => 'Get started',
-      'setup.permissions.title' => 'Permissions',
-      'setup.permissions.description' =>
-        'Grant optional permissions to use specific features of the emulator',
-      'setup.dataFolders.title' => 'Data Folders',
-      'setup.dataFolders.description' =>
-        'Select data folders\n(User folder is required)',
-      'setup.notifications.title' => 'Notifications',
-      'setup.notifications.description' =>
-        'Grant the notification permission with the button below.',
-      'setup.notifications.givePermission' => 'Grant permission',
-      'setup.notifications.warningTitle' =>
-        'Skip granting the notification permission?',
-      'setup.notifications.warningDescription' =>
-        'Azahar won\'t be able to notify you of important information.',
-      'setup.microphone.title' => 'Microphone',
-      'setup.microphone.description' =>
-        'Grant the microphone permission below to emulate the 3DS microphone.',
-      'setup.microphone.givePermission' => 'Grant permission',
-      'setup.camera.title' => 'Camera',
-      'setup.camera.description' =>
-        'Grant the camera permission below to emulate the 3DS camera.',
-      'setup.camera.givePermission' => 'Grant permission',
-      'setup.userDirectory.title' => 'Select User Folder',
-      'setup.userDirectory.description' =>
-        'Select your user data directory with the button below.',
-      'setup.userDirectory.select' => 'Select',
-      'setup.userDirectory.warningTitle' => 'You can\'t skip this step',
-      'setup.userDirectory.warningDescription' =>
-        'This step is required to allow Azahar to work. Please select a directory and then you can continue.',
-      'setup.userDirectory.warningHelpUrl' =>
-        'https://web.archive.org/web/20240304193549/https://github.com/citra-emu/citra/wiki/Citra-Android-user-data-and-storage',
-      'setup.userDirectory.moveData' => 'Move Data',
-      'setup.userDirectory.movingData' => 'Moving Data…',
-      'setup.gamesDirectory.title' => 'Applications',
-      'setup.gamesDirectory.description' =>
-        'Select your Applications folder with the button below.',
-      'setup.gamesDirectory.select' => 'Select',
-      'setup.gamesDirectory.warningTitle' =>
-        'Skip selecting applications folder?',
-      'setup.gamesDirectory.warningDescription' =>
-        'Software won\'t be displayed in the Applications list if a folder isn\'t selected.',
-      'setup.gamesDirectory.warningHelpUrl' =>
-        'https://web.archive.org/web/20240304210021/https://citra-emu.org/wiki/dumping-game-cartridges/',
-      'setup.done.title' => 'Done',
-      'setup.done.description' => 'You\'re all set.\nEnjoy using the emulator!',
-      'setup.done.continueLabel' => 'Continue',
-      'home.games' => 'Applications',
-      'home.options' => 'Options',
-      'games.searchHint' => 'Search Applications',
-      'games.emptyGamelist' =>
-        'No files were found or no game directory has been selected yet.',
-      'emulation.loading' => 'Loading…',
-      'emulation.preparingShaders' => 'Preparing Shaders',
-      'emulation.buildingShaders' => 'Building Shaders',
-      'emulation.shaderProgress' =>
-        ({required Object progress, required Object max}) =>
-            '${progress}/${max}',
-      'emulation.menuSectionOther' => 'Other',
-      'emulation.closeGame' => 'Close Game',
-      'emulation.closeGameMessage' =>
-        'Are you sure that you would like to close the current game?',
-      'applets.softwareKeyboard' => 'Software Keyboard',
-      'applets.iForgot' => 'I Forgot',
-      'applets.standardMii' => 'Standard Mii',
-      'options.emulatorSettings' => 'Settings',
-      'options.emulatorSettingsDescription' => 'Configure emulator settings',
-      'options.themeAndColor' => 'Theme and Color',
-      'options.themeAndColorDescription' => 'Customize the app\'s appearance',
-      'options.selectUserFolder' => 'Select Azahar User Folder',
-      'options.selectUserFolderDescription' =>
-        'Change the folder Azahar stores its user data in',
-      'options.selectGamesFolder' => 'Select Applications Folder',
-      'options.selectGamesFolderDescription' =>
-        'Change the folder Azahar looks for applications in',
-      'options.about' => 'About',
-      'options.aboutDescription' => 'View app info, credits and licenses',
-      'options.articBaseConnect' => 'Artic Base Connect',
-      'options.articBaseConnectDescription' =>
-        'Connect to an Artic Base server',
-      'options.shareLog' => 'Share Log',
-      'options.shareLogDescription' => 'Share the emulator\'s log file',
-      'options.shareLogNotFound' => 'No log file was found',
-      'options.gpuDriverManager' => 'GPU Driver Manager',
-      'options.gpuDriverManagerDescription' =>
-        'Install and select a custom GPU driver',
-      'options.installGameContent' => 'Install Game Content',
-      'options.installGameContentDescription' =>
-        'Install a CIA file to the emulated system',
-      'gpuDriverManager.title' => 'GPU Driver Manager',
-      'gpuDriverManager.systemDriver' => 'System Driver',
-      'gpuDriverManager.installDriver' => 'Install Driver',
-      'gpuDriverManager.installDriverDescription' =>
-        'Install a custom driver from a zip file',
-      'gpuDriverManager.installFailed' => 'Failed to install the driver',
-      'articBaseConnectDialog.title' => 'Artic Base Connect',
-      'articBaseConnectDialog.addressHint' => 'Server address',
-      'articBaseConnectDialog.connect' => 'Connect',
-      'about.title' => 'About',
-      'about.description' => 'An open-source 3DS emulator',
-      'about.contributors' => 'Contributors',
-      'about.contributorsDescription' =>
-        'Contributors who made Azahar possible',
-      'about.licenses' => 'Licenses',
-      'about.licensesDescription' => 'Projects used by Azahar',
-      'about.build' => 'Build',
-      'settings.title' => 'Settings',
-      'settings.resetToDefault' => 'Reset to Default',
-      'settings.resetToDefaultDialog.title' => 'Reset to Default?',
-      'settings.resetToDefaultDialog.message' =>
-        'This will reset all settings to their default values. This cannot be undone.',
-      'settings.resetToDefaultDialog.confirm' => 'Reset',
-      'settings.sliderDialog.kDefault' => 'Default',
-      'settings.sliderDialog.invalidValue' =>
-        ({required Object title, required Object min, required Object max}) =>
-            '${title}: value must be between ${min} and ${max}.',
-      'settings.inputBindingDialog.waitingForInput' =>
-        'Press a button on your controller…',
-      'settings.general.title' => 'General',
-      'settings.general.frameLimitEnable' => 'Limit Speed',
-      'settings.general.frameLimitEnableDescription' =>
-        'When enabled, emulation speed will be limited to a specified percentage of normal speed.',
-      'settings.general.frameLimitSlider' => 'Limit Speed Percent',
-      'settings.general.frameLimitSliderDescription' =>
-        'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.',
-      'settings.graphics.title' => 'Graphics',
-      'settings.graphics.renderer' => 'Renderer',
-      'settings.graphics.graphicsApi' => 'Graphics API',
-      'settings.graphics.graphicsApiOpengles' => 'OpenGLES',
-      'settings.graphics.graphicsApiVulkan' => 'Vulkan',
-      'settings.graphics.spirvShaderGen' => 'Enable SPIR-V shader generation',
-      'settings.graphics.spirvShaderGenDescription' =>
-        'Emits the fragment shader used to emulate PICA using SPIR-V instead of GLSL',
-      'settings.graphics.asyncShaders' =>
-        'Enable asynchronous shader compilation',
-      'settings.graphics.asyncShadersDescription' =>
-        'Compiles shaders in the background to reduce stuttering during gameplay. When enabled expect temporary graphical glitches',
-      'settings.graphics.internalResolution' => 'Internal Resolution',
-      'settings.graphics.internalResolutionDescription' =>
-        'Specifies the resolution used to render at. A high resolution will improve visual quality a lot but is also quite heavy on performance and might cause glitches in certain applications.',
-      'settings.graphics.internalResolutionNative' => 'Native (400x240)',
-      'settings.graphics.internalResolution2x' => '2x Native (800x480)',
-      'settings.graphics.internalResolution3x' => '3x Native (1200x720)',
-      'settings.graphics.internalResolution4x' => '4x Native (1600x960)',
-      'settings.graphics.internalResolution5x' => '5x Native (2000x1200)',
-      'settings.graphics.internalResolution6x' => '6x Native (2400x1440)',
-      'settings.graphics.internalResolution7x' => '7x Native (2800x1680)',
-      'settings.graphics.internalResolution8x' => '8x Native (3200x1920)',
-      'settings.graphics.internalResolution9x' => '9x Native (3600x2160)',
-      'settings.graphics.internalResolution10x' => '10x Native (4000x2400)',
-      'settings.graphics.linearFiltering' => 'Linear Filtering',
-      'settings.graphics.linearFilteringDescription' =>
-        'Enables linear filtering, which causes game visuals to appear smoother.',
-      'settings.graphics.shadersAccurateMul' => 'Accurate Multiplication',
-      'settings.graphics.shadersAccurateMulDescription' =>
-        'Uses more accurate multiplication in hardware shaders, which may fix some graphical bugs. When enabled, performance will be reduced.',
-      'settings.graphics.useDiskShaderCache' => 'Disk Shader Cache',
-      'settings.graphics.useDiskShaderCacheDescription' =>
-        'Reduce stuttering by storing and loading generated shaders to disk. It cannot be used without Enabling Hardware Shader.',
-      'settings.graphics.textureFilterName' => 'Texture Filter',
-      'settings.graphics.textureFilterDescription' =>
-        'Enhances the visuals of applications by applying a filter to textures. The supported filters are Anime4K Ultrafast, Bicubic, ScaleForce, xBRZ freescale, and MMPX.',
-      'settings.graphics.textureFilterNone' => 'None',
-      'settings.graphics.textureFilterAnime4k' => 'Anime4K',
-      'settings.graphics.textureFilterBicubic' => 'Bicubic',
-      'settings.graphics.textureFilterScaleforce' => 'ScaleForce',
-      'settings.graphics.textureFilterXbrz' => 'xBRZ',
-      'settings.graphics.textureFilterMmpx' => 'MMPX',
-      'settings.graphics.delayRenderThread' => 'Delay game render thread',
-      'settings.graphics.delayRenderThreadDescription' =>
-        'Delay the game render thread when it submits data to the GPU. Helps with performance issues in the (very few) applications with dynamic framerates.',
-      'settings.graphics.stereoscopy' => 'Stereoscopy',
-      'settings.graphics.render3d' => 'Stereoscopic 3D Mode',
-      'settings.graphics.render3dOff' => 'Off',
-      'settings.graphics.render3dSideBySide' => 'Side by Side',
-      'settings.graphics.render3dReverseSideBySide' => 'Reverse Side by Side',
-      'settings.graphics.render3dAnaglyph' => 'Anaglyph',
-      'settings.graphics.render3dInterlaced' => 'Interlaced',
-      'settings.graphics.render3dReverseInterlaced' => 'Reverse Interlaced',
-      'settings.graphics.render3dCardboardVr' => 'Cardboard VR',
-      'settings.graphics.factor3d' => 'Depth',
-      'settings.graphics.factor3dDescription' =>
-        'Specifies the value of the 3D slider. This should be set to higher than 0% when Stereoscopic 3D is enabled.',
-      'settings.graphics.disableRightEyeRender' => 'Disable Right Eye Render',
-      'settings.graphics.disableRightEyeRenderDescription' =>
-        'Greatly improves performance in some applications, but can cause flickering in others.',
-      'settings.graphics.cardboardVr' => 'Cardboard VR',
-      'settings.graphics.cardboardScreenSize' => 'Cardboard Screen Size',
-      'settings.graphics.cardboardScreenSizeDescription' =>
-        'Scales the screen to a percentage of its original size.',
-      'settings.graphics.cardboardXShift' => 'Horizontal Shift',
-      'settings.graphics.cardboardXShiftDescription' =>
-        'Specifies the percentage of empty space to shift the screens horizontally. Positive values move the two eyes closer to the middle, while negative values move them away.',
-      'settings.graphics.cardboardYShift' => 'Vertical Shift',
-      'settings.graphics.cardboardYShiftDescription' =>
-        'Specifies the percentage of empty space to shift the screens vertically. Positive values move the two eyes towards the bottom, while negative values move them towards the top.',
-      'settings.graphics.utility' => 'Utility',
-      'settings.graphics.dumpTextures' => 'Dump Textures',
-      'settings.graphics.dumpTexturesDescription' =>
-        'Textures are dumped to dump/textures/[Title ID]/.',
-      'settings.graphics.customTextures' => 'Custom Textures',
-      'settings.graphics.customTexturesDescription' =>
-        'Textures are loaded from load/textures/[Title ID]/.',
-      'settings.graphics.asyncCustomLoading' => 'Async Custom Texture Loading',
-      'settings.graphics.asyncCustomLoadingDescription' =>
-        'Load custom textures asynchronously with background threads to reduce loading stutter.',
-      'settings.graphics.advanced' => 'Advanced',
-      'settings.graphics.textureSamplingName' => 'Texture Sampling',
-      'settings.graphics.textureSamplingDescription' =>
-        'Overrides the sampling filter used by games. This can be useful in certain cases with poorly behaved games when upscaling. If unsure, set this to Game Controlled.',
-      'settings.graphics.textureSamplingGameControlled' => 'Game Controlled',
-      'settings.graphics.textureSamplingNearestNeighbor' => 'Nearest Neighbor',
-      'settings.graphics.textureSamplingLinear' => 'Linear',
-      'settings.system.title' => 'System',
-      'settings.system.emulationSettings' => 'Emulation Settings',
-      'settings.system.new3ds' => 'New 3DS Mode',
-      'settings.system.new3dsDescription' =>
-        'Enables New 3DS exclusive features that are not present on the Old 3DS.',
-      'settings.system.lleApplets' => 'LLE Applets',
-      'settings.system.lleAppletsDescription' =>
-        'Uses low level emulation of the system applets when available, instead of high level emulation.',
-      'settings.system.requiredOnlineLleModules' =>
-        'Enable Required Online LLE Modules',
-      'settings.system.requiredOnlineLleModulesDescription' =>
-        'Uses low level emulation for modules required for online features, even if LLE Applets is disabled.',
-      'settings.system.profileSettings' => 'Profile Settings',
-      'settings.system.emulatedRegion' => 'Emulated Region',
-      'settings.system.regionAutoSelect' => 'Auto-Select',
-      'settings.system.regionJapan' => 'JPN',
-      'settings.system.regionUsa' => 'USA',
-      'settings.system.regionEurope' => 'EUR',
-      'settings.system.regionAustralia' => 'AUS',
-      'settings.system.regionChina' => 'CHN',
-      'settings.system.regionKorea' => 'KOR',
-      'settings.system.regionTaiwan' => 'TWN',
-      'settings.system.country' => 'Country',
-      'settings.system.emulatedLanguage' => 'Emulated Language',
-      'settings.system.languageJapanese' => 'Japanese (日本語)',
-      'settings.system.languageEnglish' => 'English',
-      'settings.system.languageFrench' => 'French (Français)',
-      'settings.system.languageGerman' => 'German (Deutsch)',
-      'settings.system.languageItalian' => 'Italian (Italiano)',
-      'settings.system.languageSpanish' => 'Spanish (Español)',
-      'settings.system.languageSimplifiedChinese' =>
-        'Simplified Chinese (简体中文)',
-      'settings.system.languageKorean' => 'Korean (한국어)',
-      'settings.system.languageDutch' => 'Dutch (Nederlands)',
-      'settings.system.languagePortuguese' => 'Portuguese (Português)',
-      'settings.system.languageRussian' => 'Russian (Русский)',
-      'settings.system.languageTraditionalChinese' =>
-        'Traditional Chinese (正體中文)',
-      'settings.system.username' => 'Username',
-      'settings.system.playCoins' => 'Play Coins',
-      'settings.system.stepsPerHour' => 'Steps per Hour',
-      'settings.system.stepsPerHourDescription' =>
-        'The average number of steps to be generated per hour, for pedometer-based features.',
-      'settings.system.scanRealWifiNetworks' => 'Scan for Real Wi-Fi Networks',
-      'settings.system.scanRealWifiNetworksDescription' =>
-        'Reports real nearby Wi-Fi networks as 3DS StreetPass/SpotPass-compatible networks, instead of fake ones.',
-      'settings.system.consoleId' => 'Console ID',
-      'settings.system.consoleIdDescription' =>
-        'Tap to regenerate the console ID. Some applications may use this as a form of parental lock.',
-      'settings.system.macAddress' => 'MAC Address',
-      'settings.system.macAddressDescription' =>
-        'Tap to regenerate the network MAC address.',
-      'settings.system.birthday' => 'Birthday',
-      'settings.system.birthdayMonth' => 'Birthday Month',
-      'settings.system.birthdayDay' => 'Birthday Day',
-      'settings.system.monthJanuary' => 'January',
-      'settings.system.monthFebruary' => 'February',
-      'settings.system.monthMarch' => 'March',
-      'settings.system.monthApril' => 'April',
-      'settings.system.monthMay' => 'May',
-      'settings.system.monthJune' => 'June',
-      'settings.system.monthJuly' => 'July',
-      'settings.system.monthAugust' => 'August',
-      'settings.system.monthSeptember' => 'September',
-      'settings.system.monthOctober' => 'October',
-      'settings.system.monthNovember' => 'November',
-      'settings.system.monthDecember' => 'December',
-      'settings.system.clock' => 'Clock',
-      'settings.system.initClock' => 'Initial Clock',
-      'settings.system.initClockDeviceClock' => 'Device Clock',
-      'settings.system.initClockSimulatedClock' => 'Simulated Clock',
-      'settings.system.simulatedClock' => 'Simulated Clock',
-      'settings.system.pluginLoader' => 'Plugin Loader',
-      'settings.system.pluginLoaderEnable' => 'Plugin Loader',
-      'settings.system.pluginLoaderEnableDescription' =>
-        'Allows arbitrary plugins to be loaded into the emulated game.',
-      'settings.system.allowPluginLoader' => 'Allow Plugin Loader',
-      'settings.system.allowPluginLoaderDescription' =>
-        'Allows the game itself to request plugins to be loaded.',
-      'settings.system.countryJapan' => 'Japan',
-      'settings.system.countryAnguilla' => 'Anguilla',
-      'settings.system.countryAntiguaAndBarbuda' => 'Antigua and Barbuda',
-      'settings.system.countryArgentina' => 'Argentina',
-      'settings.system.countryAruba' => 'Aruba',
-      'settings.system.countryBahamas' => 'Bahamas',
-      'settings.system.countryBarbados' => 'Barbados',
-      'settings.system.countryBelize' => 'Belize',
-      'settings.system.countryBolivia' => 'Bolivia',
-      'settings.system.countryBrazil' => 'Brazil',
-      'settings.system.countryBritishVirginIslands' => 'British Virgin Islands',
-      'settings.system.countryCanada' => 'Canada',
-      'settings.system.countryCaymanIslands' => 'Cayman Islands',
-      'settings.system.countryChile' => 'Chile',
-      'settings.system.countryColombia' => 'Colombia',
-      'settings.system.countryCostaRica' => 'Costa Rica',
-      'settings.system.countryDominica' => 'Dominica',
-      'settings.system.countryDominicanRepublic' => 'Dominican Republic',
-      'settings.system.countryEcuador' => 'Ecuador',
-      'settings.system.countryElSalvador' => 'El Salvador',
-      'settings.system.countryFrenchGuiana' => 'French Guiana',
-      'settings.system.countryGrenada' => 'Grenada',
-      'settings.system.countryGuadeloupe' => 'Guadeloupe',
-      'settings.system.countryGuatemala' => 'Guatemala',
-      'settings.system.countryGuyana' => 'Guyana',
-      'settings.system.countryHaiti' => 'Haiti',
-      'settings.system.countryHonduras' => 'Honduras',
-      'settings.system.countryJamaica' => 'Jamaica',
-      'settings.system.countryMartinique' => 'Martinique',
-      'settings.system.countryMexico' => 'Mexico',
-      'settings.system.countryMontserrat' => 'Montserrat',
-      'settings.system.countryNetherlandsAntilles' => 'Netherlands Antilles',
-      'settings.system.countryNicaragua' => 'Nicaragua',
-      'settings.system.countryPanama' => 'Panama',
-      'settings.system.countryParaguay' => 'Paraguay',
-      'settings.system.countryPeru' => 'Peru',
-      'settings.system.countrySaintKittsAndNevis' => 'Saint Kitts and Nevis',
-      'settings.system.countrySaintLucia' => 'Saint Lucia',
-      'settings.system.countrySaintVincentAndTheGrenadines' =>
-        'Saint Vincent and the Grenadines',
-      'settings.system.countrySuriname' => 'Suriname',
-      'settings.system.countryTrinidadAndTobago' => 'Trinidad and Tobago',
-      'settings.system.countryTurksAndCaicosIslands' =>
-        'Turks and Caicos Islands',
-      'settings.system.countryUnitedStates' => 'United States',
-      'settings.system.countryUruguay' => 'Uruguay',
-      'settings.system.countryUsVirginIslands' => 'US Virgin Islands',
-      'settings.system.countryVenezuela' => 'Venezuela',
-      'settings.system.countryAlbania' => 'Albania',
-      'settings.system.countryAustralia' => 'Australia',
-      'settings.system.countryAustria' => 'Austria',
-      'settings.system.countryBelgium' => 'Belgium',
-      'settings.system.countryBosniaAndHerzegovina' => 'Bosnia and Herzegovina',
-      'settings.system.countryBotswana' => 'Botswana',
-      'settings.system.countryBulgaria' => 'Bulgaria',
-      'settings.system.countryCroatia' => 'Croatia',
-      'settings.system.countryCyprus' => 'Cyprus',
-      'settings.system.countryCzechRepublic' => 'Czech Republic',
-      'settings.system.countryDenmark' => 'Denmark',
-      'settings.system.countryEstonia' => 'Estonia',
-      'settings.system.countryFinland' => 'Finland',
-      'settings.system.countryFrance' => 'France',
-      'settings.system.countryGermany' => 'Germany',
-      'settings.system.countryGreece' => 'Greece',
-      'settings.system.countryHungary' => 'Hungary',
-      'settings.system.countryIceland' => 'Iceland',
-      'settings.system.countryIreland' => 'Ireland',
-      'settings.system.countryItaly' => 'Italy',
-      'settings.system.countryLatvia' => 'Latvia',
-      'settings.system.countryLesotho' => 'Lesotho',
-      'settings.system.countryLiechtenstein' => 'Liechtenstein',
-      'settings.system.countryLithuania' => 'Lithuania',
-      'settings.system.countryLuxembourg' => 'Luxembourg',
-      'settings.system.countryMacedonia' => 'Macedonia',
-      'settings.system.countryMalta' => 'Malta',
-      'settings.system.countryMontenegro' => 'Montenegro',
-      'settings.system.countryMozambique' => 'Mozambique',
-      'settings.system.countryNamibia' => 'Namibia',
-      'settings.system.countryNetherlands' => 'Netherlands',
-      'settings.system.countryNewZealand' => 'New Zealand',
-      'settings.system.countryNorway' => 'Norway',
-      'settings.system.countryPoland' => 'Poland',
-      'settings.system.countryPortugal' => 'Portugal',
-      'settings.system.countryRomania' => 'Romania',
-      'settings.system.countryRussia' => 'Russia',
-      'settings.system.countrySerbia' => 'Serbia',
-      'settings.system.countrySlovakia' => 'Slovakia',
-      'settings.system.countrySlovenia' => 'Slovenia',
-      'settings.system.countrySouthAfrica' => 'South Africa',
-      'settings.system.countrySpain' => 'Spain',
-      'settings.system.countrySwaziland' => 'Swaziland',
-      'settings.system.countrySweden' => 'Sweden',
-      'settings.system.countrySwitzerland' => 'Switzerland',
-      'settings.system.countryTurkey' => 'Turkey',
-      'settings.system.countryUnitedKingdom' => 'United Kingdom',
-      'settings.system.countryZambia' => 'Zambia',
-      'settings.system.countryZimbabwe' => 'Zimbabwe',
-      'settings.system.countryAzerbaijan' => 'Azerbaijan',
-      'settings.system.countryMauritania' => 'Mauritania',
-      'settings.system.countryMali' => 'Mali',
-      'settings.system.countryNiger' => 'Niger',
-      'settings.system.countryChad' => 'Chad',
-      'settings.system.countrySudan' => 'Sudan',
-      'settings.system.countryEritrea' => 'Eritrea',
-      'settings.system.countryDjibouti' => 'Djibouti',
-      'settings.system.countrySomalia' => 'Somalia',
-      'settings.system.countryAndorra' => 'Andorra',
-      'settings.system.countryGibraltar' => 'Gibraltar',
-      'settings.system.countryGuernsey' => 'Guernsey',
-      'settings.system.countryIsleOfMan' => 'Isle of Man',
-      'settings.system.countryJersey' => 'Jersey',
-      'settings.system.countryMonaco' => 'Monaco',
-      'settings.system.countryTaiwan' => 'Taiwan',
-      'settings.system.countrySouthKorea' => 'South Korea',
-      'settings.system.countryHongKong' => 'Hong Kong',
-      'settings.system.countryMacau' => 'Macau',
-      'settings.system.countryIndonesia' => 'Indonesia',
-      'settings.system.countrySingapore' => 'Singapore',
-      'settings.system.countryThailand' => 'Thailand',
-      'settings.system.countryPhilippines' => 'Philippines',
-      'settings.system.countryMalaysia' => 'Malaysia',
-      'settings.system.countryChina' => 'China',
-      'settings.system.countryUnitedArabEmirates' => 'United Arab Emirates',
-      'settings.system.countryIndia' => 'India',
-      'settings.system.countryEgypt' => 'Egypt',
-      'settings.system.countryOman' => 'Oman',
-      'settings.system.countryQatar' => 'Qatar',
-      'settings.system.countryKuwait' => 'Kuwait',
-      'settings.system.countrySaudiArabia' => 'Saudi Arabia',
-      'settings.system.countrySyria' => 'Syria',
-      'settings.system.countryBahrain' => 'Bahrain',
-      'settings.system.countryJordan' => 'Jordan',
-      'settings.system.countrySanMarino' => 'San Marino',
-      'settings.system.countryVaticanCity' => 'Vatican City',
-      'settings.system.countryBermuda' => 'Bermuda',
-      'settings.camera.title' => 'Camera',
-      'settings.camera.innerCamera' => 'Inner Camera',
-      'settings.camera.outerLeftCamera' => 'Outer Left Camera',
-      'settings.camera.outerRightCamera' => 'Outer Right Camera',
-      'settings.camera.imageSource' => 'Image Source',
-      'settings.camera.imageSourceBlank' => 'Blank',
-      'settings.camera.imageSourceStillImage' => 'Still Image',
-      'settings.camera.imageSourceDeviceCamera' => 'Device Camera',
-      'settings.camera.cameraDevice' => 'Camera Device',
-      'settings.camera.cameraDeviceDefault' => 'Default',
-      'settings.camera.cameraDeviceAnyFront' => 'Any Front Camera',
-      'settings.camera.cameraDeviceAnyBack' => 'Any Back Camera',
-      'settings.camera.imageFlip' => 'Image Flip',
-      'settings.camera.imageFlipNone' => 'None',
-      'settings.camera.imageFlipHorizontal' => 'Horizontal',
-      'settings.camera.imageFlipVertical' => 'Vertical',
-      'settings.camera.imageFlipReverse' => 'Reverse',
-      'settings.controls.title' => 'Controls',
-      'settings.controls.controllerInputMode' => 'Controller Input Mode',
-      'settings.controls.controllerInputModeManual' => 'Manual',
-      'settings.controls.controllerInputModeAutoDetect' => 'Auto-Detect',
-      'settings.controls.invertLeftStickYAxis' => 'Invert Left Stick Y Axis',
-      'settings.controls.gyroSettings' => 'Gyro Settings',
-      'settings.controls.gyroInputSource' => 'Gyro Input Source',
-      'settings.controls.gyroInputSourceDevice' => 'Device',
-      'settings.controls.gyroInputSourceController' => 'Controller',
-      'settings.controls.gyroSensitivityVertical' =>
-        'Gyro Sensitivity (Vertical)',
-      'settings.controls.invertGyroVertical' => 'Invert Gyro Vertical',
-      'settings.controls.gyroSensitivityHorizontal' =>
-        'Gyro Sensitivity (Horizontal)',
-      'settings.controls.invertGyroHorizontal' => 'Invert Gyro Horizontal',
-      'settings.controls.genericButtons' => 'Generic Buttons',
-      'settings.controls.buttonA' => 'A',
-      'settings.controls.buttonB' => 'B',
-      'settings.controls.buttonX' => 'X',
-      'settings.controls.buttonY' => 'Y',
-      'settings.controls.buttonSelect' => 'Select',
-      'settings.controls.buttonStart' => 'Start',
-      'settings.controls.buttonHome' => 'Home',
-      'settings.controls.circlePad' => 'Circle-Pad',
-      'settings.controls.cStick' => 'C-Stick',
-      'settings.controls.axisVertical' => 'Vertical Axis',
-      'settings.controls.axisHorizontal' => 'Horizontal Axis',
-      'settings.controls.dpadAxis' => 'D-Pad Axis',
-      'settings.controls.dpadButtons' => 'D-Pad Buttons',
-      'settings.controls.buttonUp' => 'Up',
-      'settings.controls.buttonDown' => 'Down',
-      'settings.controls.buttonLeft' => 'Left',
-      'settings.controls.buttonRight' => 'Right',
-      'settings.controls.triggers' => 'Triggers',
-      'settings.controls.buttonL' => 'L',
-      'settings.controls.buttonR' => 'R',
-      'settings.controls.buttonZl' => 'ZL',
-      'settings.controls.buttonZr' => 'ZR',
-      'settings.controls.hotkeys' => 'Hotkeys',
-      'settings.controls.hotkeySwapScreens' => 'Swap Screens',
-      'settings.controls.hotkeyCycleLayout' => 'Cycle Layout',
-      'settings.controls.hotkeyCloseGame' => 'Close Game',
-      'settings.controls.hotkeyPauseOrResume' => 'Pause or Resume',
-      'settings.controls.hotkeyQuicksave' => 'Quicksave',
-      'settings.controls.hotkeyQuickload' => 'Quickload',
-      'settings.controls.miscellaneous' => 'Miscellaneous',
-      'settings.controls.useArticBaseController' => 'Use Artic Base Controller',
-      'settings.layout.title' => 'Layout',
-      'settings.layout.screenOrientation' => 'Screen Orientation',
-      'settings.layout.screenOrientationAutoSensor' => 'Auto (Sensor)',
-      'settings.layout.screenOrientationLandscape' => 'Landscape',
-      'settings.layout.screenOrientationLandscapeReverse' =>
-        'Reverse Landscape',
-      'settings.layout.screenOrientationPortrait' => 'Portrait',
-      'settings.layout.screenOrientationPortraitReverse' => 'Reverse Portrait',
-      'settings.layout.customLandscapeLayout' => 'Custom Landscape Layout',
-      'settings.layout.customPortraitLayout' => 'Custom Portrait Layout',
-      'settings.layout.topScreen' => 'Top Screen',
-      'settings.layout.bottomScreen' => 'Bottom Screen',
-      'settings.layout.positionX' => 'X',
-      'settings.layout.positionY' => 'Y',
-      'settings.layout.width' => 'Width',
-      'settings.layout.height' => 'Height',
-      'settings.audio.title' => 'Audio',
-      'settings.audio.volume' => 'Volume',
-      'settings.audio.audioStretching' => 'Audio Stretching',
-      'settings.audio.audioStretchingDescription' =>
-        'Stretches audio to reduce stuttering. Increases audio latency and slightly reduces performance.',
-      'settings.audio.realtimeAudio' => 'Realtime Audio',
-      'settings.audio.realtimeAudioDescription' =>
-        'Reduces audio latency, but may cause instability in some applications. Only takes effect when Audio Stretching is disabled.',
-      'settings.audio.audioInputType' => 'Audio Input Type',
-      'settings.audio.audioInputTypeAuto' => 'Auto',
-      'settings.audio.audioInputTypeNone' => 'None',
-      'settings.audio.audioInputTypeStaticNoise' => 'Static Noise',
-      'settings.audio.audioInputTypeRealCubeb' => 'Real Device (Cubeb)',
-      'settings.audio.audioInputTypeRealOpenal' => 'Real Device (OpenAL)',
-      'settings.audio.soundOutputMode' => 'Sound Output Mode',
-      'settings.audio.soundOutputModeMono' => 'Mono',
-      'settings.audio.soundOutputModeStereo' => 'Stereo',
-      'settings.audio.soundOutputModeSurround' => 'Surround',
-      'settings.debug.title' => 'Debug',
-      'settings.debug.warning' =>
-        'These settings are for debugging purposes only. Changing them may cause instability.',
-      'settings.debug.cpuClockSpeed' => 'CPU Clock Speed',
-      'settings.debug.cpuClockSpeedDescription' =>
-        'Over/Underclocks the emulated CPU. Not recommended.',
-      'settings.debug.cpuJit' => 'CPU JIT',
-      'settings.debug.cpuJitDescription' =>
-        'Uses the Just-In-Time (JIT) compiler for CPU emulation. When disabled, a much slower interpreter is used instead.',
-      'settings.debug.hwShaders' => 'Hardware Shaders',
-      'settings.debug.hwShadersDescription' =>
-        'Uses hardware shaders to emulate 3DS shaders, instead of the software renderer. Disabling this greatly reduces performance.',
-      'settings.debug.vsync' => 'VSync',
-      'settings.debug.vsyncDescription' =>
-        'Synchronizes rendering with the host device\'s display refresh rate.',
-      'settings.debug.rendererDebug' => 'Renderer Debug',
-      'settings.debug.rendererDebugDescription' =>
-        'Enables additional renderer debugging features. Reduces performance.',
-      'settings.debug.instantDebugLog' => 'Instant Debug Log',
-      'settings.debug.instantDebugLogDescription' =>
-        'Writes to the debug log immediately instead of buffering. Reduces performance.',
-      'settings.debug.delayStartLleModules' => 'Delay Start for LLE Modules',
-      'settings.debug.delayStartLleModulesDescription' =>
-        'Delays the start of LLE modules to work around race conditions.',
-      'settings.debug.deterministicAsyncOperations' =>
-        'Deterministic Async Operations',
-      'settings.debug.deterministicAsyncOperationsDescription' =>
-        'Forces asynchronous operations to run in a deterministic order. Reduces performance.',
-      'settings.theme.title' => 'Theme and Color',
-      'settings.theme.materialYou' => 'Material You',
-      'settings.theme.materialYouDescription' =>
-        'Uses colors extracted from your device\'s wallpaper.',
-      'settings.theme.staticThemeColor' => 'Static Theme Color',
-      'settings.theme.staticThemeColorBlue' => 'Blue (Default)',
-      'settings.theme.staticThemeColorCyan' => 'Cyan',
-      'settings.theme.staticThemeColorRed' => 'Red',
-      'settings.theme.staticThemeColorGreen' => 'Green',
-      'settings.theme.staticThemeColorYellow' => 'Yellow',
-      'settings.theme.staticThemeColorOrange' => 'Orange',
-      'settings.theme.staticThemeColorViolet' => 'Violet',
-      'settings.theme.staticThemeColorPink' => 'Pink',
-      'settings.theme.staticThemeColorGray' => 'Gray',
-      'settings.theme.themeMode' => 'Theme Mode',
-      'settings.theme.themeModeFollowSystem' => 'Follow System',
-      'settings.theme.themeModeLight' => 'Light',
-      'settings.theme.themeModeDark' => 'Dark',
-      'settings.theme.useBlackBackgrounds' => 'Use Black Backgrounds',
-      'settings.theme.useBlackBackgroundsDescription' =>
-        'Uses black backgrounds when dark mode is enabled, instead of dark gray.',
-      'settings.language.title' => 'Language',
-      'settings.language.systemDefault' => 'System default',
-      'settings.language.english' => 'English',
-      _ => null,
-    };
+          'appName' => 'Azahar',
+          'setup.next' => 'Next',
+          'setup.back' => 'Back',
+          'setup.stepComplete' => 'Complete!',
+          'setup.warningSkip' => 'Skip',
+          'setup.warningCancel' => 'Cancel',
+          'setup.warningHelp' => 'Help',
+          'setup.close' => 'Close',
+          'setup.welcome.title' => 'Welcome!',
+          'setup.welcome.description' =>
+            'Learn how to set up Azahar and jump into emulation.',
+          'setup.welcome.getStarted' => 'Get started',
+          'setup.permissions.title' => 'Permissions',
+          'setup.permissions.description' =>
+            'Grant optional permissions to use specific features of the emulator',
+          'setup.dataFolders.title' => 'Data Folders',
+          'setup.dataFolders.description' =>
+            'Select data folders\n(User folder is required)',
+          'setup.notifications.title' => 'Notifications',
+          'setup.notifications.description' =>
+            'Grant the notification permission with the button below.',
+          'setup.notifications.givePermission' => 'Grant permission',
+          'setup.notifications.warningTitle' =>
+            'Skip granting the notification permission?',
+          'setup.notifications.warningDescription' =>
+            'Azahar won\'t be able to notify you of important information.',
+          'setup.microphone.title' => 'Microphone',
+          'setup.microphone.description' =>
+            'Grant the microphone permission below to emulate the 3DS microphone.',
+          'setup.microphone.givePermission' => 'Grant permission',
+          'setup.camera.title' => 'Camera',
+          'setup.camera.description' =>
+            'Grant the camera permission below to emulate the 3DS camera.',
+          'setup.camera.givePermission' => 'Grant permission',
+          'setup.userDirectory.title' => 'Select User Folder',
+          'setup.userDirectory.description' =>
+            'Select your user data directory with the button below.',
+          'setup.userDirectory.select' => 'Select',
+          'setup.userDirectory.warningTitle' => 'You can\'t skip this step',
+          'setup.userDirectory.warningDescription' =>
+            'This step is required to allow Azahar to work. Please select a directory and then you can continue.',
+          'setup.userDirectory.warningHelpUrl' =>
+            'https://web.archive.org/web/20240304193549/https://github.com/citra-emu/citra/wiki/Citra-Android-user-data-and-storage',
+          'setup.userDirectory.moveData' => 'Move Data',
+          'setup.userDirectory.movingData' => 'Moving Data…',
+          'setup.gamesDirectory.title' => 'Applications',
+          'setup.gamesDirectory.description' =>
+            'Select your Applications folder with the button below.',
+          'setup.gamesDirectory.select' => 'Select',
+          'setup.gamesDirectory.warningTitle' =>
+            'Skip selecting applications folder?',
+          'setup.gamesDirectory.warningDescription' =>
+            'Software won\'t be displayed in the Applications list if a folder isn\'t selected.',
+          'setup.gamesDirectory.warningHelpUrl' =>
+            'https://web.archive.org/web/20240304210021/https://citra-emu.org/wiki/dumping-game-cartridges/',
+          'setup.done.title' => 'Done',
+          'setup.done.description' =>
+            'You\'re all set.\nEnjoy using the emulator!',
+          'setup.done.continueLabel' => 'Continue',
+          'home.games' => 'Applications',
+          'home.options' => 'Options',
+          'games.searchHint' => 'Search Applications',
+          'games.emptyGamelist' =>
+            'No files were found or no game directory has been selected yet.',
+          'emulation.loading' => 'Loading…',
+          'emulation.preparingShaders' => 'Preparing Shaders',
+          'emulation.buildingShaders' => 'Building Shaders',
+          'emulation.shaderProgress' =>
+            ({required Object progress, required Object max}) =>
+                '${progress}/${max}',
+          'emulation.menuSectionOther' => 'Other',
+          'emulation.closeGame' => 'Close Game',
+          'emulation.closeGameMessage' =>
+            'Are you sure that you would like to close the current game?',
+          'applets.softwareKeyboard' => 'Software Keyboard',
+          'applets.iForgot' => 'I Forgot',
+          'applets.standardMii' => 'Standard Mii',
+          'options.emulatorSettings' => 'Settings',
+          'options.emulatorSettingsDescription' =>
+            'Configure emulator settings',
+          'options.themeAndColor' => 'Theme and Color',
+          'options.themeAndColorDescription' =>
+            'Customize the app\'s appearance',
+          'options.selectUserFolder' => 'Select Azahar User Folder',
+          'options.selectUserFolderDescription' =>
+            'Change the folder Azahar stores its user data in',
+          'options.selectGamesFolder' => 'Select Applications Folder',
+          'options.selectGamesFolderDescription' =>
+            'Change the folder Azahar looks for applications in',
+          'options.about' => 'About',
+          'options.aboutDescription' => 'View app info, credits and licenses',
+          'options.articBaseConnect' => 'Artic Base Connect',
+          'options.articBaseConnectDescription' =>
+            'Connect to an Artic Base server',
+          'options.shareLog' => 'Share Log',
+          'options.shareLogDescription' => 'Share the emulator\'s log file',
+          'options.shareLogNotFound' => 'No log file was found',
+          'options.gpuDriverManager' => 'GPU Driver Manager',
+          'options.gpuDriverManagerDescription' =>
+            'Install and select a custom GPU driver',
+          'options.installGameContent' => 'Install Game Content',
+          'options.installGameContentDescription' =>
+            'Install a CIA file to the emulated system',
+          'options.setupSystemFiles' => 'Setup System Files',
+          'options.setupSystemFilesDescription' =>
+            'Set up the 3DS Home Menu and applets',
+          'systemFiles.title' => 'Setup System Files',
+          'systemFiles.preamble' =>
+            'This will set up the 3DS system files needed to run the Home Menu and other system applets, using an Artic Base server.',
+          'systemFiles.connectSetupTool' => 'Connect to Setup Tool',
+          'systemFiles.deleteSystemFiles' => 'Delete System Files',
+          'systemFiles.deleteSystemFilesDescription' =>
+            'This will delete the installed 3DS system files. This cannot be undone.',
+          'systemFiles.bootHomeMenu' => 'Boot Home Menu',
+          'systemFiles.start' => 'Start',
+          'systemFiles.runSystemSetup' => 'Run System Setup on Boot',
+          'systemFiles.showHomeApps' => 'Show Home Menu Applications',
+          'systemFiles.detecting' => 'Detecting installed system titles…',
+          'systemFiles.preparing' => 'Preparing system files…',
+          'systemFiles.enterAddress' => 'Enter Artic Base Address',
+          'systemFiles.old3ds' => 'Old 3DS',
+          'systemFiles.new3ds' => 'New 3DS',
+          'systemFiles.statusPossible' => 'Not yet installed',
+          'systemFiles.statusCompleted' => 'Already installed',
+          'systemFiles.statusOld3dsNeeded' =>
+            'Install Old 3DS system files first',
+          'gpuDriverManager.title' => 'GPU Driver Manager',
+          'gpuDriverManager.systemDriver' => 'System Driver',
+          'gpuDriverManager.installDriver' => 'Install Driver',
+          'gpuDriverManager.installDriverDescription' =>
+            'Install a custom driver from a zip file',
+          'gpuDriverManager.installFailed' => 'Failed to install the driver',
+          'articBaseConnectDialog.title' => 'Artic Base Connect',
+          'articBaseConnectDialog.addressHint' => 'Server address',
+          'articBaseConnectDialog.connect' => 'Connect',
+          'about.title' => 'About',
+          'about.description' => 'An open-source 3DS emulator',
+          'about.contributors' => 'Contributors',
+          'about.contributorsDescription' =>
+            'Contributors who made Azahar possible',
+          'about.licenses' => 'Licenses',
+          'about.licensesDescription' => 'Projects used by Azahar',
+          'about.build' => 'Build',
+          'settings.title' => 'Settings',
+          'settings.resetToDefault' => 'Reset to Default',
+          'settings.resetToDefaultDialog.title' => 'Reset to Default?',
+          'settings.resetToDefaultDialog.message' =>
+            'This will reset all settings to their default values. This cannot be undone.',
+          'settings.resetToDefaultDialog.confirm' => 'Reset',
+          'settings.sliderDialog.kDefault' => 'Default',
+          'settings.sliderDialog.invalidValue' =>
+            ({
+              required Object title,
+              required Object min,
+              required Object max,
+            }) => '${title}: value must be between ${min} and ${max}.',
+          'settings.inputBindingDialog.waitingForInput' =>
+            'Press a button on your controller…',
+          'settings.general.title' => 'General',
+          'settings.general.frameLimitEnable' => 'Limit Speed',
+          'settings.general.frameLimitEnableDescription' =>
+            'When enabled, emulation speed will be limited to a specified percentage of normal speed.',
+          'settings.general.frameLimitSlider' => 'Limit Speed Percent',
+          'settings.general.frameLimitSliderDescription' =>
+            'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.',
+          'settings.graphics.title' => 'Graphics',
+          'settings.graphics.renderer' => 'Renderer',
+          'settings.graphics.graphicsApi' => 'Graphics API',
+          'settings.graphics.graphicsApiOpengles' => 'OpenGLES',
+          'settings.graphics.graphicsApiVulkan' => 'Vulkan',
+          'settings.graphics.spirvShaderGen' =>
+            'Enable SPIR-V shader generation',
+          'settings.graphics.spirvShaderGenDescription' =>
+            'Emits the fragment shader used to emulate PICA using SPIR-V instead of GLSL',
+          'settings.graphics.asyncShaders' =>
+            'Enable asynchronous shader compilation',
+          'settings.graphics.asyncShadersDescription' =>
+            'Compiles shaders in the background to reduce stuttering during gameplay. When enabled expect temporary graphical glitches',
+          'settings.graphics.internalResolution' => 'Internal Resolution',
+          'settings.graphics.internalResolutionDescription' =>
+            'Specifies the resolution used to render at. A high resolution will improve visual quality a lot but is also quite heavy on performance and might cause glitches in certain applications.',
+          'settings.graphics.internalResolutionNative' => 'Native (400x240)',
+          'settings.graphics.internalResolution2x' => '2x Native (800x480)',
+          'settings.graphics.internalResolution3x' => '3x Native (1200x720)',
+          'settings.graphics.internalResolution4x' => '4x Native (1600x960)',
+          'settings.graphics.internalResolution5x' => '5x Native (2000x1200)',
+          'settings.graphics.internalResolution6x' => '6x Native (2400x1440)',
+          'settings.graphics.internalResolution7x' => '7x Native (2800x1680)',
+          'settings.graphics.internalResolution8x' => '8x Native (3200x1920)',
+          'settings.graphics.internalResolution9x' => '9x Native (3600x2160)',
+          'settings.graphics.internalResolution10x' => '10x Native (4000x2400)',
+          'settings.graphics.linearFiltering' => 'Linear Filtering',
+          'settings.graphics.linearFilteringDescription' =>
+            'Enables linear filtering, which causes game visuals to appear smoother.',
+          'settings.graphics.shadersAccurateMul' => 'Accurate Multiplication',
+          'settings.graphics.shadersAccurateMulDescription' =>
+            'Uses more accurate multiplication in hardware shaders, which may fix some graphical bugs. When enabled, performance will be reduced.',
+          'settings.graphics.useDiskShaderCache' => 'Disk Shader Cache',
+          'settings.graphics.useDiskShaderCacheDescription' =>
+            'Reduce stuttering by storing and loading generated shaders to disk. It cannot be used without Enabling Hardware Shader.',
+          'settings.graphics.textureFilterName' => 'Texture Filter',
+          'settings.graphics.textureFilterDescription' =>
+            'Enhances the visuals of applications by applying a filter to textures. The supported filters are Anime4K Ultrafast, Bicubic, ScaleForce, xBRZ freescale, and MMPX.',
+          'settings.graphics.textureFilterNone' => 'None',
+          'settings.graphics.textureFilterAnime4k' => 'Anime4K',
+          'settings.graphics.textureFilterBicubic' => 'Bicubic',
+          'settings.graphics.textureFilterScaleforce' => 'ScaleForce',
+          'settings.graphics.textureFilterXbrz' => 'xBRZ',
+          'settings.graphics.textureFilterMmpx' => 'MMPX',
+          'settings.graphics.delayRenderThread' => 'Delay game render thread',
+          'settings.graphics.delayRenderThreadDescription' =>
+            'Delay the game render thread when it submits data to the GPU. Helps with performance issues in the (very few) applications with dynamic framerates.',
+          'settings.graphics.stereoscopy' => 'Stereoscopy',
+          'settings.graphics.render3d' => 'Stereoscopic 3D Mode',
+          'settings.graphics.render3dOff' => 'Off',
+          'settings.graphics.render3dSideBySide' => 'Side by Side',
+          'settings.graphics.render3dReverseSideBySide' =>
+            'Reverse Side by Side',
+          'settings.graphics.render3dAnaglyph' => 'Anaglyph',
+          'settings.graphics.render3dInterlaced' => 'Interlaced',
+          'settings.graphics.render3dReverseInterlaced' => 'Reverse Interlaced',
+          'settings.graphics.render3dCardboardVr' => 'Cardboard VR',
+          'settings.graphics.factor3d' => 'Depth',
+          'settings.graphics.factor3dDescription' =>
+            'Specifies the value of the 3D slider. This should be set to higher than 0% when Stereoscopic 3D is enabled.',
+          'settings.graphics.disableRightEyeRender' =>
+            'Disable Right Eye Render',
+          'settings.graphics.disableRightEyeRenderDescription' =>
+            'Greatly improves performance in some applications, but can cause flickering in others.',
+          'settings.graphics.cardboardVr' => 'Cardboard VR',
+          'settings.graphics.cardboardScreenSize' => 'Cardboard Screen Size',
+          'settings.graphics.cardboardScreenSizeDescription' =>
+            'Scales the screen to a percentage of its original size.',
+          'settings.graphics.cardboardXShift' => 'Horizontal Shift',
+          'settings.graphics.cardboardXShiftDescription' =>
+            'Specifies the percentage of empty space to shift the screens horizontally. Positive values move the two eyes closer to the middle, while negative values move them away.',
+          'settings.graphics.cardboardYShift' => 'Vertical Shift',
+          'settings.graphics.cardboardYShiftDescription' =>
+            'Specifies the percentage of empty space to shift the screens vertically. Positive values move the two eyes towards the bottom, while negative values move them towards the top.',
+          'settings.graphics.utility' => 'Utility',
+          'settings.graphics.dumpTextures' => 'Dump Textures',
+          'settings.graphics.dumpTexturesDescription' =>
+            'Textures are dumped to dump/textures/[Title ID]/.',
+          'settings.graphics.customTextures' => 'Custom Textures',
+          'settings.graphics.customTexturesDescription' =>
+            'Textures are loaded from load/textures/[Title ID]/.',
+          'settings.graphics.asyncCustomLoading' =>
+            'Async Custom Texture Loading',
+          'settings.graphics.asyncCustomLoadingDescription' =>
+            'Load custom textures asynchronously with background threads to reduce loading stutter.',
+          'settings.graphics.advanced' => 'Advanced',
+          'settings.graphics.textureSamplingName' => 'Texture Sampling',
+          'settings.graphics.textureSamplingDescription' =>
+            'Overrides the sampling filter used by games. This can be useful in certain cases with poorly behaved games when upscaling. If unsure, set this to Game Controlled.',
+          'settings.graphics.textureSamplingGameControlled' =>
+            'Game Controlled',
+          'settings.graphics.textureSamplingNearestNeighbor' =>
+            'Nearest Neighbor',
+          'settings.graphics.textureSamplingLinear' => 'Linear',
+          'settings.system.title' => 'System',
+          'settings.system.emulationSettings' => 'Emulation Settings',
+          'settings.system.new3ds' => 'New 3DS Mode',
+          'settings.system.new3dsDescription' =>
+            'Enables New 3DS exclusive features that are not present on the Old 3DS.',
+          'settings.system.lleApplets' => 'LLE Applets',
+          'settings.system.lleAppletsDescription' =>
+            'Uses low level emulation of the system applets when available, instead of high level emulation.',
+          'settings.system.requiredOnlineLleModules' =>
+            'Enable Required Online LLE Modules',
+          'settings.system.requiredOnlineLleModulesDescription' =>
+            'Uses low level emulation for modules required for online features, even if LLE Applets is disabled.',
+          'settings.system.profileSettings' => 'Profile Settings',
+          'settings.system.emulatedRegion' => 'Emulated Region',
+          'settings.system.regionAutoSelect' => 'Auto-Select',
+          'settings.system.regionJapan' => 'JPN',
+          'settings.system.regionUsa' => 'USA',
+          'settings.system.regionEurope' => 'EUR',
+          'settings.system.regionAustralia' => 'AUS',
+          'settings.system.regionChina' => 'CHN',
+          'settings.system.regionKorea' => 'KOR',
+          'settings.system.regionTaiwan' => 'TWN',
+          'settings.system.country' => 'Country',
+          'settings.system.emulatedLanguage' => 'Emulated Language',
+          'settings.system.languageJapanese' => 'Japanese (日本語)',
+          'settings.system.languageEnglish' => 'English',
+          'settings.system.languageFrench' => 'French (Français)',
+          'settings.system.languageGerman' => 'German (Deutsch)',
+          'settings.system.languageItalian' => 'Italian (Italiano)',
+          'settings.system.languageSpanish' => 'Spanish (Español)',
+          'settings.system.languageSimplifiedChinese' =>
+            'Simplified Chinese (简体中文)',
+          'settings.system.languageKorean' => 'Korean (한국어)',
+          'settings.system.languageDutch' => 'Dutch (Nederlands)',
+          'settings.system.languagePortuguese' => 'Portuguese (Português)',
+          'settings.system.languageRussian' => 'Russian (Русский)',
+          'settings.system.languageTraditionalChinese' =>
+            'Traditional Chinese (正體中文)',
+          'settings.system.username' => 'Username',
+          'settings.system.playCoins' => 'Play Coins',
+          'settings.system.stepsPerHour' => 'Steps per Hour',
+          'settings.system.stepsPerHourDescription' =>
+            'The average number of steps to be generated per hour, for pedometer-based features.',
+          'settings.system.scanRealWifiNetworks' =>
+            'Scan for Real Wi-Fi Networks',
+          'settings.system.scanRealWifiNetworksDescription' =>
+            'Reports real nearby Wi-Fi networks as 3DS StreetPass/SpotPass-compatible networks, instead of fake ones.',
+          'settings.system.consoleId' => 'Console ID',
+          'settings.system.consoleIdDescription' =>
+            'Tap to regenerate the console ID. Some applications may use this as a form of parental lock.',
+          'settings.system.macAddress' => 'MAC Address',
+          'settings.system.macAddressDescription' =>
+            'Tap to regenerate the network MAC address.',
+          'settings.system.birthday' => 'Birthday',
+          'settings.system.birthdayMonth' => 'Birthday Month',
+          'settings.system.birthdayDay' => 'Birthday Day',
+          'settings.system.monthJanuary' => 'January',
+          'settings.system.monthFebruary' => 'February',
+          'settings.system.monthMarch' => 'March',
+          'settings.system.monthApril' => 'April',
+          'settings.system.monthMay' => 'May',
+          'settings.system.monthJune' => 'June',
+          'settings.system.monthJuly' => 'July',
+          'settings.system.monthAugust' => 'August',
+          'settings.system.monthSeptember' => 'September',
+          'settings.system.monthOctober' => 'October',
+          'settings.system.monthNovember' => 'November',
+          'settings.system.monthDecember' => 'December',
+          'settings.system.clock' => 'Clock',
+          'settings.system.initClock' => 'Initial Clock',
+          'settings.system.initClockDeviceClock' => 'Device Clock',
+          'settings.system.initClockSimulatedClock' => 'Simulated Clock',
+          'settings.system.simulatedClock' => 'Simulated Clock',
+          'settings.system.pluginLoader' => 'Plugin Loader',
+          'settings.system.pluginLoaderEnable' => 'Plugin Loader',
+          'settings.system.pluginLoaderEnableDescription' =>
+            'Allows arbitrary plugins to be loaded into the emulated game.',
+          'settings.system.allowPluginLoader' => 'Allow Plugin Loader',
+          'settings.system.allowPluginLoaderDescription' =>
+            'Allows the game itself to request plugins to be loaded.',
+          'settings.system.countryJapan' => 'Japan',
+          'settings.system.countryAnguilla' => 'Anguilla',
+          'settings.system.countryAntiguaAndBarbuda' => 'Antigua and Barbuda',
+          'settings.system.countryArgentina' => 'Argentina',
+          'settings.system.countryAruba' => 'Aruba',
+          'settings.system.countryBahamas' => 'Bahamas',
+          'settings.system.countryBarbados' => 'Barbados',
+          'settings.system.countryBelize' => 'Belize',
+          'settings.system.countryBolivia' => 'Bolivia',
+          'settings.system.countryBrazil' => 'Brazil',
+          'settings.system.countryBritishVirginIslands' =>
+            'British Virgin Islands',
+          'settings.system.countryCanada' => 'Canada',
+          'settings.system.countryCaymanIslands' => 'Cayman Islands',
+          'settings.system.countryChile' => 'Chile',
+          'settings.system.countryColombia' => 'Colombia',
+          'settings.system.countryCostaRica' => 'Costa Rica',
+          'settings.system.countryDominica' => 'Dominica',
+          'settings.system.countryDominicanRepublic' => 'Dominican Republic',
+          'settings.system.countryEcuador' => 'Ecuador',
+          'settings.system.countryElSalvador' => 'El Salvador',
+          'settings.system.countryFrenchGuiana' => 'French Guiana',
+          'settings.system.countryGrenada' => 'Grenada',
+          'settings.system.countryGuadeloupe' => 'Guadeloupe',
+          'settings.system.countryGuatemala' => 'Guatemala',
+          'settings.system.countryGuyana' => 'Guyana',
+          'settings.system.countryHaiti' => 'Haiti',
+          'settings.system.countryHonduras' => 'Honduras',
+          'settings.system.countryJamaica' => 'Jamaica',
+          'settings.system.countryMartinique' => 'Martinique',
+          'settings.system.countryMexico' => 'Mexico',
+          'settings.system.countryMontserrat' => 'Montserrat',
+          'settings.system.countryNetherlandsAntilles' =>
+            'Netherlands Antilles',
+          'settings.system.countryNicaragua' => 'Nicaragua',
+          'settings.system.countryPanama' => 'Panama',
+          'settings.system.countryParaguay' => 'Paraguay',
+          'settings.system.countryPeru' => 'Peru',
+          'settings.system.countrySaintKittsAndNevis' =>
+            'Saint Kitts and Nevis',
+          'settings.system.countrySaintLucia' => 'Saint Lucia',
+          'settings.system.countrySaintVincentAndTheGrenadines' =>
+            'Saint Vincent and the Grenadines',
+          'settings.system.countrySuriname' => 'Suriname',
+          'settings.system.countryTrinidadAndTobago' => 'Trinidad and Tobago',
+          'settings.system.countryTurksAndCaicosIslands' =>
+            'Turks and Caicos Islands',
+          'settings.system.countryUnitedStates' => 'United States',
+          'settings.system.countryUruguay' => 'Uruguay',
+          'settings.system.countryUsVirginIslands' => 'US Virgin Islands',
+          'settings.system.countryVenezuela' => 'Venezuela',
+          'settings.system.countryAlbania' => 'Albania',
+          'settings.system.countryAustralia' => 'Australia',
+          'settings.system.countryAustria' => 'Austria',
+          'settings.system.countryBelgium' => 'Belgium',
+          'settings.system.countryBosniaAndHerzegovina' =>
+            'Bosnia and Herzegovina',
+          'settings.system.countryBotswana' => 'Botswana',
+          'settings.system.countryBulgaria' => 'Bulgaria',
+          'settings.system.countryCroatia' => 'Croatia',
+          'settings.system.countryCyprus' => 'Cyprus',
+          'settings.system.countryCzechRepublic' => 'Czech Republic',
+          'settings.system.countryDenmark' => 'Denmark',
+          'settings.system.countryEstonia' => 'Estonia',
+          'settings.system.countryFinland' => 'Finland',
+          'settings.system.countryFrance' => 'France',
+          'settings.system.countryGermany' => 'Germany',
+          'settings.system.countryGreece' => 'Greece',
+          'settings.system.countryHungary' => 'Hungary',
+          'settings.system.countryIceland' => 'Iceland',
+          'settings.system.countryIreland' => 'Ireland',
+          'settings.system.countryItaly' => 'Italy',
+          'settings.system.countryLatvia' => 'Latvia',
+          'settings.system.countryLesotho' => 'Lesotho',
+          'settings.system.countryLiechtenstein' => 'Liechtenstein',
+          'settings.system.countryLithuania' => 'Lithuania',
+          'settings.system.countryLuxembourg' => 'Luxembourg',
+          'settings.system.countryMacedonia' => 'Macedonia',
+          'settings.system.countryMalta' => 'Malta',
+          'settings.system.countryMontenegro' => 'Montenegro',
+          'settings.system.countryMozambique' => 'Mozambique',
+          'settings.system.countryNamibia' => 'Namibia',
+          'settings.system.countryNetherlands' => 'Netherlands',
+          'settings.system.countryNewZealand' => 'New Zealand',
+          'settings.system.countryNorway' => 'Norway',
+          'settings.system.countryPoland' => 'Poland',
+          'settings.system.countryPortugal' => 'Portugal',
+          'settings.system.countryRomania' => 'Romania',
+          'settings.system.countryRussia' => 'Russia',
+          'settings.system.countrySerbia' => 'Serbia',
+          'settings.system.countrySlovakia' => 'Slovakia',
+          'settings.system.countrySlovenia' => 'Slovenia',
+          'settings.system.countrySouthAfrica' => 'South Africa',
+          'settings.system.countrySpain' => 'Spain',
+          'settings.system.countrySwaziland' => 'Swaziland',
+          'settings.system.countrySweden' => 'Sweden',
+          'settings.system.countrySwitzerland' => 'Switzerland',
+          'settings.system.countryTurkey' => 'Turkey',
+          'settings.system.countryUnitedKingdom' => 'United Kingdom',
+          'settings.system.countryZambia' => 'Zambia',
+          'settings.system.countryZimbabwe' => 'Zimbabwe',
+          'settings.system.countryAzerbaijan' => 'Azerbaijan',
+          'settings.system.countryMauritania' => 'Mauritania',
+          'settings.system.countryMali' => 'Mali',
+          'settings.system.countryNiger' => 'Niger',
+          'settings.system.countryChad' => 'Chad',
+          'settings.system.countrySudan' => 'Sudan',
+          'settings.system.countryEritrea' => 'Eritrea',
+          'settings.system.countryDjibouti' => 'Djibouti',
+          'settings.system.countrySomalia' => 'Somalia',
+          'settings.system.countryAndorra' => 'Andorra',
+          'settings.system.countryGibraltar' => 'Gibraltar',
+          'settings.system.countryGuernsey' => 'Guernsey',
+          'settings.system.countryIsleOfMan' => 'Isle of Man',
+          'settings.system.countryJersey' => 'Jersey',
+          'settings.system.countryMonaco' => 'Monaco',
+          'settings.system.countryTaiwan' => 'Taiwan',
+          'settings.system.countrySouthKorea' => 'South Korea',
+          'settings.system.countryHongKong' => 'Hong Kong',
+          'settings.system.countryMacau' => 'Macau',
+          'settings.system.countryIndonesia' => 'Indonesia',
+          'settings.system.countrySingapore' => 'Singapore',
+          'settings.system.countryThailand' => 'Thailand',
+          'settings.system.countryPhilippines' => 'Philippines',
+          'settings.system.countryMalaysia' => 'Malaysia',
+          'settings.system.countryChina' => 'China',
+          'settings.system.countryUnitedArabEmirates' => 'United Arab Emirates',
+          'settings.system.countryIndia' => 'India',
+          'settings.system.countryEgypt' => 'Egypt',
+          'settings.system.countryOman' => 'Oman',
+          'settings.system.countryQatar' => 'Qatar',
+          'settings.system.countryKuwait' => 'Kuwait',
+          'settings.system.countrySaudiArabia' => 'Saudi Arabia',
+          'settings.system.countrySyria' => 'Syria',
+          'settings.system.countryBahrain' => 'Bahrain',
+          'settings.system.countryJordan' => 'Jordan',
+          'settings.system.countrySanMarino' => 'San Marino',
+          'settings.system.countryVaticanCity' => 'Vatican City',
+          'settings.system.countryBermuda' => 'Bermuda',
+          'settings.camera.title' => 'Camera',
+          'settings.camera.innerCamera' => 'Inner Camera',
+          'settings.camera.outerLeftCamera' => 'Outer Left Camera',
+          'settings.camera.outerRightCamera' => 'Outer Right Camera',
+          'settings.camera.imageSource' => 'Image Source',
+          'settings.camera.imageSourceBlank' => 'Blank',
+          'settings.camera.imageSourceStillImage' => 'Still Image',
+          'settings.camera.imageSourceDeviceCamera' => 'Device Camera',
+          'settings.camera.cameraDevice' => 'Camera Device',
+          'settings.camera.cameraDeviceDefault' => 'Default',
+          'settings.camera.cameraDeviceAnyFront' => 'Any Front Camera',
+          'settings.camera.cameraDeviceAnyBack' => 'Any Back Camera',
+          'settings.camera.imageFlip' => 'Image Flip',
+          'settings.camera.imageFlipNone' => 'None',
+          'settings.camera.imageFlipHorizontal' => 'Horizontal',
+          'settings.camera.imageFlipVertical' => 'Vertical',
+          'settings.camera.imageFlipReverse' => 'Reverse',
+          'settings.controls.title' => 'Controls',
+          'settings.controls.controllerInputMode' => 'Controller Input Mode',
+          'settings.controls.controllerInputModeManual' => 'Manual',
+          'settings.controls.controllerInputModeAutoDetect' => 'Auto-Detect',
+          'settings.controls.invertLeftStickYAxis' =>
+            'Invert Left Stick Y Axis',
+          'settings.controls.gyroSettings' => 'Gyro Settings',
+          'settings.controls.gyroInputSource' => 'Gyro Input Source',
+          'settings.controls.gyroInputSourceDevice' => 'Device',
+          'settings.controls.gyroInputSourceController' => 'Controller',
+          'settings.controls.gyroSensitivityVertical' =>
+            'Gyro Sensitivity (Vertical)',
+          'settings.controls.invertGyroVertical' => 'Invert Gyro Vertical',
+          'settings.controls.gyroSensitivityHorizontal' =>
+            'Gyro Sensitivity (Horizontal)',
+          'settings.controls.invertGyroHorizontal' => 'Invert Gyro Horizontal',
+          'settings.controls.genericButtons' => 'Generic Buttons',
+          'settings.controls.buttonA' => 'A',
+          'settings.controls.buttonB' => 'B',
+          'settings.controls.buttonX' => 'X',
+          'settings.controls.buttonY' => 'Y',
+          'settings.controls.buttonSelect' => 'Select',
+          'settings.controls.buttonStart' => 'Start',
+          'settings.controls.buttonHome' => 'Home',
+          'settings.controls.circlePad' => 'Circle-Pad',
+          'settings.controls.cStick' => 'C-Stick',
+          'settings.controls.axisVertical' => 'Vertical Axis',
+          'settings.controls.axisHorizontal' => 'Horizontal Axis',
+          'settings.controls.dpadAxis' => 'D-Pad Axis',
+          'settings.controls.dpadButtons' => 'D-Pad Buttons',
+          'settings.controls.buttonUp' => 'Up',
+          'settings.controls.buttonDown' => 'Down',
+          'settings.controls.buttonLeft' => 'Left',
+          'settings.controls.buttonRight' => 'Right',
+          'settings.controls.triggers' => 'Triggers',
+          'settings.controls.buttonL' => 'L',
+          'settings.controls.buttonR' => 'R',
+          'settings.controls.buttonZl' => 'ZL',
+          'settings.controls.buttonZr' => 'ZR',
+          'settings.controls.hotkeys' => 'Hotkeys',
+          'settings.controls.hotkeySwapScreens' => 'Swap Screens',
+          'settings.controls.hotkeyCycleLayout' => 'Cycle Layout',
+          'settings.controls.hotkeyCloseGame' => 'Close Game',
+          'settings.controls.hotkeyPauseOrResume' => 'Pause or Resume',
+          'settings.controls.hotkeyQuicksave' => 'Quicksave',
+          'settings.controls.hotkeyQuickload' => 'Quickload',
+          'settings.controls.miscellaneous' => 'Miscellaneous',
+          'settings.controls.useArticBaseController' =>
+            'Use Artic Base Controller',
+          'settings.layout.title' => 'Layout',
+          'settings.layout.screenOrientation' => 'Screen Orientation',
+          'settings.layout.screenOrientationAutoSensor' => 'Auto (Sensor)',
+          'settings.layout.screenOrientationLandscape' => 'Landscape',
+          'settings.layout.screenOrientationLandscapeReverse' =>
+            'Reverse Landscape',
+          'settings.layout.screenOrientationPortrait' => 'Portrait',
+          'settings.layout.screenOrientationPortraitReverse' =>
+            'Reverse Portrait',
+          'settings.layout.customLandscapeLayout' => 'Custom Landscape Layout',
+          'settings.layout.customPortraitLayout' => 'Custom Portrait Layout',
+          'settings.layout.topScreen' => 'Top Screen',
+          'settings.layout.bottomScreen' => 'Bottom Screen',
+          'settings.layout.positionX' => 'X',
+          'settings.layout.positionY' => 'Y',
+          'settings.layout.width' => 'Width',
+          'settings.layout.height' => 'Height',
+          'settings.audio.title' => 'Audio',
+          'settings.audio.volume' => 'Volume',
+          'settings.audio.audioStretching' => 'Audio Stretching',
+          'settings.audio.audioStretchingDescription' =>
+            'Stretches audio to reduce stuttering. Increases audio latency and slightly reduces performance.',
+          'settings.audio.realtimeAudio' => 'Realtime Audio',
+          'settings.audio.realtimeAudioDescription' =>
+            'Reduces audio latency, but may cause instability in some applications. Only takes effect when Audio Stretching is disabled.',
+          'settings.audio.audioInputType' => 'Audio Input Type',
+          'settings.audio.audioInputTypeAuto' => 'Auto',
+          'settings.audio.audioInputTypeNone' => 'None',
+          'settings.audio.audioInputTypeStaticNoise' => 'Static Noise',
+          'settings.audio.audioInputTypeRealCubeb' => 'Real Device (Cubeb)',
+          'settings.audio.audioInputTypeRealOpenal' => 'Real Device (OpenAL)',
+          'settings.audio.soundOutputMode' => 'Sound Output Mode',
+          'settings.audio.soundOutputModeMono' => 'Mono',
+          'settings.audio.soundOutputModeStereo' => 'Stereo',
+          'settings.audio.soundOutputModeSurround' => 'Surround',
+          'settings.debug.title' => 'Debug',
+          'settings.debug.warning' =>
+            'These settings are for debugging purposes only. Changing them may cause instability.',
+          'settings.debug.cpuClockSpeed' => 'CPU Clock Speed',
+          'settings.debug.cpuClockSpeedDescription' =>
+            'Over/Underclocks the emulated CPU. Not recommended.',
+          'settings.debug.cpuJit' => 'CPU JIT',
+          'settings.debug.cpuJitDescription' =>
+            'Uses the Just-In-Time (JIT) compiler for CPU emulation. When disabled, a much slower interpreter is used instead.',
+          'settings.debug.hwShaders' => 'Hardware Shaders',
+          'settings.debug.hwShadersDescription' =>
+            'Uses hardware shaders to emulate 3DS shaders, instead of the software renderer. Disabling this greatly reduces performance.',
+          'settings.debug.vsync' => 'VSync',
+          'settings.debug.vsyncDescription' =>
+            'Synchronizes rendering with the host device\'s display refresh rate.',
+          'settings.debug.rendererDebug' => 'Renderer Debug',
+          'settings.debug.rendererDebugDescription' =>
+            'Enables additional renderer debugging features. Reduces performance.',
+          'settings.debug.instantDebugLog' => 'Instant Debug Log',
+          'settings.debug.instantDebugLogDescription' =>
+            'Writes to the debug log immediately instead of buffering. Reduces performance.',
+          'settings.debug.delayStartLleModules' =>
+            'Delay Start for LLE Modules',
+          'settings.debug.delayStartLleModulesDescription' =>
+            'Delays the start of LLE modules to work around race conditions.',
+          'settings.debug.deterministicAsyncOperations' =>
+            'Deterministic Async Operations',
+          'settings.debug.deterministicAsyncOperationsDescription' =>
+            'Forces asynchronous operations to run in a deterministic order. Reduces performance.',
+          'settings.theme.title' => 'Theme and Color',
+          'settings.theme.materialYou' => 'Material You',
+          'settings.theme.materialYouDescription' =>
+            'Uses colors extracted from your device\'s wallpaper.',
+          'settings.theme.staticThemeColor' => 'Static Theme Color',
+          'settings.theme.staticThemeColorBlue' => 'Blue (Default)',
+          'settings.theme.staticThemeColorCyan' => 'Cyan',
+          'settings.theme.staticThemeColorRed' => 'Red',
+          'settings.theme.staticThemeColorGreen' => 'Green',
+          _ => null,
+        } ??
+        switch (path) {
+          'settings.theme.staticThemeColorYellow' => 'Yellow',
+          'settings.theme.staticThemeColorOrange' => 'Orange',
+          'settings.theme.staticThemeColorViolet' => 'Violet',
+          'settings.theme.staticThemeColorPink' => 'Pink',
+          'settings.theme.staticThemeColorGray' => 'Gray',
+          'settings.theme.themeMode' => 'Theme Mode',
+          'settings.theme.themeModeFollowSystem' => 'Follow System',
+          'settings.theme.themeModeLight' => 'Light',
+          'settings.theme.themeModeDark' => 'Dark',
+          'settings.theme.useBlackBackgrounds' => 'Use Black Backgrounds',
+          'settings.theme.useBlackBackgroundsDescription' =>
+            'Uses black backgrounds when dark mode is enabled, instead of dark gray.',
+          'settings.language.title' => 'Language',
+          'settings.language.systemDefault' => 'System default',
+          'settings.language.english' => 'English',
+          _ => null,
+        };
   }
 }

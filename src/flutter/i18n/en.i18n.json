@@ -103,7 +103,28 @@
     "gpuDriverManager": "GPU Driver Manager",
     "gpuDriverManagerDescription": "Install and select a custom GPU driver",
     "installGameContent": "Install Game Content",
-    "installGameContentDescription": "Install a CIA file to the emulated system"
+    "installGameContentDescription": "Install a CIA file to the emulated system",
+    "setupSystemFiles": "Setup System Files",
+    "setupSystemFilesDescription": "Set up the 3DS Home Menu and applets"
+  },
+  "systemFiles": {
+    "title": "Setup System Files",
+    "preamble": "This will set up the 3DS system files needed to run the Home Menu and other system applets, using an Artic Base server.",
+    "connectSetupTool": "Connect to Setup Tool",
+    "deleteSystemFiles": "Delete System Files",
+    "deleteSystemFilesDescription": "This will delete the installed 3DS system files. This cannot be undone.",
+    "bootHomeMenu": "Boot Home Menu",
+    "start": "Start",
+    "runSystemSetup": "Run System Setup on Boot",
+    "showHomeApps": "Show Home Menu Applications",
+    "detecting": "Detecting installed system titles…",
+    "preparing": "Preparing system files…",
+    "enterAddress": "Enter Artic Base Address",
+    "old3ds": "Old 3DS",
+    "new3ds": "New 3DS",
+    "statusPossible": "Not yet installed",
+    "statusCompleted": "Already installed",
+    "statusOld3dsNeeded": "Install Old 3DS system files first"
   },
   "gpuDriverManager": {
     "title": "GPU Driver Manager",

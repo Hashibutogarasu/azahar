@@ -78,6 +78,38 @@ class NativeBridge {
     return _channel.invokeMethod<void>('installCiaFiles', {'paths': paths});
   }
 
+  Future<bool> isFullConsoleLinked() async {
+    final result = await _channel.invokeMethod<bool>('isFullConsoleLinked');
+    return result ?? false;
+  }
+
+  Future<List<bool>> areSystemTitlesInstalled() async {
+    final result = await _channel.invokeMethod<List<Object?>>('areSystemTitlesInstalled');
+    return result?.cast<bool>() ?? const [false, false];
+  }
+
+  Future<void> installSystemFiles(bool old3ds) {
+    return _channel.invokeMethod<void>('installSystemFiles', {'old3ds': old3ds});
+  }
+
+  Future<void> unlinkConsole() {
+    return _channel.invokeMethod<void>('unlinkConsole');
+  }
+
+  Future<String> getHomeMenuPath(int region) async {
+    final result = await _channel.invokeMethod<String>('getHomeMenuPath', {'region': region});
+    return result ?? '';
+  }
+
+  Future<bool> isSystemSetupNeeded() async {
+    final result = await _channel.invokeMethod<bool>('isSystemSetupNeeded');
+    return result ?? false;
+  }
+
+  Future<void> setSystemSetupNeeded(bool needed) {
+    return _channel.invokeMethod<void>('setSystemSetupNeeded', {'needed': needed});
+  }
+
   Future<List<Game>> getGames() async {
     final result = await _channel.invokeMethod<List<Object?>>('getGames');
     if (result == null) return const [];

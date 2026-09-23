@@ -6,6 +6,7 @@ import '../screens/home/app_shell.dart';
 import '../screens/options/about_page.dart';
 import '../screens/options/gpu_driver_manager_page.dart';
 import '../screens/options/options_page.dart';
+import '../screens/options/system_files_page.dart';
 import '../screens/setup/setup_wizard_page.dart';
 
 part 'app_routes.g.dart';
@@ -37,6 +38,16 @@ class GpuDriverManagerRoute extends GoRouteData with $GpuDriverManagerRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const GpuDriverManagerPage();
+  }
+}
+
+@TypedGoRoute<SystemFilesRoute>(path: '/system-files')
+class SystemFilesRoute extends GoRouteData with $SystemFilesRoute {
+  const SystemFilesRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const SystemFilesPage();
   }
 }
 

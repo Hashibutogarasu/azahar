@@ -67,6 +67,12 @@ class OptionsPage extends ConsumerWidget {
                   onTap: () => ref.read(ciaInstallProvider).pickAndInstall(),
                 ),
                 _OptionCard(
+                  icon: Icons.build_outlined,
+                  title: t.options.setupSystemFiles,
+                  description: t.options.setupSystemFilesDescription,
+                  onTap: () => const SystemFilesRoute().push(context),
+                ),
+                _OptionCard(
                   icon: Icons.info_outline,
                   title: t.options.about,
                   description: t.options.aboutDescription,

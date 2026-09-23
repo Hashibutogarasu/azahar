@@ -10,6 +10,7 @@ List<RouteBase> get $appRoutes => [
   $setupRoute,
   $aboutRoute,
   $gpuDriverManagerRoute,
+  $systemFilesRoute,
   $appShellRouteData,
 ];
 
@@ -77,6 +78,33 @@ mixin $GpuDriverManagerRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/gpu-driver-manager');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $systemFilesRoute => GoRouteData.$route(
+  path: '/system-files',
+  hasOverriddenOnExit: false,
+  factory: $SystemFilesRoute._fromState,
+);
+
+mixin $SystemFilesRoute on GoRouteData {
+  static SystemFilesRoute _fromState(GoRouterState state) =>
+      const SystemFilesRoute();
+
+  @override
+  String get location => GoRouteData.$location('/system-files');
 
   @override
   void go(BuildContext context) => context.go(location);
