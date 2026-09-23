@@ -1,17 +1,27 @@
 import '../../native/native_bridge.dart';
 import 'emulator_setting_key.dart';
 
-/// Reads and writes the emulator core's `config.ini`, mirroring the original app's
-/// `SettingsFile`/`Settings` classes. The native side only exposes the raw ini contents; every
-/// key's meaning, type and default value lives here in Dart.
+/// Reads and writes the emulator core's `config.ini`. Every key's meaning, type and default
+/// value lives here in Dart; the native side only exposes the raw ini contents.
+///
+/// Like the original app's `SettingsViewModel`: writes update memory and reload the core right
+/// away, but only reach disk once [save] is called.
 class EmulatorSettingsRepository {
   EmulatorSettingsRepository(this._nativeBridge);
 
   final NativeBridge _nativeBridge;
   Map<String, Map<String, String>> _sections = const {};
+  bool _dirty = false;
 
   Future<void> load() async {
     _sections = await _nativeBridge.readEmulatorConfig();
+  }
+
+  /// Writes pending changes to `config.ini`. A no-op if nothing changed.
+  Future<void> save() async {
+    if (!_dirty) return;
+    _dirty = false;
+    await _nativeBridge.writeEmulatorConfig(_sections);
   }
 
   String? _rawValue(String section, String key) => _sections[section]?[key];
@@ -21,7 +31,7 @@ class EmulatorSettingsRepository {
       ..._sections,
       section: {...?_sections[section], key: value},
     };
-    await _nativeBridge.writeEmulatorConfigValue(section: section, key: key, value: value);
+    _dirty = true;
     await _nativeBridge.reloadEmulatorSettings();
   }
 

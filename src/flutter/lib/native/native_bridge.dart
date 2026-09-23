@@ -135,16 +135,8 @@ class NativeBridge {
     );
   }
 
-  Future<void> writeEmulatorConfigValue({
-    required String section,
-    required String key,
-    required String value,
-  }) {
-    return _channel.invokeMethod<void>('writeEmulatorConfigValue', {
-      'section': section,
-      'key': key,
-      'value': value,
-    });
+  Future<void> writeEmulatorConfig(Map<String, Map<String, String>> sections) {
+    return _channel.invokeMethod<void>('writeEmulatorConfig', sections);
   }
 
   Future<void> reloadEmulatorSettings() {

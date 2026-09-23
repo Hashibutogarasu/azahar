@@ -8,7 +8,7 @@ import org.citra.citra_emu.utils.EmulatorSettingsFile
 class SettingsController {
     val handlers: List<AzaharMethodHandler> = listOf(
         ReadConfig(),
-        WriteConfigValue(),
+        WriteConfig(),
         ReloadNativeSettings()
     )
 
@@ -19,17 +19,16 @@ class SettingsController {
         }
     }
 
-    private inner class WriteConfigValue : AzaharMethodHandler {
-        override val name = "writeEmulatorConfigValue"
+    private inner class WriteConfig : AzaharMethodHandler {
+        override val name = "writeEmulatorConfig"
         override fun execute(call: MethodCall, result: MethodChannel.Result) {
-            val section = call.argument<String>("section")
-            val key = call.argument<String>("key")
-            val value = call.argument<String>("value")
-            if (section == null || key == null || value == null) {
-                result.error("invalid_argument", "section, key and value are required", null)
+            @Suppress("UNCHECKED_CAST")
+            val sections = call.arguments as? Map<String, Map<String, String>>
+            if (sections == null) {
+                result.error("invalid_argument", "a map of sections is required", null)
                 return
             }
-            EmulatorSettingsFile.write(section, key, value)
+            EmulatorSettingsFile.write(sections)
             result.success(null)
         }
     }

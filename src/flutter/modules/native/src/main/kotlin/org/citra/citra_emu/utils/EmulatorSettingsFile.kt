@@ -42,13 +42,17 @@ object EmulatorSettingsFile {
         return sections
     }
 
-    fun write(section: String, key: String, value: String) {
+    fun write(sections: Map<String, Map<String, String>>) {
         val file = configFile() ?: return
         val contentResolver = CitraApplication.appContext.contentResolver
         val inputStream = contentResolver.openInputStream(file.uri)
         val writer = Wini(inputStream)
         inputStream?.close()
-        writer.put(section, key, value)
+        for ((section, keys) in sections) {
+            for ((key, value) in keys) {
+                writer.put(section, key, value)
+            }
+        }
         val outputStream = contentResolver.openOutputStream(file.uri, "wt")
         writer.store(outputStream)
         outputStream?.flush()
