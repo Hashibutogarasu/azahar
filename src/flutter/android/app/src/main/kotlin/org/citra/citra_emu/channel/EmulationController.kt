@@ -1,5 +1,6 @@
 package org.citra.citra_emu.channel
 
+import android.view.Choreographer
 import androidx.preference.PreferenceManager
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -11,6 +12,27 @@ class EmulationController(private val textureRegistry: TextureRegistry) {
     private var surfaceProducer: TextureRegistry.SurfaceProducer? = null
     private var secondarySurfaceProducer: TextureRegistry.SurfaceProducer? = null
     private var screensSwapped = false
+
+    private val frameCallback = object : Choreographer.FrameCallback {
+        override fun doFrame(frameTimeNanos: Long) {
+            Choreographer.getInstance().postFrameCallback(this)
+            NativeLibrary.doFrame()
+            NativeLibrary.doFrameSecondary()
+        }
+    }
+    private var isPresentingFrames = false
+
+    private fun startPresentingFrames() {
+        if (isPresentingFrames) return
+        isPresentingFrames = true
+        Choreographer.getInstance().postFrameCallback(frameCallback)
+    }
+
+    private fun stopPresentingFrames() {
+        if (!isPresentingFrames) return
+        isPresentingFrames = false
+        Choreographer.getInstance().removeFrameCallback(frameCallback)
+    }
 
     val handlers: List<AzaharMethodHandler> = listOf(
         CreateEmulationTexture(),
@@ -61,6 +83,7 @@ class EmulationController(private val textureRegistry: TextureRegistry) {
             } else {
                 Thread { NativeLibrary.run(path) }.start()
             }
+            startPresentingFrames()
             result.success(null)
         }
     }
@@ -93,6 +116,7 @@ class EmulationController(private val textureRegistry: TextureRegistry) {
     private inner class StopEmulation : AzaharMethodHandler {
         override val name = "stopEmulation"
         override fun execute(call: MethodCall, result: MethodChannel.Result) {
+            stopPresentingFrames()
             NativeLibrary.stopEmulation()
             NativeLibrary.surfaceDestroyed()
             NativeLibrary.surfaceDestroyedSecondary()
