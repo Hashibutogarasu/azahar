@@ -151,6 +151,31 @@ class NativeBridge {
     return _channel.invokeMethod<void>('reloadEmulatorSettings');
   }
 
+  Future<Map<String, Object?>> readSystemSaveGame() async {
+    final result = await _channel.invokeMethod<Map<Object?, Object?>>('readSystemSaveGame');
+    if (result == null) return const {};
+    return result.cast<String, Object?>();
+  }
+
+  Future<void> writeSystemSaveGame(Map<String, Object?> fields) {
+    return _channel.invokeMethod<void>('writeSystemSaveGame', fields);
+  }
+
+  Future<String> regenerateConsoleId() async {
+    final result = await _channel.invokeMethod<String>('regenerateConsoleId');
+    return result ?? '';
+  }
+
+  Future<String> regenerateMac() async {
+    final result = await _channel.invokeMethod<String>('regenerateMac');
+    return result ?? '';
+  }
+
+  Future<int> getCountryCompatibility(int region) async {
+    final result = await _channel.invokeMethod<int>('getCountryCompatibility', region);
+    return result ?? 0;
+  }
+
   Game _gameFromMap(Map<Object?, Object?> map) {
     return Game(
       title: map['title'] as String? ?? '',

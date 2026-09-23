@@ -33,6 +33,42 @@ sealed class SettingsItem with _$SettingsItem {
     required List<int> choiceValues,
   }) = SettingsSingleChoiceItem;
 
+  const factory SettingsItem.floatSlider({
+    required String title,
+    String? description,
+    required FloatKey setting,
+    required double min,
+    required double max,
+    required String units,
+  }) = SettingsFloatSliderItem;
+
+  const factory SettingsItem.stringSingleChoice({
+    required String title,
+    String? description,
+    required StringKey setting,
+    required List<String> choiceLabels,
+    required List<String> choiceValues,
+  }) = SettingsStringSingleChoiceItem;
+
+  const factory SettingsItem.stringInput({
+    required String title,
+    String? description,
+    required StringKey setting,
+    int? maxLength,
+  }) = SettingsStringInputItem;
+
+  const factory SettingsItem.dateTime({
+    required String title,
+    String? description,
+    required StringKey setting,
+  }) = SettingsDateTimeItem;
+
+  const factory SettingsItem.action({
+    required String title,
+    String? description,
+    required void Function(BuildContext context) onTap,
+  }) = SettingsActionItem;
+
   const factory SettingsItem.submenu({
     required String title,
     String? description,

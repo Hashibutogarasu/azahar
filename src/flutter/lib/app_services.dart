@@ -1,6 +1,7 @@
 import 'data/database.dart';
 import 'data/game_repository.dart';
 import 'data/settings/emulator_settings_repository.dart';
+import 'data/settings/system_save_repository.dart';
 import 'data/settings_repository.dart';
 import 'native/native_bridge.dart';
 
@@ -11,4 +12,5 @@ abstract final class AppServices {
   static final GameRepository gameRepository = GameRepository(database, nativeBridge);
   static final EmulatorSettingsRepository emulatorSettingsRepository =
       EmulatorSettingsRepository(nativeBridge);
+  static final SystemSaveRepository systemSaveRepository = SystemSaveRepository(nativeBridge);
 }
