@@ -177,6 +177,17 @@ List<SettingsItem> buildSystemSettingsItems(
       choiceValues: const [0, 1],
     ),
     SettingsItem.dateTime(title: s.simulatedClock, setting: SystemSettingKeys.initTime),
+    SettingsItem.header(title: s.pluginLoader),
+    SettingsItem.switch_(
+      title: s.pluginLoaderEnable,
+      description: s.pluginLoaderEnableDescription,
+      setting: SystemSettingKeys.pluginLoader,
+    ),
+    SettingsItem.switch_(
+      title: s.allowPluginLoader,
+      description: s.allowPluginLoaderDescription,
+      setting: SystemSettingKeys.allowPluginLoader,
+    ),
   ];
 }
 
