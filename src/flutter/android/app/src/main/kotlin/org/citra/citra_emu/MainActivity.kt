@@ -13,6 +13,7 @@ import org.citra.citra_emu.channel.AzaharMethodHandler
 import org.citra.citra_emu.channel.DirectoryController
 import org.citra.citra_emu.channel.EmulationController
 import org.citra.citra_emu.channel.GamesController
+import org.citra.citra_emu.channel.SettingsController
 import org.citra.citra_emu.channel.ShowMiiSelector
 import org.citra.citra_emu.utils.AppletBridge
 import org.citra.citra_emu.utils.DiskShaderCacheProgress
@@ -37,6 +38,7 @@ class MainActivity : FlutterFragmentActivity() {
         DirectoryController(this, contentResolver, openUserDirectoryLauncher, openGamesDirectoryLauncher)
     }
     private val gamesController: GamesController by lazy { GamesController(this, cacheDir) }
+    private val settingsController = SettingsController()
 
     override fun onResume() {
         super.onResume()
@@ -61,7 +63,8 @@ class MainActivity : FlutterFragmentActivity() {
 
         val emulationController = EmulationController(flutterEngine.renderer)
         val handlers: Map<String, AzaharMethodHandler> =
-            (directoryController.handlers + gamesController.handlers + emulationController.handlers)
+            (directoryController.handlers + gamesController.handlers +
+                emulationController.handlers + settingsController.handlers)
                 .associateBy { it.name }
 
         val appletChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, APPLET_CHANNEL)

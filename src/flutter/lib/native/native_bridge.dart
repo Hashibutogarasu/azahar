@@ -124,6 +124,33 @@ class NativeBridge {
     return result ?? false;
   }
 
+  Future<Map<String, Map<String, String>>> readEmulatorConfig() async {
+    final result = await _channel.invokeMethod<Map<Object?, Object?>>('readEmulatorConfig');
+    if (result == null) return const {};
+    return result.map(
+      (section, keys) => MapEntry(
+        section as String,
+        (keys as Map<Object?, Object?>).cast<String, String>(),
+      ),
+    );
+  }
+
+  Future<void> writeEmulatorConfigValue({
+    required String section,
+    required String key,
+    required String value,
+  }) {
+    return _channel.invokeMethod<void>('writeEmulatorConfigValue', {
+      'section': section,
+      'key': key,
+      'value': value,
+    });
+  }
+
+  Future<void> reloadEmulatorSettings() {
+    return _channel.invokeMethod<void>('reloadEmulatorSettings');
+  }
+
   Game _gameFromMap(Map<Object?, Object?> map) {
     return Game(
       title: map['title'] as String? ?? '',

@@ -61,6 +61,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$setup$en setup = Translations$setup$en.internal(
     _root,
   );
+  late final Translations$home$en home = Translations$home$en.internal(_root);
   late final Translations$games$en games = Translations$games$en.internal(
     _root,
   );
@@ -69,6 +70,11 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$applets$en applets = Translations$applets$en.internal(
     _root,
   );
+  late final Translations$options$en options = Translations$options$en.internal(
+    _root,
+  );
+  late final Translations$settings$en settings =
+      Translations$settings$en.internal(_root);
 }
 
 // Path: setup
@@ -114,6 +120,21 @@ class Translations$setup$en {
       Translations$setup$gamesDirectory$en.internal(_root);
   late final Translations$setup$done$en done =
       Translations$setup$done$en.internal(_root);
+}
+
+// Path: home
+class Translations$home$en {
+  Translations$home$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Applications'
+  String get games => 'Applications';
+
+  /// en: 'Options'
+  String get options => 'Options';
 }
 
 // Path: games
@@ -170,6 +191,38 @@ class Translations$applets$en {
 
   /// en: 'Standard Mii'
   String get standardMii => 'Standard Mii';
+}
+
+// Path: options
+class Translations$options$en {
+  Translations$options$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Settings'
+  String get emulatorSettings => 'Settings';
+
+  /// en: 'Configure emulator settings'
+  String get emulatorSettingsDescription => 'Configure emulator settings';
+}
+
+// Path: settings
+class Translations$settings$en {
+  Translations$settings$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Settings'
+  String get title => 'Settings';
+
+  late final Translations$settings$sliderDialog$en sliderDialog =
+      Translations$settings$sliderDialog$en.internal(_root);
+  late final Translations$settings$general$en general =
+      Translations$settings$general$en.internal(_root);
 }
 
 // Path: setup.welcome
@@ -339,6 +392,51 @@ class Translations$setup$done$en {
   String get continueLabel => 'Continue';
 }
 
+// Path: settings.sliderDialog
+class Translations$settings$sliderDialog$en {
+  Translations$settings$sliderDialog$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Default'
+  String get kDefault => 'Default';
+
+  /// en: '${title}: value must be between ${min} and ${max}.'
+  String invalidValue({
+    required Object title,
+    required Object min,
+    required Object max,
+  }) => '${title}: value must be between ${min} and ${max}.';
+}
+
+// Path: settings.general
+class Translations$settings$general$en {
+  Translations$settings$general$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'General'
+  String get title => 'General';
+
+  /// en: 'Limit Speed'
+  String get frameLimitEnable => 'Limit Speed';
+
+  /// en: 'When enabled, emulation speed will be limited to a specified percentage of normal speed.'
+  String get frameLimitEnableDescription =>
+      'When enabled, emulation speed will be limited to a specified percentage of normal speed.';
+
+  /// en: 'Limit Speed Percent'
+  String get frameLimitSlider => 'Limit Speed Percent';
+
+  /// en: 'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.'
+  String get frameLimitSliderDescription =>
+      'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -399,6 +497,8 @@ extension on Translations {
       'setup.done.title' => 'Done',
       'setup.done.description' => 'You\'re all set.\nEnjoy using the emulator!',
       'setup.done.continueLabel' => 'Continue',
+      'home.games' => 'Applications',
+      'home.options' => 'Options',
       'games.searchHint' => 'Search Applications',
       'games.emptyGamelist' =>
         'No files were found or no game directory has been selected yet.',
@@ -411,6 +511,20 @@ extension on Translations {
       'applets.softwareKeyboard' => 'Software Keyboard',
       'applets.iForgot' => 'I Forgot',
       'applets.standardMii' => 'Standard Mii',
+      'options.emulatorSettings' => 'Settings',
+      'options.emulatorSettingsDescription' => 'Configure emulator settings',
+      'settings.title' => 'Settings',
+      'settings.sliderDialog.kDefault' => 'Default',
+      'settings.sliderDialog.invalidValue' =>
+        ({required Object title, required Object min, required Object max}) =>
+            '${title}: value must be between ${min} and ${max}.',
+      'settings.general.title' => 'General',
+      'settings.general.frameLimitEnable' => 'Limit Speed',
+      'settings.general.frameLimitEnableDescription' =>
+        'When enabled, emulation speed will be limited to a specified percentage of normal speed.',
+      'settings.general.frameLimitSlider' => 'Limit Speed Percent',
+      'settings.general.frameLimitSliderDescription' =>
+        'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.',
       _ => null,
     };
   }

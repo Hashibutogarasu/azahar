@@ -54,6 +54,10 @@
       "continueLabel": "Continue"
     }
   },
+  "home": {
+    "games": "Applications",
+    "options": "Options"
+  },
   "games": {
     "searchHint": "Search Applications",
     "emptyGamelist": "No files were found or no game directory has been selected yet."
@@ -68,5 +72,23 @@
     "softwareKeyboard": "Software Keyboard",
     "iForgot": "I Forgot",
     "standardMii": "Standard Mii"
+  },
+  "options": {
+    "emulatorSettings": "Settings",
+    "emulatorSettingsDescription": "Configure emulator settings"
+  },
+  "settings": {
+    "title": "Settings",
+    "sliderDialog": {
+      "default": "Default",
+      "invalidValue": "${title}: value must be between ${min} and ${max}."
+    },
+    "general": {
+      "title": "General",
+      "frameLimitEnable": "Limit Speed",
+      "frameLimitEnableDescription": "When enabled, emulation speed will be limited to a specified percentage of normal speed.",
+      "frameLimitSlider": "Limit Speed Percent",
+      "frameLimitSliderDescription": "Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit."
+    }
   }
 }

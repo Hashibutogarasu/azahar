@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../models/game.dart';
 import '../screens/emulation/emulation_page.dart';
 import '../screens/games/games_list_page.dart';
+import '../screens/home/app_shell.dart';
+import '../screens/options/options_page.dart';
 import '../screens/setup/setup_wizard_page.dart';
 
 part 'app_routes.g.dart';
@@ -18,13 +20,50 @@ class SetupRoute extends GoRouteData with $SetupRoute {
   }
 }
 
-@TypedGoRoute<GamesListRoute>(path: '/')
+@TypedStatefulShellRoute<AppShellRouteData>(
+  branches: [
+    TypedStatefulShellBranch<GamesBranchData>(routes: [TypedGoRoute<GamesListRoute>(path: '/')]),
+    TypedStatefulShellBranch<OptionsBranchData>(
+      routes: [TypedGoRoute<OptionsRoute>(path: '/options')],
+    ),
+  ],
+)
+class AppShellRouteData extends StatefulShellRouteData {
+  const AppShellRouteData();
+
+  @override
+  Widget builder(
+    BuildContext context,
+    GoRouterState state,
+    StatefulNavigationShell navigationShell,
+  ) {
+    return AppShell(navigationShell: navigationShell);
+  }
+}
+
+class GamesBranchData extends StatefulShellBranchData {
+  const GamesBranchData();
+}
+
 class GamesListRoute extends GoRouteData with $GamesListRoute {
   const GamesListRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const GamesListPage();
+  }
+}
+
+class OptionsBranchData extends StatefulShellBranchData {
+  const OptionsBranchData();
+}
+
+class OptionsRoute extends GoRouteData with $OptionsRoute {
+  const OptionsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const OptionsPage();
   }
 }
 
