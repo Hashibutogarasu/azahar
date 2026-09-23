@@ -241,6 +241,8 @@ class Translations$settings$en {
       Translations$settings$graphics$en.internal(_root);
   late final Translations$settings$system$en system =
       Translations$settings$system$en.internal(_root);
+  late final Translations$settings$camera$en camera =
+      Translations$settings$camera$en.internal(_root);
 }
 
 // Path: setup.welcome
@@ -1341,6 +1343,66 @@ class Translations$settings$system$en {
   String get countryBermuda => 'Bermuda';
 }
 
+// Path: settings.camera
+class Translations$settings$camera$en {
+  Translations$settings$camera$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Camera'
+  String get title => 'Camera';
+
+  /// en: 'Inner Camera'
+  String get innerCamera => 'Inner Camera';
+
+  /// en: 'Outer Left Camera'
+  String get outerLeftCamera => 'Outer Left Camera';
+
+  /// en: 'Outer Right Camera'
+  String get outerRightCamera => 'Outer Right Camera';
+
+  /// en: 'Image Source'
+  String get imageSource => 'Image Source';
+
+  /// en: 'Blank'
+  String get imageSourceBlank => 'Blank';
+
+  /// en: 'Still Image'
+  String get imageSourceStillImage => 'Still Image';
+
+  /// en: 'Device Camera'
+  String get imageSourceDeviceCamera => 'Device Camera';
+
+  /// en: 'Camera Device'
+  String get cameraDevice => 'Camera Device';
+
+  /// en: 'Default'
+  String get cameraDeviceDefault => 'Default';
+
+  /// en: 'Any Front Camera'
+  String get cameraDeviceAnyFront => 'Any Front Camera';
+
+  /// en: 'Any Back Camera'
+  String get cameraDeviceAnyBack => 'Any Back Camera';
+
+  /// en: 'Image Flip'
+  String get imageFlip => 'Image Flip';
+
+  /// en: 'None'
+  String get imageFlipNone => 'None';
+
+  /// en: 'Horizontal'
+  String get imageFlipHorizontal => 'Horizontal';
+
+  /// en: 'Vertical'
+  String get imageFlipVertical => 'Vertical';
+
+  /// en: 'Reverse'
+  String get imageFlipReverse => 'Reverse';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -1741,6 +1803,23 @@ extension on Translations {
       'settings.system.countrySanMarino' => 'San Marino',
       'settings.system.countryVaticanCity' => 'Vatican City',
       'settings.system.countryBermuda' => 'Bermuda',
+      'settings.camera.title' => 'Camera',
+      'settings.camera.innerCamera' => 'Inner Camera',
+      'settings.camera.outerLeftCamera' => 'Outer Left Camera',
+      'settings.camera.outerRightCamera' => 'Outer Right Camera',
+      'settings.camera.imageSource' => 'Image Source',
+      'settings.camera.imageSourceBlank' => 'Blank',
+      'settings.camera.imageSourceStillImage' => 'Still Image',
+      'settings.camera.imageSourceDeviceCamera' => 'Device Camera',
+      'settings.camera.cameraDevice' => 'Camera Device',
+      'settings.camera.cameraDeviceDefault' => 'Default',
+      'settings.camera.cameraDeviceAnyFront' => 'Any Front Camera',
+      'settings.camera.cameraDeviceAnyBack' => 'Any Back Camera',
+      'settings.camera.imageFlip' => 'Image Flip',
+      'settings.camera.imageFlipNone' => 'None',
+      'settings.camera.imageFlipHorizontal' => 'Horizontal',
+      'settings.camera.imageFlipVertical' => 'Vertical',
+      'settings.camera.imageFlipReverse' => 'Reverse',
       _ => null,
     };
   }

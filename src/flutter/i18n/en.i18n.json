@@ -374,6 +374,25 @@
       "countrySanMarino": "San Marino",
       "countryVaticanCity": "Vatican City",
       "countryBermuda": "Bermuda"
+    },
+    "camera": {
+      "title": "Camera",
+      "innerCamera": "Inner Camera",
+      "outerLeftCamera": "Outer Left Camera",
+      "outerRightCamera": "Outer Right Camera",
+      "imageSource": "Image Source",
+      "imageSourceBlank": "Blank",
+      "imageSourceStillImage": "Still Image",
+      "imageSourceDeviceCamera": "Device Camera",
+      "cameraDevice": "Camera Device",
+      "cameraDeviceDefault": "Default",
+      "cameraDeviceAnyFront": "Any Front Camera",
+      "cameraDeviceAnyBack": "Any Back Camera",
+      "imageFlip": "Image Flip",
+      "imageFlipNone": "None",
+      "imageFlipHorizontal": "Horizontal",
+      "imageFlipVertical": "Vertical",
+      "imageFlipReverse": "Reverse"
     }
   }
 }

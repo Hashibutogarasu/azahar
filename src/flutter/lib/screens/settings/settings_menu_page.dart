@@ -56,6 +56,11 @@ class _SettingsMenuPageState extends State<SettingsMenuPage> {
         onTap: (context) => const SystemSettingsRoute().push(context),
       ),
       SettingsItem.submenu(
+        title: t.settings.camera.title,
+        icon: Icons.camera_alt,
+        onTap: (context) => const CameraSettingsRoute().push(context),
+      ),
+      SettingsItem.submenu(
         title: t.settings.graphics.title,
         icon: Icons.monitor,
         onTap: (context) => const GraphicsSettingsRoute().push(context),
