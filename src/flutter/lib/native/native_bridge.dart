@@ -68,6 +68,11 @@ class NativeBridge {
     return _channel.invokeMethod<String>('openGamesDirectory');
   }
 
+  Future<bool> shareLog() async {
+    final result = await _channel.invokeMethod<bool>('shareLog');
+    return result ?? false;
+  }
+
   Future<List<Game>> getGames() async {
     final result = await _channel.invokeMethod<List<Object?>>('getGames');
     if (result == null) return const [];

@@ -257,6 +257,15 @@ class Translations$options$en {
 
   /// en: 'Connect to an Artic Base server'
   String get articBaseConnectDescription => 'Connect to an Artic Base server';
+
+  /// en: 'Share Log'
+  String get shareLog => 'Share Log';
+
+  /// en: 'Share the emulator's log file'
+  String get shareLogDescription => 'Share the emulator\'s log file';
+
+  /// en: 'No log file was found'
+  String get shareLogNotFound => 'No log file was found';
 }
 
 // Path: articBaseConnectDialog
@@ -2054,6 +2063,9 @@ extension on Translations {
       'options.articBaseConnect' => 'Artic Base Connect',
       'options.articBaseConnectDescription' =>
         'Connect to an Artic Base server',
+      'options.shareLog' => 'Share Log',
+      'options.shareLogDescription' => 'Share the emulator\'s log file',
+      'options.shareLogNotFound' => 'No log file was found',
       'articBaseConnectDialog.title' => 'Artic Base Connect',
       'articBaseConnectDialog.addressHint' => 'Server address',
       'articBaseConnectDialog.connect' => 'Connect',

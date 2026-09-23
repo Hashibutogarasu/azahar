@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/settings/artic_base_provider.dart';
+import '../../data/settings/share_log_provider.dart';
 import '../../data/settings/user_directories_provider.dart';
 import '../../i18n/translations.g.dart';
 import '../../routing/app_routes.dart';
@@ -65,6 +66,12 @@ class OptionsPage extends ConsumerWidget {
               description: t.options.articBaseConnectDescription,
               onTap: () => _connectArticBase(context, ref.read(articBaseProvider)),
             ),
+            _OptionCard(
+              icon: Icons.share_outlined,
+              title: t.options.shareLog,
+              description: t.options.shareLogDescription,
+              onTap: () => _shareLog(context, ref.read(shareLogProvider)),
+            ),
           ],
         ),
       ),
@@ -118,6 +125,14 @@ class OptionsPage extends ConsumerWidget {
     );
     if (address == null || address.isEmpty) return;
     await service.connect(address);
+  }
+
+  Future<void> _shareLog(BuildContext context, ShareLogService service) async {
+    final t = context.t;
+    final found = await service.share();
+    if (!found && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.options.shareLogNotFound)));
+    }
   }
 }
 

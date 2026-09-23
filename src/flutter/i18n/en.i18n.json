@@ -96,7 +96,10 @@
     "about": "About",
     "aboutDescription": "View app info, credits and licenses",
     "articBaseConnect": "Artic Base Connect",
-    "articBaseConnectDescription": "Connect to an Artic Base server"
+    "articBaseConnectDescription": "Connect to an Artic Base server",
+    "shareLog": "Share Log",
+    "shareLogDescription": "Share the emulator's log file",
+    "shareLogNotFound": "No log file was found"
   },
   "articBaseConnectDialog": {
     "title": "Artic Base Connect",
