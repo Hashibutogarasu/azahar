@@ -75,6 +75,11 @@ class _SettingsMenuPageState extends State<SettingsMenuPage> {
         icon: Icons.fit_screen,
         onTap: (context) => const LayoutSettingsRoute().push(context),
       ),
+      SettingsItem.submenu(
+        title: t.settings.audio.title,
+        icon: Icons.volume_up,
+        onTap: (context) => const AudioSettingsRoute().push(context),
+      ),
     ];
   }
 }

@@ -460,6 +460,24 @@
       "positionY": "Y",
       "width": "Width",
       "height": "Height"
+    },
+    "audio": {
+      "title": "Audio",
+      "volume": "Volume",
+      "audioStretching": "Audio Stretching",
+      "audioStretchingDescription": "Stretches audio to reduce stuttering. Increases audio latency and slightly reduces performance.",
+      "realtimeAudio": "Realtime Audio",
+      "realtimeAudioDescription": "Reduces audio latency, but may cause instability in some applications. Only takes effect when Audio Stretching is disabled.",
+      "audioInputType": "Audio Input Type",
+      "audioInputTypeAuto": "Auto",
+      "audioInputTypeNone": "None",
+      "audioInputTypeStaticNoise": "Static Noise",
+      "audioInputTypeRealCubeb": "Real Device (Cubeb)",
+      "audioInputTypeRealOpenal": "Real Device (OpenAL)",
+      "soundOutputMode": "Sound Output Mode",
+      "soundOutputModeMono": "Mono",
+      "soundOutputModeStereo": "Stereo",
+      "soundOutputModeSurround": "Surround"
     }
   }
 }

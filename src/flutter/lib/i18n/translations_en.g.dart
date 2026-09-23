@@ -249,6 +249,8 @@ class Translations$settings$en {
       Translations$settings$controls$en.internal(_root);
   late final Translations$settings$layout$en layout =
       Translations$settings$layout$en.internal(_root);
+  late final Translations$settings$audio$en audio =
+      Translations$settings$audio$en.internal(_root);
 }
 
 // Path: setup.welcome
@@ -1619,6 +1621,65 @@ class Translations$settings$layout$en {
   String get height => 'Height';
 }
 
+// Path: settings.audio
+class Translations$settings$audio$en {
+  Translations$settings$audio$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Audio'
+  String get title => 'Audio';
+
+  /// en: 'Volume'
+  String get volume => 'Volume';
+
+  /// en: 'Audio Stretching'
+  String get audioStretching => 'Audio Stretching';
+
+  /// en: 'Stretches audio to reduce stuttering. Increases audio latency and slightly reduces performance.'
+  String get audioStretchingDescription =>
+      'Stretches audio to reduce stuttering. Increases audio latency and slightly reduces performance.';
+
+  /// en: 'Realtime Audio'
+  String get realtimeAudio => 'Realtime Audio';
+
+  /// en: 'Reduces audio latency, but may cause instability in some applications. Only takes effect when Audio Stretching is disabled.'
+  String get realtimeAudioDescription =>
+      'Reduces audio latency, but may cause instability in some applications. Only takes effect when Audio Stretching is disabled.';
+
+  /// en: 'Audio Input Type'
+  String get audioInputType => 'Audio Input Type';
+
+  /// en: 'Auto'
+  String get audioInputTypeAuto => 'Auto';
+
+  /// en: 'None'
+  String get audioInputTypeNone => 'None';
+
+  /// en: 'Static Noise'
+  String get audioInputTypeStaticNoise => 'Static Noise';
+
+  /// en: 'Real Device (Cubeb)'
+  String get audioInputTypeRealCubeb => 'Real Device (Cubeb)';
+
+  /// en: 'Real Device (OpenAL)'
+  String get audioInputTypeRealOpenal => 'Real Device (OpenAL)';
+
+  /// en: 'Sound Output Mode'
+  String get soundOutputMode => 'Sound Output Mode';
+
+  /// en: 'Mono'
+  String get soundOutputModeMono => 'Mono';
+
+  /// en: 'Stereo'
+  String get soundOutputModeStereo => 'Stereo';
+
+  /// en: 'Surround'
+  String get soundOutputModeSurround => 'Surround';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -2101,6 +2162,24 @@ extension on Translations {
       'settings.layout.positionY' => 'Y',
       'settings.layout.width' => 'Width',
       'settings.layout.height' => 'Height',
+      'settings.audio.title' => 'Audio',
+      'settings.audio.volume' => 'Volume',
+      'settings.audio.audioStretching' => 'Audio Stretching',
+      'settings.audio.audioStretchingDescription' =>
+        'Stretches audio to reduce stuttering. Increases audio latency and slightly reduces performance.',
+      'settings.audio.realtimeAudio' => 'Realtime Audio',
+      'settings.audio.realtimeAudioDescription' =>
+        'Reduces audio latency, but may cause instability in some applications. Only takes effect when Audio Stretching is disabled.',
+      'settings.audio.audioInputType' => 'Audio Input Type',
+      'settings.audio.audioInputTypeAuto' => 'Auto',
+      'settings.audio.audioInputTypeNone' => 'None',
+      'settings.audio.audioInputTypeStaticNoise' => 'Static Noise',
+      'settings.audio.audioInputTypeRealCubeb' => 'Real Device (Cubeb)',
+      'settings.audio.audioInputTypeRealOpenal' => 'Real Device (OpenAL)',
+      'settings.audio.soundOutputMode' => 'Sound Output Mode',
+      'settings.audio.soundOutputModeMono' => 'Mono',
+      'settings.audio.soundOutputModeStereo' => 'Stereo',
+      'settings.audio.soundOutputModeSurround' => 'Surround',
       _ => null,
     };
   }

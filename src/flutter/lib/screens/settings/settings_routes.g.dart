@@ -16,6 +16,7 @@ List<RouteBase> get $appRoutes => [
   $layoutSettingsRoute,
   $customLandscapeLayoutSettingsRoute,
   $customPortraitLayoutSettingsRoute,
+  $audioSettingsRoute,
 ];
 
 RouteBase get $settingsMenuRoute => GoRouteData.$route(
@@ -248,6 +249,33 @@ mixin $CustomPortraitLayoutSettingsRoute on GoRouteData {
   @override
   String get location =>
       GoRouteData.$location('/settings/layout/custom-portrait');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $audioSettingsRoute => GoRouteData.$route(
+  path: '/settings/audio',
+  hasOverriddenOnExit: false,
+  factory: $AudioSettingsRoute._fromState,
+);
+
+mixin $AudioSettingsRoute on GoRouteData {
+  static AudioSettingsRoute _fromState(GoRouterState state) =>
+      const AudioSettingsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/settings/audio');
 
   @override
   void go(BuildContext context) => context.go(location);
