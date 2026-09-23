@@ -73,6 +73,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$options$en options = Translations$options$en.internal(
     _root,
   );
+  late final Translations$gpuDriverManager$en gpuDriverManager =
+      Translations$gpuDriverManager$en.internal(_root);
   late final Translations$articBaseConnectDialog$en articBaseConnectDialog =
       Translations$articBaseConnectDialog$en.internal(_root);
   late final Translations$about$en about = Translations$about$en.internal(
@@ -266,6 +268,38 @@ class Translations$options$en {
 
   /// en: 'No log file was found'
   String get shareLogNotFound => 'No log file was found';
+
+  /// en: 'GPU Driver Manager'
+  String get gpuDriverManager => 'GPU Driver Manager';
+
+  /// en: 'Install and select a custom GPU driver'
+  String get gpuDriverManagerDescription =>
+      'Install and select a custom GPU driver';
+}
+
+// Path: gpuDriverManager
+class Translations$gpuDriverManager$en {
+  Translations$gpuDriverManager$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'GPU Driver Manager'
+  String get title => 'GPU Driver Manager';
+
+  /// en: 'System Driver'
+  String get systemDriver => 'System Driver';
+
+  /// en: 'Install Driver'
+  String get installDriver => 'Install Driver';
+
+  /// en: 'Install a custom driver from a zip file'
+  String get installDriverDescription =>
+      'Install a custom driver from a zip file';
+
+  /// en: 'Failed to install the driver'
+  String get installFailed => 'Failed to install the driver';
 }
 
 // Path: articBaseConnectDialog
@@ -2066,6 +2100,15 @@ extension on Translations {
       'options.shareLog' => 'Share Log',
       'options.shareLogDescription' => 'Share the emulator\'s log file',
       'options.shareLogNotFound' => 'No log file was found',
+      'options.gpuDriverManager' => 'GPU Driver Manager',
+      'options.gpuDriverManagerDescription' =>
+        'Install and select a custom GPU driver',
+      'gpuDriverManager.title' => 'GPU Driver Manager',
+      'gpuDriverManager.systemDriver' => 'System Driver',
+      'gpuDriverManager.installDriver' => 'Install Driver',
+      'gpuDriverManager.installDriverDescription' =>
+        'Install a custom driver from a zip file',
+      'gpuDriverManager.installFailed' => 'Failed to install the driver',
       'articBaseConnectDialog.title' => 'Artic Base Connect',
       'articBaseConnectDialog.addressHint' => 'Server address',
       'articBaseConnectDialog.connect' => 'Connect',

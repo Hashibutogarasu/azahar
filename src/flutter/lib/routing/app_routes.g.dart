@@ -9,6 +9,7 @@ part of 'app_routes.dart';
 List<RouteBase> get $appRoutes => [
   $setupRoute,
   $aboutRoute,
+  $gpuDriverManagerRoute,
   $appShellRouteData,
 ];
 
@@ -49,6 +50,33 @@ mixin $AboutRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/about');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $gpuDriverManagerRoute => GoRouteData.$route(
+  path: '/gpu-driver-manager',
+  hasOverriddenOnExit: false,
+  factory: $GpuDriverManagerRoute._fromState,
+);
+
+mixin $GpuDriverManagerRoute on GoRouteData {
+  static GpuDriverManagerRoute _fromState(GoRouterState state) =>
+      const GpuDriverManagerRoute();
+
+  @override
+  String get location => GoRouteData.$location('/gpu-driver-manager');
 
   @override
   void go(BuildContext context) => context.go(location);

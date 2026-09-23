@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/settings/artic_base_provider.dart';
+import '../../data/settings/gpu_driver_provider.dart';
 import '../../data/settings/share_log_provider.dart';
 import '../../data/settings/user_directories_provider.dart';
 import '../../i18n/translations.g.dart';
@@ -23,56 +24,69 @@ class OptionsPage extends ConsumerWidget {
     final t = context.t;
     return Scaffold(
       body: SafeArea(
-        child: GridView(
-          padding: const EdgeInsets.symmetric(vertical: 24),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 1,
-            mainAxisExtent: 88,
-          ),
-          children: [
-            _OptionCard(
-              icon: Icons.settings_outlined,
-              title: t.options.emulatorSettings,
-              description: t.options.emulatorSettingsDescription,
-              onTap: () => const SettingsMenuRoute().push(context),
-            ),
-            _OptionCard(
-              icon: Icons.palette_outlined,
-              title: t.options.themeAndColor,
-              description: t.options.themeAndColorDescription,
-              onTap: () => const ThemeSettingsRoute().push(context),
-            ),
-            _OptionCard(
-              icon: Icons.folder_outlined,
-              title: t.options.selectUserFolder,
-              description: t.options.selectUserFolderDescription,
-              onTap: () => _selectUserFolder(context, ref.read(userDirectoriesProvider)),
-            ),
-            _OptionCard(
-              icon: Icons.videogame_asset_outlined,
-              title: t.options.selectGamesFolder,
-              description: t.options.selectGamesFolderDescription,
-              onTap: () => _selectGamesFolder(context, ref.read(userDirectoriesProvider)),
-            ),
-            _OptionCard(
-              icon: Icons.info_outline,
-              title: t.options.about,
-              description: t.options.aboutDescription,
-              onTap: () => const AboutRoute().push(context),
-            ),
-            _OptionCard(
-              icon: Icons.wifi_tethering,
-              title: t.options.articBaseConnect,
-              description: t.options.articBaseConnectDescription,
-              onTap: () => _connectArticBase(context, ref.read(articBaseProvider)),
-            ),
-            _OptionCard(
-              icon: Icons.share_outlined,
-              title: t.options.shareLog,
-              description: t.options.shareLogDescription,
-              onTap: () => _shareLog(context, ref.read(shareLogProvider)),
-            ),
-          ],
+        child: FutureBuilder<bool>(
+          future: ref.read(gpuDriverProvider).isSupported(),
+          builder: (context, snapshot) {
+            final supportsGpuDriverLoading = snapshot.data ?? false;
+            return GridView(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 1,
+                mainAxisExtent: 88,
+              ),
+              children: [
+                _OptionCard(
+                  icon: Icons.settings_outlined,
+                  title: t.options.emulatorSettings,
+                  description: t.options.emulatorSettingsDescription,
+                  onTap: () => const SettingsMenuRoute().push(context),
+                ),
+                _OptionCard(
+                  icon: Icons.palette_outlined,
+                  title: t.options.themeAndColor,
+                  description: t.options.themeAndColorDescription,
+                  onTap: () => const ThemeSettingsRoute().push(context),
+                ),
+                _OptionCard(
+                  icon: Icons.folder_outlined,
+                  title: t.options.selectUserFolder,
+                  description: t.options.selectUserFolderDescription,
+                  onTap: () => _selectUserFolder(context, ref.read(userDirectoriesProvider)),
+                ),
+                _OptionCard(
+                  icon: Icons.videogame_asset_outlined,
+                  title: t.options.selectGamesFolder,
+                  description: t.options.selectGamesFolderDescription,
+                  onTap: () => _selectGamesFolder(context, ref.read(userDirectoriesProvider)),
+                ),
+                _OptionCard(
+                  icon: Icons.info_outline,
+                  title: t.options.about,
+                  description: t.options.aboutDescription,
+                  onTap: () => const AboutRoute().push(context),
+                ),
+                _OptionCard(
+                  icon: Icons.wifi_tethering,
+                  title: t.options.articBaseConnect,
+                  description: t.options.articBaseConnectDescription,
+                  onTap: () => _connectArticBase(context, ref.read(articBaseProvider)),
+                ),
+                _OptionCard(
+                  icon: Icons.share_outlined,
+                  title: t.options.shareLog,
+                  description: t.options.shareLogDescription,
+                  onTap: () => _shareLog(context, ref.read(shareLogProvider)),
+                ),
+                if (supportsGpuDriverLoading)
+                  _OptionCard(
+                    icon: Icons.memory,
+                    title: t.options.gpuDriverManager,
+                    description: t.options.gpuDriverManagerDescription,
+                    onTap: () => const GpuDriverManagerRoute().push(context),
+                  ),
+              ],
+            );
+          },
         ),
       ),
     );

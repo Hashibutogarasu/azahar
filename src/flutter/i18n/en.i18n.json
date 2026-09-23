@@ -99,7 +99,16 @@
     "articBaseConnectDescription": "Connect to an Artic Base server",
     "shareLog": "Share Log",
     "shareLogDescription": "Share the emulator's log file",
-    "shareLogNotFound": "No log file was found"
+    "shareLogNotFound": "No log file was found",
+    "gpuDriverManager": "GPU Driver Manager",
+    "gpuDriverManagerDescription": "Install and select a custom GPU driver"
+  },
+  "gpuDriverManager": {
+    "title": "GPU Driver Manager",
+    "systemDriver": "System Driver",
+    "installDriver": "Install Driver",
+    "installDriverDescription": "Install a custom driver from a zip file",
+    "installFailed": "Failed to install the driver"
   },
   "articBaseConnectDialog": {
     "title": "Artic Base Connect",

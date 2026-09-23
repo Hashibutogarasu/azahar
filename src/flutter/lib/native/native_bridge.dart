@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 
 import '../models/copy_dir_progress.dart';
 import '../models/game.dart';
+import '../models/gpu_driver_info.dart';
 import '../models/shader_cache_progress.dart';
 
 class NativeBridge {
@@ -179,6 +180,40 @@ class NativeBridge {
   Future<int> getCountryCompatibility(int region) async {
     final result = await _channel.invokeMethod<int>('getCountryCompatibility', region);
     return result ?? 0;
+  }
+
+  Future<bool> supportsCustomDriverLoading() async {
+    final result = await _channel.invokeMethod<bool>('supportsCustomDriverLoading');
+    return result ?? false;
+  }
+
+  Future<List<GpuDriverInfo>> listGpuDrivers() async {
+    final result = await _channel.invokeMethod<List<Object?>>('listGpuDrivers');
+    if (result == null) return const [];
+    return result.cast<Map<Object?, Object?>>().map((entry) {
+      return GpuDriverInfo(
+        uri: entry['uri'] as String? ?? '',
+        name: entry['name'] as String?,
+        description: entry['description'] as String?,
+        author: entry['author'] as String?,
+        vendor: entry['vendor'] as String?,
+        version: entry['version'] as String?,
+      );
+    }).toList();
+  }
+
+  Future<String?> getSelectedGpuDriver() {
+    return _channel.invokeMethod<String>('getSelectedGpuDriver');
+  }
+
+  Future<bool> installGpuDriver(String path) async {
+    final result = await _channel.invokeMethod<bool>('installGpuDriver', {'path': path});
+    return result ?? false;
+  }
+
+  Future<bool> selectGpuDriver(String? uri) async {
+    final result = await _channel.invokeMethod<bool>('selectGpuDriver', {'uri': uri});
+    return result ?? false;
   }
 
   Game _gameFromMap(Map<Object?, Object?> map) {
