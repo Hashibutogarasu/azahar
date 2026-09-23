@@ -5,6 +5,7 @@ import 'sections/camera_settings_page.dart';
 import 'sections/controls_settings_page.dart';
 import 'sections/general_settings_page.dart';
 import 'sections/graphics_settings_page.dart';
+import 'sections/layout_settings_page.dart';
 import 'sections/system_settings_page.dart';
 import 'settings_menu_page.dart';
 
@@ -67,5 +68,37 @@ class ControlsSettingsRoute extends GoRouteData with $ControlsSettingsRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const ControlsSettingsPage();
+  }
+}
+
+@TypedGoRoute<LayoutSettingsRoute>(path: '/settings/layout')
+class LayoutSettingsRoute extends GoRouteData with $LayoutSettingsRoute {
+  const LayoutSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const LayoutSettingsPage();
+  }
+}
+
+@TypedGoRoute<CustomLandscapeLayoutSettingsRoute>(path: '/settings/layout/custom-landscape')
+class CustomLandscapeLayoutSettingsRoute extends GoRouteData
+    with $CustomLandscapeLayoutSettingsRoute {
+  const CustomLandscapeLayoutSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const CustomLandscapeLayoutSettingsPage();
+  }
+}
+
+@TypedGoRoute<CustomPortraitLayoutSettingsRoute>(path: '/settings/layout/custom-portrait')
+class CustomPortraitLayoutSettingsRoute extends GoRouteData
+    with $CustomPortraitLayoutSettingsRoute {
+  const CustomPortraitLayoutSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const CustomPortraitLayoutSettingsPage();
   }
 }

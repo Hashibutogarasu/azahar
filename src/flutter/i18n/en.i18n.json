@@ -443,6 +443,23 @@
       "hotkeyQuickload": "Quickload",
       "miscellaneous": "Miscellaneous",
       "useArticBaseController": "Use Artic Base Controller"
+    },
+    "layout": {
+      "title": "Layout",
+      "screenOrientation": "Screen Orientation",
+      "screenOrientationAutoSensor": "Auto (Sensor)",
+      "screenOrientationLandscape": "Landscape",
+      "screenOrientationLandscapeReverse": "Reverse Landscape",
+      "screenOrientationPortrait": "Portrait",
+      "screenOrientationPortraitReverse": "Reverse Portrait",
+      "customLandscapeLayout": "Custom Landscape Layout",
+      "customPortraitLayout": "Custom Portrait Layout",
+      "topScreen": "Top Screen",
+      "bottomScreen": "Bottom Screen",
+      "positionX": "X",
+      "positionY": "Y",
+      "width": "Width",
+      "height": "Height"
     }
   }
 }

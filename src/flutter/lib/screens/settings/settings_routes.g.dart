@@ -13,6 +13,9 @@ List<RouteBase> get $appRoutes => [
   $systemSettingsRoute,
   $cameraSettingsRoute,
   $controlsSettingsRoute,
+  $layoutSettingsRoute,
+  $customLandscapeLayoutSettingsRoute,
+  $customPortraitLayoutSettingsRoute,
 ];
 
 RouteBase get $settingsMenuRoute => GoRouteData.$route(
@@ -162,6 +165,89 @@ mixin $ControlsSettingsRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/settings/controls');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $layoutSettingsRoute => GoRouteData.$route(
+  path: '/settings/layout',
+  hasOverriddenOnExit: false,
+  factory: $LayoutSettingsRoute._fromState,
+);
+
+mixin $LayoutSettingsRoute on GoRouteData {
+  static LayoutSettingsRoute _fromState(GoRouterState state) =>
+      const LayoutSettingsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/settings/layout');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $customLandscapeLayoutSettingsRoute => GoRouteData.$route(
+  path: '/settings/layout/custom-landscape',
+  hasOverriddenOnExit: false,
+  factory: $CustomLandscapeLayoutSettingsRoute._fromState,
+);
+
+mixin $CustomLandscapeLayoutSettingsRoute on GoRouteData {
+  static CustomLandscapeLayoutSettingsRoute _fromState(GoRouterState state) =>
+      const CustomLandscapeLayoutSettingsRoute();
+
+  @override
+  String get location =>
+      GoRouteData.$location('/settings/layout/custom-landscape');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $customPortraitLayoutSettingsRoute => GoRouteData.$route(
+  path: '/settings/layout/custom-portrait',
+  hasOverriddenOnExit: false,
+  factory: $CustomPortraitLayoutSettingsRoute._fromState,
+);
+
+mixin $CustomPortraitLayoutSettingsRoute on GoRouteData {
+  static CustomPortraitLayoutSettingsRoute _fromState(GoRouterState state) =>
+      const CustomPortraitLayoutSettingsRoute();
+
+  @override
+  String get location =>
+      GoRouteData.$location('/settings/layout/custom-portrait');
 
   @override
   void go(BuildContext context) => context.go(location);

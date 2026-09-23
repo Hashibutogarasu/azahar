@@ -247,6 +247,8 @@ class Translations$settings$en {
       Translations$settings$camera$en.internal(_root);
   late final Translations$settings$controls$en controls =
       Translations$settings$controls$en.internal(_root);
+  late final Translations$settings$layout$en layout =
+      Translations$settings$layout$en.internal(_root);
 }
 
 // Path: setup.welcome
@@ -1563,6 +1565,60 @@ class Translations$settings$controls$en {
   String get useArticBaseController => 'Use Artic Base Controller';
 }
 
+// Path: settings.layout
+class Translations$settings$layout$en {
+  Translations$settings$layout$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Layout'
+  String get title => 'Layout';
+
+  /// en: 'Screen Orientation'
+  String get screenOrientation => 'Screen Orientation';
+
+  /// en: 'Auto (Sensor)'
+  String get screenOrientationAutoSensor => 'Auto (Sensor)';
+
+  /// en: 'Landscape'
+  String get screenOrientationLandscape => 'Landscape';
+
+  /// en: 'Reverse Landscape'
+  String get screenOrientationLandscapeReverse => 'Reverse Landscape';
+
+  /// en: 'Portrait'
+  String get screenOrientationPortrait => 'Portrait';
+
+  /// en: 'Reverse Portrait'
+  String get screenOrientationPortraitReverse => 'Reverse Portrait';
+
+  /// en: 'Custom Landscape Layout'
+  String get customLandscapeLayout => 'Custom Landscape Layout';
+
+  /// en: 'Custom Portrait Layout'
+  String get customPortraitLayout => 'Custom Portrait Layout';
+
+  /// en: 'Top Screen'
+  String get topScreen => 'Top Screen';
+
+  /// en: 'Bottom Screen'
+  String get bottomScreen => 'Bottom Screen';
+
+  /// en: 'X'
+  String get positionX => 'X';
+
+  /// en: 'Y'
+  String get positionY => 'Y';
+
+  /// en: 'Width'
+  String get width => 'Width';
+
+  /// en: 'Height'
+  String get height => 'Height';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -2029,6 +2085,22 @@ extension on Translations {
       'settings.controls.hotkeyQuickload' => 'Quickload',
       'settings.controls.miscellaneous' => 'Miscellaneous',
       'settings.controls.useArticBaseController' => 'Use Artic Base Controller',
+      'settings.layout.title' => 'Layout',
+      'settings.layout.screenOrientation' => 'Screen Orientation',
+      'settings.layout.screenOrientationAutoSensor' => 'Auto (Sensor)',
+      'settings.layout.screenOrientationLandscape' => 'Landscape',
+      'settings.layout.screenOrientationLandscapeReverse' =>
+        'Reverse Landscape',
+      'settings.layout.screenOrientationPortrait' => 'Portrait',
+      'settings.layout.screenOrientationPortraitReverse' => 'Reverse Portrait',
+      'settings.layout.customLandscapeLayout' => 'Custom Landscape Layout',
+      'settings.layout.customPortraitLayout' => 'Custom Portrait Layout',
+      'settings.layout.topScreen' => 'Top Screen',
+      'settings.layout.bottomScreen' => 'Bottom Screen',
+      'settings.layout.positionX' => 'X',
+      'settings.layout.positionY' => 'Y',
+      'settings.layout.width' => 'Width',
+      'settings.layout.height' => 'Height',
       _ => null,
     };
   }

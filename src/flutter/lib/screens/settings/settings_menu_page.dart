@@ -70,6 +70,11 @@ class _SettingsMenuPageState extends State<SettingsMenuPage> {
         icon: Icons.monitor,
         onTap: (context) => const GraphicsSettingsRoute().push(context),
       ),
+      SettingsItem.submenu(
+        title: t.settings.layout.title,
+        icon: Icons.fit_screen,
+        onTap: (context) => const LayoutSettingsRoute().push(context),
+      ),
     ];
   }
 }
