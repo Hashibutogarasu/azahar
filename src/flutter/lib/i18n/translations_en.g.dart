@@ -223,6 +223,8 @@ class Translations$settings$en {
       Translations$settings$sliderDialog$en.internal(_root);
   late final Translations$settings$general$en general =
       Translations$settings$general$en.internal(_root);
+  late final Translations$settings$graphics$en graphics =
+      Translations$settings$graphics$en.internal(_root);
 }
 
 // Path: setup.welcome
@@ -437,6 +439,242 @@ class Translations$settings$general$en {
       'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.';
 }
 
+// Path: settings.graphics
+class Translations$settings$graphics$en {
+  Translations$settings$graphics$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Graphics'
+  String get title => 'Graphics';
+
+  /// en: 'Renderer'
+  String get renderer => 'Renderer';
+
+  /// en: 'Graphics API'
+  String get graphicsApi => 'Graphics API';
+
+  /// en: 'OpenGLES'
+  String get graphicsApiOpengles => 'OpenGLES';
+
+  /// en: 'Vulkan'
+  String get graphicsApiVulkan => 'Vulkan';
+
+  /// en: 'Enable SPIR-V shader generation'
+  String get spirvShaderGen => 'Enable SPIR-V shader generation';
+
+  /// en: 'Emits the fragment shader used to emulate PICA using SPIR-V instead of GLSL'
+  String get spirvShaderGenDescription =>
+      'Emits the fragment shader used to emulate PICA using SPIR-V instead of GLSL';
+
+  /// en: 'Enable asynchronous shader compilation'
+  String get asyncShaders => 'Enable asynchronous shader compilation';
+
+  /// en: 'Compiles shaders in the background to reduce stuttering during gameplay. When enabled expect temporary graphical glitches'
+  String get asyncShadersDescription =>
+      'Compiles shaders in the background to reduce stuttering during gameplay. When enabled expect temporary graphical glitches';
+
+  /// en: 'Internal Resolution'
+  String get internalResolution => 'Internal Resolution';
+
+  /// en: 'Specifies the resolution used to render at. A high resolution will improve visual quality a lot but is also quite heavy on performance and might cause glitches in certain applications.'
+  String get internalResolutionDescription =>
+      'Specifies the resolution used to render at. A high resolution will improve visual quality a lot but is also quite heavy on performance and might cause glitches in certain applications.';
+
+  /// en: 'Native (400x240)'
+  String get internalResolutionNative => 'Native (400x240)';
+
+  /// en: '2x Native (800x480)'
+  String get internalResolution2x => '2x Native (800x480)';
+
+  /// en: '3x Native (1200x720)'
+  String get internalResolution3x => '3x Native (1200x720)';
+
+  /// en: '4x Native (1600x960)'
+  String get internalResolution4x => '4x Native (1600x960)';
+
+  /// en: '5x Native (2000x1200)'
+  String get internalResolution5x => '5x Native (2000x1200)';
+
+  /// en: '6x Native (2400x1440)'
+  String get internalResolution6x => '6x Native (2400x1440)';
+
+  /// en: '7x Native (2800x1680)'
+  String get internalResolution7x => '7x Native (2800x1680)';
+
+  /// en: '8x Native (3200x1920)'
+  String get internalResolution8x => '8x Native (3200x1920)';
+
+  /// en: '9x Native (3600x2160)'
+  String get internalResolution9x => '9x Native (3600x2160)';
+
+  /// en: '10x Native (4000x2400)'
+  String get internalResolution10x => '10x Native (4000x2400)';
+
+  /// en: 'Linear Filtering'
+  String get linearFiltering => 'Linear Filtering';
+
+  /// en: 'Enables linear filtering, which causes game visuals to appear smoother.'
+  String get linearFilteringDescription =>
+      'Enables linear filtering, which causes game visuals to appear smoother.';
+
+  /// en: 'Accurate Multiplication'
+  String get shadersAccurateMul => 'Accurate Multiplication';
+
+  /// en: 'Uses more accurate multiplication in hardware shaders, which may fix some graphical bugs. When enabled, performance will be reduced.'
+  String get shadersAccurateMulDescription =>
+      'Uses more accurate multiplication in hardware shaders, which may fix some graphical bugs. When enabled, performance will be reduced.';
+
+  /// en: 'Disk Shader Cache'
+  String get useDiskShaderCache => 'Disk Shader Cache';
+
+  /// en: 'Reduce stuttering by storing and loading generated shaders to disk. It cannot be used without Enabling Hardware Shader.'
+  String get useDiskShaderCacheDescription =>
+      'Reduce stuttering by storing and loading generated shaders to disk. It cannot be used without Enabling Hardware Shader.';
+
+  /// en: 'Texture Filter'
+  String get textureFilterName => 'Texture Filter';
+
+  /// en: 'Enhances the visuals of applications by applying a filter to textures. The supported filters are Anime4K Ultrafast, Bicubic, ScaleForce, xBRZ freescale, and MMPX.'
+  String get textureFilterDescription =>
+      'Enhances the visuals of applications by applying a filter to textures. The supported filters are Anime4K Ultrafast, Bicubic, ScaleForce, xBRZ freescale, and MMPX.';
+
+  /// en: 'None'
+  String get textureFilterNone => 'None';
+
+  /// en: 'Anime4K'
+  String get textureFilterAnime4k => 'Anime4K';
+
+  /// en: 'Bicubic'
+  String get textureFilterBicubic => 'Bicubic';
+
+  /// en: 'ScaleForce'
+  String get textureFilterScaleforce => 'ScaleForce';
+
+  /// en: 'xBRZ'
+  String get textureFilterXbrz => 'xBRZ';
+
+  /// en: 'MMPX'
+  String get textureFilterMmpx => 'MMPX';
+
+  /// en: 'Delay game render thread'
+  String get delayRenderThread => 'Delay game render thread';
+
+  /// en: 'Delay the game render thread when it submits data to the GPU. Helps with performance issues in the (very few) applications with dynamic framerates.'
+  String get delayRenderThreadDescription =>
+      'Delay the game render thread when it submits data to the GPU. Helps with performance issues in the (very few) applications with dynamic framerates.';
+
+  /// en: 'Stereoscopy'
+  String get stereoscopy => 'Stereoscopy';
+
+  /// en: 'Stereoscopic 3D Mode'
+  String get render3d => 'Stereoscopic 3D Mode';
+
+  /// en: 'Off'
+  String get render3dOff => 'Off';
+
+  /// en: 'Side by Side'
+  String get render3dSideBySide => 'Side by Side';
+
+  /// en: 'Reverse Side by Side'
+  String get render3dReverseSideBySide => 'Reverse Side by Side';
+
+  /// en: 'Anaglyph'
+  String get render3dAnaglyph => 'Anaglyph';
+
+  /// en: 'Interlaced'
+  String get render3dInterlaced => 'Interlaced';
+
+  /// en: 'Reverse Interlaced'
+  String get render3dReverseInterlaced => 'Reverse Interlaced';
+
+  /// en: 'Cardboard VR'
+  String get render3dCardboardVr => 'Cardboard VR';
+
+  /// en: 'Depth'
+  String get factor3d => 'Depth';
+
+  /// en: 'Specifies the value of the 3D slider. This should be set to higher than 0% when Stereoscopic 3D is enabled.'
+  String get factor3dDescription =>
+      'Specifies the value of the 3D slider. This should be set to higher than 0% when Stereoscopic 3D is enabled.';
+
+  /// en: 'Disable Right Eye Render'
+  String get disableRightEyeRender => 'Disable Right Eye Render';
+
+  /// en: 'Greatly improves performance in some applications, but can cause flickering in others.'
+  String get disableRightEyeRenderDescription =>
+      'Greatly improves performance in some applications, but can cause flickering in others.';
+
+  /// en: 'Cardboard VR'
+  String get cardboardVr => 'Cardboard VR';
+
+  /// en: 'Cardboard Screen Size'
+  String get cardboardScreenSize => 'Cardboard Screen Size';
+
+  /// en: 'Scales the screen to a percentage of its original size.'
+  String get cardboardScreenSizeDescription =>
+      'Scales the screen to a percentage of its original size.';
+
+  /// en: 'Horizontal Shift'
+  String get cardboardXShift => 'Horizontal Shift';
+
+  /// en: 'Specifies the percentage of empty space to shift the screens horizontally. Positive values move the two eyes closer to the middle, while negative values move them away.'
+  String get cardboardXShiftDescription =>
+      'Specifies the percentage of empty space to shift the screens horizontally. Positive values move the two eyes closer to the middle, while negative values move them away.';
+
+  /// en: 'Vertical Shift'
+  String get cardboardYShift => 'Vertical Shift';
+
+  /// en: 'Specifies the percentage of empty space to shift the screens vertically. Positive values move the two eyes towards the bottom, while negative values move them towards the top.'
+  String get cardboardYShiftDescription =>
+      'Specifies the percentage of empty space to shift the screens vertically. Positive values move the two eyes towards the bottom, while negative values move them towards the top.';
+
+  /// en: 'Utility'
+  String get utility => 'Utility';
+
+  /// en: 'Dump Textures'
+  String get dumpTextures => 'Dump Textures';
+
+  /// en: 'Textures are dumped to dump/textures/[Title ID]/.'
+  String get dumpTexturesDescription =>
+      'Textures are dumped to dump/textures/[Title ID]/.';
+
+  /// en: 'Custom Textures'
+  String get customTextures => 'Custom Textures';
+
+  /// en: 'Textures are loaded from load/textures/[Title ID]/.'
+  String get customTexturesDescription =>
+      'Textures are loaded from load/textures/[Title ID]/.';
+
+  /// en: 'Async Custom Texture Loading'
+  String get asyncCustomLoading => 'Async Custom Texture Loading';
+
+  /// en: 'Load custom textures asynchronously with background threads to reduce loading stutter.'
+  String get asyncCustomLoadingDescription =>
+      'Load custom textures asynchronously with background threads to reduce loading stutter.';
+
+  /// en: 'Advanced'
+  String get advanced => 'Advanced';
+
+  /// en: 'Texture Sampling'
+  String get textureSamplingName => 'Texture Sampling';
+
+  /// en: 'Overrides the sampling filter used by games. This can be useful in certain cases with poorly behaved games when upscaling. If unsure, set this to Game Controlled.'
+  String get textureSamplingDescription =>
+      'Overrides the sampling filter used by games. This can be useful in certain cases with poorly behaved games when upscaling. If unsure, set this to Game Controlled.';
+
+  /// en: 'Game Controlled'
+  String get textureSamplingGameControlled => 'Game Controlled';
+
+  /// en: 'Nearest Neighbor'
+  String get textureSamplingNearestNeighbor => 'Nearest Neighbor';
+
+  /// en: 'Linear'
+  String get textureSamplingLinear => 'Linear';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -525,6 +763,94 @@ extension on Translations {
       'settings.general.frameLimitSlider' => 'Limit Speed Percent',
       'settings.general.frameLimitSliderDescription' =>
         'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.',
+      'settings.graphics.title' => 'Graphics',
+      'settings.graphics.renderer' => 'Renderer',
+      'settings.graphics.graphicsApi' => 'Graphics API',
+      'settings.graphics.graphicsApiOpengles' => 'OpenGLES',
+      'settings.graphics.graphicsApiVulkan' => 'Vulkan',
+      'settings.graphics.spirvShaderGen' => 'Enable SPIR-V shader generation',
+      'settings.graphics.spirvShaderGenDescription' =>
+        'Emits the fragment shader used to emulate PICA using SPIR-V instead of GLSL',
+      'settings.graphics.asyncShaders' =>
+        'Enable asynchronous shader compilation',
+      'settings.graphics.asyncShadersDescription' =>
+        'Compiles shaders in the background to reduce stuttering during gameplay. When enabled expect temporary graphical glitches',
+      'settings.graphics.internalResolution' => 'Internal Resolution',
+      'settings.graphics.internalResolutionDescription' =>
+        'Specifies the resolution used to render at. A high resolution will improve visual quality a lot but is also quite heavy on performance and might cause glitches in certain applications.',
+      'settings.graphics.internalResolutionNative' => 'Native (400x240)',
+      'settings.graphics.internalResolution2x' => '2x Native (800x480)',
+      'settings.graphics.internalResolution3x' => '3x Native (1200x720)',
+      'settings.graphics.internalResolution4x' => '4x Native (1600x960)',
+      'settings.graphics.internalResolution5x' => '5x Native (2000x1200)',
+      'settings.graphics.internalResolution6x' => '6x Native (2400x1440)',
+      'settings.graphics.internalResolution7x' => '7x Native (2800x1680)',
+      'settings.graphics.internalResolution8x' => '8x Native (3200x1920)',
+      'settings.graphics.internalResolution9x' => '9x Native (3600x2160)',
+      'settings.graphics.internalResolution10x' => '10x Native (4000x2400)',
+      'settings.graphics.linearFiltering' => 'Linear Filtering',
+      'settings.graphics.linearFilteringDescription' =>
+        'Enables linear filtering, which causes game visuals to appear smoother.',
+      'settings.graphics.shadersAccurateMul' => 'Accurate Multiplication',
+      'settings.graphics.shadersAccurateMulDescription' =>
+        'Uses more accurate multiplication in hardware shaders, which may fix some graphical bugs. When enabled, performance will be reduced.',
+      'settings.graphics.useDiskShaderCache' => 'Disk Shader Cache',
+      'settings.graphics.useDiskShaderCacheDescription' =>
+        'Reduce stuttering by storing and loading generated shaders to disk. It cannot be used without Enabling Hardware Shader.',
+      'settings.graphics.textureFilterName' => 'Texture Filter',
+      'settings.graphics.textureFilterDescription' =>
+        'Enhances the visuals of applications by applying a filter to textures. The supported filters are Anime4K Ultrafast, Bicubic, ScaleForce, xBRZ freescale, and MMPX.',
+      'settings.graphics.textureFilterNone' => 'None',
+      'settings.graphics.textureFilterAnime4k' => 'Anime4K',
+      'settings.graphics.textureFilterBicubic' => 'Bicubic',
+      'settings.graphics.textureFilterScaleforce' => 'ScaleForce',
+      'settings.graphics.textureFilterXbrz' => 'xBRZ',
+      'settings.graphics.textureFilterMmpx' => 'MMPX',
+      'settings.graphics.delayRenderThread' => 'Delay game render thread',
+      'settings.graphics.delayRenderThreadDescription' =>
+        'Delay the game render thread when it submits data to the GPU. Helps with performance issues in the (very few) applications with dynamic framerates.',
+      'settings.graphics.stereoscopy' => 'Stereoscopy',
+      'settings.graphics.render3d' => 'Stereoscopic 3D Mode',
+      'settings.graphics.render3dOff' => 'Off',
+      'settings.graphics.render3dSideBySide' => 'Side by Side',
+      'settings.graphics.render3dReverseSideBySide' => 'Reverse Side by Side',
+      'settings.graphics.render3dAnaglyph' => 'Anaglyph',
+      'settings.graphics.render3dInterlaced' => 'Interlaced',
+      'settings.graphics.render3dReverseInterlaced' => 'Reverse Interlaced',
+      'settings.graphics.render3dCardboardVr' => 'Cardboard VR',
+      'settings.graphics.factor3d' => 'Depth',
+      'settings.graphics.factor3dDescription' =>
+        'Specifies the value of the 3D slider. This should be set to higher than 0% when Stereoscopic 3D is enabled.',
+      'settings.graphics.disableRightEyeRender' => 'Disable Right Eye Render',
+      'settings.graphics.disableRightEyeRenderDescription' =>
+        'Greatly improves performance in some applications, but can cause flickering in others.',
+      'settings.graphics.cardboardVr' => 'Cardboard VR',
+      'settings.graphics.cardboardScreenSize' => 'Cardboard Screen Size',
+      'settings.graphics.cardboardScreenSizeDescription' =>
+        'Scales the screen to a percentage of its original size.',
+      'settings.graphics.cardboardXShift' => 'Horizontal Shift',
+      'settings.graphics.cardboardXShiftDescription' =>
+        'Specifies the percentage of empty space to shift the screens horizontally. Positive values move the two eyes closer to the middle, while negative values move them away.',
+      'settings.graphics.cardboardYShift' => 'Vertical Shift',
+      'settings.graphics.cardboardYShiftDescription' =>
+        'Specifies the percentage of empty space to shift the screens vertically. Positive values move the two eyes towards the bottom, while negative values move them towards the top.',
+      'settings.graphics.utility' => 'Utility',
+      'settings.graphics.dumpTextures' => 'Dump Textures',
+      'settings.graphics.dumpTexturesDescription' =>
+        'Textures are dumped to dump/textures/[Title ID]/.',
+      'settings.graphics.customTextures' => 'Custom Textures',
+      'settings.graphics.customTexturesDescription' =>
+        'Textures are loaded from load/textures/[Title ID]/.',
+      'settings.graphics.asyncCustomLoading' => 'Async Custom Texture Loading',
+      'settings.graphics.asyncCustomLoadingDescription' =>
+        'Load custom textures asynchronously with background threads to reduce loading stutter.',
+      'settings.graphics.advanced' => 'Advanced',
+      'settings.graphics.textureSamplingName' => 'Texture Sampling',
+      'settings.graphics.textureSamplingDescription' =>
+        'Overrides the sampling filter used by games. This can be useful in certain cases with poorly behaved games when upscaling. If unsure, set this to Game Controlled.',
+      'settings.graphics.textureSamplingGameControlled' => 'Game Controlled',
+      'settings.graphics.textureSamplingNearestNeighbor' => 'Nearest Neighbor',
+      'settings.graphics.textureSamplingLinear' => 'Linear',
       _ => null,
     };
   }

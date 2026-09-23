@@ -6,7 +6,11 @@ part of 'settings_routes.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [$settingsMenuRoute, $settingsSectionRoute];
+List<RouteBase> get $appRoutes => [
+  $settingsMenuRoute,
+  $generalSettingsRoute,
+  $graphicsSettingsRoute,
+];
 
 RouteBase get $settingsMenuRoute => GoRouteData.$route(
   path: '/settings',
@@ -35,21 +39,45 @@ mixin $SettingsMenuRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $settingsSectionRoute => GoRouteData.$route(
-  path: '/settings/:menuTag',
+RouteBase get $generalSettingsRoute => GoRouteData.$route(
+  path: '/settings/general',
   hasOverriddenOnExit: false,
-  factory: $SettingsSectionRoute._fromState,
+  factory: $GeneralSettingsRoute._fromState,
 );
 
-mixin $SettingsSectionRoute on GoRouteData {
-  static SettingsSectionRoute _fromState(GoRouterState state) =>
-      SettingsSectionRoute(menuTag: state.pathParameters['menuTag']!);
-
-  SettingsSectionRoute get _self => this as SettingsSectionRoute;
+mixin $GeneralSettingsRoute on GoRouteData {
+  static GeneralSettingsRoute _fromState(GoRouterState state) =>
+      const GeneralSettingsRoute();
 
   @override
-  String get location =>
-      GoRouteData.$location('/settings/${Uri.encodeComponent(_self.menuTag)}');
+  String get location => GoRouteData.$location('/settings/general');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $graphicsSettingsRoute => GoRouteData.$route(
+  path: '/settings/graphics',
+  hasOverriddenOnExit: false,
+  factory: $GraphicsSettingsRoute._fromState,
+);
+
+mixin $GraphicsSettingsRoute on GoRouteData {
+  static GraphicsSettingsRoute _fromState(GoRouterState state) =>
+      const GraphicsSettingsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/settings/graphics');
 
   @override
   void go(BuildContext context) => context.go(location);

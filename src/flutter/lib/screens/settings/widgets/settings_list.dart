@@ -4,7 +4,6 @@ import '../../../app_services.dart';
 import '../../../data/settings/settings_item.dart';
 import '../../../errors/app_exception.dart';
 import '../../../i18n/translations.g.dart';
-import '../settings_routes.dart';
 
 /// Renders a list of [SettingsItem]s using standard Material widgets, reading and writing each
 /// item's value through [AppServices.emulatorSettingsRepository].
@@ -60,7 +59,7 @@ class _SettingsListState extends State<SettingsList> {
         title: Text(item.title),
         subtitle: item.description == null ? null : Text(item.description!),
         trailing: const Icon(Icons.chevron_right),
-        onTap: () => SettingsSectionRoute(menuTag: item.menuTag).push(context),
+        onTap: () => item.onTap(context),
       ),
     };
   }

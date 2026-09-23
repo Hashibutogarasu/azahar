@@ -1,8 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import 'sections/general_settings_page.dart';
+import 'sections/graphics_settings_page.dart';
 import 'settings_menu_page.dart';
-import 'settings_section_page.dart';
 
 part 'settings_routes.g.dart';
 
@@ -16,14 +17,22 @@ class SettingsMenuRoute extends GoRouteData with $SettingsMenuRoute {
   }
 }
 
-@TypedGoRoute<SettingsSectionRoute>(path: '/settings/:menuTag')
-class SettingsSectionRoute extends GoRouteData with $SettingsSectionRoute {
-  const SettingsSectionRoute({required this.menuTag});
-
-  final String menuTag;
+@TypedGoRoute<GeneralSettingsRoute>(path: '/settings/general')
+class GeneralSettingsRoute extends GoRouteData with $GeneralSettingsRoute {
+  const GeneralSettingsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return SettingsSectionPage(menuTag: menuTag);
+    return const GeneralSettingsPage();
+  }
+}
+
+@TypedGoRoute<GraphicsSettingsRoute>(path: '/settings/graphics')
+class GraphicsSettingsRoute extends GoRouteData with $GraphicsSettingsRoute {
+  const GraphicsSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const GraphicsSettingsPage();
   }
 }
