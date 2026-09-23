@@ -55,7 +55,6 @@
     }
   },
   "games": {
-    "title": "Applications",
     "searchHint": "Search Applications",
     "emptyGamelist": "No files were found or no game directory has been selected yet."
   },

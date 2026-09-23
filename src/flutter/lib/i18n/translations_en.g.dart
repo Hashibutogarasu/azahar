@@ -124,9 +124,6 @@ class Translations$games$en {
 
   // Translations
 
-  /// en: 'Applications'
-  String get title => 'Applications';
-
   /// en: 'Search Applications'
   String get searchHint => 'Search Applications';
 
@@ -402,7 +399,6 @@ extension on Translations {
       'setup.done.title' => 'Done',
       'setup.done.description' => 'You\'re all set.\nEnjoy using the emulator!',
       'setup.done.continueLabel' => 'Continue',
-      'games.title' => 'Applications',
       'games.searchHint' => 'Search Applications',
       'games.emptyGamelist' =>
         'No files were found or no game directory has been selected yet.',

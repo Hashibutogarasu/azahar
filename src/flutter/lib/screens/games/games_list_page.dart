@@ -43,46 +43,47 @@ class _GamesListPageState extends State<GamesListPage> {
   Widget build(BuildContext context) {
     final t = context.t;
     return Scaffold(
-      appBar: AppBar(title: Text(t.games.title)),
-      body: RefreshIndicator(
-        onRefresh: _rescan,
-        child: _games.isEmpty
-            ? ListView(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(t.games.emptyGamelist, textAlign: TextAlign.center),
-                  ),
-                ],
-              )
-            : LayoutBuilder(
-                builder: (context, constraints) {
-                  final columns = constraints.maxWidth >= 600 ? 2 : 1;
-                  return GridView.builder(
-                    padding: const EdgeInsets.all(8),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: columns,
-                      mainAxisExtent: 107,
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: _rescan,
+          child: _games.isEmpty
+              ? ListView(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Text(t.games.emptyGamelist, textAlign: TextAlign.center),
                     ),
-                    itemCount: _games.length,
-                    itemBuilder: (context, index) {
-                      final game = _games[index];
-                      return GameCard(
-                        game: game,
-                        onTap: () async {
-                          await _gameRepository.markLastPlayed(game.path);
-                          if (context.mounted) {
-                            EmulationRoute(
-                              gamePath: Uri.encodeComponent(game.path),
-                              $extra: game,
-                            ).go(context);
-                          }
-                        },
-                      );
-                    },
-                  );
-                },
-              ),
+                  ],
+                )
+              : LayoutBuilder(
+                  builder: (context, constraints) {
+                    final columns = constraints.maxWidth >= 600 ? 2 : 1;
+                    return GridView.builder(
+                      padding: const EdgeInsets.all(8),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: columns,
+                        mainAxisExtent: 107,
+                      ),
+                      itemCount: _games.length,
+                      itemBuilder: (context, index) {
+                        final game = _games[index];
+                        return GameCard(
+                          game: game,
+                          onTap: () async {
+                            await _gameRepository.markLastPlayed(game.path);
+                            if (context.mounted) {
+                              EmulationRoute(
+                                gamePath: Uri.encodeComponent(game.path),
+                                $extra: game,
+                              ).go(context);
+                            }
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
+        ),
       ),
     );
   }
