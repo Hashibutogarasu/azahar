@@ -71,6 +71,13 @@ sealed class SettingsItem with _$SettingsItem {
     SettingsValueStore? store,
   }) = SettingsDateTimeItem;
 
+  const factory SettingsItem.inputBinding({
+    required String title,
+    String? description,
+    required StringKey setting,
+    SettingsValueStore? store,
+  }) = SettingsInputBindingItem;
+
   const factory SettingsItem.action({
     required String title,
     String? description,

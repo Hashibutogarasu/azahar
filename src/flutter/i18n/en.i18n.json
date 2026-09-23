@@ -94,6 +94,9 @@
       "default": "Default",
       "invalidValue": "${title}: value must be between ${min} and ${max}."
     },
+    "inputBindingDialog": {
+      "waitingForInput": "Press a button on your controller…"
+    },
     "general": {
       "title": "General",
       "frameLimitEnable": "Limit Speed",

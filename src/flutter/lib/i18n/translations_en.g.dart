@@ -235,6 +235,8 @@ class Translations$settings$en {
 
   late final Translations$settings$sliderDialog$en sliderDialog =
       Translations$settings$sliderDialog$en.internal(_root);
+  late final Translations$settings$inputBindingDialog$en inputBindingDialog =
+      Translations$settings$inputBindingDialog$en.internal(_root);
   late final Translations$settings$general$en general =
       Translations$settings$general$en.internal(_root);
   late final Translations$settings$graphics$en graphics =
@@ -460,6 +462,18 @@ class Translations$settings$sliderDialog$en {
     required Object min,
     required Object max,
   }) => '${title}: value must be between ${min} and ${max}.';
+}
+
+// Path: settings.inputBindingDialog
+class Translations$settings$inputBindingDialog$en {
+  Translations$settings$inputBindingDialog$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Press a button on your controller…'
+  String get waitingForInput => 'Press a button on your controller…';
 }
 
 // Path: settings.general
@@ -1494,6 +1508,8 @@ extension on Translations {
       'settings.sliderDialog.invalidValue' =>
         ({required Object title, required Object min, required Object max}) =>
             '${title}: value must be between ${min} and ${max}.',
+      'settings.inputBindingDialog.waitingForInput' =>
+        'Press a button on your controller…',
       'settings.general.title' => 'General',
       'settings.general.frameLimitEnable' => 'Limit Speed',
       'settings.general.frameLimitEnableDescription' =>

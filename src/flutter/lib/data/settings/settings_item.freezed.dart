@@ -88,7 +88,7 @@ extension SettingsItemPatterns on SettingsItem {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( SettingsHeaderItem value)?  header,TResult Function( SettingsSwitchItem value)?  switch_,TResult Function( SettingsSliderItem value)?  slider,TResult Function( SettingsSingleChoiceItem value)?  singleChoice,TResult Function( SettingsFloatSliderItem value)?  floatSlider,TResult Function( SettingsStringSingleChoiceItem value)?  stringSingleChoice,TResult Function( SettingsStringInputItem value)?  stringInput,TResult Function( SettingsDateTimeItem value)?  dateTime,TResult Function( SettingsActionItem value)?  action,TResult Function( SettingsSubmenuItem value)?  submenu,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( SettingsHeaderItem value)?  header,TResult Function( SettingsSwitchItem value)?  switch_,TResult Function( SettingsSliderItem value)?  slider,TResult Function( SettingsSingleChoiceItem value)?  singleChoice,TResult Function( SettingsFloatSliderItem value)?  floatSlider,TResult Function( SettingsStringSingleChoiceItem value)?  stringSingleChoice,TResult Function( SettingsStringInputItem value)?  stringInput,TResult Function( SettingsDateTimeItem value)?  dateTime,TResult Function( SettingsInputBindingItem value)?  inputBinding,TResult Function( SettingsActionItem value)?  action,TResult Function( SettingsSubmenuItem value)?  submenu,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case SettingsHeaderItem() when header != null:
@@ -99,7 +99,8 @@ return singleChoice(_that);case SettingsFloatSliderItem() when floatSlider != nu
 return floatSlider(_that);case SettingsStringSingleChoiceItem() when stringSingleChoice != null:
 return stringSingleChoice(_that);case SettingsStringInputItem() when stringInput != null:
 return stringInput(_that);case SettingsDateTimeItem() when dateTime != null:
-return dateTime(_that);case SettingsActionItem() when action != null:
+return dateTime(_that);case SettingsInputBindingItem() when inputBinding != null:
+return inputBinding(_that);case SettingsActionItem() when action != null:
 return action(_that);case SettingsSubmenuItem() when submenu != null:
 return submenu(_that);case _:
   return orElse();
@@ -119,7 +120,7 @@ return submenu(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( SettingsHeaderItem value)  header,required TResult Function( SettingsSwitchItem value)  switch_,required TResult Function( SettingsSliderItem value)  slider,required TResult Function( SettingsSingleChoiceItem value)  singleChoice,required TResult Function( SettingsFloatSliderItem value)  floatSlider,required TResult Function( SettingsStringSingleChoiceItem value)  stringSingleChoice,required TResult Function( SettingsStringInputItem value)  stringInput,required TResult Function( SettingsDateTimeItem value)  dateTime,required TResult Function( SettingsActionItem value)  action,required TResult Function( SettingsSubmenuItem value)  submenu,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( SettingsHeaderItem value)  header,required TResult Function( SettingsSwitchItem value)  switch_,required TResult Function( SettingsSliderItem value)  slider,required TResult Function( SettingsSingleChoiceItem value)  singleChoice,required TResult Function( SettingsFloatSliderItem value)  floatSlider,required TResult Function( SettingsStringSingleChoiceItem value)  stringSingleChoice,required TResult Function( SettingsStringInputItem value)  stringInput,required TResult Function( SettingsDateTimeItem value)  dateTime,required TResult Function( SettingsInputBindingItem value)  inputBinding,required TResult Function( SettingsActionItem value)  action,required TResult Function( SettingsSubmenuItem value)  submenu,}){
 final _that = this;
 switch (_that) {
 case SettingsHeaderItem():
@@ -130,7 +131,8 @@ return singleChoice(_that);case SettingsFloatSliderItem():
 return floatSlider(_that);case SettingsStringSingleChoiceItem():
 return stringSingleChoice(_that);case SettingsStringInputItem():
 return stringInput(_that);case SettingsDateTimeItem():
-return dateTime(_that);case SettingsActionItem():
+return dateTime(_that);case SettingsInputBindingItem():
+return inputBinding(_that);case SettingsActionItem():
 return action(_that);case SettingsSubmenuItem():
 return submenu(_that);}
 }
@@ -146,7 +148,7 @@ return submenu(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( SettingsHeaderItem value)?  header,TResult? Function( SettingsSwitchItem value)?  switch_,TResult? Function( SettingsSliderItem value)?  slider,TResult? Function( SettingsSingleChoiceItem value)?  singleChoice,TResult? Function( SettingsFloatSliderItem value)?  floatSlider,TResult? Function( SettingsStringSingleChoiceItem value)?  stringSingleChoice,TResult? Function( SettingsStringInputItem value)?  stringInput,TResult? Function( SettingsDateTimeItem value)?  dateTime,TResult? Function( SettingsActionItem value)?  action,TResult? Function( SettingsSubmenuItem value)?  submenu,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( SettingsHeaderItem value)?  header,TResult? Function( SettingsSwitchItem value)?  switch_,TResult? Function( SettingsSliderItem value)?  slider,TResult? Function( SettingsSingleChoiceItem value)?  singleChoice,TResult? Function( SettingsFloatSliderItem value)?  floatSlider,TResult? Function( SettingsStringSingleChoiceItem value)?  stringSingleChoice,TResult? Function( SettingsStringInputItem value)?  stringInput,TResult? Function( SettingsDateTimeItem value)?  dateTime,TResult? Function( SettingsInputBindingItem value)?  inputBinding,TResult? Function( SettingsActionItem value)?  action,TResult? Function( SettingsSubmenuItem value)?  submenu,}){
 final _that = this;
 switch (_that) {
 case SettingsHeaderItem() when header != null:
@@ -157,7 +159,8 @@ return singleChoice(_that);case SettingsFloatSliderItem() when floatSlider != nu
 return floatSlider(_that);case SettingsStringSingleChoiceItem() when stringSingleChoice != null:
 return stringSingleChoice(_that);case SettingsStringInputItem() when stringInput != null:
 return stringInput(_that);case SettingsDateTimeItem() when dateTime != null:
-return dateTime(_that);case SettingsActionItem() when action != null:
+return dateTime(_that);case SettingsInputBindingItem() when inputBinding != null:
+return inputBinding(_that);case SettingsActionItem() when action != null:
 return action(_that);case SettingsSubmenuItem() when submenu != null:
 return submenu(_that);case _:
   return null;
@@ -176,7 +179,7 @@ return submenu(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String title,  String? description)?  header,TResult Function( String title,  String? description,  IntBoolKey setting,  SettingsValueStore? store)?  switch_,TResult Function( String title,  String? description,  IntKey setting,  int min,  int max,  String units,  SettingsValueStore? store)?  slider,TResult Function( String title,  String? description,  IntKey setting,  List<String> choiceLabels,  List<int> choiceValues,  SettingsValueStore? store)?  singleChoice,TResult Function( String title,  String? description,  FloatKey setting,  double min,  double max,  String units,  SettingsValueStore? store)?  floatSlider,TResult Function( String title,  String? description,  StringKey setting,  List<String> choiceLabels,  List<String> choiceValues,  SettingsValueStore? store)?  stringSingleChoice,TResult Function( String title,  String? description,  StringKey setting,  int? maxLength,  SettingsValueStore? store)?  stringInput,TResult Function( String title,  String? description,  StringKey setting,  SettingsValueStore? store)?  dateTime,TResult Function( String title,  String? description,  IconData? icon,  void Function(BuildContext context) onTap)?  action,TResult Function( String title,  String? description,  IconData? icon,  void Function(BuildContext context) onTap)?  submenu,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String title,  String? description)?  header,TResult Function( String title,  String? description,  IntBoolKey setting,  SettingsValueStore? store)?  switch_,TResult Function( String title,  String? description,  IntKey setting,  int min,  int max,  String units,  SettingsValueStore? store)?  slider,TResult Function( String title,  String? description,  IntKey setting,  List<String> choiceLabels,  List<int> choiceValues,  SettingsValueStore? store)?  singleChoice,TResult Function( String title,  String? description,  FloatKey setting,  double min,  double max,  String units,  SettingsValueStore? store)?  floatSlider,TResult Function( String title,  String? description,  StringKey setting,  List<String> choiceLabels,  List<String> choiceValues,  SettingsValueStore? store)?  stringSingleChoice,TResult Function( String title,  String? description,  StringKey setting,  int? maxLength,  SettingsValueStore? store)?  stringInput,TResult Function( String title,  String? description,  StringKey setting,  SettingsValueStore? store)?  dateTime,TResult Function( String title,  String? description,  StringKey setting,  SettingsValueStore? store)?  inputBinding,TResult Function( String title,  String? description,  IconData? icon,  void Function(BuildContext context) onTap)?  action,TResult Function( String title,  String? description,  IconData? icon,  void Function(BuildContext context) onTap)?  submenu,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case SettingsHeaderItem() when header != null:
 return header(_that.title,_that.description);case SettingsSwitchItem() when switch_ != null:
@@ -186,7 +189,8 @@ return singleChoice(_that.title,_that.description,_that.setting,_that.choiceLabe
 return floatSlider(_that.title,_that.description,_that.setting,_that.min,_that.max,_that.units,_that.store);case SettingsStringSingleChoiceItem() when stringSingleChoice != null:
 return stringSingleChoice(_that.title,_that.description,_that.setting,_that.choiceLabels,_that.choiceValues,_that.store);case SettingsStringInputItem() when stringInput != null:
 return stringInput(_that.title,_that.description,_that.setting,_that.maxLength,_that.store);case SettingsDateTimeItem() when dateTime != null:
-return dateTime(_that.title,_that.description,_that.setting,_that.store);case SettingsActionItem() when action != null:
+return dateTime(_that.title,_that.description,_that.setting,_that.store);case SettingsInputBindingItem() when inputBinding != null:
+return inputBinding(_that.title,_that.description,_that.setting,_that.store);case SettingsActionItem() when action != null:
 return action(_that.title,_that.description,_that.icon,_that.onTap);case SettingsSubmenuItem() when submenu != null:
 return submenu(_that.title,_that.description,_that.icon,_that.onTap);case _:
   return orElse();
@@ -206,7 +210,7 @@ return submenu(_that.title,_that.description,_that.icon,_that.onTap);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String title,  String? description)  header,required TResult Function( String title,  String? description,  IntBoolKey setting,  SettingsValueStore? store)  switch_,required TResult Function( String title,  String? description,  IntKey setting,  int min,  int max,  String units,  SettingsValueStore? store)  slider,required TResult Function( String title,  String? description,  IntKey setting,  List<String> choiceLabels,  List<int> choiceValues,  SettingsValueStore? store)  singleChoice,required TResult Function( String title,  String? description,  FloatKey setting,  double min,  double max,  String units,  SettingsValueStore? store)  floatSlider,required TResult Function( String title,  String? description,  StringKey setting,  List<String> choiceLabels,  List<String> choiceValues,  SettingsValueStore? store)  stringSingleChoice,required TResult Function( String title,  String? description,  StringKey setting,  int? maxLength,  SettingsValueStore? store)  stringInput,required TResult Function( String title,  String? description,  StringKey setting,  SettingsValueStore? store)  dateTime,required TResult Function( String title,  String? description,  IconData? icon,  void Function(BuildContext context) onTap)  action,required TResult Function( String title,  String? description,  IconData? icon,  void Function(BuildContext context) onTap)  submenu,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String title,  String? description)  header,required TResult Function( String title,  String? description,  IntBoolKey setting,  SettingsValueStore? store)  switch_,required TResult Function( String title,  String? description,  IntKey setting,  int min,  int max,  String units,  SettingsValueStore? store)  slider,required TResult Function( String title,  String? description,  IntKey setting,  List<String> choiceLabels,  List<int> choiceValues,  SettingsValueStore? store)  singleChoice,required TResult Function( String title,  String? description,  FloatKey setting,  double min,  double max,  String units,  SettingsValueStore? store)  floatSlider,required TResult Function( String title,  String? description,  StringKey setting,  List<String> choiceLabels,  List<String> choiceValues,  SettingsValueStore? store)  stringSingleChoice,required TResult Function( String title,  String? description,  StringKey setting,  int? maxLength,  SettingsValueStore? store)  stringInput,required TResult Function( String title,  String? description,  StringKey setting,  SettingsValueStore? store)  dateTime,required TResult Function( String title,  String? description,  StringKey setting,  SettingsValueStore? store)  inputBinding,required TResult Function( String title,  String? description,  IconData? icon,  void Function(BuildContext context) onTap)  action,required TResult Function( String title,  String? description,  IconData? icon,  void Function(BuildContext context) onTap)  submenu,}) {final _that = this;
 switch (_that) {
 case SettingsHeaderItem():
 return header(_that.title,_that.description);case SettingsSwitchItem():
@@ -216,7 +220,8 @@ return singleChoice(_that.title,_that.description,_that.setting,_that.choiceLabe
 return floatSlider(_that.title,_that.description,_that.setting,_that.min,_that.max,_that.units,_that.store);case SettingsStringSingleChoiceItem():
 return stringSingleChoice(_that.title,_that.description,_that.setting,_that.choiceLabels,_that.choiceValues,_that.store);case SettingsStringInputItem():
 return stringInput(_that.title,_that.description,_that.setting,_that.maxLength,_that.store);case SettingsDateTimeItem():
-return dateTime(_that.title,_that.description,_that.setting,_that.store);case SettingsActionItem():
+return dateTime(_that.title,_that.description,_that.setting,_that.store);case SettingsInputBindingItem():
+return inputBinding(_that.title,_that.description,_that.setting,_that.store);case SettingsActionItem():
 return action(_that.title,_that.description,_that.icon,_that.onTap);case SettingsSubmenuItem():
 return submenu(_that.title,_that.description,_that.icon,_that.onTap);}
 }
@@ -232,7 +237,7 @@ return submenu(_that.title,_that.description,_that.icon,_that.onTap);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String title,  String? description)?  header,TResult? Function( String title,  String? description,  IntBoolKey setting,  SettingsValueStore? store)?  switch_,TResult? Function( String title,  String? description,  IntKey setting,  int min,  int max,  String units,  SettingsValueStore? store)?  slider,TResult? Function( String title,  String? description,  IntKey setting,  List<String> choiceLabels,  List<int> choiceValues,  SettingsValueStore? store)?  singleChoice,TResult? Function( String title,  String? description,  FloatKey setting,  double min,  double max,  String units,  SettingsValueStore? store)?  floatSlider,TResult? Function( String title,  String? description,  StringKey setting,  List<String> choiceLabels,  List<String> choiceValues,  SettingsValueStore? store)?  stringSingleChoice,TResult? Function( String title,  String? description,  StringKey setting,  int? maxLength,  SettingsValueStore? store)?  stringInput,TResult? Function( String title,  String? description,  StringKey setting,  SettingsValueStore? store)?  dateTime,TResult? Function( String title,  String? description,  IconData? icon,  void Function(BuildContext context) onTap)?  action,TResult? Function( String title,  String? description,  IconData? icon,  void Function(BuildContext context) onTap)?  submenu,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String title,  String? description)?  header,TResult? Function( String title,  String? description,  IntBoolKey setting,  SettingsValueStore? store)?  switch_,TResult? Function( String title,  String? description,  IntKey setting,  int min,  int max,  String units,  SettingsValueStore? store)?  slider,TResult? Function( String title,  String? description,  IntKey setting,  List<String> choiceLabels,  List<int> choiceValues,  SettingsValueStore? store)?  singleChoice,TResult? Function( String title,  String? description,  FloatKey setting,  double min,  double max,  String units,  SettingsValueStore? store)?  floatSlider,TResult? Function( String title,  String? description,  StringKey setting,  List<String> choiceLabels,  List<String> choiceValues,  SettingsValueStore? store)?  stringSingleChoice,TResult? Function( String title,  String? description,  StringKey setting,  int? maxLength,  SettingsValueStore? store)?  stringInput,TResult? Function( String title,  String? description,  StringKey setting,  SettingsValueStore? store)?  dateTime,TResult? Function( String title,  String? description,  StringKey setting,  SettingsValueStore? store)?  inputBinding,TResult? Function( String title,  String? description,  IconData? icon,  void Function(BuildContext context) onTap)?  action,TResult? Function( String title,  String? description,  IconData? icon,  void Function(BuildContext context) onTap)?  submenu,}) {final _that = this;
 switch (_that) {
 case SettingsHeaderItem() when header != null:
 return header(_that.title,_that.description);case SettingsSwitchItem() when switch_ != null:
@@ -242,7 +247,8 @@ return singleChoice(_that.title,_that.description,_that.setting,_that.choiceLabe
 return floatSlider(_that.title,_that.description,_that.setting,_that.min,_that.max,_that.units,_that.store);case SettingsStringSingleChoiceItem() when stringSingleChoice != null:
 return stringSingleChoice(_that.title,_that.description,_that.setting,_that.choiceLabels,_that.choiceValues,_that.store);case SettingsStringInputItem() when stringInput != null:
 return stringInput(_that.title,_that.description,_that.setting,_that.maxLength,_that.store);case SettingsDateTimeItem() when dateTime != null:
-return dateTime(_that.title,_that.description,_that.setting,_that.store);case SettingsActionItem() when action != null:
+return dateTime(_that.title,_that.description,_that.setting,_that.store);case SettingsInputBindingItem() when inputBinding != null:
+return inputBinding(_that.title,_that.description,_that.setting,_that.store);case SettingsActionItem() when action != null:
 return action(_that.title,_that.description,_that.icon,_that.onTap);case SettingsSubmenuItem() when submenu != null:
 return submenu(_that.title,_that.description,_that.icon,_that.onTap);case _:
   return null;
@@ -859,6 +865,78 @@ class _$SettingsDateTimeItemCopyWithImpl<$Res>
 /// with the given fields replaced by the non-null parameter values.
 @override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? setting = null,Object? store = freezed,}) {
   return _then(SettingsDateTimeItem(
+title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,setting: null == setting ? _self.setting : setting // ignore: cast_nullable_to_non_nullable
+as StringKey,store: freezed == store ? _self.store : store // ignore: cast_nullable_to_non_nullable
+as SettingsValueStore?,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class SettingsInputBindingItem implements SettingsItem {
+  const SettingsInputBindingItem({required this.title, this.description, required this.setting, this.store});
+  
+
+@override final  String title;
+@override final  String? description;
+ final  StringKey setting;
+ final  SettingsValueStore? store;
+
+/// Create a copy of SettingsItem
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SettingsInputBindingItemCopyWith<SettingsInputBindingItem> get copyWith => _$SettingsInputBindingItemCopyWithImpl<SettingsInputBindingItem>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsInputBindingItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.store, store) || other.store == store));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,title,description,setting,store);
+
+@override
+String toString() {
+  return 'SettingsItem.inputBinding(title: $title, description: $description, setting: $setting, store: $store)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SettingsInputBindingItemCopyWith<$Res> implements $SettingsItemCopyWith<$Res> {
+  factory $SettingsInputBindingItemCopyWith(SettingsInputBindingItem value, $Res Function(SettingsInputBindingItem) _then) = _$SettingsInputBindingItemCopyWithImpl;
+@override @useResult
+$Res call({
+ String title, String? description, StringKey setting, SettingsValueStore? store
+});
+
+
+
+
+}
+/// @nodoc
+class _$SettingsInputBindingItemCopyWithImpl<$Res>
+    implements $SettingsInputBindingItemCopyWith<$Res> {
+  _$SettingsInputBindingItemCopyWithImpl(this._self, this._then);
+
+  final SettingsInputBindingItem _self;
+  final $Res Function(SettingsInputBindingItem) _then;
+
+/// Create a copy of SettingsItem
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? setting = null,Object? store = freezed,}) {
+  return _then(SettingsInputBindingItem(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,setting: null == setting ? _self.setting : setting // ignore: cast_nullable_to_non_nullable

@@ -17,4 +17,9 @@ class ControlBindingsRepository {
         .into(_db.controlBindings)
         .insertOnConflictUpdate(ControlBindingsCompanion.insert(key: key, value: value));
   }
+
+  Future<Map<String, String>> readAll() async {
+    final rows = await _db.select(_db.controlBindings).get();
+    return {for (final row in rows) row.key: row.value};
+  }
 }

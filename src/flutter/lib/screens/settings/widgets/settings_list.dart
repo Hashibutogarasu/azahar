@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gamepads/gamepads.dart';
 
 import '../../../app_services.dart';
 import '../../../data/settings/settings_item.dart';
@@ -83,6 +84,12 @@ class _SettingsListState extends State<SettingsList> {
         subtitle: item.description == null ? null : Text(item.description!),
         trailing: Text(_dateTimeLabel(item)),
         onTap: () => _showDateTimeDialog(item),
+      ),
+      SettingsInputBindingItem() => ListTile(
+        title: Text(item.title),
+        subtitle: item.description == null ? null : Text(item.description!),
+        trailing: Text(_storeFor(item.store).readString(item.setting)),
+        onTap: () => _showInputBindingDialog(item),
       ),
       SettingsActionItem() => ListTile(
         leading: item.icon == null ? null : Icon(item.icon),
@@ -418,6 +425,37 @@ class _SettingsListState extends State<SettingsList> {
       item.setting,
       (combined.toUtc().millisecondsSinceEpoch ~/ 1000).toString(),
     );
+    setState(() {});
+  }
+
+  Future<void> _showInputBindingDialog(SettingsInputBindingItem item) async {
+    final store = _storeFor(item.store);
+    final t = context.t;
+    final localizations = MaterialLocalizations.of(context);
+    final subscription = Gamepads.events
+        .where((event) => event.type == KeyType.button && event.value > 0.5)
+        .listen(null);
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        subscription.onData((event) {
+          if (context.mounted) Navigator.of(context).pop(event.key);
+        });
+        return AlertDialog(
+          title: Text(item.title),
+          content: Text(t.settings.inputBindingDialog.waitingForInput),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(localizations.cancelButtonLabel),
+            ),
+          ],
+        );
+      },
+    );
+    await subscription.cancel();
+    if (result == null) return;
+    await store.writeString(item.setting, result);
     setState(() {});
   }
 }
