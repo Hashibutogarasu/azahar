@@ -6,11 +6,7 @@ part of 'app_routes.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [
-  $setupRoute,
-  $appShellRouteData,
-  $emulationRoute,
-];
+List<RouteBase> get $appRoutes => [$setupRoute, $appShellRouteData];
 
 RouteBase get $setupRoute => GoRouteData.$route(
   path: '/setup',
@@ -106,39 +102,4 @@ mixin $OptionsRoute on GoRouteData {
 
   @override
   void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $emulationRoute => GoRouteData.$route(
-  path: '/emulation/:gamePath',
-  hasOverriddenOnExit: false,
-  factory: $EmulationRoute._fromState,
-);
-
-mixin $EmulationRoute on GoRouteData {
-  static EmulationRoute _fromState(GoRouterState state) => EmulationRoute(
-    gamePath: state.pathParameters['gamePath']!,
-    $extra: state.extra as Game?,
-  );
-
-  EmulationRoute get _self => this as EmulationRoute;
-
-  @override
-  String get location => GoRouteData.$location(
-    '/emulation/${Uri.encodeComponent(_self.gamePath)}',
-  );
-
-  @override
-  void go(BuildContext context) => context.go(location, extra: _self.$extra);
-
-  @override
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: _self.$extra);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: _self.$extra);
-
-  @override
-  void replace(BuildContext context) =>
-      context.replace(location, extra: _self.$extra);
 }

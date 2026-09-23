@@ -106,6 +106,14 @@ class NativeBridge {
     return _channel.invokeMethod<void>('stopEmulation');
   }
 
+  Future<void> launchEmulationActivity(String gamePath) {
+    return _channel.invokeMethod<void>('launchEmulationActivity', {'path': gamePath});
+  }
+
+  Future<void> terminateProcess() {
+    return _channel.invokeMethod<void>('terminateProcess');
+  }
+
   Future<bool> onTouchEvent({required double x, required double y, required bool pressed}) async {
     final result = await _channel.invokeMethod<bool>('onTouchEvent', {
       'x': x,

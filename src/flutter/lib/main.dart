@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'app_services.dart';
+import 'emulation_main.dart';
 import 'errors/app_exception.dart';
 import 'i18n/translations.g.dart';
 import 'native/applet_channel.dart';
@@ -27,6 +29,16 @@ void main() {
   runZonedGuarded(
     () {
       WidgetsFlutterBinding.ensureInitialized();
+
+      final initialRoute = WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+      if (initialRoute.startsWith(emulationRoutePrefix)) {
+        final gamePath = Uri.decodeComponent(
+          initialRoute.substring(emulationRoutePrefix.length),
+        );
+        runApp(ProviderScope(child: EmulationStandaloneApp(gamePath: gamePath)));
+        return;
+      }
+
       AppletChannel(_navigatorKey);
 
       final defaultOnError = FlutterError.onError;
@@ -38,7 +50,7 @@ void main() {
         }
       };
 
-      runApp(const AzaharApp());
+      runApp(const ProviderScope(child: AzaharApp()));
     },
     (error, stackTrace) {
       if (error is AppException) {

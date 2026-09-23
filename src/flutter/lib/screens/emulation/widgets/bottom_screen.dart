@@ -1,23 +1,29 @@
 import 'package:flutter/widgets.dart';
 
-import '../emulation_view_model.dart';
-
-/// Displays the 3DS bottom screen rendered by the native side and forwards touches on it to
-/// [viewModel] as 3DS touchscreen input.
 class BottomScreen extends StatelessWidget {
-  const BottomScreen({super.key, required this.viewModel, required this.size});
+  const BottomScreen({
+    super.key,
+    required this.textureId,
+    required this.size,
+    required this.onPointerDown,
+    required this.onPointerMove,
+    required this.onPointerUp,
+  });
 
-  final EmulationViewModel viewModel;
+  final int? textureId;
   final Size size;
+  final void Function(PointerDownEvent event) onPointerDown;
+  final void Function(PointerMoveEvent event) onPointerMove;
+  final void Function(PointerUpEvent event) onPointerUp;
 
   @override
   Widget build(BuildContext context) {
-    final id = viewModel.bottomTextureId;
+    final id = textureId;
     return Listener(
       behavior: HitTestBehavior.opaque,
-      onPointerDown: (event) => viewModel.touchPressed(event.localPosition, size),
-      onPointerMove: (event) => viewModel.touchMoved(event.localPosition, size),
-      onPointerUp: (_) => viewModel.touchReleased(),
+      onPointerDown: onPointerDown,
+      onPointerMove: onPointerMove,
+      onPointerUp: onPointerUp,
       child: SizedBox.fromSize(
         size: size,
         child: id == null || id < 0 ? null : Texture(textureId: id),

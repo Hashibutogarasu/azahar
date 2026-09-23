@@ -4,7 +4,6 @@ import '../../app_services.dart';
 import '../../data/game_repository.dart';
 import '../../i18n/translations.g.dart';
 import '../../models/game.dart';
-import '../../routing/app_routes.dart';
 import 'widgets/game_card.dart';
 
 class GamesListPage extends StatefulWidget {
@@ -71,12 +70,7 @@ class _GamesListPageState extends State<GamesListPage> {
                           game: game,
                           onTap: () async {
                             await _gameRepository.markLastPlayed(game.path);
-                            if (context.mounted) {
-                              EmulationRoute(
-                                gamePath: Uri.encodeComponent(game.path),
-                                $extra: game,
-                              ).go(context);
-                            }
+                            await AppServices.nativeBridge.launchEmulationActivity(game.path);
                           },
                         );
                       },

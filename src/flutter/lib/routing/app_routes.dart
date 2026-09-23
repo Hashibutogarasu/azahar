@@ -1,8 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
-import '../models/game.dart';
-import '../screens/emulation/emulation_page.dart';
 import '../screens/games/games_list_page.dart';
 import '../screens/home/app_shell.dart';
 import '../screens/options/options_page.dart';
@@ -64,18 +62,5 @@ class OptionsRoute extends GoRouteData with $OptionsRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const OptionsPage();
-  }
-}
-
-@TypedGoRoute<EmulationRoute>(path: '/emulation/:gamePath')
-class EmulationRoute extends GoRouteData with $EmulationRoute {
-  const EmulationRoute({required this.gamePath, this.$extra});
-
-  final String gamePath;
-  final Game? $extra;
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return EmulationPage(gamePath: Uri.decodeComponent(gamePath), game: $extra);
   }
 }

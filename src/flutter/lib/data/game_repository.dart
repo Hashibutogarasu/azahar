@@ -26,6 +26,12 @@ class GameRepository {
     return scanned;
   }
 
+  Future<model.Game?> gameByPath(String path) async {
+    final row =
+        await (_db.select(_db.games)..where((tbl) => tbl.path.equals(path))).getSingleOrNull();
+    return row == null ? null : _fromRow(row);
+  }
+
   Future<void> markLastPlayed(String path) async {
     await (_db.update(_db.games)..where((tbl) => tbl.path.equals(path))).write(
       GamesCompanion(lastPlayedTime: Value(DateTime.now())),

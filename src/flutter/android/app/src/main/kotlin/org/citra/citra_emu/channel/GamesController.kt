@@ -5,13 +5,14 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import java.io.File
 import java.io.FileOutputStream
+import org.citra.citra_emu.EmulationActivity
 import org.citra.citra_emu.MainActivity
 import org.citra.citra_emu.model.Game
 import org.citra.citra_emu.utils.GameHelper
 import org.citra.citra_emu.utils.gameIconBitmap
 
 class GamesController(private val activity: MainActivity, private val cacheDir: File) {
-    val handlers: List<AzaharMethodHandler> = listOf(GetGames())
+    val handlers: List<AzaharMethodHandler> = listOf(GetGames(), LaunchEmulationActivity())
 
     private fun Game.toChannelMap(): Map<String, Any?> {
         val iconPath = gameIconBitmap(icon)?.let { bitmap ->
@@ -41,6 +42,19 @@ class GamesController(private val activity: MainActivity, private val cacheDir: 
                 val games = GameHelper.getGames().map { it.toChannelMap() }
                 activity.runOnUiThread { result.success(games) }
             }.start()
+        }
+    }
+
+    private inner class LaunchEmulationActivity : AzaharMethodHandler {
+        override val name = "launchEmulationActivity"
+        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+            val path = call.argument<String>("path")
+            if (path == null) {
+                result.error("invalid_argument", "path is required", null)
+                return
+            }
+            EmulationActivity.start(activity, path)
+            result.success(null)
         }
     }
 }
