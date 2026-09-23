@@ -64,4 +64,12 @@ class SettingsRepository {
     }
     return write(SettingsKeys.languageCode, languageCode);
   }
+
+  Future<String?> articBaseAddress() {
+    return read(SettingsKeys.articBaseAddress);
+  }
+
+  Future<void> setArticBaseAddress(String address) {
+    return write(SettingsKeys.articBaseAddress, address);
+  }
 }

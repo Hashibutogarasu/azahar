@@ -94,7 +94,14 @@
     "selectGamesFolder": "Select Applications Folder",
     "selectGamesFolderDescription": "Change the folder Azahar looks for applications in",
     "about": "About",
-    "aboutDescription": "View app info, credits and licenses"
+    "aboutDescription": "View app info, credits and licenses",
+    "articBaseConnect": "Artic Base Connect",
+    "articBaseConnectDescription": "Connect to an Artic Base server"
+  },
+  "articBaseConnectDialog": {
+    "title": "Artic Base Connect",
+    "addressHint": "Server address",
+    "connect": "Connect"
   },
   "about": {
     "title": "About",

@@ -3,12 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/settings/artic_base_provider.dart';
 import '../../data/settings/user_directories_provider.dart';
 import '../../i18n/translations.g.dart';
 import '../../routing/app_routes.dart';
 import '../settings/settings_routes.dart';
 import '../setup/dialogs/citra_directory_dialog.dart';
 import '../setup/dialogs/copy_dir_progress_dialog.dart';
+import 'dialogs/artic_base_connect_dialog.dart';
 
 /// The Options tab's grid of app-level settings and shortcuts, mirroring the original app's
 /// `HomeSettingsScreen`.
@@ -57,6 +59,12 @@ class OptionsPage extends ConsumerWidget {
               description: t.options.aboutDescription,
               onTap: () => const AboutRoute().push(context),
             ),
+            _OptionCard(
+              icon: Icons.wifi_tethering,
+              title: t.options.articBaseConnect,
+              description: t.options.articBaseConnectDescription,
+              onTap: () => _connectArticBase(context, ref.read(articBaseProvider)),
+            ),
           ],
         ),
       ),
@@ -99,6 +107,17 @@ class OptionsPage extends ConsumerWidget {
     final pickedUri = await service.pickGamesDirectory();
     if (pickedUri == null) return;
     await service.confirmGamesDirectory(pickedUri);
+  }
+
+  Future<void> _connectArticBase(BuildContext context, ArticBaseService service) async {
+    final previousAddress = await service.previousAddress();
+    if (!context.mounted) return;
+    final address = await ArticBaseConnectDialog.show(
+      context,
+      initialAddress: previousAddress ?? '',
+    );
+    if (address == null || address.isEmpty) return;
+    await service.connect(address);
   }
 }
 

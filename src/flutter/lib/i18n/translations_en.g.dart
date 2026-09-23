@@ -73,6 +73,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$options$en options = Translations$options$en.internal(
     _root,
   );
+  late final Translations$articBaseConnectDialog$en articBaseConnectDialog =
+      Translations$articBaseConnectDialog$en.internal(_root);
   late final Translations$about$en about = Translations$about$en.internal(
     _root,
   );
@@ -249,6 +251,30 @@ class Translations$options$en {
 
   /// en: 'View app info, credits and licenses'
   String get aboutDescription => 'View app info, credits and licenses';
+
+  /// en: 'Artic Base Connect'
+  String get articBaseConnect => 'Artic Base Connect';
+
+  /// en: 'Connect to an Artic Base server'
+  String get articBaseConnectDescription => 'Connect to an Artic Base server';
+}
+
+// Path: articBaseConnectDialog
+class Translations$articBaseConnectDialog$en {
+  Translations$articBaseConnectDialog$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Artic Base Connect'
+  String get title => 'Artic Base Connect';
+
+  /// en: 'Server address'
+  String get addressHint => 'Server address';
+
+  /// en: 'Connect'
+  String get connect => 'Connect';
 }
 
 // Path: about
@@ -2025,6 +2051,12 @@ extension on Translations {
         'Change the folder Azahar looks for applications in',
       'options.about' => 'About',
       'options.aboutDescription' => 'View app info, credits and licenses',
+      'options.articBaseConnect' => 'Artic Base Connect',
+      'options.articBaseConnectDescription' =>
+        'Connect to an Artic Base server',
+      'articBaseConnectDialog.title' => 'Artic Base Connect',
+      'articBaseConnectDialog.addressHint' => 'Server address',
+      'articBaseConnectDialog.connect' => 'Connect',
       'about.title' => 'About',
       'about.description' => 'An open-source 3DS emulator',
       'about.contributors' => 'Contributors',

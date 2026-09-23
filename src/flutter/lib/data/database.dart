@@ -40,6 +40,7 @@ abstract final class SettingsKeys {
   static const String citraDirectory = 'CITRA_DIRECTORY';
   static const String gamePath = 'game_path';
   static const String languageCode = 'AppLanguage';
+  static const String articBaseAddress = 'last_artic_base_addr';
 }
 
 class ThemeSettings extends Table {
