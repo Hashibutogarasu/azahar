@@ -245,6 +245,8 @@ class Translations$settings$en {
       Translations$settings$system$en.internal(_root);
   late final Translations$settings$camera$en camera =
       Translations$settings$camera$en.internal(_root);
+  late final Translations$settings$controls$en controls =
+      Translations$settings$controls$en.internal(_root);
 }
 
 // Path: setup.welcome
@@ -1417,6 +1419,150 @@ class Translations$settings$camera$en {
   String get imageFlipReverse => 'Reverse';
 }
 
+// Path: settings.controls
+class Translations$settings$controls$en {
+  Translations$settings$controls$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Controls'
+  String get title => 'Controls';
+
+  /// en: 'Controller Input Mode'
+  String get controllerInputMode => 'Controller Input Mode';
+
+  /// en: 'Manual'
+  String get controllerInputModeManual => 'Manual';
+
+  /// en: 'Auto-Detect'
+  String get controllerInputModeAutoDetect => 'Auto-Detect';
+
+  /// en: 'Invert Left Stick Y Axis'
+  String get invertLeftStickYAxis => 'Invert Left Stick Y Axis';
+
+  /// en: 'Gyro Settings'
+  String get gyroSettings => 'Gyro Settings';
+
+  /// en: 'Gyro Input Source'
+  String get gyroInputSource => 'Gyro Input Source';
+
+  /// en: 'Device'
+  String get gyroInputSourceDevice => 'Device';
+
+  /// en: 'Controller'
+  String get gyroInputSourceController => 'Controller';
+
+  /// en: 'Gyro Sensitivity (Vertical)'
+  String get gyroSensitivityVertical => 'Gyro Sensitivity (Vertical)';
+
+  /// en: 'Invert Gyro Vertical'
+  String get invertGyroVertical => 'Invert Gyro Vertical';
+
+  /// en: 'Gyro Sensitivity (Horizontal)'
+  String get gyroSensitivityHorizontal => 'Gyro Sensitivity (Horizontal)';
+
+  /// en: 'Invert Gyro Horizontal'
+  String get invertGyroHorizontal => 'Invert Gyro Horizontal';
+
+  /// en: 'Generic Buttons'
+  String get genericButtons => 'Generic Buttons';
+
+  /// en: 'A'
+  String get buttonA => 'A';
+
+  /// en: 'B'
+  String get buttonB => 'B';
+
+  /// en: 'X'
+  String get buttonX => 'X';
+
+  /// en: 'Y'
+  String get buttonY => 'Y';
+
+  /// en: 'Select'
+  String get buttonSelect => 'Select';
+
+  /// en: 'Start'
+  String get buttonStart => 'Start';
+
+  /// en: 'Home'
+  String get buttonHome => 'Home';
+
+  /// en: 'Circle-Pad'
+  String get circlePad => 'Circle-Pad';
+
+  /// en: 'C-Stick'
+  String get cStick => 'C-Stick';
+
+  /// en: 'Vertical Axis'
+  String get axisVertical => 'Vertical Axis';
+
+  /// en: 'Horizontal Axis'
+  String get axisHorizontal => 'Horizontal Axis';
+
+  /// en: 'D-Pad Axis'
+  String get dpadAxis => 'D-Pad Axis';
+
+  /// en: 'D-Pad Buttons'
+  String get dpadButtons => 'D-Pad Buttons';
+
+  /// en: 'Up'
+  String get buttonUp => 'Up';
+
+  /// en: 'Down'
+  String get buttonDown => 'Down';
+
+  /// en: 'Left'
+  String get buttonLeft => 'Left';
+
+  /// en: 'Right'
+  String get buttonRight => 'Right';
+
+  /// en: 'Triggers'
+  String get triggers => 'Triggers';
+
+  /// en: 'L'
+  String get buttonL => 'L';
+
+  /// en: 'R'
+  String get buttonR => 'R';
+
+  /// en: 'ZL'
+  String get buttonZl => 'ZL';
+
+  /// en: 'ZR'
+  String get buttonZr => 'ZR';
+
+  /// en: 'Hotkeys'
+  String get hotkeys => 'Hotkeys';
+
+  /// en: 'Swap Screens'
+  String get hotkeySwapScreens => 'Swap Screens';
+
+  /// en: 'Cycle Layout'
+  String get hotkeyCycleLayout => 'Cycle Layout';
+
+  /// en: 'Close Game'
+  String get hotkeyCloseGame => 'Close Game';
+
+  /// en: 'Pause or Resume'
+  String get hotkeyPauseOrResume => 'Pause or Resume';
+
+  /// en: 'Quicksave'
+  String get hotkeyQuicksave => 'Quicksave';
+
+  /// en: 'Quickload'
+  String get hotkeyQuickload => 'Quickload';
+
+  /// en: 'Miscellaneous'
+  String get miscellaneous => 'Miscellaneous';
+
+  /// en: 'Use Artic Base Controller'
+  String get useArticBaseController => 'Use Artic Base Controller';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -1836,6 +1982,53 @@ extension on Translations {
       'settings.camera.imageFlipHorizontal' => 'Horizontal',
       'settings.camera.imageFlipVertical' => 'Vertical',
       'settings.camera.imageFlipReverse' => 'Reverse',
+      'settings.controls.title' => 'Controls',
+      'settings.controls.controllerInputMode' => 'Controller Input Mode',
+      'settings.controls.controllerInputModeManual' => 'Manual',
+      'settings.controls.controllerInputModeAutoDetect' => 'Auto-Detect',
+      'settings.controls.invertLeftStickYAxis' => 'Invert Left Stick Y Axis',
+      'settings.controls.gyroSettings' => 'Gyro Settings',
+      'settings.controls.gyroInputSource' => 'Gyro Input Source',
+      'settings.controls.gyroInputSourceDevice' => 'Device',
+      'settings.controls.gyroInputSourceController' => 'Controller',
+      'settings.controls.gyroSensitivityVertical' =>
+        'Gyro Sensitivity (Vertical)',
+      'settings.controls.invertGyroVertical' => 'Invert Gyro Vertical',
+      'settings.controls.gyroSensitivityHorizontal' =>
+        'Gyro Sensitivity (Horizontal)',
+      'settings.controls.invertGyroHorizontal' => 'Invert Gyro Horizontal',
+      'settings.controls.genericButtons' => 'Generic Buttons',
+      'settings.controls.buttonA' => 'A',
+      'settings.controls.buttonB' => 'B',
+      'settings.controls.buttonX' => 'X',
+      'settings.controls.buttonY' => 'Y',
+      'settings.controls.buttonSelect' => 'Select',
+      'settings.controls.buttonStart' => 'Start',
+      'settings.controls.buttonHome' => 'Home',
+      'settings.controls.circlePad' => 'Circle-Pad',
+      'settings.controls.cStick' => 'C-Stick',
+      'settings.controls.axisVertical' => 'Vertical Axis',
+      'settings.controls.axisHorizontal' => 'Horizontal Axis',
+      'settings.controls.dpadAxis' => 'D-Pad Axis',
+      'settings.controls.dpadButtons' => 'D-Pad Buttons',
+      'settings.controls.buttonUp' => 'Up',
+      'settings.controls.buttonDown' => 'Down',
+      'settings.controls.buttonLeft' => 'Left',
+      'settings.controls.buttonRight' => 'Right',
+      'settings.controls.triggers' => 'Triggers',
+      'settings.controls.buttonL' => 'L',
+      'settings.controls.buttonR' => 'R',
+      'settings.controls.buttonZl' => 'ZL',
+      'settings.controls.buttonZr' => 'ZR',
+      'settings.controls.hotkeys' => 'Hotkeys',
+      'settings.controls.hotkeySwapScreens' => 'Swap Screens',
+      'settings.controls.hotkeyCycleLayout' => 'Cycle Layout',
+      'settings.controls.hotkeyCloseGame' => 'Close Game',
+      'settings.controls.hotkeyPauseOrResume' => 'Pause or Resume',
+      'settings.controls.hotkeyQuicksave' => 'Quicksave',
+      'settings.controls.hotkeyQuickload' => 'Quickload',
+      'settings.controls.miscellaneous' => 'Miscellaneous',
+      'settings.controls.useArticBaseController' => 'Use Artic Base Controller',
       _ => null,
     };
   }

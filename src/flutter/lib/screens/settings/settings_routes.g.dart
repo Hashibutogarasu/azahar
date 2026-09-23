@@ -12,6 +12,7 @@ List<RouteBase> get $appRoutes => [
   $graphicsSettingsRoute,
   $systemSettingsRoute,
   $cameraSettingsRoute,
+  $controlsSettingsRoute,
 ];
 
 RouteBase get $settingsMenuRoute => GoRouteData.$route(
@@ -134,6 +135,33 @@ mixin $CameraSettingsRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/settings/camera');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $controlsSettingsRoute => GoRouteData.$route(
+  path: '/settings/controls',
+  hasOverriddenOnExit: false,
+  factory: $ControlsSettingsRoute._fromState,
+);
+
+mixin $ControlsSettingsRoute on GoRouteData {
+  static ControlsSettingsRoute _fromState(GoRouterState state) =>
+      const ControlsSettingsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/settings/controls');
 
   @override
   void go(BuildContext context) => context.go(location);

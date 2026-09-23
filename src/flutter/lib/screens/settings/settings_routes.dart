@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import 'sections/camera_settings_page.dart';
+import 'sections/controls_settings_page.dart';
 import 'sections/general_settings_page.dart';
 import 'sections/graphics_settings_page.dart';
 import 'sections/system_settings_page.dart';
@@ -56,5 +57,15 @@ class CameraSettingsRoute extends GoRouteData with $CameraSettingsRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const CameraSettingsPage();
+  }
+}
+
+@TypedGoRoute<ControlsSettingsRoute>(path: '/settings/controls')
+class ControlsSettingsRoute extends GoRouteData with $ControlsSettingsRoute {
+  const ControlsSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const ControlsSettingsPage();
   }
 }
