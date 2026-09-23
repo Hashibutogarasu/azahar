@@ -1,0 +1,73 @@
+{
+  "appName": "Azahar",
+  "setup": {
+    "next": "Next",
+    "back": "Back",
+    "stepComplete": "Complete!",
+    "warningSkip": "Skip",
+    "warningCancel": "Cancel",
+    "warningHelp": "Help",
+    "close": "Close",
+    "welcome": {
+      "title": "Welcome!",
+      "description": "Learn how to set up Azahar and jump into emulation.",
+      "getStarted": "Get started"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Grant the notification permission with the button below.",
+      "givePermission": "Grant permission",
+      "warningTitle": "Skip granting the notification permission?",
+      "warningDescription": "Azahar won't be able to notify you of important information."
+    },
+    "microphone": {
+      "title": "Microphone",
+      "description": "Grant the microphone permission below to emulate the 3DS microphone.",
+      "givePermission": "Grant permission"
+    },
+    "camera": {
+      "title": "Camera",
+      "description": "Grant the camera permission below to emulate the 3DS camera.",
+      "givePermission": "Grant permission"
+    },
+    "userDirectory": {
+      "title": "Select User Folder",
+      "description": "Select your user data directory with the button below.",
+      "select": "Select",
+      "warningTitle": "You can't skip this step",
+      "warningDescription": "This step is required to allow Azahar to work. Please select a directory and then you can continue.",
+      "warningHelpUrl": "https://web.archive.org/web/20240304193549/https://github.com/citra-emu/citra/wiki/Citra-Android-user-data-and-storage",
+      "moveData": "Move Data",
+      "movingData": "Moving Data…"
+    },
+    "gamesDirectory": {
+      "title": "Applications",
+      "description": "Select your Applications folder with the button below.",
+      "select": "Select",
+      "warningTitle": "Skip selecting applications folder?",
+      "warningDescription": "Software won't be displayed in the Applications list if a folder isn't selected.",
+      "warningHelpUrl": "https://web.archive.org/web/20240304210021/https://citra-emu.org/wiki/dumping-game-cartridges/"
+    },
+    "done": {
+      "title": "Done",
+      "description": "You're all set.\nEnjoy using the emulator!",
+      "continueLabel": "Continue"
+    }
+  },
+  "games": {
+    "title": "Applications",
+    "searchHint": "Search Applications",
+    "emptyGamelist": "No files were found or no game directory has been selected yet."
+  },
+  "emulation": {
+    "loading": "Loading…",
+    "preparingShaders": "Preparing Shaders",
+    "buildingShaders": "Building Shaders",
+    "shaderProgress": "${progress}/${max}"
+  },
+  "applets": {
+    "softwareKeyboard": "Software Keyboard",
+    "iForgot": "I Forgot",
+    "standardMii": "Standard Mii"
+  }
+}

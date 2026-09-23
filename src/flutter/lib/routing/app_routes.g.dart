@@ -1,0 +1,101 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'app_routes.dart';
+
+// **************************************************************************
+// GoRouterGenerator
+// **************************************************************************
+
+List<RouteBase> get $appRoutes => [
+  $setupRoute,
+  $gamesListRoute,
+  $emulationRoute,
+];
+
+RouteBase get $setupRoute => GoRouteData.$route(
+  path: '/setup',
+  hasOverriddenOnExit: false,
+  factory: $SetupRoute._fromState,
+);
+
+mixin $SetupRoute on GoRouteData {
+  static SetupRoute _fromState(GoRouterState state) => const SetupRoute();
+
+  @override
+  String get location => GoRouteData.$location('/setup');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $gamesListRoute => GoRouteData.$route(
+  path: '/',
+  hasOverriddenOnExit: false,
+  factory: $GamesListRoute._fromState,
+);
+
+mixin $GamesListRoute on GoRouteData {
+  static GamesListRoute _fromState(GoRouterState state) =>
+      const GamesListRoute();
+
+  @override
+  String get location => GoRouteData.$location('/');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $emulationRoute => GoRouteData.$route(
+  path: '/emulation/:gamePath',
+  hasOverriddenOnExit: false,
+  factory: $EmulationRoute._fromState,
+);
+
+mixin $EmulationRoute on GoRouteData {
+  static EmulationRoute _fromState(GoRouterState state) => EmulationRoute(
+    gamePath: state.pathParameters['gamePath']!,
+    $extra: state.extra as Game?,
+  );
+
+  EmulationRoute get _self => this as EmulationRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/emulation/${Uri.encodeComponent(_self.gamePath)}',
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+
+  @override
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: _self.$extra);
+
+  @override
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
+}

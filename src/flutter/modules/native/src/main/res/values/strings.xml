@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_notification_channel_name" translatable="false">Azahar</string>
+    <string name="app_notification_channel_id" translatable="false">Azahar</string>
+    <string name="app_notification_channel_description">Azahar 3DS emulator notifications</string>
+    <string name="cia_install_notification_channel_name" translatable="false">Azahar CIA Install</string>
+    <string name="cia_install_notification_channel_id" translatable="false">citra-cia</string>
+    <string name="cia_install_notification_channel_description">Azahar notifications during CIA Install</string>
+    <string name="redump_games"><![CDATA[Please follow the guides to redump your <a href="https://web.archive.org/web/20240304210021/https://citra-emu.org/wiki/dumping-game-cartridges/">game cartidges</a> or <a href="https://web.archive.org/web/20240304210011/https://citra-emu.org/wiki/dumping-installed-titles/">installed titles</a>.]]></string>
+    <string name="loader_error_encrypted">Your ROM is Encrypted</string>
+    <string name="loader_error_invalid_format">Invalid ROM format</string>
+    <string name="abort_button">Abort</string>
+    <string name="continue_button">Continue</string>
+    <string name="system_archive_not_found">System Archive Not Found</string>
+    <string name="system_archive_not_found_message">%s is missing. Please dump your system archives.\nContinuing emulation may result in crashes and bugs.</string>
+    <string name="system_archive_general">A system archive</string>
+    <string name="save_load_error">Save/Load Error</string>
+    <string name="fatal_error">Fatal Error</string>
+    <string name="fatal_error_message">A fatal error occurred. Check the log for details.\nContinuing emulation may result in crashes and bugs.</string>
+    <string name="artic_server_comm_error">Failed to communicate with the Artic Base server. Emulation will stop.</string>
+    <string name="artic_base">Artic Base</string>
+
+    <string name="memory_formatted">%1$s %2$s</string>
+    <string name="memory_byte_shorthand">B</string>
+    <string name="memory_kilobyte">KB</string>
+    <string name="memory_megabyte">MB</string>
+    <string name="memory_gigabyte">GB</string>
+    <string name="memory_terabyte">TB</string>
+    <string name="memory_petabyte">PB</string>
+    <string name="memory_exabyte">EB</string>
+
+    <string name="invalid_region">Invalid region</string>
+    <string name="unsupported_encrypted">Unsupported encrypted application</string>
+
+    <string name="install_cia_title">Install CIA</string>
+    <plurals name="cia_install_toast">
+        <item quantity="one">Installing %d file. See notification for more details.</item>
+        <item quantity="other">Installing %d files. See notification for more details.</item>
+    </plurals>
+    <string name="cia_install_notification_title">Installing CIA</string>
+    <string name="cia_install_notification_installing">Installing %1$s (%2$d/%3$d)</string>
+    <string name="cia_install_notification_success_title">Successfully installed CIA</string>
+    <string name="cia_install_notification_error_title">Failed to install CIA</string>
+    <string name="cia_install_success">\"%s\" has been installed successfully</string>
+    <string name="cia_install_error_aborted">The installation of \"%s\" was aborted.\n Please see the log for more details</string>
+    <string name="cia_install_error_invalid">\"%s\" is not a valid CIA</string>
+    <string name="cia_install_error_encrypted">\"%s\" must be decrypted before being used with Azahar.\n A real 3DS is required</string>
+    <string name="cia_install_error_unknown">An unknown error occurred while installing \"%s\".\n Please see the log for more details</string>
+
+</resources>
