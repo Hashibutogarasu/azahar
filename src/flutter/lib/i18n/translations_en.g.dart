@@ -173,6 +173,16 @@ class Translations$emulation$en {
   /// en: '${progress}/${max}'
   String shaderProgress({required Object progress, required Object max}) =>
       '${progress}/${max}';
+
+  /// en: 'Other'
+  String get menuSectionOther => 'Other';
+
+  /// en: 'Close Game'
+  String get closeGame => 'Close Game';
+
+  /// en: 'Are you sure that you would like to close the current game?'
+  String get closeGameMessage =>
+      'Are you sure that you would like to close the current game?';
 }
 
 // Path: applets
@@ -746,6 +756,10 @@ extension on Translations {
       'emulation.shaderProgress' =>
         ({required Object progress, required Object max}) =>
             '${progress}/${max}',
+      'emulation.menuSectionOther' => 'Other',
+      'emulation.closeGame' => 'Close Game',
+      'emulation.closeGameMessage' =>
+        'Are you sure that you would like to close the current game?',
       'applets.softwareKeyboard' => 'Software Keyboard',
       'applets.iForgot' => 'I Forgot',
       'applets.standardMii' => 'Standard Mii',

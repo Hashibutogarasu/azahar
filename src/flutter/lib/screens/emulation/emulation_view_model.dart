@@ -71,6 +71,13 @@ class EmulationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Pauses emulation while a close-game confirmation is shown, independently of [isPaused]'s
+  /// pause button state.
+  Future<void> pauseForClosePrompt() => _nativeBridge.pauseEmulation();
+
+  /// Resumes emulation after a close-game confirmation was cancelled.
+  Future<void> cancelClosePrompt() => _nativeBridge.resumeEmulation();
+
   /// Converts [position], local to the bottom screen widget of [screenSize], into the pixel
   /// coordinates of the bottom screen surface that the native side expects.
   Offset? _toSurfacePosition(Offset position, Size screenSize) {
