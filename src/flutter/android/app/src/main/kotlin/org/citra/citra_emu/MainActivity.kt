@@ -123,17 +123,23 @@ class MainActivity : FlutterFragmentActivity() {
 
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, SHADER_PROGRESS_CHANNEL)
             .setStreamHandler(object : EventChannel.StreamHandler {
+                private var installedListener: DiskShaderCacheProgress.Listener? = null
+
                 override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
-                    DiskShaderCacheProgress.listener =
-                        DiskShaderCacheProgress.Listener { stage, progress, max ->
-                            events.success(
-                                mapOf("stage" to stage.name, "progress" to progress, "max" to max)
-                            )
-                        }
+                    val listener = DiskShaderCacheProgress.Listener { stage, progress, max ->
+                        events.success(
+                            mapOf("stage" to stage.name, "progress" to progress, "max" to max)
+                        )
+                    }
+                    installedListener = listener
+                    DiskShaderCacheProgress.listener = listener
                 }
 
                 override fun onCancel(arguments: Any?) {
-                    DiskShaderCacheProgress.listener = null
+                    if (DiskShaderCacheProgress.listener === installedListener) {
+                        DiskShaderCacheProgress.listener = null
+                    }
+                    installedListener = null
                 }
             })
 
