@@ -56,7 +56,11 @@ class EmulationController(private val textureRegistry: TextureRegistry) {
             }
             surfaceProducer?.let { NativeLibrary.surfaceChanged(it.surface) }
             secondarySurfaceProducer?.let { NativeLibrary.surfaceChangedSecondary(it.surface) }
-            Thread { NativeLibrary.run(path) }.start()
+            if (NativeLibrary.isRunning()) {
+                NativeLibrary.unPauseEmulation()
+            } else {
+                Thread { NativeLibrary.run(path) }.start()
+            }
             result.success(null)
         }
     }
