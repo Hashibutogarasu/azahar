@@ -50,83 +50,95 @@ class _SetupWizardPageState extends State<SetupWizardPage> {
         imageAsset: 'assets/images/azahar_logo.png',
         title: t.setup.welcome.title,
         description: t.setup.welcome.description,
-        actionLabel: t.setup.welcome.getStarted,
-        isCompleted: false,
-        performAction: (_) async {
-          await _advanceTo(1);
-          return false;
-        },
+        actions: [
+          SetupAction(
+            icon: Icons.arrow_forward,
+            label: t.setup.welcome.getStarted,
+            isCompleted: false,
+            performAction: (_) async {
+              await _advanceTo(1);
+              return false;
+            },
+          ),
+        ],
       ),
       SetupStep(
-        icon: Icons.notifications,
-        title: t.setup.notifications.title,
-        description: t.setup.notifications.description,
-        actionLabel: t.setup.notifications.givePermission,
-        hasWarning: true,
-        warningTitle: t.setup.notifications.warningTitle,
-        warningDescription: t.setup.notifications.warningDescription,
-        isCompleted: _viewModel.notificationsCompleted,
-        performAction: (_) => _viewModel.requestNotificationPermission(),
-      ),
-      SetupStep(
-        icon: Icons.mic,
-        title: t.setup.microphone.title,
-        description: t.setup.microphone.description,
-        actionLabel: t.setup.microphone.givePermission,
-        isCompleted: _viewModel.microphoneCompleted,
-        performAction: (_) => _viewModel.requestMicrophonePermission(),
-      ),
-      SetupStep(
-        icon: Icons.camera_alt,
-        title: t.setup.camera.title,
-        description: t.setup.camera.description,
-        actionLabel: t.setup.camera.givePermission,
-        isCompleted: _viewModel.cameraCompleted,
-        performAction: (_) => _viewModel.requestCameraPermission(),
+        icon: Icons.verified_user,
+        title: t.setup.permissions.title,
+        description: t.setup.permissions.description,
+        actions: [
+          SetupAction(
+            icon: Icons.notifications,
+            label: t.setup.notifications.title,
+            hasWarning: true,
+            warningTitle: t.setup.notifications.warningTitle,
+            warningDescription: t.setup.notifications.warningDescription,
+            isCompleted: _viewModel.notificationsCompleted,
+            performAction: (_) => _viewModel.requestNotificationPermission(),
+          ),
+          SetupAction(
+            icon: Icons.mic,
+            label: t.setup.microphone.title,
+            isCompleted: _viewModel.microphoneCompleted,
+            performAction: (_) => _viewModel.requestMicrophonePermission(),
+          ),
+          SetupAction(
+            icon: Icons.camera_alt,
+            label: t.setup.camera.title,
+            isCompleted: _viewModel.cameraCompleted,
+            performAction: (_) => _viewModel.requestCameraPermission(),
+          ),
+        ],
       ),
       SetupStep(
         icon: Icons.folder_open,
-        title: t.setup.userDirectory.title,
-        description: t.setup.userDirectory.description,
-        actionLabel: t.setup.userDirectory.select,
-        isUnskippable: true,
-        hasWarning: true,
-        warningTitle: t.setup.userDirectory.warningTitle,
-        warningDescription: t.setup.userDirectory.warningDescription,
-        warningHelpUrl: t.setup.userDirectory.warningHelpUrl,
-        isCompleted: _viewModel.userDirectoryCompleted,
-        performAction: (context) => _performUserDirectorySelection(context),
-      ),
-      SetupStep(
-        icon: Icons.sports_esports,
-        title: t.setup.gamesDirectory.title,
-        description: t.setup.gamesDirectory.description,
-        actionLabel: t.setup.gamesDirectory.select,
-        hasWarning: true,
-        warningTitle: t.setup.gamesDirectory.warningTitle,
-        warningDescription: t.setup.gamesDirectory.warningDescription,
-        warningHelpUrl: t.setup.gamesDirectory.warningHelpUrl,
-        isCompleted: _viewModel.gamesDirectoryCompleted,
-        performAction: (_) async {
-          final uri = await _viewModel.pickGamesDirectory();
-          if (uri == null) return false;
-          return _viewModel.confirmGamesDirectory(uri);
-        },
+        title: t.setup.dataFolders.title,
+        description: t.setup.dataFolders.description,
+        actions: [
+          SetupAction(
+            icon: Icons.home,
+            label: t.setup.userDirectory.title,
+            isUnskippable: true,
+            warningTitle: t.setup.userDirectory.warningTitle,
+            warningDescription: t.setup.userDirectory.warningDescription,
+            warningHelpUrl: t.setup.userDirectory.warningHelpUrl,
+            isCompleted: _viewModel.userDirectoryCompleted,
+            performAction: (context) => _performUserDirectorySelection(context),
+          ),
+          SetupAction(
+            icon: Icons.sports_esports,
+            label: t.setup.gamesDirectory.title,
+            hasWarning: true,
+            warningTitle: t.setup.gamesDirectory.warningTitle,
+            warningDescription: t.setup.gamesDirectory.warningDescription,
+            warningHelpUrl: t.setup.gamesDirectory.warningHelpUrl,
+            isCompleted: _viewModel.gamesDirectoryCompleted,
+            performAction: (_) async {
+              final uri = await _viewModel.pickGamesDirectory();
+              if (uri == null) return false;
+              return _viewModel.confirmGamesDirectory(uri);
+            },
+          ),
+        ],
       ),
       SetupStep(
         icon: Icons.check_circle,
         title: t.setup.done.title,
         description: t.setup.done.description,
-        actionLabel: t.setup.done.continueLabel,
-        buttonIcon: Icons.arrow_forward,
-        isCompleted: false,
-        performAction: (context) async {
-          await _viewModel.completeSetup();
-          if (context.mounted) {
-            const GamesListRoute().go(context);
-          }
-          return false;
-        },
+        actions: [
+          SetupAction(
+            icon: Icons.arrow_forward,
+            label: t.setup.done.continueLabel,
+            isCompleted: false,
+            performAction: (context) async {
+              await _viewModel.completeSetup();
+              if (context.mounted) {
+                const GamesListRoute().go(context);
+              }
+              return false;
+            },
+          ),
+        ],
       ),
     ];
   }
@@ -139,26 +151,34 @@ class _SetupWizardPageState extends State<SetupWizardPage> {
     );
   }
 
+  Future<void> _onActionPressed(SetupAction action, BuildContext context) async {
+    await action.performAction(context);
+  }
+
   Future<void> _onNextPressed(List<SetupStep> steps) async {
     final index = _currentPage;
     final step = steps[index];
 
-    if ((step.hasWarning || step.isUnskippable) && !step.isCompleted) {
-      if (step.isUnskippable) {
+    for (final action in step.actions) {
+      if (action.isCompleted) continue;
+      if (!action.isUnskippable && !action.hasWarning) continue;
+
+      if (action.isUnskippable) {
         await MessageDialog.show(
           context,
-          title: step.warningTitle!,
-          description: step.warningDescription,
-          helpUrl: step.warningHelpUrl,
+          title: action.warningTitle!,
+          description: action.warningDescription,
+          helpUrl: action.warningHelpUrl,
         );
         return;
       }
+
       if (!_hasBeenWarned.contains(index)) {
         final shouldSkip = await SetupWarningDialog.show(
           context,
-          title: step.warningTitle!,
-          description: step.warningDescription!,
-          helpUrl: step.warningHelpUrl,
+          title: action.warningTitle!,
+          description: action.warningDescription!,
+          helpUrl: action.warningHelpUrl,
         );
         if (shouldSkip == true) {
           setState(() => _hasBeenWarned.add(index));
@@ -222,7 +242,7 @@ class _SetupWizardPageState extends State<SetupWizardPage> {
                 itemBuilder: (context, index) {
                   return SetupStepView(
                     step: steps[index],
-                    onAction: () => steps[index].performAction(context),
+                    onAction: (action) => _onActionPressed(action, context),
                   );
                 },
               ),

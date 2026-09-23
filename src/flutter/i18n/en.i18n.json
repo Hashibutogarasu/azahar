@@ -13,6 +13,14 @@
       "description": "Learn how to set up Azahar and jump into emulation.",
       "getStarted": "Get started"
     },
+    "permissions": {
+      "title": "Permissions",
+      "description": "Grant optional permissions to use specific features of the emulator"
+    },
+    "dataFolders": {
+      "title": "Data Folders",
+      "description": "Select data folders\n(User folder is required)"
+    },
     "notifications": {
       "title": "Notifications",
       "description": "Grant the notification permission with the button below.",

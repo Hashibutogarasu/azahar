@@ -108,6 +108,10 @@ class Translations$setup$en {
 
   late final Translations$setup$welcome$en welcome =
       Translations$setup$welcome$en.internal(_root);
+  late final Translations$setup$permissions$en permissions =
+      Translations$setup$permissions$en.internal(_root);
+  late final Translations$setup$dataFolders$en dataFolders =
+      Translations$setup$dataFolders$en.internal(_root);
   late final Translations$setup$notifications$en notifications =
       Translations$setup$notifications$en.internal(_root);
   late final Translations$setup$microphone$en microphone =
@@ -254,6 +258,37 @@ class Translations$setup$welcome$en {
 
   /// en: 'Get started'
   String get getStarted => 'Get started';
+}
+
+// Path: setup.permissions
+class Translations$setup$permissions$en {
+  Translations$setup$permissions$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Permissions'
+  String get title => 'Permissions';
+
+  /// en: 'Grant optional permissions to use specific features of the emulator'
+  String get description =>
+      'Grant optional permissions to use specific features of the emulator';
+}
+
+// Path: setup.dataFolders
+class Translations$setup$dataFolders$en {
+  Translations$setup$dataFolders$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Data Folders'
+  String get title => 'Data Folders';
+
+  /// en: 'Select data folders (User folder is required)'
+  String get description => 'Select data folders\n(User folder is required)';
 }
 
 // Path: setup.notifications
@@ -705,6 +740,12 @@ extension on Translations {
       'setup.welcome.description' =>
         'Learn how to set up Azahar and jump into emulation.',
       'setup.welcome.getStarted' => 'Get started',
+      'setup.permissions.title' => 'Permissions',
+      'setup.permissions.description' =>
+        'Grant optional permissions to use specific features of the emulator',
+      'setup.dataFolders.title' => 'Data Folders',
+      'setup.dataFolders.description' =>
+        'Select data folders\n(User folder is required)',
       'setup.notifications.title' => 'Notifications',
       'setup.notifications.description' =>
         'Grant the notification permission with the button below.',

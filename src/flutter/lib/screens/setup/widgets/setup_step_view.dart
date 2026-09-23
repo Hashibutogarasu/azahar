@@ -7,7 +7,7 @@ class SetupStepView extends StatelessWidget {
   const SetupStepView({super.key, required this.step, required this.onAction});
 
   final SetupStep step;
-  final VoidCallback onAction;
+  final void Function(SetupAction action) onAction;
 
   @override
   Widget build(BuildContext context) {
@@ -48,18 +48,19 @@ class SetupStepView extends StatelessWidget {
           else
             Padding(
               padding: const EdgeInsets.only(top: 24),
-              child: FilledButton(
-                onPressed: onAction,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(step.actionLabel),
-                    if (step.buttonIcon != null) ...[
-                      const SizedBox(width: 8),
-                      Icon(step.buttonIcon, size: 18),
-                    ],
-                  ],
-                ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final action in step.actions)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: FilledButton.icon(
+                        onPressed: action.isCompleted ? null : () => onAction(action),
+                        icon: Icon(action.icon, size: 18),
+                        label: Text(action.label),
+                      ),
+                    ),
+                ],
               ),
             ),
         ],
