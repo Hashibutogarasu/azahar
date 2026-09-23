@@ -106,6 +106,19 @@ class NativeBridge {
     return _channel.invokeMethod<void>('stopEmulation');
   }
 
+  Future<bool> onTouchEvent({required double x, required double y, required bool pressed}) async {
+    final result = await _channel.invokeMethod<bool>('onTouchEvent', {
+      'x': x,
+      'y': y,
+      'pressed': pressed,
+    });
+    return result ?? false;
+  }
+
+  Future<void> onTouchMoved({required double x, required double y}) {
+    return _channel.invokeMethod<void>('onTouchMoved', {'x': x, 'y': y});
+  }
+
   Future<bool> swapScreens() async {
     final result = await _channel.invokeMethod<bool>('swapScreens');
     return result ?? false;

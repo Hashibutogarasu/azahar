@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../models/shader_cache_progress.dart';
 import '../../native/native_bridge.dart';
@@ -13,6 +13,7 @@ class EmulationViewModel extends ChangeNotifier {
 
   int? topTextureId;
   int? bottomTextureId;
+  Size? _bottomTextureSize;
   bool isPaused = false;
   bool isScreensSwapped = false;
   bool emulationStarted = false;
@@ -48,11 +49,14 @@ class EmulationViewModel extends ChangeNotifier {
       width: (layout.topScreen.width * devicePixelRatio).round(),
       height: (layout.topScreen.height * devicePixelRatio).round(),
     );
+    final bottomWidth = (layout.bottomScreen.width * devicePixelRatio).round();
+    final bottomHeight = (layout.bottomScreen.height * devicePixelRatio).round();
     bottomTextureId = await _nativeBridge.createEmulationTexture(
-      width: (layout.bottomScreen.width * devicePixelRatio).round(),
-      height: (layout.bottomScreen.height * devicePixelRatio).round(),
+      width: bottomWidth,
+      height: bottomHeight,
       secondary: true,
     );
+    _bottomTextureSize = Size(bottomWidth.toDouble(), bottomHeight.toDouble());
     await _nativeBridge.startEmulation(gamePath);
     notifyListeners();
   }
@@ -65,6 +69,36 @@ class EmulationViewModel extends ChangeNotifier {
     }
     isPaused = !isPaused;
     notifyListeners();
+  }
+
+  /// Converts [position], local to the bottom screen widget of [screenSize], into the pixel
+  /// coordinates of the bottom screen surface that the native side expects.
+  Offset? _toSurfacePosition(Offset position, Size screenSize) {
+    final textureSize = _bottomTextureSize;
+    if (textureSize == null || screenSize.isEmpty) return null;
+    return Offset(
+      position.dx * textureSize.width / screenSize.width,
+      position.dy * textureSize.height / screenSize.height,
+    );
+  }
+
+  /// Sends a touch press at [position], local to the bottom screen widget of [screenSize].
+  void touchPressed(Offset position, Size screenSize) {
+    final surfacePosition = _toSurfacePosition(position, screenSize);
+    if (surfacePosition == null) return;
+    _nativeBridge.onTouchEvent(x: surfacePosition.dx, y: surfacePosition.dy, pressed: true);
+  }
+
+  /// Sends a touch move to [position], local to the bottom screen widget of [screenSize].
+  void touchMoved(Offset position, Size screenSize) {
+    final surfacePosition = _toSurfacePosition(position, screenSize);
+    if (surfacePosition == null) return;
+    _nativeBridge.onTouchMoved(x: surfacePosition.dx, y: surfacePosition.dy);
+  }
+
+  /// Sends a touch release to the native side.
+  void touchReleased() {
+    _nativeBridge.onTouchEvent(x: 0, y: 0, pressed: false);
   }
 
   Future<void> swapScreens() async {

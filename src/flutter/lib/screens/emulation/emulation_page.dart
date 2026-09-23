@@ -4,7 +4,9 @@ import '../../app_services.dart';
 import '../../models/game.dart';
 import 'emulation_screens_layout.dart';
 import 'emulation_view_model.dart';
+import 'widgets/bottom_screen.dart';
 import 'widgets/emulation_loading_card.dart';
+import 'widgets/top_screen.dart';
 
 class EmulationPage extends StatefulWidget {
   const EmulationPage({super.key, required this.gamePath, this.game});
@@ -48,18 +50,11 @@ class _EmulationPageState extends State<EmulationPage> {
 
   void _onViewModelChanged() => setState(() {});
 
-  Widget _screen(int? textureId, Size size) {
-    return SizedBox.fromSize(
-      size: size,
-      child: textureId == null || textureId < 0 ? null : Texture(textureId: textureId),
-    );
-  }
-
   Widget _screens(BoxConstraints constraints) {
     final layout = EmulationScreensLayout.fit(constraints.biggest);
     _requestStart(layout);
-    final topScreen = _screen(_viewModel.topTextureId, layout.topScreen);
-    final bottomScreen = _screen(_viewModel.bottomTextureId, layout.bottomScreen);
+    final topScreen = TopScreen(textureId: _viewModel.topTextureId, size: layout.topScreen);
+    final bottomScreen = BottomScreen(viewModel: _viewModel, size: layout.bottomScreen);
     return Align(
       alignment: Alignment.topCenter,
       child: Flex(

@@ -1,8 +1,10 @@
 package org.citra.citra_emu.channel
 
+import androidx.preference.PreferenceManager
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.view.TextureRegistry
+import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.NativeLibrary
 
 class EmulationController(private val textureRegistry: TextureRegistry) {
@@ -16,8 +18,14 @@ class EmulationController(private val textureRegistry: TextureRegistry) {
         PauseEmulation(),
         ResumeEmulation(),
         SwapScreens(),
-        StopEmulation()
+        StopEmulation(),
+        TouchEvent(),
+        TouchMoved()
     )
+
+    private val isTouchEnabled: Boolean
+        get() = PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
+            .getBoolean("isTouchEnabled", true)
 
     private inner class CreateEmulationTexture : AzaharMethodHandler {
         override val name = "createEmulationTexture"
@@ -88,6 +96,32 @@ class EmulationController(private val textureRegistry: TextureRegistry) {
             surfaceProducer = null
             secondarySurfaceProducer?.release()
             secondarySurfaceProducer = null
+            result.success(null)
+        }
+    }
+
+    private inner class TouchEvent : AzaharMethodHandler {
+        override val name = "onTouchEvent"
+        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+            if (!isTouchEnabled) {
+                result.success(false)
+                return
+            }
+            val x = call.argument<Double>("x") ?: 0.0
+            val y = call.argument<Double>("y") ?: 0.0
+            val pressed = call.argument<Boolean>("pressed") ?: false
+            result.success(NativeLibrary.onTouchEvent(x.toFloat(), y.toFloat(), pressed))
+        }
+    }
+
+    private inner class TouchMoved : AzaharMethodHandler {
+        override val name = "onTouchMoved"
+        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+            if (isTouchEnabled) {
+                val x = call.argument<Double>("x") ?: 0.0
+                val y = call.argument<Double>("y") ?: 0.0
+                NativeLibrary.onTouchMoved(x.toFloat(), y.toFloat())
+            }
             result.success(null)
         }
     }
