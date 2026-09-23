@@ -51,7 +51,6 @@ class _EmulationPageState extends ConsumerState<EmulationPage> {
 
   Future<void> _confirmCloseGame() async {
     final notifier = ref.read(emulationSessionProvider.notifier);
-    _scaffoldKey.currentState?.closeDrawer();
     await notifier.pauseForClosePrompt();
     if (!mounted) return;
     final confirmed = await CloseGameDialog.show(context);
@@ -100,6 +99,7 @@ class _EmulationPageState extends ConsumerState<EmulationPage> {
       child: Scaffold(
         key: _scaffoldKey,
         backgroundColor: Colors.black,
+        drawerEnableOpenDragGesture: false,
         drawer: state.emulationStarted
             ? EmulationDrawer(
                 gameTitle: widget.game?.title ?? '',
