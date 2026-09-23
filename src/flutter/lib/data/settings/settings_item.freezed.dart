@@ -176,7 +176,7 @@ return submenu(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String title,  String? description)?  header,TResult Function( String title,  String? description,  IntBoolKey setting,  SettingsValueStore? store)?  switch_,TResult Function( String title,  String? description,  IntKey setting,  int min,  int max,  String units,  SettingsValueStore? store)?  slider,TResult Function( String title,  String? description,  IntKey setting,  List<String> choiceLabels,  List<int> choiceValues,  SettingsValueStore? store)?  singleChoice,TResult Function( String title,  String? description,  FloatKey setting,  double min,  double max,  String units,  SettingsValueStore? store)?  floatSlider,TResult Function( String title,  String? description,  StringKey setting,  List<String> choiceLabels,  List<String> choiceValues,  SettingsValueStore? store)?  stringSingleChoice,TResult Function( String title,  String? description,  StringKey setting,  int? maxLength,  SettingsValueStore? store)?  stringInput,TResult Function( String title,  String? description,  StringKey setting,  SettingsValueStore? store)?  dateTime,TResult Function( String title,  String? description,  void Function(BuildContext context) onTap)?  action,TResult Function( String title,  String? description,  void Function(BuildContext context) onTap)?  submenu,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String title,  String? description)?  header,TResult Function( String title,  String? description,  IntBoolKey setting,  SettingsValueStore? store)?  switch_,TResult Function( String title,  String? description,  IntKey setting,  int min,  int max,  String units,  SettingsValueStore? store)?  slider,TResult Function( String title,  String? description,  IntKey setting,  List<String> choiceLabels,  List<int> choiceValues,  SettingsValueStore? store)?  singleChoice,TResult Function( String title,  String? description,  FloatKey setting,  double min,  double max,  String units,  SettingsValueStore? store)?  floatSlider,TResult Function( String title,  String? description,  StringKey setting,  List<String> choiceLabels,  List<String> choiceValues,  SettingsValueStore? store)?  stringSingleChoice,TResult Function( String title,  String? description,  StringKey setting,  int? maxLength,  SettingsValueStore? store)?  stringInput,TResult Function( String title,  String? description,  StringKey setting,  SettingsValueStore? store)?  dateTime,TResult Function( String title,  String? description,  IconData? icon,  void Function(BuildContext context) onTap)?  action,TResult Function( String title,  String? description,  IconData? icon,  void Function(BuildContext context) onTap)?  submenu,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case SettingsHeaderItem() when header != null:
 return header(_that.title,_that.description);case SettingsSwitchItem() when switch_ != null:
@@ -187,8 +187,8 @@ return floatSlider(_that.title,_that.description,_that.setting,_that.min,_that.m
 return stringSingleChoice(_that.title,_that.description,_that.setting,_that.choiceLabels,_that.choiceValues,_that.store);case SettingsStringInputItem() when stringInput != null:
 return stringInput(_that.title,_that.description,_that.setting,_that.maxLength,_that.store);case SettingsDateTimeItem() when dateTime != null:
 return dateTime(_that.title,_that.description,_that.setting,_that.store);case SettingsActionItem() when action != null:
-return action(_that.title,_that.description,_that.onTap);case SettingsSubmenuItem() when submenu != null:
-return submenu(_that.title,_that.description,_that.onTap);case _:
+return action(_that.title,_that.description,_that.icon,_that.onTap);case SettingsSubmenuItem() when submenu != null:
+return submenu(_that.title,_that.description,_that.icon,_that.onTap);case _:
   return orElse();
 
 }
@@ -206,7 +206,7 @@ return submenu(_that.title,_that.description,_that.onTap);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String title,  String? description)  header,required TResult Function( String title,  String? description,  IntBoolKey setting,  SettingsValueStore? store)  switch_,required TResult Function( String title,  String? description,  IntKey setting,  int min,  int max,  String units,  SettingsValueStore? store)  slider,required TResult Function( String title,  String? description,  IntKey setting,  List<String> choiceLabels,  List<int> choiceValues,  SettingsValueStore? store)  singleChoice,required TResult Function( String title,  String? description,  FloatKey setting,  double min,  double max,  String units,  SettingsValueStore? store)  floatSlider,required TResult Function( String title,  String? description,  StringKey setting,  List<String> choiceLabels,  List<String> choiceValues,  SettingsValueStore? store)  stringSingleChoice,required TResult Function( String title,  String? description,  StringKey setting,  int? maxLength,  SettingsValueStore? store)  stringInput,required TResult Function( String title,  String? description,  StringKey setting,  SettingsValueStore? store)  dateTime,required TResult Function( String title,  String? description,  void Function(BuildContext context) onTap)  action,required TResult Function( String title,  String? description,  void Function(BuildContext context) onTap)  submenu,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String title,  String? description)  header,required TResult Function( String title,  String? description,  IntBoolKey setting,  SettingsValueStore? store)  switch_,required TResult Function( String title,  String? description,  IntKey setting,  int min,  int max,  String units,  SettingsValueStore? store)  slider,required TResult Function( String title,  String? description,  IntKey setting,  List<String> choiceLabels,  List<int> choiceValues,  SettingsValueStore? store)  singleChoice,required TResult Function( String title,  String? description,  FloatKey setting,  double min,  double max,  String units,  SettingsValueStore? store)  floatSlider,required TResult Function( String title,  String? description,  StringKey setting,  List<String> choiceLabels,  List<String> choiceValues,  SettingsValueStore? store)  stringSingleChoice,required TResult Function( String title,  String? description,  StringKey setting,  int? maxLength,  SettingsValueStore? store)  stringInput,required TResult Function( String title,  String? description,  StringKey setting,  SettingsValueStore? store)  dateTime,required TResult Function( String title,  String? description,  IconData? icon,  void Function(BuildContext context) onTap)  action,required TResult Function( String title,  String? description,  IconData? icon,  void Function(BuildContext context) onTap)  submenu,}) {final _that = this;
 switch (_that) {
 case SettingsHeaderItem():
 return header(_that.title,_that.description);case SettingsSwitchItem():
@@ -217,8 +217,8 @@ return floatSlider(_that.title,_that.description,_that.setting,_that.min,_that.m
 return stringSingleChoice(_that.title,_that.description,_that.setting,_that.choiceLabels,_that.choiceValues,_that.store);case SettingsStringInputItem():
 return stringInput(_that.title,_that.description,_that.setting,_that.maxLength,_that.store);case SettingsDateTimeItem():
 return dateTime(_that.title,_that.description,_that.setting,_that.store);case SettingsActionItem():
-return action(_that.title,_that.description,_that.onTap);case SettingsSubmenuItem():
-return submenu(_that.title,_that.description,_that.onTap);}
+return action(_that.title,_that.description,_that.icon,_that.onTap);case SettingsSubmenuItem():
+return submenu(_that.title,_that.description,_that.icon,_that.onTap);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -232,7 +232,7 @@ return submenu(_that.title,_that.description,_that.onTap);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String title,  String? description)?  header,TResult? Function( String title,  String? description,  IntBoolKey setting,  SettingsValueStore? store)?  switch_,TResult? Function( String title,  String? description,  IntKey setting,  int min,  int max,  String units,  SettingsValueStore? store)?  slider,TResult? Function( String title,  String? description,  IntKey setting,  List<String> choiceLabels,  List<int> choiceValues,  SettingsValueStore? store)?  singleChoice,TResult? Function( String title,  String? description,  FloatKey setting,  double min,  double max,  String units,  SettingsValueStore? store)?  floatSlider,TResult? Function( String title,  String? description,  StringKey setting,  List<String> choiceLabels,  List<String> choiceValues,  SettingsValueStore? store)?  stringSingleChoice,TResult? Function( String title,  String? description,  StringKey setting,  int? maxLength,  SettingsValueStore? store)?  stringInput,TResult? Function( String title,  String? description,  StringKey setting,  SettingsValueStore? store)?  dateTime,TResult? Function( String title,  String? description,  void Function(BuildContext context) onTap)?  action,TResult? Function( String title,  String? description,  void Function(BuildContext context) onTap)?  submenu,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String title,  String? description)?  header,TResult? Function( String title,  String? description,  IntBoolKey setting,  SettingsValueStore? store)?  switch_,TResult? Function( String title,  String? description,  IntKey setting,  int min,  int max,  String units,  SettingsValueStore? store)?  slider,TResult? Function( String title,  String? description,  IntKey setting,  List<String> choiceLabels,  List<int> choiceValues,  SettingsValueStore? store)?  singleChoice,TResult? Function( String title,  String? description,  FloatKey setting,  double min,  double max,  String units,  SettingsValueStore? store)?  floatSlider,TResult? Function( String title,  String? description,  StringKey setting,  List<String> choiceLabels,  List<String> choiceValues,  SettingsValueStore? store)?  stringSingleChoice,TResult? Function( String title,  String? description,  StringKey setting,  int? maxLength,  SettingsValueStore? store)?  stringInput,TResult? Function( String title,  String? description,  StringKey setting,  SettingsValueStore? store)?  dateTime,TResult? Function( String title,  String? description,  IconData? icon,  void Function(BuildContext context) onTap)?  action,TResult? Function( String title,  String? description,  IconData? icon,  void Function(BuildContext context) onTap)?  submenu,}) {final _that = this;
 switch (_that) {
 case SettingsHeaderItem() when header != null:
 return header(_that.title,_that.description);case SettingsSwitchItem() when switch_ != null:
@@ -243,8 +243,8 @@ return floatSlider(_that.title,_that.description,_that.setting,_that.min,_that.m
 return stringSingleChoice(_that.title,_that.description,_that.setting,_that.choiceLabels,_that.choiceValues,_that.store);case SettingsStringInputItem() when stringInput != null:
 return stringInput(_that.title,_that.description,_that.setting,_that.maxLength,_that.store);case SettingsDateTimeItem() when dateTime != null:
 return dateTime(_that.title,_that.description,_that.setting,_that.store);case SettingsActionItem() when action != null:
-return action(_that.title,_that.description,_that.onTap);case SettingsSubmenuItem() when submenu != null:
-return submenu(_that.title,_that.description,_that.onTap);case _:
+return action(_that.title,_that.description,_that.icon,_that.onTap);case SettingsSubmenuItem() when submenu != null:
+return submenu(_that.title,_that.description,_that.icon,_that.onTap);case _:
   return null;
 
 }
@@ -874,11 +874,12 @@ as SettingsValueStore?,
 
 
 class SettingsActionItem implements SettingsItem {
-  const SettingsActionItem({required this.title, this.description, required this.onTap});
+  const SettingsActionItem({required this.title, this.description, this.icon, required this.onTap});
   
 
 @override final  String title;
 @override final  String? description;
+ final  IconData? icon;
  final  void Function(BuildContext context) onTap;
 
 /// Create a copy of SettingsItem
@@ -891,16 +892,16 @@ $SettingsActionItemCopyWith<SettingsActionItem> get copyWith => _$SettingsAction
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsActionItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.onTap, onTap) || other.onTap == onTap));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsActionItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.onTap, onTap) || other.onTap == onTap));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,onTap);
+int get hashCode => Object.hash(runtimeType,title,description,icon,onTap);
 
 @override
 String toString() {
-  return 'SettingsItem.action(title: $title, description: $description, onTap: $onTap)';
+  return 'SettingsItem.action(title: $title, description: $description, icon: $icon, onTap: $onTap)';
 }
 
 
@@ -911,7 +912,7 @@ abstract mixin class $SettingsActionItemCopyWith<$Res> implements $SettingsItemC
   factory $SettingsActionItemCopyWith(SettingsActionItem value, $Res Function(SettingsActionItem) _then) = _$SettingsActionItemCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String? description, void Function(BuildContext context) onTap
+ String title, String? description, IconData? icon, void Function(BuildContext context) onTap
 });
 
 
@@ -928,11 +929,12 @@ class _$SettingsActionItemCopyWithImpl<$Res>
 
 /// Create a copy of SettingsItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? onTap = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? icon = freezed,Object? onTap = null,}) {
   return _then(SettingsActionItem(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
-as String?,onTap: null == onTap ? _self.onTap : onTap // ignore: cast_nullable_to_non_nullable
+as String?,icon: freezed == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
+as IconData?,onTap: null == onTap ? _self.onTap : onTap // ignore: cast_nullable_to_non_nullable
 as void Function(BuildContext context),
   ));
 }
@@ -944,11 +946,12 @@ as void Function(BuildContext context),
 
 
 class SettingsSubmenuItem implements SettingsItem {
-  const SettingsSubmenuItem({required this.title, this.description, required this.onTap});
+  const SettingsSubmenuItem({required this.title, this.description, this.icon, required this.onTap});
   
 
 @override final  String title;
 @override final  String? description;
+ final  IconData? icon;
  final  void Function(BuildContext context) onTap;
 
 /// Create a copy of SettingsItem
@@ -961,16 +964,16 @@ $SettingsSubmenuItemCopyWith<SettingsSubmenuItem> get copyWith => _$SettingsSubm
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsSubmenuItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.onTap, onTap) || other.onTap == onTap));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsSubmenuItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.onTap, onTap) || other.onTap == onTap));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,onTap);
+int get hashCode => Object.hash(runtimeType,title,description,icon,onTap);
 
 @override
 String toString() {
-  return 'SettingsItem.submenu(title: $title, description: $description, onTap: $onTap)';
+  return 'SettingsItem.submenu(title: $title, description: $description, icon: $icon, onTap: $onTap)';
 }
 
 
@@ -981,7 +984,7 @@ abstract mixin class $SettingsSubmenuItemCopyWith<$Res> implements $SettingsItem
   factory $SettingsSubmenuItemCopyWith(SettingsSubmenuItem value, $Res Function(SettingsSubmenuItem) _then) = _$SettingsSubmenuItemCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String? description, void Function(BuildContext context) onTap
+ String title, String? description, IconData? icon, void Function(BuildContext context) onTap
 });
 
 
@@ -998,11 +1001,12 @@ class _$SettingsSubmenuItemCopyWithImpl<$Res>
 
 /// Create a copy of SettingsItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? onTap = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? icon = freezed,Object? onTap = null,}) {
   return _then(SettingsSubmenuItem(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
-as String?,onTap: null == onTap ? _self.onTap : onTap // ignore: cast_nullable_to_non_nullable
+as String?,icon: freezed == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
+as IconData?,onTap: null == onTap ? _self.onTap : onTap // ignore: cast_nullable_to_non_nullable
 as void Function(BuildContext context),
   ));
 }

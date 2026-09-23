@@ -85,11 +85,13 @@ class _SettingsListState extends State<SettingsList> {
         onTap: () => _showDateTimeDialog(item),
       ),
       SettingsActionItem() => ListTile(
+        leading: item.icon == null ? null : Icon(item.icon),
         title: Text(item.title),
         subtitle: item.description == null ? null : Text(item.description!),
         onTap: () => item.onTap(context),
       ),
       SettingsSubmenuItem() => ListTile(
+        leading: item.icon == null ? null : Icon(item.icon),
         title: Text(item.title),
         subtitle: item.description == null ? null : Text(item.description!),
         trailing: const Icon(Icons.chevron_right),

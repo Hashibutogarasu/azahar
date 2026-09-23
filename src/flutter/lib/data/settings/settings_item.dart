@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'emulator_setting_key.dart';
@@ -74,12 +74,14 @@ sealed class SettingsItem with _$SettingsItem {
   const factory SettingsItem.action({
     required String title,
     String? description,
+    IconData? icon,
     required void Function(BuildContext context) onTap,
   }) = SettingsActionItem;
 
   const factory SettingsItem.submenu({
     required String title,
     String? description,
+    IconData? icon,
     required void Function(BuildContext context) onTap,
   }) = SettingsSubmenuItem;
 }

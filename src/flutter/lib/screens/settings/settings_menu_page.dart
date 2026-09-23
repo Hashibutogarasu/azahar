@@ -47,14 +47,17 @@ class _SettingsMenuPageState extends State<SettingsMenuPage> {
     return [
       SettingsItem.submenu(
         title: t.settings.general.title,
+        icon: Icons.tune,
         onTap: (context) => const GeneralSettingsRoute().push(context),
       ),
       SettingsItem.submenu(
         title: t.settings.system.title,
+        icon: Icons.memory,
         onTap: (context) => const SystemSettingsRoute().push(context),
       ),
       SettingsItem.submenu(
         title: t.settings.graphics.title,
+        icon: Icons.monitor,
         onTap: (context) => const GraphicsSettingsRoute().push(context),
       ),
     ];
