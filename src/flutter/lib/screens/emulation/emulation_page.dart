@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../app_services.dart';
 import '../../models/game.dart';
+import '../../routing/app_routes.dart';
 import 'emulation_screens_layout.dart';
 import 'emulation_view_model.dart';
 import 'widgets/bottom_screen.dart';
@@ -73,7 +75,11 @@ class _EmulationPageState extends State<EmulationPage> {
     final confirmed = await CloseGameDialog.show(context);
     if (!mounted) return;
     if (confirmed == true) {
-      Navigator.of(context).pop();
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        const GamesListRoute().go(context);
+      }
     } else {
       await _viewModel.cancelClosePrompt();
     }
