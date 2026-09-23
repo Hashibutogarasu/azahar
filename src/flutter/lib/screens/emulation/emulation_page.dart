@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app_services.dart';
 import '../../models/game.dart';
+import 'emulation_screens_layout.dart';
 import 'emulation_view_model.dart';
 import 'widgets/emulation_loading_card.dart';
 
@@ -17,18 +18,23 @@ class EmulationPage extends StatefulWidget {
 
 class _EmulationPageState extends State<EmulationPage> {
   final EmulationViewModel _viewModel = EmulationViewModel(AppServices.nativeBridge);
+  bool _startRequested = false;
 
   @override
   void initState() {
     super.initState();
     _viewModel.addListener(_onViewModelChanged);
+  }
+
+  void _requestStart(EmulationScreensLayout layout) {
+    if (_startRequested) return;
+    _startRequested = true;
+    final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final mediaQuery = MediaQuery.of(context);
       _viewModel.start(
         widget.gamePath,
-        maxWidth: mediaQuery.size.width,
-        maxHeight: mediaQuery.size.height,
-        devicePixelRatio: mediaQuery.devicePixelRatio,
+        layout: layout,
+        devicePixelRatio: devicePixelRatio,
       );
     });
   }
@@ -42,42 +48,38 @@ class _EmulationPageState extends State<EmulationPage> {
 
   void _onViewModelChanged() => setState(() {});
 
-  Widget _screen(int? textureId, double width, double height) {
-    return SizedBox(
-      width: width,
-      height: height,
+  Widget _screen(int? textureId, Size size) {
+    return SizedBox.fromSize(
+      size: size,
       child: textureId == null || textureId < 0 ? null : Texture(textureId: textureId),
+    );
+  }
+
+  Widget _screens(BoxConstraints constraints) {
+    final layout = EmulationScreensLayout.fit(constraints.biggest);
+    _requestStart(layout);
+    final topScreen = _screen(_viewModel.topTextureId, layout.topScreen);
+    final bottomScreen = _screen(_viewModel.bottomTextureId, layout.bottomScreen);
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Flex(
+        direction: layout.direction,
+        mainAxisSize: MainAxisSize.min,
+        children: _viewModel.isScreensSwapped
+            ? [bottomScreen, topScreen]
+            : [topScreen, bottomScreen],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final topScreen = _screen(
-      _viewModel.topTextureId,
-      _viewModel.topScreenWidth,
-      _viewModel.topScreenHeight,
-    );
-    final bottomScreen = _screen(
-      _viewModel.bottomTextureId,
-      _viewModel.bottomScreenWidth,
-      _viewModel.bottomScreenHeight,
-    );
-    final screens = _viewModel.isScreensSwapped
-        ? [bottomScreen, topScreen]
-        : [topScreen, bottomScreen];
-
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
         child: Stack(
           children: [
-            Align(
-              alignment: Alignment.topCenter,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: screens,
-              ),
-            ),
+            LayoutBuilder(builder: (context, constraints) => _screens(constraints)),
             if (!_viewModel.emulationStarted)
               Center(
                 child: EmulationLoadingCard(
