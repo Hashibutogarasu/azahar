@@ -10,6 +10,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.DocumentsContract
 import android.system.Os
+import android.system.OsConstants
 import android.util.Pair
 import androidx.documentfile.provider.DocumentFile
 import org.citra.citra_emu.CitraApplication
@@ -99,14 +100,20 @@ object FileUtil {
      */
     @JvmStatic
     fun openContentUri(path: String, openMode: String): Int {
+        val resolvedMode = if (openMode == "rwa") "rw" else openMode
         try {
             context
                 .contentResolver
-                .openFileDescriptor(Uri.parse(path), openMode)
+                .openFileDescriptor(Uri.parse(path), resolvedMode)
                 .use { parcelFileDescriptor ->
                     if (parcelFileDescriptor == null) {
                         Log.error("[FileUtil]: Cannot get the file descriptor from uri: $path")
                         return -1
+                    }
+                    if (openMode == "rwa") {
+                        val fd = parcelFileDescriptor.fileDescriptor
+                        val flags = Os.fcntlInt(fd, OsConstants.F_GETFL, 0)
+                        Os.fcntlInt(fd, OsConstants.F_SETFL, flags or OsConstants.O_APPEND)
                     }
                     return parcelFileDescriptor.detachFd()
                 }
