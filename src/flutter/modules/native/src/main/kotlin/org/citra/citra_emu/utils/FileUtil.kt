@@ -99,10 +99,11 @@ object FileUtil {
      */
     @JvmStatic
     fun openContentUri(path: String, openMode: String): Int {
+        val resolvedMode = if (openMode == "rwa") "rw" else openMode
         try {
             context
                 .contentResolver
-                .openFileDescriptor(Uri.parse(path), openMode)
+                .openFileDescriptor(Uri.parse(path), resolvedMode)
                 .use { parcelFileDescriptor ->
                     if (parcelFileDescriptor == null) {
                         Log.error("[FileUtil]: Cannot get the file descriptor from uri: $path")
