@@ -39,6 +39,7 @@ abstract final class SettingsKeys {
   static const String firstApplicationLaunch = 'FirstApplicationLaunch';
   static const String citraDirectory = 'CITRA_DIRECTORY';
   static const String gamePath = 'game_path';
+  static const String languageCode = 'AppLanguage';
 }
 
 class ThemeSettings extends Table {

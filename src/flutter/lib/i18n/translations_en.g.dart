@@ -261,6 +261,8 @@ class Translations$settings$en {
       Translations$settings$debug$en.internal(_root);
   late final Translations$settings$theme$en theme =
       Translations$settings$theme$en.internal(_root);
+  late final Translations$settings$language$en language =
+      Translations$settings$language$en.internal(_root);
 }
 
 // Path: setup.welcome
@@ -1830,6 +1832,24 @@ class Translations$settings$theme$en {
       'Uses black backgrounds when dark mode is enabled, instead of dark gray.';
 }
 
+// Path: settings.language
+class Translations$settings$language$en {
+  Translations$settings$language$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Language'
+  String get title => 'Language';
+
+  /// en: 'System default'
+  String get systemDefault => 'System default';
+
+  /// en: 'English'
+  String get english => 'English';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -2381,6 +2401,9 @@ extension on Translations {
       'settings.theme.useBlackBackgrounds' => 'Use Black Backgrounds',
       'settings.theme.useBlackBackgroundsDescription' =>
         'Uses black backgrounds when dark mode is enabled, instead of dark gray.',
+      'settings.language.title' => 'Language',
+      'settings.language.systemDefault' => 'System default',
+      'settings.language.english' => 'English',
       _ => null,
     };
   }

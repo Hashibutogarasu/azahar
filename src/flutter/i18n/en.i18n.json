@@ -521,6 +521,11 @@
       "themeModeDark": "Dark",
       "useBlackBackgrounds": "Use Black Backgrounds",
       "useBlackBackgroundsDescription": "Uses black backgrounds when dark mode is enabled, instead of dark gray."
+    },
+    "language": {
+      "title": "Language",
+      "systemDefault": "System default",
+      "english": "English"
     }
   }
 }

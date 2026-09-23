@@ -51,4 +51,17 @@ class SettingsRepository {
   Future<void> setGamesDirectoryUri(String uri) {
     return write(SettingsKeys.gamePath, uri);
   }
+
+  Future<String?> languageCode() {
+    return read(SettingsKeys.languageCode);
+  }
+
+  Future<void> setLanguageCode(String? languageCode) {
+    if (languageCode == null) {
+      return (_db.delete(
+        _db.appSettings,
+      )..where((tbl) => tbl.key.equals(SettingsKeys.languageCode))).go();
+    }
+    return write(SettingsKeys.languageCode, languageCode);
+  }
 }

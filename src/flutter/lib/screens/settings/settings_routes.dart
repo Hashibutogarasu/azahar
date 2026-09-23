@@ -7,6 +7,7 @@ import 'sections/controls_settings_page.dart';
 import 'sections/debug_settings_page.dart';
 import 'sections/general_settings_page.dart';
 import 'sections/graphics_settings_page.dart';
+import 'sections/language_settings_page.dart';
 import 'sections/layout_settings_page.dart';
 import 'sections/system_settings_page.dart';
 import 'sections/theme_settings_page.dart';
@@ -133,5 +134,15 @@ class ThemeSettingsRoute extends GoRouteData with $ThemeSettingsRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const ThemeSettingsPage();
+  }
+}
+
+@TypedGoRoute<LanguageSettingsRoute>(path: '/settings/language')
+class LanguageSettingsRoute extends GoRouteData with $LanguageSettingsRoute {
+  const LanguageSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const LanguageSettingsPage();
   }
 }

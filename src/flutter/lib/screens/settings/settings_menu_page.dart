@@ -85,6 +85,11 @@ class _SettingsMenuPageState extends State<SettingsMenuPage> {
         icon: Icons.code,
         onTap: (context) => const DebugSettingsRoute().push(context),
       ),
+      SettingsItem.submenu(
+        title: t.settings.language.title,
+        icon: Icons.language,
+        onTap: (context) => const LanguageSettingsRoute().push(context),
+      ),
     ];
   }
 }
