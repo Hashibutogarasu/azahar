@@ -24,20 +24,22 @@ void reportAppException(AppException error) {
 }
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  AppletChannel(_navigatorKey);
-
-  final defaultOnError = FlutterError.onError;
-  FlutterError.onError = (details) {
-    if (details.exception case final AppException error) {
-      reportAppException(error);
-    } else {
-      defaultOnError?.call(details);
-    }
-  };
-
   runZonedGuarded(
-    () => runApp(const AzaharApp()),
+    () {
+      WidgetsFlutterBinding.ensureInitialized();
+      AppletChannel(_navigatorKey);
+
+      final defaultOnError = FlutterError.onError;
+      FlutterError.onError = (details) {
+        if (details.exception case final AppException error) {
+          reportAppException(error);
+        } else {
+          defaultOnError?.call(details);
+        }
+      };
+
+      runApp(const AzaharApp());
+    },
     (error, stackTrace) {
       if (error is AppException) {
         reportAppException(error);
