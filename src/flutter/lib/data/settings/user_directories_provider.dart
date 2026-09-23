@@ -1,0 +1,36 @@
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../app_services.dart';
+import '../../models/copy_dir_progress.dart';
+
+final userDirectoriesProvider = Provider<UserDirectoriesService>(
+  (ref) => UserDirectoriesService(),
+);
+
+class UserDirectoriesService {
+  Future<String?> previousUserDirectory() => AppServices.settingsRepository.citraDirectoryUri();
+
+  Future<String?> pickUserDirectory() => FilePicker.getDirectoryPath();
+
+  Stream<CopyDirProgress> copyDirProgress() => AppServices.nativeBridge.copyDirProgress();
+
+  Future<void> confirmUserDirectory({
+    required String uri,
+    String? previousUri,
+    required bool moveData,
+  }) async {
+    await AppServices.nativeBridge.confirmUserDirectory(
+      uri: uri,
+      previousUri: previousUri,
+      moveData: moveData,
+    );
+    await AppServices.settingsRepository.setCitraDirectoryUri(uri);
+  }
+
+  Future<String?> pickGamesDirectory() => FilePicker.getDirectoryPath();
+
+  Future<void> confirmGamesDirectory(String uri) {
+    return AppServices.settingsRepository.setGamesDirectoryUri(uri);
+  }
+}

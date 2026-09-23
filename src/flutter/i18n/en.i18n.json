@@ -88,7 +88,11 @@
     "emulatorSettings": "Settings",
     "emulatorSettingsDescription": "Configure emulator settings",
     "themeAndColor": "Theme and Color",
-    "themeAndColorDescription": "Customize the app's appearance"
+    "themeAndColorDescription": "Customize the app's appearance",
+    "selectUserFolder": "Select Azahar User Folder",
+    "selectUserFolderDescription": "Change the folder Azahar stores its user data in",
+    "selectGamesFolder": "Select Applications Folder",
+    "selectGamesFolderDescription": "Change the folder Azahar looks for applications in"
   },
   "settings": {
     "title": "Settings",

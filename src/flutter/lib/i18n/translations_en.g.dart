@@ -226,6 +226,20 @@ class Translations$options$en {
 
   /// en: 'Customize the app's appearance'
   String get themeAndColorDescription => 'Customize the app\'s appearance';
+
+  /// en: 'Select Azahar User Folder'
+  String get selectUserFolder => 'Select Azahar User Folder';
+
+  /// en: 'Change the folder Azahar stores its user data in'
+  String get selectUserFolderDescription =>
+      'Change the folder Azahar stores its user data in';
+
+  /// en: 'Select Applications Folder'
+  String get selectGamesFolder => 'Select Applications Folder';
+
+  /// en: 'Change the folder Azahar looks for applications in'
+  String get selectGamesFolderDescription =>
+      'Change the folder Azahar looks for applications in';
 }
 
 // Path: settings
@@ -1964,6 +1978,12 @@ extension on Translations {
       'options.emulatorSettingsDescription' => 'Configure emulator settings',
       'options.themeAndColor' => 'Theme and Color',
       'options.themeAndColorDescription' => 'Customize the app\'s appearance',
+      'options.selectUserFolder' => 'Select Azahar User Folder',
+      'options.selectUserFolderDescription' =>
+        'Change the folder Azahar stores its user data in',
+      'options.selectGamesFolder' => 'Select Applications Folder',
+      'options.selectGamesFolderDescription' =>
+        'Change the folder Azahar looks for applications in',
       'settings.title' => 'Settings',
       'settings.resetToDefault' => 'Reset to Default',
       'settings.resetToDefaultDialog.title' => 'Reset to Default?',

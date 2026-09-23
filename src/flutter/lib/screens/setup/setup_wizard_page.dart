@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../app_services.dart';
+import '../../data/settings/user_directories_provider.dart';
 import '../../i18n/translations.g.dart';
 import '../../routing/app_routes.dart';
 import 'dialogs/citra_directory_dialog.dart';
@@ -23,8 +24,11 @@ class SetupWizardPage extends StatefulWidget {
 
 class _SetupWizardPageState extends State<SetupWizardPage> {
   final _pageController = PageController();
-  final SetupWizardViewModel _viewModel =
-      SetupWizardViewModel(AppServices.nativeBridge, AppServices.settingsRepository);
+  final SetupWizardViewModel _viewModel = SetupWizardViewModel(
+    AppServices.nativeBridge,
+    AppServices.settingsRepository,
+    UserDirectoriesService(),
+  );
   final Set<int> _hasBeenWarned = {};
   int _currentPage = 0;
 
