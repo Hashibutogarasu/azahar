@@ -1,21 +1,37 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppTheme {
-  static const Color _seedColor = Color(0xFFB71C1C);
+  static const List<Color> staticThemeColors = [
+    Colors.blue,
+    Colors.cyan,
+    Colors.red,
+    Colors.green,
+    Colors.yellow,
+    Colors.orange,
+    Colors.deepPurple,
+    Colors.pink,
+    Colors.blueGrey,
+  ];
 
-  static ThemeData light() {
+  static ThemeData light({int staticThemeColor = 0}) {
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: _seedColor,
+      seedColor: staticThemeColors[staticThemeColor],
       brightness: Brightness.light,
     );
     return ThemeData(useMaterial3: true, colorScheme: colorScheme);
   }
 
-  static ThemeData dark() {
+  static ThemeData dark({int staticThemeColor = 0, bool blackBackgrounds = false}) {
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: _seedColor,
+      seedColor: staticThemeColors[staticThemeColor],
       brightness: Brightness.dark,
     );
-    return ThemeData(useMaterial3: true, colorScheme: colorScheme);
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: blackBackgrounds
+          ? colorScheme.copyWith(surface: Colors.black)
+          : colorScheme,
+      scaffoldBackgroundColor: blackBackgrounds ? Colors.black : null,
+    );
   }
 }

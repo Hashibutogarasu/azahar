@@ -18,6 +18,7 @@ List<RouteBase> get $appRoutes => [
   $customPortraitLayoutSettingsRoute,
   $audioSettingsRoute,
   $debugSettingsRoute,
+  $themeSettingsRoute,
 ];
 
 RouteBase get $settingsMenuRoute => GoRouteData.$route(
@@ -304,6 +305,33 @@ mixin $DebugSettingsRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/settings/debug');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $themeSettingsRoute => GoRouteData.$route(
+  path: '/settings/theme',
+  hasOverriddenOnExit: false,
+  factory: $ThemeSettingsRoute._fromState,
+);
+
+mixin $ThemeSettingsRoute on GoRouteData {
+  static ThemeSettingsRoute _fromState(GoRouterState state) =>
+      const ThemeSettingsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/settings/theme');
 
   @override
   void go(BuildContext context) => context.go(location);

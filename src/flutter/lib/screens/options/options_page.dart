@@ -26,6 +26,12 @@ class OptionsPage extends StatelessWidget {
               description: t.options.emulatorSettingsDescription,
               onTap: () => const SettingsMenuRoute().push(context),
             ),
+            _OptionCard(
+              icon: Icons.palette_outlined,
+              title: t.options.themeAndColor,
+              description: t.options.themeAndColorDescription,
+              onTap: () => const ThemeSettingsRoute().push(context),
+            ),
           ],
         ),
       ),

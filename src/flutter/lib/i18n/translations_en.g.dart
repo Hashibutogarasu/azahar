@@ -220,6 +220,12 @@ class Translations$options$en {
 
   /// en: 'Configure emulator settings'
   String get emulatorSettingsDescription => 'Configure emulator settings';
+
+  /// en: 'Theme and Color'
+  String get themeAndColor => 'Theme and Color';
+
+  /// en: 'Customize the app's appearance'
+  String get themeAndColorDescription => 'Customize the app\'s appearance';
 }
 
 // Path: settings
@@ -253,6 +259,8 @@ class Translations$settings$en {
       Translations$settings$audio$en.internal(_root);
   late final Translations$settings$debug$en debug =
       Translations$settings$debug$en.internal(_root);
+  late final Translations$settings$theme$en theme =
+      Translations$settings$theme$en.internal(_root);
 }
 
 // Path: setup.welcome
@@ -1754,6 +1762,74 @@ class Translations$settings$debug$en {
       'Forces asynchronous operations to run in a deterministic order. Reduces performance.';
 }
 
+// Path: settings.theme
+class Translations$settings$theme$en {
+  Translations$settings$theme$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Theme and Color'
+  String get title => 'Theme and Color';
+
+  /// en: 'Material You'
+  String get materialYou => 'Material You';
+
+  /// en: 'Uses colors extracted from your device's wallpaper.'
+  String get materialYouDescription =>
+      'Uses colors extracted from your device\'s wallpaper.';
+
+  /// en: 'Static Theme Color'
+  String get staticThemeColor => 'Static Theme Color';
+
+  /// en: 'Blue (Default)'
+  String get staticThemeColorBlue => 'Blue (Default)';
+
+  /// en: 'Cyan'
+  String get staticThemeColorCyan => 'Cyan';
+
+  /// en: 'Red'
+  String get staticThemeColorRed => 'Red';
+
+  /// en: 'Green'
+  String get staticThemeColorGreen => 'Green';
+
+  /// en: 'Yellow'
+  String get staticThemeColorYellow => 'Yellow';
+
+  /// en: 'Orange'
+  String get staticThemeColorOrange => 'Orange';
+
+  /// en: 'Violet'
+  String get staticThemeColorViolet => 'Violet';
+
+  /// en: 'Pink'
+  String get staticThemeColorPink => 'Pink';
+
+  /// en: 'Gray'
+  String get staticThemeColorGray => 'Gray';
+
+  /// en: 'Theme Mode'
+  String get themeMode => 'Theme Mode';
+
+  /// en: 'Follow System'
+  String get themeModeFollowSystem => 'Follow System';
+
+  /// en: 'Light'
+  String get themeModeLight => 'Light';
+
+  /// en: 'Dark'
+  String get themeModeDark => 'Dark';
+
+  /// en: 'Use Black Backgrounds'
+  String get useBlackBackgrounds => 'Use Black Backgrounds';
+
+  /// en: 'Uses black backgrounds when dark mode is enabled, instead of dark gray.'
+  String get useBlackBackgroundsDescription =>
+      'Uses black backgrounds when dark mode is enabled, instead of dark gray.';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -1840,6 +1916,8 @@ extension on Translations {
       'applets.standardMii' => 'Standard Mii',
       'options.emulatorSettings' => 'Settings',
       'options.emulatorSettingsDescription' => 'Configure emulator settings',
+      'options.themeAndColor' => 'Theme and Color',
+      'options.themeAndColorDescription' => 'Customize the app\'s appearance',
       'settings.title' => 'Settings',
       'settings.sliderDialog.kDefault' => 'Default',
       'settings.sliderDialog.invalidValue' =>
@@ -2282,6 +2360,27 @@ extension on Translations {
         'Deterministic Async Operations',
       'settings.debug.deterministicAsyncOperationsDescription' =>
         'Forces asynchronous operations to run in a deterministic order. Reduces performance.',
+      'settings.theme.title' => 'Theme and Color',
+      'settings.theme.materialYou' => 'Material You',
+      'settings.theme.materialYouDescription' =>
+        'Uses colors extracted from your device\'s wallpaper.',
+      'settings.theme.staticThemeColor' => 'Static Theme Color',
+      'settings.theme.staticThemeColorBlue' => 'Blue (Default)',
+      'settings.theme.staticThemeColorCyan' => 'Cyan',
+      'settings.theme.staticThemeColorRed' => 'Red',
+      'settings.theme.staticThemeColorGreen' => 'Green',
+      'settings.theme.staticThemeColorYellow' => 'Yellow',
+      'settings.theme.staticThemeColorOrange' => 'Orange',
+      'settings.theme.staticThemeColorViolet' => 'Violet',
+      'settings.theme.staticThemeColorPink' => 'Pink',
+      'settings.theme.staticThemeColorGray' => 'Gray',
+      'settings.theme.themeMode' => 'Theme Mode',
+      'settings.theme.themeModeFollowSystem' => 'Follow System',
+      'settings.theme.themeModeLight' => 'Light',
+      'settings.theme.themeModeDark' => 'Dark',
+      'settings.theme.useBlackBackgrounds' => 'Use Black Backgrounds',
+      'settings.theme.useBlackBackgroundsDescription' =>
+        'Uses black backgrounds when dark mode is enabled, instead of dark gray.',
       _ => null,
     };
   }

@@ -9,6 +9,7 @@ import 'sections/general_settings_page.dart';
 import 'sections/graphics_settings_page.dart';
 import 'sections/layout_settings_page.dart';
 import 'sections/system_settings_page.dart';
+import 'sections/theme_settings_page.dart';
 import 'settings_menu_page.dart';
 
 part 'settings_routes.g.dart';
@@ -122,5 +123,15 @@ class DebugSettingsRoute extends GoRouteData with $DebugSettingsRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const DebugSettingsPage();
+  }
+}
+
+@TypedGoRoute<ThemeSettingsRoute>(path: '/settings/theme')
+class ThemeSettingsRoute extends GoRouteData with $ThemeSettingsRoute {
+  const ThemeSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const ThemeSettingsPage();
   }
 }

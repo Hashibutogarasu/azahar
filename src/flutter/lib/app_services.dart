@@ -4,6 +4,7 @@ import 'data/settings/control_bindings_repository.dart';
 import 'data/settings/emulator_settings_repository.dart';
 import 'data/settings/input_layout_repository.dart';
 import 'data/settings/system_save_repository.dart';
+import 'data/settings/theme_settings_repository.dart';
 import 'data/settings_repository.dart';
 import 'native/native_bridge.dart';
 
@@ -19,4 +20,7 @@ abstract final class AppServices {
     database,
   );
   static final InputLayoutRepository inputLayoutRepository = InputLayoutRepository(database);
+  static final ThemeSettingsRepository themeSettingsRepository = ThemeSettingsRepository(
+    database,
+  );
 }

@@ -86,7 +86,9 @@
   },
   "options": {
     "emulatorSettings": "Settings",
-    "emulatorSettingsDescription": "Configure emulator settings"
+    "emulatorSettingsDescription": "Configure emulator settings",
+    "themeAndColor": "Theme and Color",
+    "themeAndColorDescription": "Customize the app's appearance"
   },
   "settings": {
     "title": "Settings",
@@ -498,6 +500,27 @@
       "delayStartLleModulesDescription": "Delays the start of LLE modules to work around race conditions.",
       "deterministicAsyncOperations": "Deterministic Async Operations",
       "deterministicAsyncOperationsDescription": "Forces asynchronous operations to run in a deterministic order. Reduces performance."
+    },
+    "theme": {
+      "title": "Theme and Color",
+      "materialYou": "Material You",
+      "materialYouDescription": "Uses colors extracted from your device's wallpaper.",
+      "staticThemeColor": "Static Theme Color",
+      "staticThemeColorBlue": "Blue (Default)",
+      "staticThemeColorCyan": "Cyan",
+      "staticThemeColorRed": "Red",
+      "staticThemeColorGreen": "Green",
+      "staticThemeColorYellow": "Yellow",
+      "staticThemeColorOrange": "Orange",
+      "staticThemeColorViolet": "Violet",
+      "staticThemeColorPink": "Pink",
+      "staticThemeColorGray": "Gray",
+      "themeMode": "Theme Mode",
+      "themeModeFollowSystem": "Follow System",
+      "themeModeLight": "Light",
+      "themeModeDark": "Dark",
+      "useBlackBackgrounds": "Use Black Backgrounds",
+      "useBlackBackgroundsDescription": "Uses black backgrounds when dark mode is enabled, instead of dark gray."
     }
   }
 }

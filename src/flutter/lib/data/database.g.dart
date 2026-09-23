@@ -1633,6 +1633,375 @@ class InputLayoutElementsCompanion extends UpdateCompanion<InputLayoutElement> {
   }
 }
 
+class $ThemeSettingsTable extends ThemeSettings
+    with TableInfo<$ThemeSettingsTable, ThemeSetting> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ThemeSettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _themeModeMeta = const VerificationMeta(
+    'themeMode',
+  );
+  @override
+  late final GeneratedColumn<String> themeMode = GeneratedColumn<String>(
+    'theme_mode',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('system'),
+  );
+  static const VerificationMeta _staticThemeColorMeta = const VerificationMeta(
+    'staticThemeColor',
+  );
+  @override
+  late final GeneratedColumn<int> staticThemeColor = GeneratedColumn<int>(
+    'static_theme_color',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _blackBackgroundsMeta = const VerificationMeta(
+    'blackBackgrounds',
+  );
+  @override
+  late final GeneratedColumn<bool> blackBackgrounds = GeneratedColumn<bool>(
+    'black_backgrounds',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("black_backgrounds" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _materialYouMeta = const VerificationMeta(
+    'materialYou',
+  );
+  @override
+  late final GeneratedColumn<bool> materialYou = GeneratedColumn<bool>(
+    'material_you',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("material_you" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    themeMode,
+    staticThemeColor,
+    blackBackgrounds,
+    materialYou,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'theme_settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ThemeSetting> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('theme_mode')) {
+      context.handle(
+        _themeModeMeta,
+        themeMode.isAcceptableOrUnknown(data['theme_mode']!, _themeModeMeta),
+      );
+    }
+    if (data.containsKey('static_theme_color')) {
+      context.handle(
+        _staticThemeColorMeta,
+        staticThemeColor.isAcceptableOrUnknown(
+          data['static_theme_color']!,
+          _staticThemeColorMeta,
+        ),
+      );
+    }
+    if (data.containsKey('black_backgrounds')) {
+      context.handle(
+        _blackBackgroundsMeta,
+        blackBackgrounds.isAcceptableOrUnknown(
+          data['black_backgrounds']!,
+          _blackBackgroundsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('material_you')) {
+      context.handle(
+        _materialYouMeta,
+        materialYou.isAcceptableOrUnknown(
+          data['material_you']!,
+          _materialYouMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ThemeSetting map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ThemeSetting(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      themeMode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}theme_mode'],
+      )!,
+      staticThemeColor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}static_theme_color'],
+      )!,
+      blackBackgrounds: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}black_backgrounds'],
+      )!,
+      materialYou: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}material_you'],
+      )!,
+    );
+  }
+
+  @override
+  $ThemeSettingsTable createAlias(String alias) {
+    return $ThemeSettingsTable(attachedDatabase, alias);
+  }
+}
+
+class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
+  final int id;
+  final String themeMode;
+  final int staticThemeColor;
+  final bool blackBackgrounds;
+  final bool materialYou;
+  const ThemeSetting({
+    required this.id,
+    required this.themeMode,
+    required this.staticThemeColor,
+    required this.blackBackgrounds,
+    required this.materialYou,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['theme_mode'] = Variable<String>(themeMode);
+    map['static_theme_color'] = Variable<int>(staticThemeColor);
+    map['black_backgrounds'] = Variable<bool>(blackBackgrounds);
+    map['material_you'] = Variable<bool>(materialYou);
+    return map;
+  }
+
+  ThemeSettingsCompanion toCompanion(bool nullToAbsent) {
+    return ThemeSettingsCompanion(
+      id: Value(id),
+      themeMode: Value(themeMode),
+      staticThemeColor: Value(staticThemeColor),
+      blackBackgrounds: Value(blackBackgrounds),
+      materialYou: Value(materialYou),
+    );
+  }
+
+  factory ThemeSetting.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ThemeSetting(
+      id: serializer.fromJson<int>(json['id']),
+      themeMode: serializer.fromJson<String>(json['themeMode']),
+      staticThemeColor: serializer.fromJson<int>(json['staticThemeColor']),
+      blackBackgrounds: serializer.fromJson<bool>(json['blackBackgrounds']),
+      materialYou: serializer.fromJson<bool>(json['materialYou']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'themeMode': serializer.toJson<String>(themeMode),
+      'staticThemeColor': serializer.toJson<int>(staticThemeColor),
+      'blackBackgrounds': serializer.toJson<bool>(blackBackgrounds),
+      'materialYou': serializer.toJson<bool>(materialYou),
+    };
+  }
+
+  ThemeSetting copyWith({
+    int? id,
+    String? themeMode,
+    int? staticThemeColor,
+    bool? blackBackgrounds,
+    bool? materialYou,
+  }) => ThemeSetting(
+    id: id ?? this.id,
+    themeMode: themeMode ?? this.themeMode,
+    staticThemeColor: staticThemeColor ?? this.staticThemeColor,
+    blackBackgrounds: blackBackgrounds ?? this.blackBackgrounds,
+    materialYou: materialYou ?? this.materialYou,
+  );
+  ThemeSetting copyWithCompanion(ThemeSettingsCompanion data) {
+    return ThemeSetting(
+      id: data.id.present ? data.id.value : this.id,
+      themeMode: data.themeMode.present ? data.themeMode.value : this.themeMode,
+      staticThemeColor: data.staticThemeColor.present
+          ? data.staticThemeColor.value
+          : this.staticThemeColor,
+      blackBackgrounds: data.blackBackgrounds.present
+          ? data.blackBackgrounds.value
+          : this.blackBackgrounds,
+      materialYou: data.materialYou.present
+          ? data.materialYou.value
+          : this.materialYou,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ThemeSetting(')
+          ..write('id: $id, ')
+          ..write('themeMode: $themeMode, ')
+          ..write('staticThemeColor: $staticThemeColor, ')
+          ..write('blackBackgrounds: $blackBackgrounds, ')
+          ..write('materialYou: $materialYou')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    themeMode,
+    staticThemeColor,
+    blackBackgrounds,
+    materialYou,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ThemeSetting &&
+          other.id == this.id &&
+          other.themeMode == this.themeMode &&
+          other.staticThemeColor == this.staticThemeColor &&
+          other.blackBackgrounds == this.blackBackgrounds &&
+          other.materialYou == this.materialYou);
+}
+
+class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
+  final Value<int> id;
+  final Value<String> themeMode;
+  final Value<int> staticThemeColor;
+  final Value<bool> blackBackgrounds;
+  final Value<bool> materialYou;
+  const ThemeSettingsCompanion({
+    this.id = const Value.absent(),
+    this.themeMode = const Value.absent(),
+    this.staticThemeColor = const Value.absent(),
+    this.blackBackgrounds = const Value.absent(),
+    this.materialYou = const Value.absent(),
+  });
+  ThemeSettingsCompanion.insert({
+    this.id = const Value.absent(),
+    this.themeMode = const Value.absent(),
+    this.staticThemeColor = const Value.absent(),
+    this.blackBackgrounds = const Value.absent(),
+    this.materialYou = const Value.absent(),
+  });
+  static Insertable<ThemeSetting> custom({
+    Expression<int>? id,
+    Expression<String>? themeMode,
+    Expression<int>? staticThemeColor,
+    Expression<bool>? blackBackgrounds,
+    Expression<bool>? materialYou,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (themeMode != null) 'theme_mode': themeMode,
+      if (staticThemeColor != null) 'static_theme_color': staticThemeColor,
+      if (blackBackgrounds != null) 'black_backgrounds': blackBackgrounds,
+      if (materialYou != null) 'material_you': materialYou,
+    });
+  }
+
+  ThemeSettingsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? themeMode,
+    Value<int>? staticThemeColor,
+    Value<bool>? blackBackgrounds,
+    Value<bool>? materialYou,
+  }) {
+    return ThemeSettingsCompanion(
+      id: id ?? this.id,
+      themeMode: themeMode ?? this.themeMode,
+      staticThemeColor: staticThemeColor ?? this.staticThemeColor,
+      blackBackgrounds: blackBackgrounds ?? this.blackBackgrounds,
+      materialYou: materialYou ?? this.materialYou,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (themeMode.present) {
+      map['theme_mode'] = Variable<String>(themeMode.value);
+    }
+    if (staticThemeColor.present) {
+      map['static_theme_color'] = Variable<int>(staticThemeColor.value);
+    }
+    if (blackBackgrounds.present) {
+      map['black_backgrounds'] = Variable<bool>(blackBackgrounds.value);
+    }
+    if (materialYou.present) {
+      map['material_you'] = Variable<bool>(materialYou.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ThemeSettingsCompanion(')
+          ..write('id: $id, ')
+          ..write('themeMode: $themeMode, ')
+          ..write('staticThemeColor: $staticThemeColor, ')
+          ..write('blackBackgrounds: $blackBackgrounds, ')
+          ..write('materialYou: $materialYou')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1643,6 +2012,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final $InputLayoutElementsTable inputLayoutElements =
       $InputLayoutElementsTable(this);
+  late final $ThemeSettingsTable themeSettings = $ThemeSettingsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1652,6 +2022,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     appSettings,
     controlBindings,
     inputLayoutElements,
+    themeSettings,
   ];
 }
 
@@ -2575,6 +2946,215 @@ typedef $$InputLayoutElementsTableProcessedTableManager =
       InputLayoutElement,
       PrefetchHooks Function()
     >;
+typedef $$ThemeSettingsTableCreateCompanionBuilder =
+    ThemeSettingsCompanion Function({
+      Value<int> id,
+      Value<String> themeMode,
+      Value<int> staticThemeColor,
+      Value<bool> blackBackgrounds,
+      Value<bool> materialYou,
+    });
+typedef $$ThemeSettingsTableUpdateCompanionBuilder =
+    ThemeSettingsCompanion Function({
+      Value<int> id,
+      Value<String> themeMode,
+      Value<int> staticThemeColor,
+      Value<bool> blackBackgrounds,
+      Value<bool> materialYou,
+    });
+
+class $$ThemeSettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $ThemeSettingsTable> {
+  $$ThemeSettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get themeMode => $composableBuilder(
+    column: $table.themeMode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get staticThemeColor => $composableBuilder(
+    column: $table.staticThemeColor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get blackBackgrounds => $composableBuilder(
+    column: $table.blackBackgrounds,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get materialYou => $composableBuilder(
+    column: $table.materialYou,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ThemeSettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ThemeSettingsTable> {
+  $$ThemeSettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get themeMode => $composableBuilder(
+    column: $table.themeMode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get staticThemeColor => $composableBuilder(
+    column: $table.staticThemeColor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get blackBackgrounds => $composableBuilder(
+    column: $table.blackBackgrounds,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get materialYou => $composableBuilder(
+    column: $table.materialYou,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ThemeSettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ThemeSettingsTable> {
+  $$ThemeSettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get themeMode =>
+      $composableBuilder(column: $table.themeMode, builder: (column) => column);
+
+  GeneratedColumn<int> get staticThemeColor => $composableBuilder(
+    column: $table.staticThemeColor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get blackBackgrounds => $composableBuilder(
+    column: $table.blackBackgrounds,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get materialYou => $composableBuilder(
+    column: $table.materialYou,
+    builder: (column) => column,
+  );
+}
+
+class $$ThemeSettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ThemeSettingsTable,
+          ThemeSetting,
+          $$ThemeSettingsTableFilterComposer,
+          $$ThemeSettingsTableOrderingComposer,
+          $$ThemeSettingsTableAnnotationComposer,
+          $$ThemeSettingsTableCreateCompanionBuilder,
+          $$ThemeSettingsTableUpdateCompanionBuilder,
+          (
+            ThemeSetting,
+            BaseReferences<_$AppDatabase, $ThemeSettingsTable, ThemeSetting>,
+          ),
+          ThemeSetting,
+          PrefetchHooks Function()
+        > {
+  $$ThemeSettingsTableTableManager(_$AppDatabase db, $ThemeSettingsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ThemeSettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ThemeSettingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ThemeSettingsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> themeMode = const Value.absent(),
+                Value<int> staticThemeColor = const Value.absent(),
+                Value<bool> blackBackgrounds = const Value.absent(),
+                Value<bool> materialYou = const Value.absent(),
+              }) => ThemeSettingsCompanion(
+                id: id,
+                themeMode: themeMode,
+                staticThemeColor: staticThemeColor,
+                blackBackgrounds: blackBackgrounds,
+                materialYou: materialYou,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> themeMode = const Value.absent(),
+                Value<int> staticThemeColor = const Value.absent(),
+                Value<bool> blackBackgrounds = const Value.absent(),
+                Value<bool> materialYou = const Value.absent(),
+              }) => ThemeSettingsCompanion.insert(
+                id: id,
+                themeMode: themeMode,
+                staticThemeColor: staticThemeColor,
+                blackBackgrounds: blackBackgrounds,
+                materialYou: materialYou,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ThemeSettingsTable, ThemeSetting>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $ThemeSettingsTable,
+                    ThemeSetting
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ThemeSettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ThemeSettingsTable,
+      ThemeSetting,
+      $$ThemeSettingsTableFilterComposer,
+      $$ThemeSettingsTableOrderingComposer,
+      $$ThemeSettingsTableAnnotationComposer,
+      $$ThemeSettingsTableCreateCompanionBuilder,
+      $$ThemeSettingsTableUpdateCompanionBuilder,
+      (
+        ThemeSetting,
+        BaseReferences<_$AppDatabase, $ThemeSettingsTable, ThemeSetting>,
+      ),
+      ThemeSetting,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -2587,4 +3167,6 @@ class $AppDatabaseManager {
       $$ControlBindingsTableTableManager(_db, _db.controlBindings);
   $$InputLayoutElementsTableTableManager get inputLayoutElements =>
       $$InputLayoutElementsTableTableManager(_db, _db.inputLayoutElements);
+  $$ThemeSettingsTableTableManager get themeSettings =>
+      $$ThemeSettingsTableTableManager(_db, _db.themeSettings);
 }

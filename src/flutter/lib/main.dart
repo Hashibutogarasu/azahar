@@ -12,6 +12,7 @@ import 'native/applet_channel.dart';
 import 'routing/app_routes.dart';
 import 'screens/settings/settings_routes.dart' as settings;
 import 'theme/app_theme.dart';
+import 'theme/theme_settings_provider.dart';
 
 final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
@@ -62,24 +63,37 @@ void main() {
   );
 }
 
-class AzaharApp extends StatelessWidget {
+class AzaharApp extends ConsumerWidget {
   const AzaharApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeSettings = ref.watch(themeSettingsProvider);
     return TranslationProvider(
       child: Builder(
         builder: (context) {
           return MaterialApp.router(
             title: context.t.appName,
-            theme: AppTheme.light(),
-            darkTheme: AppTheme.dark(),
+            themeMode: _themeMode(themeSettings.themeMode),
+            theme: AppTheme.light(staticThemeColor: themeSettings.staticThemeColor),
+            darkTheme: AppTheme.dark(
+              staticThemeColor: themeSettings.staticThemeColor,
+              blackBackgrounds: themeSettings.blackBackgrounds,
+            ),
             routerConfig: _router,
             scaffoldMessengerKey: _scaffoldMessengerKey,
           );
         },
       ),
     );
+  }
+
+  ThemeMode _themeMode(String value) {
+    return switch (value) {
+      'light' => ThemeMode.light,
+      'dark' => ThemeMode.dark,
+      _ => ThemeMode.system,
+    };
   }
 }
 

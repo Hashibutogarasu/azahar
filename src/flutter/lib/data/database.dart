@@ -41,6 +41,17 @@ abstract final class SettingsKeys {
   static const String gamePath = 'game_path';
 }
 
+class ThemeSettings extends Table {
+  IntColumn get id => integer().withDefault(const Constant(0))();
+  TextColumn get themeMode => text().withDefault(const Constant('system'))();
+  IntColumn get staticThemeColor => integer().withDefault(const Constant(0))();
+  BoolColumn get blackBackgrounds => boolean().withDefault(const Constant(false))();
+  BoolColumn get materialYou => boolean().withDefault(const Constant(false))();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 class ControlBindings extends Table {
   TextColumn get key => text()();
   TextColumn get value => text()();
@@ -61,7 +72,7 @@ class InputLayoutElements extends Table {
   Set<Column> get primaryKey => {orientation, elementId};
 }
 
-@DriftDatabase(tables: [Games, AppSettings, ControlBindings, InputLayoutElements])
+@DriftDatabase(tables: [Games, AppSettings, ControlBindings, InputLayoutElements, ThemeSettings])
 class AppDatabase extends _$AppDatabase {
   AppDatabase._(super.e);
 
