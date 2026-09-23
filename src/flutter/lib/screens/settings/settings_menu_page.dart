@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app_services.dart';
+import '../../data/settings/reset_settings_provider.dart';
 import '../../data/settings/settings_item.dart';
 import '../../i18n/translations.g.dart';
 import 'settings_routes.dart';
@@ -10,14 +12,14 @@ import 'widgets/settings_list.dart';
 /// `FILE_NAME_CONFIG`: a list of submenus, one per settings section.
 ///
 /// Loads `config.ini` on entry and saves it on exit, like `SettingsActivity`.
-class SettingsMenuPage extends StatefulWidget {
+class SettingsMenuPage extends ConsumerStatefulWidget {
   const SettingsMenuPage({super.key});
 
   @override
-  State<SettingsMenuPage> createState() => _SettingsMenuPageState();
+  ConsumerState<SettingsMenuPage> createState() => _SettingsMenuPageState();
 }
 
-class _SettingsMenuPageState extends State<SettingsMenuPage> {
+class _SettingsMenuPageState extends ConsumerState<SettingsMenuPage> {
   late final Future<void> _loaded = AppServices.emulatorSettingsRepository.load();
 
   @override
@@ -90,6 +92,36 @@ class _SettingsMenuPageState extends State<SettingsMenuPage> {
         icon: Icons.language,
         onTap: (context) => const LanguageSettingsRoute().push(context),
       ),
+      SettingsItem.action(
+        title: t.settings.resetToDefault,
+        icon: Icons.restore,
+        onTap: (context) => _confirmReset(context, t),
+      ),
     ];
+  }
+
+  Future<void> _confirmReset(BuildContext context, Translations t) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(t.settings.resetToDefaultDialog.title),
+          content: Text(t.settings.resetToDefaultDialog.message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(t.settings.resetToDefaultDialog.confirm),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed != true) return;
+    await ref.read(resetSettingsProvider).resetAll();
+    setState(() {});
   }
 }

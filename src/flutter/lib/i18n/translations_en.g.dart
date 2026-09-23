@@ -239,6 +239,13 @@ class Translations$settings$en {
   /// en: 'Settings'
   String get title => 'Settings';
 
+  /// en: 'Reset to Default'
+  String get resetToDefault => 'Reset to Default';
+
+  late final Translations$settings$resetToDefaultDialog$en
+  resetToDefaultDialog = Translations$settings$resetToDefaultDialog$en.internal(
+    _root,
+  );
   late final Translations$settings$sliderDialog$en sliderDialog =
       Translations$settings$sliderDialog$en.internal(_root);
   late final Translations$settings$inputBindingDialog$en inputBindingDialog =
@@ -461,6 +468,25 @@ class Translations$setup$done$en {
 
   /// en: 'Continue'
   String get continueLabel => 'Continue';
+}
+
+// Path: settings.resetToDefaultDialog
+class Translations$settings$resetToDefaultDialog$en {
+  Translations$settings$resetToDefaultDialog$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Reset to Default?'
+  String get title => 'Reset to Default?';
+
+  /// en: 'This will reset all settings to their default values. This cannot be undone.'
+  String get message =>
+      'This will reset all settings to their default values. This cannot be undone.';
+
+  /// en: 'Reset'
+  String get confirm => 'Reset';
 }
 
 // Path: settings.sliderDialog
@@ -1939,6 +1965,11 @@ extension on Translations {
       'options.themeAndColor' => 'Theme and Color',
       'options.themeAndColorDescription' => 'Customize the app\'s appearance',
       'settings.title' => 'Settings',
+      'settings.resetToDefault' => 'Reset to Default',
+      'settings.resetToDefaultDialog.title' => 'Reset to Default?',
+      'settings.resetToDefaultDialog.message' =>
+        'This will reset all settings to their default values. This cannot be undone.',
+      'settings.resetToDefaultDialog.confirm' => 'Reset',
       'settings.sliderDialog.kDefault' => 'Default',
       'settings.sliderDialog.invalidValue' =>
         ({required Object title, required Object min, required Object max}) =>

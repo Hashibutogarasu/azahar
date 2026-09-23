@@ -1,6 +1,7 @@
 import '../../native/native_bridge.dart';
+import 'clearable.dart';
 
-class SystemSaveRepository {
+class SystemSaveRepository implements Clearable {
   SystemSaveRepository(this._nativeBridge);
 
   final NativeBridge _nativeBridge;
@@ -79,5 +80,18 @@ class SystemSaveRepository {
   Future<void> _writeAndReload(Map<String, Object?> fields) async {
     await _nativeBridge.writeSystemSaveGame(fields);
     await load();
+  }
+
+  @override
+  Future<void> clear() {
+    return _writeAndReload({
+      'username': 'AZAHAR',
+      'birthdayMonth': 11,
+      'birthdayDay': 7,
+      'systemLanguage': 1,
+      'soundOutputMode': 1,
+      'countryCode': 49,
+      'playCoins': 42,
+    });
   }
 }

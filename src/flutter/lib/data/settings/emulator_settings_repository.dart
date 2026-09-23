@@ -1,4 +1,5 @@
 import '../../native/native_bridge.dart';
+import 'clearable.dart';
 import 'emulator_setting_key.dart';
 import 'settings_value_store.dart';
 
@@ -7,7 +8,7 @@ import 'settings_value_store.dart';
 ///
 /// Like the original app's `SettingsViewModel`: writes update memory and reload the core right
 /// away, but only reach disk once [save] is called.
-class EmulatorSettingsRepository implements SettingsValueStore {
+class EmulatorSettingsRepository implements SettingsValueStore, Clearable {
   EmulatorSettingsRepository(this._nativeBridge);
 
   final NativeBridge _nativeBridge;
@@ -23,6 +24,14 @@ class EmulatorSettingsRepository implements SettingsValueStore {
     if (!_dirty) return;
     _dirty = false;
     await _nativeBridge.writeEmulatorConfig(_sections);
+  }
+
+  @override
+  Future<void> clear() async {
+    _sections = const {};
+    _dirty = false;
+    await _nativeBridge.writeEmulatorConfig(_sections);
+    await _nativeBridge.reloadEmulatorSettings();
   }
 
   String? _rawValue(String section, String key) => _sections[section]?[key];

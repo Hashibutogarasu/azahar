@@ -92,6 +92,12 @@
   },
   "settings": {
     "title": "Settings",
+    "resetToDefault": "Reset to Default",
+    "resetToDefaultDialog": {
+      "title": "Reset to Default?",
+      "message": "This will reset all settings to their default values. This cannot be undone.",
+      "confirm": "Reset"
+    },
     "sliderDialog": {
       "default": "Default",
       "invalidValue": "${title}: value must be between ${min} and ${max}."

@@ -1,6 +1,7 @@
 import '../database.dart';
+import 'clearable.dart';
 
-class ControlBindingsRepository {
+class ControlBindingsRepository implements Clearable {
   ControlBindingsRepository(this._db);
 
   final AppDatabase _db;
@@ -21,5 +22,10 @@ class ControlBindingsRepository {
   Future<Map<String, String>> readAll() async {
     final rows = await _db.select(_db.controlBindings).get();
     return {for (final row in rows) row.key: row.value};
+  }
+
+  @override
+  Future<void> clear() {
+    return _db.delete(_db.controlBindings).go();
   }
 }
