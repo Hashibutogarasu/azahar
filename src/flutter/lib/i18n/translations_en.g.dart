@@ -275,6 +275,13 @@ class Translations$options$en {
   /// en: 'Install and select a custom GPU driver'
   String get gpuDriverManagerDescription =>
       'Install and select a custom GPU driver';
+
+  /// en: 'Install Game Content'
+  String get installGameContent => 'Install Game Content';
+
+  /// en: 'Install a CIA file to the emulated system'
+  String get installGameContentDescription =>
+      'Install a CIA file to the emulated system';
 }
 
 // Path: gpuDriverManager
@@ -2103,6 +2110,9 @@ extension on Translations {
       'options.gpuDriverManager' => 'GPU Driver Manager',
       'options.gpuDriverManagerDescription' =>
         'Install and select a custom GPU driver',
+      'options.installGameContent' => 'Install Game Content',
+      'options.installGameContentDescription' =>
+        'Install a CIA file to the emulated system',
       'gpuDriverManager.title' => 'GPU Driver Manager',
       'gpuDriverManager.systemDriver' => 'System Driver',
       'gpuDriverManager.installDriver' => 'Install Driver',

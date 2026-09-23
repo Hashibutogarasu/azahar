@@ -101,7 +101,9 @@
     "shareLogDescription": "Share the emulator's log file",
     "shareLogNotFound": "No log file was found",
     "gpuDriverManager": "GPU Driver Manager",
-    "gpuDriverManagerDescription": "Install and select a custom GPU driver"
+    "gpuDriverManagerDescription": "Install and select a custom GPU driver",
+    "installGameContent": "Install Game Content",
+    "installGameContentDescription": "Install a CIA file to the emulated system"
   },
   "gpuDriverManager": {
     "title": "GPU Driver Manager",

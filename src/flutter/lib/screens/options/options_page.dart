@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/settings/artic_base_provider.dart';
+import '../../data/settings/cia_install_provider.dart';
 import '../../data/settings/gpu_driver_provider.dart';
 import '../../data/settings/share_log_provider.dart';
 import '../../data/settings/user_directories_provider.dart';
@@ -58,6 +59,12 @@ class OptionsPage extends ConsumerWidget {
                   title: t.options.selectGamesFolder,
                   description: t.options.selectGamesFolderDescription,
                   onTap: () => _selectGamesFolder(context, ref.read(userDirectoriesProvider)),
+                ),
+                _OptionCard(
+                  icon: Icons.install_mobile,
+                  title: t.options.installGameContent,
+                  description: t.options.installGameContentDescription,
+                  onTap: () => ref.read(ciaInstallProvider).pickAndInstall(),
                 ),
                 _OptionCard(
                   icon: Icons.info_outline,

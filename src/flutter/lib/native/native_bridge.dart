@@ -74,6 +74,10 @@ class NativeBridge {
     return result ?? false;
   }
 
+  Future<void> installCiaFiles(List<String> paths) {
+    return _channel.invokeMethod<void>('installCiaFiles', {'paths': paths});
+  }
+
   Future<List<Game>> getGames() async {
     final result = await _channel.invokeMethod<List<Object?>>('getGames');
     if (result == null) return const [];

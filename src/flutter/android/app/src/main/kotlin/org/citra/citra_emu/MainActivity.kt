@@ -10,6 +10,7 @@ import org.citra.citra_emu.applets.MiiSelector
 import org.citra.citra_emu.applets.SoftwareKeyboard
 import org.citra.citra_emu.camera.StillImageCameraHelper
 import org.citra.citra_emu.channel.AzaharMethodHandler
+import org.citra.citra_emu.channel.CiaInstallController
 import org.citra.citra_emu.channel.DirectoryController
 import org.citra.citra_emu.channel.EmulationController
 import org.citra.citra_emu.channel.GamesController
@@ -41,6 +42,7 @@ class MainActivity : FlutterFragmentActivity() {
     private val gamesController: GamesController by lazy { GamesController(this, cacheDir) }
     private val settingsController = SettingsController()
     private val gpuDriverController = GpuDriverController()
+    private val ciaInstallController by lazy { CiaInstallController(this) }
 
     override fun onResume() {
         super.onResume()
@@ -67,7 +69,7 @@ class MainActivity : FlutterFragmentActivity() {
         val handlers: Map<String, AzaharMethodHandler> =
             (directoryController.handlers + gamesController.handlers +
                 emulationController.handlers + settingsController.handlers +
-                gpuDriverController.handlers)
+                gpuDriverController.handlers + ciaInstallController.handlers)
                 .associateBy { it.name }
 
         val appletChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, APPLET_CHANNEL)
