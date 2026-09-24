@@ -51,6 +51,10 @@ Thumbs.db
 .flatpak-builder/
 repo/
 
+# Android Gradle/CMake external native build caches
+.cxx/
+.gradle/
+
 # GitHub Actions generated files
 .ccache/
 node_modules/
