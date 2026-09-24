@@ -18,11 +18,9 @@ import '../setup/dialogs/citra_directory_dialog.dart';
 import '../setup/dialogs/copy_dir_progress_dialog.dart';
 import '../settings/widgets/settings_group_card.dart';
 import 'dialogs/artic_base_connect_dialog.dart';
-import 'options_routes.dart';
 
 /// The Options tab: a grouped settings screen built on `babstrap_settings_screen`, grouping
-/// settings into 一般(General)/システム(System)/グラフィックス(Graphics)/ツール(Tools)/
-/// フォルダ設定(Folder settings)/その他(Other) sections.
+/// settings into General/System/Graphics/Tools/Folder settings/Other sections.
 class OptionsPage extends ConsumerWidget {
   const OptionsPage({super.key});
 
@@ -54,6 +52,12 @@ class OptionsPage extends ConsumerWidget {
                       title: t.options.themeAndColor,
                       subtitle: t.options.themeAndColorDescription,
                       onTap: () => const OptionsThemeSettingsRoute().push(context),
+                    ),
+                    babstrap.SettingsItem(
+                      icons: Icons.music_note_outlined,
+                      title: t.options.media,
+                      subtitle: t.options.mediaDescription,
+                      onTap: () => const OptionsMediaSettingsRoute().push(context),
                     ),
                   ],
                 ),

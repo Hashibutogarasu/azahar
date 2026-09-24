@@ -7,13 +7,26 @@ import '../data/settings/settings_load_provider.dart';
 import '../screens/games/games_list_page.dart';
 import '../screens/home/app_shell.dart';
 import '../screens/options/about_page.dart';
+import '../screens/options/emulation_settings_page.dart';
 import '../screens/options/gpu_driver_manager_page.dart';
 import '../screens/options/legacy_options_page.dart';
 import '../screens/options/options_page.dart';
 import '../screens/options/system_files_page.dart';
+import '../screens/settings/sections/audio_settings_page.dart';
+import '../screens/settings/sections/camera_settings_page.dart';
+import '../screens/settings/sections/controls_settings_page.dart';
+import '../screens/settings/sections/debug_settings_page.dart';
+import '../screens/settings/sections/general_settings_page.dart';
+import '../screens/settings/sections/graphics_settings_page.dart';
+import '../screens/settings/sections/language_settings_page.dart';
+import '../screens/settings/sections/layout_settings_page.dart';
+import '../screens/settings/sections/media_settings_page.dart';
+import '../screens/settings/sections/system_settings_page.dart';
+import '../screens/settings/sections/theme_settings_page.dart';
 import '../screens/setup/setup_wizard_page.dart';
 
 part 'app_routes.g.dart';
+part 'options_page_routes.dart';
 
 @TypedGoRoute<SetupRoute>(path: '/setup')
 class SetupRoute extends GoRouteData with $SetupRoute {

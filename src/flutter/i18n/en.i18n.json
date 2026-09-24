@@ -104,6 +104,9 @@
     "preparingShaders": "Preparing Shaders",
     "buildingShaders": "Building Shaders",
     "shaderProgress": "${progress}/${max}",
+    "menuSectionGeneral": "General",
+    "pauseEmulation": "Pause Emulation",
+    "resumeEmulation": "Resume Emulation",
     "menuSectionOther": "Other",
     "closeGame": "Close Game",
     "closeGameMessage": "Are you sure that you would like to close the current game?"
@@ -133,6 +136,8 @@
     "selectGamesFolderDescription": "Allows Azahar to populate the application list",
     "themeAndColor": "Theme and Color",
     "themeAndColorDescription": "Modify the look of the app",
+    "media": "Media",
+    "mediaDescription": "Background playback and media session settings",
     "about": "About",
     "aboutDescription": "Build version, credits, and more",
     "groupGeneral": "General",
@@ -210,6 +215,11 @@
       "frameLimitEnableDescription": "When enabled, emulation speed will be limited to a specified percentage of normal speed.",
       "frameLimitSlider": "Limit Speed Percent",
       "frameLimitSliderDescription": "Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit."
+    },
+    "media": {
+      "title": "Media",
+      "treatAudioAsMediaSession": "Treat as Android Media",
+      "treatAudioAsMediaSessionDescription": "Shows playback controls on the lock screen and notification like a music app, and keeps audio playing when the app is in the background instead of pausing automatically."
     },
     "graphics": {
       "title": "Graphics",

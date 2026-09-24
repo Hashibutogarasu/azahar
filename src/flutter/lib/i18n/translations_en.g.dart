@@ -277,6 +277,15 @@ class Translations$emulation$en {
   String shaderProgress({required Object progress, required Object max}) =>
       '${progress}/${max}';
 
+  /// en: 'General'
+  String get menuSectionGeneral => 'General';
+
+  /// en: 'Pause Emulation'
+  String get pauseEmulation => 'Pause Emulation';
+
+  /// en: 'Resume Emulation'
+  String get resumeEmulation => 'Resume Emulation';
+
   /// en: 'Other'
   String get menuSectionOther => 'Other';
 
@@ -376,6 +385,13 @@ class Translations$options$en {
 
   /// en: 'Modify the look of the app'
   String get themeAndColorDescription => 'Modify the look of the app';
+
+  /// en: 'Media'
+  String get media => 'Media';
+
+  /// en: 'Background playback and media session settings'
+  String get mediaDescription =>
+      'Background playback and media session settings';
 
   /// en: 'About'
   String get about => 'About';
@@ -575,6 +591,8 @@ class Translations$settings$en {
       Translations$settings$inputBindingDialog$en.internal(_root);
   late final Translations$settings$general$en general =
       Translations$settings$general$en.internal(_root);
+  late final Translations$settings$media$en media =
+      Translations$settings$media$en.internal(_root);
   late final Translations$settings$graphics$en graphics =
       Translations$settings$graphics$en.internal(_root);
   late final Translations$settings$system$en system =
@@ -886,6 +904,25 @@ class Translations$settings$general$en {
   /// en: 'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.'
   String get frameLimitSliderDescription =>
       'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.';
+}
+
+// Path: settings.media
+class Translations$settings$media$en {
+  Translations$settings$media$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Media'
+  String get title => 'Media';
+
+  /// en: 'Treat as Android Media'
+  String get treatAudioAsMediaSession => 'Treat as Android Media';
+
+  /// en: 'Shows playback controls on the lock screen and notification like a music app, and keeps audio playing when the app is in the background instead of pausing automatically.'
+  String get treatAudioAsMediaSessionDescription =>
+      'Shows playback controls on the lock screen and notification like a music app, and keeps audio playing when the app is in the background instead of pausing automatically.';
 }
 
 // Path: settings.graphics
@@ -2377,6 +2414,9 @@ extension on Translations {
           'emulation.shaderProgress' =>
             ({required Object progress, required Object max}) =>
                 '${progress}/${max}',
+          'emulation.menuSectionGeneral' => 'General',
+          'emulation.pauseEmulation' => 'Pause Emulation',
+          'emulation.resumeEmulation' => 'Resume Emulation',
           'emulation.menuSectionOther' => 'Other',
           'emulation.closeGame' => 'Close Game',
           'emulation.closeGameMessage' =>
@@ -2411,6 +2451,9 @@ extension on Translations {
             'Allows Azahar to populate the application list',
           'options.themeAndColor' => 'Theme and Color',
           'options.themeAndColorDescription' => 'Modify the look of the app',
+          'options.media' => 'Media',
+          'options.mediaDescription' =>
+            'Background playback and media session settings',
           'options.about' => 'About',
           'options.aboutDescription' => 'Build version, credits, and more',
           'options.groupGeneral' => 'General',
@@ -2489,6 +2532,10 @@ extension on Translations {
           'settings.general.frameLimitSlider' => 'Limit Speed Percent',
           'settings.general.frameLimitSliderDescription' =>
             'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.',
+          'settings.media.title' => 'Media',
+          'settings.media.treatAudioAsMediaSession' => 'Treat as Android Media',
+          'settings.media.treatAudioAsMediaSessionDescription' =>
+            'Shows playback controls on the lock screen and notification like a music app, and keeps audio playing when the app is in the background instead of pausing automatically.',
           'settings.graphics.title' => 'Graphics',
           'settings.graphics.renderer' => 'Renderer',
           'settings.graphics.graphicsApi' => 'Graphics API',
@@ -2887,6 +2934,9 @@ extension on Translations {
           'settings.gamepad.hotkeyPauseOrResume' => 'Toggle Pause',
           'settings.gamepad.hotkeyQuicksave' => 'Quicksave',
           'settings.gamepad.hotkeyQuickload' => 'Quickload',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.gamepad.miscellaneous' => 'Miscellaneous',
           'settings.gamepad.useArticBaseController' =>
             'Use Artic Controller when connected to Artic Base Server',
@@ -2898,9 +2948,6 @@ extension on Translations {
           'settings.layout.screenOrientationLandscape' => 'Landscape',
           'settings.layout.screenOrientationLandscapeReverse' =>
             'Reverse Landscape',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.layout.screenOrientationPortrait' => 'Portrait',
           'settings.layout.screenOrientationPortraitReverse' =>
             'Reverse Portrait',

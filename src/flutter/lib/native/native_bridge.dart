@@ -16,11 +16,21 @@ class NativeBridge {
         _shaderProgressChannel =
             const EventChannel('org.citra.citra_emu/azahar_bridge/shader_progress'),
         _copyProgressChannel =
-            const EventChannel('org.citra.citra_emu/azahar_bridge/copy_progress');
+            const EventChannel('org.citra.citra_emu/azahar_bridge/copy_progress'),
+        _systemVolumeChannel =
+            const EventChannel('org.citra.citra_emu/azahar_bridge/system_volume'),
+        _mediaNotificationStopChannel =
+            const EventChannel('org.citra.citra_emu/azahar_bridge/media_notification_stop'),
+        _mediaNotificationPlayPauseChannel = const EventChannel(
+          'org.citra.citra_emu/azahar_bridge/media_notification_play_pause',
+        );
 
   final MethodChannel _channel;
   final EventChannel _shaderProgressChannel;
   final EventChannel _copyProgressChannel;
+  final EventChannel _mediaNotificationStopChannel;
+  final EventChannel _mediaNotificationPlayPauseChannel;
+  final EventChannel _systemVolumeChannel;
 
   Stream<CopyDirProgress> copyDirProgress() {
     return _copyProgressChannel.receiveBroadcastStream().map((event) {
@@ -149,8 +159,61 @@ class NativeBridge {
     return _channel.invokeMethod<void>('resumeEmulation');
   }
 
+  Future<void> pauseRendering() {
+    return _channel.invokeMethod<void>('pauseRendering');
+  }
+
+  Future<void> resumeRendering() {
+    return _channel.invokeMethod<void>('resumeRendering');
+  }
+
   Future<void> stopEmulation() {
     return _channel.invokeMethod<void>('stopEmulation');
+  }
+
+  Future<double> getSystemMediaVolume() async {
+    final result = await _channel.invokeMethod<double>('getSystemMediaVolume');
+    return result ?? 0;
+  }
+
+  Future<void> setSystemMediaVolume(double volume) {
+    return _channel.invokeMethod<void>('setSystemMediaVolume', {'volume': volume});
+  }
+
+  Stream<double> systemMediaVolumeChanges() {
+    return _systemVolumeChannel.receiveBroadcastStream().map((event) => (event as num).toDouble());
+  }
+
+  Future<void> activateMediaNotification({
+    required String title,
+    String? artworkPath,
+    required bool isPlaying,
+  }) {
+    return _channel.invokeMethod<void>('activateMediaNotification', {
+      'title': title,
+      'artworkPath': artworkPath,
+      'isPlaying': isPlaying,
+    });
+  }
+
+  Future<void> updateMediaNotificationPlaybackState({required bool isPlaying}) {
+    return _channel.invokeMethod<void>('updateMediaNotificationPlaybackState', {
+      'isPlaying': isPlaying,
+    });
+  }
+
+  Future<void> deactivateMediaNotification() {
+    return _channel.invokeMethod<void>('deactivateMediaNotification');
+  }
+
+  Stream<void> mediaNotificationStopRequests() {
+    return _mediaNotificationStopChannel.receiveBroadcastStream().map((_) {});
+  }
+
+  Stream<bool> mediaNotificationPlayPauseRequests() {
+    return _mediaNotificationPlayPauseChannel.receiveBroadcastStream().map(
+          (event) => event as bool,
+        );
   }
 
   Future<void> launchEmulationActivity(String gamePath) {

@@ -1,23 +1,4 @@
-import 'package:flutter/widgets.dart';
-import 'package:go_router/go_router.dart';
-
-import '../settings/sections/audio_settings_page.dart';
-import '../settings/sections/camera_settings_page.dart';
-import '../settings/sections/controls_settings_page.dart';
-import '../settings/sections/debug_settings_page.dart';
-import '../settings/sections/general_settings_page.dart';
-import '../settings/sections/graphics_settings_page.dart';
-import '../settings/sections/language_settings_page.dart';
-import '../settings/sections/layout_settings_page.dart';
-import '../settings/sections/system_settings_page.dart';
-import '../settings/sections/theme_settings_page.dart';
-import 'emulation_settings_page.dart';
-
-part 'options_routes.g.dart';
-
-/// The redesigned Options tab's route tree. Every settings section is reached from here (under
-/// `/options/...`) instead of the retired `/settings` hub (see `lib/screens/settings/settings_routes.dart`,
-/// kept only for the legacy Options UI).
+part of 'app_routes.dart';
 
 @TypedGoRoute<OptionsEmulationSettingsRoute>(path: '/options/emulation')
 class OptionsEmulationSettingsRoute extends GoRouteData with $OptionsEmulationSettingsRoute {
@@ -36,6 +17,16 @@ class OptionsGeneralSettingsRoute extends GoRouteData with $OptionsGeneralSettin
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const GeneralSettingsPage();
+  }
+}
+
+@TypedGoRoute<OptionsMediaSettingsRoute>(path: '/options/media')
+class OptionsMediaSettingsRoute extends GoRouteData with $OptionsMediaSettingsRoute {
+  const OptionsMediaSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const MediaSettingsPage();
   }
 }
 
