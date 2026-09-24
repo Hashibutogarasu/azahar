@@ -33,10 +33,7 @@ class _ArticBaseConnectDialogState extends State<ArticBaseConnectDialog> {
     final localizations = MaterialLocalizations.of(context);
     return AlertDialog(
       title: Text(t.articBaseConnectDialog.title),
-      content: TextField(
-        controller: _controller,
-        decoration: InputDecoration(hintText: t.articBaseConnectDialog.addressHint),
-      ),
+      content: TextField(controller: _controller),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -44,7 +41,7 @@ class _ArticBaseConnectDialogState extends State<ArticBaseConnectDialog> {
         ),
         TextButton(
           onPressed: () => Navigator.of(context).pop(_controller.text),
-          child: Text(t.articBaseConnectDialog.connect),
+          child: Text(localizations.okButtonLabel),
         ),
       ],
     );

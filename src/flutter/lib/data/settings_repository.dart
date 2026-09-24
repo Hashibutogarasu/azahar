@@ -52,17 +52,23 @@ class SettingsRepository {
     return write(SettingsKeys.gamePath, uri);
   }
 
-  Future<String?> languageCode() {
-    return read(SettingsKeys.languageCode);
+  String? _languageCode;
+
+  String? get languageCode => _languageCode;
+
+  Future<void> loadLanguageCode() async {
+    _languageCode = await read(SettingsKeys.languageCode);
   }
 
-  Future<void> setLanguageCode(String? languageCode) {
+  Future<void> setLanguageCode(String? languageCode) async {
     if (languageCode == null) {
-      return (_db.delete(
+      await (_db.delete(
         _db.appSettings,
       )..where((tbl) => tbl.key.equals(SettingsKeys.languageCode))).go();
+    } else {
+      await write(SettingsKeys.languageCode, languageCode);
     }
-    return write(SettingsKeys.languageCode, languageCode);
+    _languageCode = languageCode;
   }
 
   Future<String?> articBaseAddress() {

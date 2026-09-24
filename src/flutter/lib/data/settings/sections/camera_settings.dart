@@ -50,12 +50,14 @@ List<SettingsItem> _buildCameraGroup(
   return [
     SettingsItem.stringSingleChoice(
       title: c.imageSource,
+      description: c.imageSourceDescription,
       setting: imageSource,
       choiceLabels: [c.imageSourceBlank, c.imageSourceStillImage, c.imageSourceDeviceCamera],
       choiceValues: const ['blank', 'image', 'ndk'],
     ),
     SettingsItem.stringSingleChoice(
       title: c.cameraDevice,
+      description: c.cameraDeviceDescription,
       setting: cameraDevice,
       choiceLabels: [c.cameraDeviceDefault, c.cameraDeviceAnyFront, c.cameraDeviceAnyBack],
       choiceValues: const ['', '_front', '_back'],

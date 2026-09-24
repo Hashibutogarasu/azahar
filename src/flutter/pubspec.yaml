@@ -14,6 +14,7 @@ dependencies:
     sdk: flutter
   flutter_joystick: ^0.2.2
   flutter_riverpod: ^3.4.3
+  flutter_svg: ^2.3.0
   freezed_annotation: ^3.1.0
   gamepads: ^0.1.12
   go_router: ^18.0.1
@@ -42,3 +43,5 @@ flutter:
     - assets/images/azahar_logo.png
     - assets/images/no_icon.png
     - assets/images/no_icon_dark.png
+    - assets/icons/discord.svg
+    - assets/icons/github.svg

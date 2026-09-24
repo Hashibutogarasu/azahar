@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app_services.dart';
 import '../../data/settings/reset_settings_provider.dart';
 import '../../data/settings/settings_item.dart';
+import '../../data/settings/settings_load_provider.dart';
 import '../../i18n/translations.g.dart';
 import 'settings_routes.dart';
 import 'widgets/settings_list.dart';
@@ -20,8 +21,6 @@ class SettingsMenuPage extends ConsumerStatefulWidget {
 }
 
 class _SettingsMenuPageState extends ConsumerState<SettingsMenuPage> {
-  late final Future<void> _loaded = AppServices.emulatorSettingsRepository.load();
-
   @override
   void dispose() {
     AppServices.emulatorSettingsRepository.save();
@@ -31,17 +30,10 @@ class _SettingsMenuPageState extends ConsumerState<SettingsMenuPage> {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
+    ref.watch(settingsLoadProvider);
     return Scaffold(
       appBar: AppBar(title: Text(t.settings.title)),
-      body: FutureBuilder<void>(
-        future: _loaded,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return SettingsList(items: _buildMenuItems(t));
-        },
-      ),
+      body: SettingsList(items: _buildMenuItems(t)),
     );
   }
 
@@ -63,7 +55,7 @@ class _SettingsMenuPageState extends ConsumerState<SettingsMenuPage> {
         onTap: (context) => const CameraSettingsRoute().push(context),
       ),
       SettingsItem.submenu(
-        title: t.settings.controls.title,
+        title: t.settings.gamepad.title,
         icon: Icons.sports_esports,
         onTap: (context) => const ControlsSettingsRoute().push(context),
       ),

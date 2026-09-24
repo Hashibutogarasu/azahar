@@ -230,67 +230,68 @@ class Translations$options$en {
   /// en: 'Configure emulator settings'
   String get emulatorSettingsDescription => 'Configure emulator settings';
 
-  /// en: 'Theme and Color'
-  String get themeAndColor => 'Theme and Color';
+  /// en: 'Connect to Artic Base'
+  String get articBaseConnect => 'Connect to Artic Base';
 
-  /// en: 'Customize the app's appearance'
-  String get themeAndColorDescription => 'Customize the app\'s appearance';
+  /// en: 'Connect to a real console that is running an Artic Base server'
+  String get articBaseConnectDescription =>
+      'Connect to a real console that is running an Artic Base server';
 
-  /// en: 'Select Azahar User Folder'
-  String get selectUserFolder => 'Select Azahar User Folder';
+  /// en: 'Install CIA file'
+  String get installGameContent => 'Install CIA file';
 
-  /// en: 'Change the folder Azahar stores its user data in'
-  String get selectUserFolderDescription =>
-      'Change the folder Azahar stores its user data in';
+  /// en: 'Install applications, updates or DLC'
+  String get installGameContentDescription =>
+      'Install applications, updates or DLC';
 
-  /// en: 'Select Applications Folder'
-  String get selectGamesFolder => 'Select Applications Folder';
+  /// en: 'System Files'
+  String get setupSystemFiles => 'System Files';
 
-  /// en: 'Change the folder Azahar looks for applications in'
-  String get selectGamesFolderDescription =>
-      'Change the folder Azahar looks for applications in';
-
-  /// en: 'About'
-  String get about => 'About';
-
-  /// en: 'View app info, credits and licenses'
-  String get aboutDescription => 'View app info, credits and licenses';
-
-  /// en: 'Artic Base Connect'
-  String get articBaseConnect => 'Artic Base Connect';
-
-  /// en: 'Connect to an Artic Base server'
-  String get articBaseConnectDescription => 'Connect to an Artic Base server';
+  /// en: 'Perform system file operations such as installing system files or booting the Home Menu'
+  String get setupSystemFilesDescription =>
+      'Perform system file operations such as installing system files or booting the Home Menu';
 
   /// en: 'Share Log'
   String get shareLog => 'Share Log';
 
-  /// en: 'Share the emulator's log file'
-  String get shareLogDescription => 'Share the emulator\'s log file';
+  /// en: 'Share Azahar's log file to debug issues'
+  String get shareLogDescription => 'Share Azahar\'s log file to debug issues';
 
-  /// en: 'No log file was found'
-  String get shareLogNotFound => 'No log file was found';
+  /// en: 'No log file found'
+  String get shareLogNotFound => 'No log file found';
 
   /// en: 'GPU Driver Manager'
   String get gpuDriverManager => 'GPU Driver Manager';
 
-  /// en: 'Install and select a custom GPU driver'
+  /// en: 'Install alternative drivers for potentially better performance or accuracy'
   String get gpuDriverManagerDescription =>
-      'Install and select a custom GPU driver';
+      'Install alternative drivers for potentially better performance or accuracy';
 
-  /// en: 'Install Game Content'
-  String get installGameContent => 'Install Game Content';
+  /// en: 'Select User Folder'
+  String get selectUserFolder => 'Select User Folder';
 
-  /// en: 'Install a CIA file to the emulated system'
-  String get installGameContentDescription =>
-      'Install a CIA file to the emulated system';
+  /// en: 'Changes the files that Azahar uses to load applications'
+  String get selectUserFolderDescription =>
+      'Changes the files that Azahar uses to load applications';
 
-  /// en: 'Setup System Files'
-  String get setupSystemFiles => 'Setup System Files';
+  /// en: 'Select Applications Folder'
+  String get selectGamesFolder => 'Select Applications Folder';
 
-  /// en: 'Set up the 3DS Home Menu and applets'
-  String get setupSystemFilesDescription =>
-      'Set up the 3DS Home Menu and applets';
+  /// en: 'Allows Azahar to populate the application list'
+  String get selectGamesFolderDescription =>
+      'Allows Azahar to populate the application list';
+
+  /// en: 'Theme and Color'
+  String get themeAndColor => 'Theme and Color';
+
+  /// en: 'Modify the look of the app'
+  String get themeAndColorDescription => 'Modify the look of the app';
+
+  /// en: 'About'
+  String get about => 'About';
+
+  /// en: 'Build version, credits, and more'
+  String get aboutDescription => 'Build version, credits, and more';
 }
 
 // Path: systemFiles
@@ -301,58 +302,60 @@ class Translations$systemFiles$en {
 
   // Translations
 
-  /// en: 'Setup System Files'
-  String get title => 'Setup System Files';
+  /// en: 'System Files'
+  String get title => 'System Files';
 
-  /// en: 'This will set up the 3DS system files needed to run the Home Menu and other system applets, using an Artic Base server.'
+  /// en: 'Azahar needs console unique data and firmware files from a real console to be able to use some of its features. Such files and data can be set up with the Azahar Artic Setup Tool. Notes: • This operation will install console unique data to Azahar, do not share your user or nand folders after performing the setup process! • While doing the setup process, Azahar will link to the console running the setup tool. You can unlink the console later from the System Files tab in the emulator options menu. • Do not go online with both Azahar and your 3DS console at the same time after setting up system files, as this could cause issues. • Old 3DS setup is needed for the New 3DS setup to work (setting up both is recommended). • Both setup modes will work regardless of the model of the console running the setup tool.'
   String get preamble =>
-      'This will set up the 3DS system files needed to run the Home Menu and other system applets, using an Artic Base server.';
+      'Azahar needs console unique data and firmware files from a real console to be able to use some of its features. Such files and data can be set up with the Azahar Artic Setup Tool.\n\nNotes:\n• This operation will install console unique data to Azahar, do not share your user or nand folders after performing the setup process!\n• While doing the setup process, Azahar will link to the console running the setup tool. You can unlink the console later from the System Files tab in the emulator options menu.\n• Do not go online with both Azahar and your 3DS console at the same time after setting up system files, as this could cause issues.\n• Old 3DS setup is needed for the New 3DS setup to work (setting up both is recommended).\n• Both setup modes will work regardless of the model of the console running the setup tool.';
 
-  /// en: 'Connect to Setup Tool'
-  String get connectSetupTool => 'Connect to Setup Tool';
+  /// en: 'Connect to Artic Setup Tool'
+  String get connectSetupTool => 'Connect to Artic Setup Tool';
 
-  /// en: 'Delete System Files'
-  String get deleteSystemFiles => 'Delete System Files';
+  /// en: 'Unlink Console Unique Data'
+  String get deleteSystemFiles => 'Unlink Console Unique Data';
 
-  /// en: 'This will delete the installed 3DS system files. This cannot be undone.'
+  /// en: 'This action will unlink your real console from Azahar, with the following consequences: • Your OTP, SecureInfo and LocalFriendCodeSeed will be removed from Azahar. • Your friend list will reset and you will be logged out of your NNID/PNID account. • System files and eshop titles obtained through Azahar will become inaccessible until the same console is linked again using the setup tool (save data will not be lost). Continue?'
   String get deleteSystemFilesDescription =>
-      'This will delete the installed 3DS system files. This cannot be undone.';
+      'This action will unlink your real console from Azahar, with the following consequences:\n• Your OTP, SecureInfo and LocalFriendCodeSeed will be removed from Azahar.\n• Your friend list will reset and you will be logged out of your NNID/PNID account.\n• System files and eshop titles obtained through Azahar will become inaccessible until the same console is linked again using the setup tool (save data will not be lost).\n\nContinue?';
 
-  /// en: 'Boot Home Menu'
-  String get bootHomeMenu => 'Boot Home Menu';
+  /// en: 'Boot the HOME Menu'
+  String get bootHomeMenu => 'Boot the HOME Menu';
 
   /// en: 'Start'
   String get start => 'Start';
 
-  /// en: 'Run System Setup on Boot'
-  String get runSystemSetup => 'Run System Setup on Boot';
+  /// en: 'Run System Setup when the HOME Menu is launched'
+  String get runSystemSetup =>
+      'Run System Setup when the HOME Menu is launched';
 
-  /// en: 'Show Home Menu Applications'
-  String get showHomeApps => 'Show Home Menu Applications';
+  /// en: 'Show HOME menu apps in Applications list'
+  String get showHomeApps => 'Show HOME menu apps in Applications list';
 
-  /// en: 'Detecting installed system titles…'
-  String get detecting => 'Detecting installed system titles…';
+  /// en: 'Fetching current system files status, please wait...'
+  String get detecting =>
+      'Fetching current system files status, please wait...';
 
-  /// en: 'Preparing system files…'
-  String get preparing => 'Preparing system files…';
+  /// en: 'Preparing setup, please wait...'
+  String get preparing => 'Preparing setup, please wait...';
 
-  /// en: 'Enter Artic Base Address'
-  String get enterAddress => 'Enter Artic Base Address';
+  /// en: 'Enter Artic Setup Tool address'
+  String get enterAddress => 'Enter Artic Setup Tool address';
 
-  /// en: 'Old 3DS'
-  String get old3ds => 'Old 3DS';
+  /// en: 'Old 3DS Setup'
+  String get old3ds => 'Old 3DS Setup';
 
-  /// en: 'New 3DS'
-  String get new3ds => 'New 3DS';
+  /// en: 'New 3DS Setup'
+  String get new3ds => 'New 3DS Setup';
 
-  /// en: 'Not yet installed'
-  String get statusPossible => 'Not yet installed';
+  /// en: 'Setup is possible.'
+  String get statusPossible => 'Setup is possible.';
 
-  /// en: 'Already installed'
-  String get statusCompleted => 'Already installed';
+  /// en: 'Setup already completed.'
+  String get statusCompleted => 'Setup already completed.';
 
-  /// en: 'Install Old 3DS system files first'
-  String get statusOld3dsNeeded => 'Install Old 3DS system files first';
+  /// en: 'Old 3DS setup is required first.'
+  String get statusOld3dsNeeded => 'Old 3DS setup is required first.';
 }
 
 // Path: gpuDriverManager
@@ -388,14 +391,8 @@ class Translations$articBaseConnectDialog$en {
 
   // Translations
 
-  /// en: 'Artic Base Connect'
-  String get title => 'Artic Base Connect';
-
-  /// en: 'Server address'
-  String get addressHint => 'Server address';
-
-  /// en: 'Connect'
-  String get connect => 'Connect';
+  /// en: 'Enter Artic Base server address'
+  String get title => 'Enter Artic Base server address';
 }
 
 // Path: about
@@ -421,8 +418,8 @@ class Translations$about$en {
   /// en: 'Licenses'
   String get licenses => 'Licenses';
 
-  /// en: 'Projects used by Azahar'
-  String get licensesDescription => 'Projects used by Azahar';
+  /// en: 'Projects used by Azahar for Android'
+  String get licensesDescription => 'Projects used by Azahar for Android';
 
   /// en: 'Build'
   String get build => 'Build';
@@ -458,8 +455,8 @@ class Translations$settings$en {
       Translations$settings$system$en.internal(_root);
   late final Translations$settings$camera$en camera =
       Translations$settings$camera$en.internal(_root);
-  late final Translations$settings$controls$en controls =
-      Translations$settings$controls$en.internal(_root);
+  late final Translations$settings$gamepad$en gamepad =
+      Translations$settings$gamepad$en.internal(_root);
   late final Translations$settings$layout$en layout =
       Translations$settings$layout$en.internal(_root);
   late final Translations$settings$audio$en audio =
@@ -1621,8 +1618,12 @@ class Translations$settings$camera$en {
   /// en: 'Outer Right Camera'
   String get outerRightCamera => 'Outer Right Camera';
 
-  /// en: 'Image Source'
-  String get imageSource => 'Image Source';
+  /// en: 'Camera Image Source'
+  String get imageSource => 'Camera Image Source';
+
+  /// en: 'Sets the image source of the virtual camera. You can use an image file, or a device camera when supported.'
+  String get imageSourceDescription =>
+      'Sets the image source of the virtual camera. You can use an image file, or a device camera when supported.';
 
   /// en: 'Blank'
   String get imageSourceBlank => 'Blank';
@@ -1633,8 +1634,12 @@ class Translations$settings$camera$en {
   /// en: 'Device Camera'
   String get imageSourceDeviceCamera => 'Device Camera';
 
-  /// en: 'Camera Device'
-  String get cameraDevice => 'Camera Device';
+  /// en: 'Camera'
+  String get cameraDevice => 'Camera';
+
+  /// en: 'If the "Image Source" setting is set to "Device Camera", this sets the physical camera to use.'
+  String get cameraDeviceDescription =>
+      'If the "Image Source" setting is set to "Device Camera", this sets the physical camera to use.';
 
   /// en: 'Default'
   String get cameraDeviceDefault => 'Default';
@@ -1645,8 +1650,8 @@ class Translations$settings$camera$en {
   /// en: 'Any Back Camera'
   String get cameraDeviceAnyBack => 'Any Back Camera';
 
-  /// en: 'Image Flip'
-  String get imageFlip => 'Image Flip';
+  /// en: 'Flip'
+  String get imageFlip => 'Flip';
 
   /// en: 'None'
   String get imageFlipNone => 'None';
@@ -1661,19 +1666,23 @@ class Translations$settings$camera$en {
   String get imageFlipReverse => 'Reverse';
 }
 
-// Path: settings.controls
-class Translations$settings$controls$en {
-  Translations$settings$controls$en.internal(this._root);
+// Path: settings.gamepad
+class Translations$settings$gamepad$en {
+  Translations$settings$gamepad$en.internal(this._root);
 
   final Translations _root; // ignore: unused_field
 
   // Translations
 
-  /// en: 'Controls'
-  String get title => 'Controls';
+  /// en: 'Gamepad'
+  String get title => 'Gamepad';
 
   /// en: 'Controller Input Mode'
   String get controllerInputMode => 'Controller Input Mode';
+
+  /// en: 'Choose how physical game controllers are mapped to 3DS input.'
+  String get controllerInputModeDescription =>
+      'Choose how physical game controllers are mapped to 3DS input.';
 
   /// en: 'Manual'
   String get controllerInputModeManual => 'Manual';
@@ -1684,11 +1693,19 @@ class Translations$settings$controls$en {
   /// en: 'Invert Left Stick Y Axis'
   String get invertLeftStickYAxis => 'Invert Left Stick Y Axis';
 
+  /// en: 'Invert the left stick's vertical axis when using auto-detected controllers.'
+  String get invertLeftStickYAxisDescription =>
+      'Invert the left stick\'s vertical axis when using auto-detected controllers.';
+
   /// en: 'Gyro Settings'
   String get gyroSettings => 'Gyro Settings';
 
   /// en: 'Gyro Input Source'
   String get gyroInputSource => 'Gyro Input Source';
+
+  /// en: 'Choose whether motion (gyro) controls come from this device or a connected controller's gyroscope. Falls back to this device if the controller has no gyroscope.'
+  String get gyroInputSourceDescription =>
+      'Choose whether motion (gyro) controls come from this device or a connected controller\'s gyroscope. Falls back to this device if the controller has no gyroscope.';
 
   /// en: 'Device'
   String get gyroInputSourceDevice => 'Device';
@@ -1696,20 +1713,36 @@ class Translations$settings$controls$en {
   /// en: 'Controller'
   String get gyroInputSourceController => 'Controller';
 
-  /// en: 'Gyro Sensitivity (Vertical)'
-  String get gyroSensitivityVertical => 'Gyro Sensitivity (Vertical)';
+  /// en: 'Gyro Vertical Sensitivity'
+  String get gyroSensitivityVertical => 'Gyro Vertical Sensitivity';
 
-  /// en: 'Invert Gyro Vertical'
-  String get invertGyroVertical => 'Invert Gyro Vertical';
+  /// en: 'Adjust the gyroscope's vertical (pitch) sensitivity.'
+  String get gyroSensitivityVerticalDescription =>
+      'Adjust the gyroscope\'s vertical (pitch) sensitivity.';
 
-  /// en: 'Gyro Sensitivity (Horizontal)'
-  String get gyroSensitivityHorizontal => 'Gyro Sensitivity (Horizontal)';
+  /// en: 'Invert Gyro Vertical Axis'
+  String get invertGyroVertical => 'Invert Gyro Vertical Axis';
 
-  /// en: 'Invert Gyro Horizontal'
-  String get invertGyroHorizontal => 'Invert Gyro Horizontal';
+  /// en: 'Invert the gyroscope's vertical (pitch) axis.'
+  String get invertGyroVerticalDescription =>
+      'Invert the gyroscope\'s vertical (pitch) axis.';
 
-  /// en: 'Generic Buttons'
-  String get genericButtons => 'Generic Buttons';
+  /// en: 'Gyro Horizontal Sensitivity'
+  String get gyroSensitivityHorizontal => 'Gyro Horizontal Sensitivity';
+
+  /// en: 'Adjust the gyroscope's horizontal (yaw) sensitivity.'
+  String get gyroSensitivityHorizontalDescription =>
+      'Adjust the gyroscope\'s horizontal (yaw) sensitivity.';
+
+  /// en: 'Invert Gyro Horizontal Axis'
+  String get invertGyroHorizontal => 'Invert Gyro Horizontal Axis';
+
+  /// en: 'Invert the gyroscope's horizontal (yaw) axis.'
+  String get invertGyroHorizontalDescription =>
+      'Invert the gyroscope\'s horizontal (yaw) axis.';
+
+  /// en: 'Buttons'
+  String get genericButtons => 'Buttons';
 
   /// en: 'A'
   String get buttonA => 'A';
@@ -1723,32 +1756,40 @@ class Translations$settings$controls$en {
   /// en: 'Y'
   String get buttonY => 'Y';
 
-  /// en: 'Select'
-  String get buttonSelect => 'Select';
+  /// en: 'SELECT'
+  String get buttonSelect => 'SELECT';
 
-  /// en: 'Start'
-  String get buttonStart => 'Start';
+  /// en: 'START'
+  String get buttonStart => 'START';
 
-  /// en: 'Home'
-  String get buttonHome => 'Home';
+  /// en: 'HOME'
+  String get buttonHome => 'HOME';
 
-  /// en: 'Circle-Pad'
-  String get circlePad => 'Circle-Pad';
+  /// en: 'Circle Pad'
+  String get circlePad => 'Circle Pad';
 
   /// en: 'C-Stick'
   String get cStick => 'C-Stick';
 
-  /// en: 'Vertical Axis'
-  String get axisVertical => 'Vertical Axis';
+  /// en: 'Up/Down Axis'
+  String get axisVertical => 'Up/Down Axis';
 
-  /// en: 'Horizontal Axis'
-  String get axisHorizontal => 'Horizontal Axis';
+  /// en: 'Left/Right Axis'
+  String get axisHorizontal => 'Left/Right Axis';
 
-  /// en: 'D-Pad Axis'
-  String get dpadAxis => 'D-Pad Axis';
+  /// en: 'D-Pad (Axis)'
+  String get dpadAxis => 'D-Pad (Axis)';
 
-  /// en: 'D-Pad Buttons'
-  String get dpadButtons => 'D-Pad Buttons';
+  /// en: 'Some controllers may not be able to map their D-pad as an axis. If that's the case, use the D-Pad (buttons) section.'
+  String get dpadAxisDescription =>
+      'Some controllers may not be able to map their D-pad as an axis. If that\'s the case, use the D-Pad (buttons) section.';
+
+  /// en: 'D-Pad (Button)'
+  String get dpadButtons => 'D-Pad (Button)';
+
+  /// en: 'Only map the D-pad to these if you're facing issues with the D-Pad (Axis) button mappings.'
+  String get dpadButtonsDescription =>
+      'Only map the D-pad to these if you\'re facing issues with the D-Pad (Axis) button mappings.';
 
   /// en: 'Up'
   String get buttonUp => 'Up';
@@ -1783,14 +1824,14 @@ class Translations$settings$controls$en {
   /// en: 'Swap Screens'
   String get hotkeySwapScreens => 'Swap Screens';
 
-  /// en: 'Cycle Layout'
-  String get hotkeyCycleLayout => 'Cycle Layout';
+  /// en: 'Cycle Layouts'
+  String get hotkeyCycleLayout => 'Cycle Layouts';
 
   /// en: 'Close Game'
   String get hotkeyCloseGame => 'Close Game';
 
-  /// en: 'Pause or Resume'
-  String get hotkeyPauseOrResume => 'Pause or Resume';
+  /// en: 'Toggle Pause'
+  String get hotkeyPauseOrResume => 'Toggle Pause';
 
   /// en: 'Quicksave'
   String get hotkeyQuicksave => 'Quicksave';
@@ -1801,8 +1842,13 @@ class Translations$settings$controls$en {
   /// en: 'Miscellaneous'
   String get miscellaneous => 'Miscellaneous';
 
-  /// en: 'Use Artic Base Controller'
-  String get useArticBaseController => 'Use Artic Base Controller';
+  /// en: 'Use Artic Controller when connected to Artic Base Server'
+  String get useArticBaseController =>
+      'Use Artic Controller when connected to Artic Base Server';
+
+  /// en: 'Use the controls provided by Artic Base Server when connected to it instead of the configured input device.'
+  String get useArticBaseControllerDescription =>
+      'Use the controls provided by Artic Base Server when connected to it instead of the configured input device.';
 }
 
 // Path: settings.layout
@@ -1819,8 +1865,8 @@ class Translations$settings$layout$en {
   /// en: 'Screen Orientation'
   String get screenOrientation => 'Screen Orientation';
 
-  /// en: 'Auto (Sensor)'
-  String get screenOrientationAutoSensor => 'Auto (Sensor)';
+  /// en: 'Automatic'
+  String get screenOrientationAutoSensor => 'Automatic';
 
   /// en: 'Landscape'
   String get screenOrientationLandscape => 'Landscape';
@@ -1834,11 +1880,11 @@ class Translations$settings$layout$en {
   /// en: 'Reverse Portrait'
   String get screenOrientationPortraitReverse => 'Reverse Portrait';
 
-  /// en: 'Custom Landscape Layout'
-  String get customLandscapeLayout => 'Custom Landscape Layout';
+  /// en: 'Landscape Custom Layout'
+  String get customLandscapeLayout => 'Landscape Custom Layout';
 
-  /// en: 'Custom Portrait Layout'
-  String get customPortraitLayout => 'Custom Portrait Layout';
+  /// en: 'Portrait Custom Layout'
+  String get customPortraitLayout => 'Portrait Custom Layout';
 
   /// en: 'Top Screen'
   String get topScreen => 'Top Screen';
@@ -1846,11 +1892,11 @@ class Translations$settings$layout$en {
   /// en: 'Bottom Screen'
   String get bottomScreen => 'Bottom Screen';
 
-  /// en: 'X'
-  String get positionX => 'X';
+  /// en: 'X-Position'
+  String get positionX => 'X-Position';
 
-  /// en: 'Y'
-  String get positionY => 'Y';
+  /// en: 'Y-Position'
+  String get positionY => 'Y-Position';
 
   /// en: 'Width'
   String get width => 'Width';
@@ -2164,68 +2210,69 @@ extension on Translations {
           'options.emulatorSettings' => 'Settings',
           'options.emulatorSettingsDescription' =>
             'Configure emulator settings',
-          'options.themeAndColor' => 'Theme and Color',
-          'options.themeAndColorDescription' =>
-            'Customize the app\'s appearance',
-          'options.selectUserFolder' => 'Select Azahar User Folder',
-          'options.selectUserFolderDescription' =>
-            'Change the folder Azahar stores its user data in',
-          'options.selectGamesFolder' => 'Select Applications Folder',
-          'options.selectGamesFolderDescription' =>
-            'Change the folder Azahar looks for applications in',
-          'options.about' => 'About',
-          'options.aboutDescription' => 'View app info, credits and licenses',
-          'options.articBaseConnect' => 'Artic Base Connect',
+          'options.articBaseConnect' => 'Connect to Artic Base',
           'options.articBaseConnectDescription' =>
-            'Connect to an Artic Base server',
+            'Connect to a real console that is running an Artic Base server',
+          'options.installGameContent' => 'Install CIA file',
+          'options.installGameContentDescription' =>
+            'Install applications, updates or DLC',
+          'options.setupSystemFiles' => 'System Files',
+          'options.setupSystemFilesDescription' =>
+            'Perform system file operations such as installing system files or booting the Home Menu',
           'options.shareLog' => 'Share Log',
-          'options.shareLogDescription' => 'Share the emulator\'s log file',
-          'options.shareLogNotFound' => 'No log file was found',
+          'options.shareLogDescription' =>
+            'Share Azahar\'s log file to debug issues',
+          'options.shareLogNotFound' => 'No log file found',
           'options.gpuDriverManager' => 'GPU Driver Manager',
           'options.gpuDriverManagerDescription' =>
-            'Install and select a custom GPU driver',
-          'options.installGameContent' => 'Install Game Content',
-          'options.installGameContentDescription' =>
-            'Install a CIA file to the emulated system',
-          'options.setupSystemFiles' => 'Setup System Files',
-          'options.setupSystemFilesDescription' =>
-            'Set up the 3DS Home Menu and applets',
-          'systemFiles.title' => 'Setup System Files',
+            'Install alternative drivers for potentially better performance or accuracy',
+          'options.selectUserFolder' => 'Select User Folder',
+          'options.selectUserFolderDescription' =>
+            'Changes the files that Azahar uses to load applications',
+          'options.selectGamesFolder' => 'Select Applications Folder',
+          'options.selectGamesFolderDescription' =>
+            'Allows Azahar to populate the application list',
+          'options.themeAndColor' => 'Theme and Color',
+          'options.themeAndColorDescription' => 'Modify the look of the app',
+          'options.about' => 'About',
+          'options.aboutDescription' => 'Build version, credits, and more',
+          'systemFiles.title' => 'System Files',
           'systemFiles.preamble' =>
-            'This will set up the 3DS system files needed to run the Home Menu and other system applets, using an Artic Base server.',
-          'systemFiles.connectSetupTool' => 'Connect to Setup Tool',
-          'systemFiles.deleteSystemFiles' => 'Delete System Files',
+            'Azahar needs console unique data and firmware files from a real console to be able to use some of its features. Such files and data can be set up with the Azahar Artic Setup Tool.\n\nNotes:\n• This operation will install console unique data to Azahar, do not share your user or nand folders after performing the setup process!\n• While doing the setup process, Azahar will link to the console running the setup tool. You can unlink the console later from the System Files tab in the emulator options menu.\n• Do not go online with both Azahar and your 3DS console at the same time after setting up system files, as this could cause issues.\n• Old 3DS setup is needed for the New 3DS setup to work (setting up both is recommended).\n• Both setup modes will work regardless of the model of the console running the setup tool.',
+          'systemFiles.connectSetupTool' => 'Connect to Artic Setup Tool',
+          'systemFiles.deleteSystemFiles' => 'Unlink Console Unique Data',
           'systemFiles.deleteSystemFilesDescription' =>
-            'This will delete the installed 3DS system files. This cannot be undone.',
-          'systemFiles.bootHomeMenu' => 'Boot Home Menu',
+            'This action will unlink your real console from Azahar, with the following consequences:\n• Your OTP, SecureInfo and LocalFriendCodeSeed will be removed from Azahar.\n• Your friend list will reset and you will be logged out of your NNID/PNID account.\n• System files and eshop titles obtained through Azahar will become inaccessible until the same console is linked again using the setup tool (save data will not be lost).\n\nContinue?',
+          'systemFiles.bootHomeMenu' => 'Boot the HOME Menu',
           'systemFiles.start' => 'Start',
-          'systemFiles.runSystemSetup' => 'Run System Setup on Boot',
-          'systemFiles.showHomeApps' => 'Show Home Menu Applications',
-          'systemFiles.detecting' => 'Detecting installed system titles…',
-          'systemFiles.preparing' => 'Preparing system files…',
-          'systemFiles.enterAddress' => 'Enter Artic Base Address',
-          'systemFiles.old3ds' => 'Old 3DS',
-          'systemFiles.new3ds' => 'New 3DS',
-          'systemFiles.statusPossible' => 'Not yet installed',
-          'systemFiles.statusCompleted' => 'Already installed',
+          'systemFiles.runSystemSetup' =>
+            'Run System Setup when the HOME Menu is launched',
+          'systemFiles.showHomeApps' =>
+            'Show HOME menu apps in Applications list',
+          'systemFiles.detecting' =>
+            'Fetching current system files status, please wait...',
+          'systemFiles.preparing' => 'Preparing setup, please wait...',
+          'systemFiles.enterAddress' => 'Enter Artic Setup Tool address',
+          'systemFiles.old3ds' => 'Old 3DS Setup',
+          'systemFiles.new3ds' => 'New 3DS Setup',
+          'systemFiles.statusPossible' => 'Setup is possible.',
+          'systemFiles.statusCompleted' => 'Setup already completed.',
           'systemFiles.statusOld3dsNeeded' =>
-            'Install Old 3DS system files first',
+            'Old 3DS setup is required first.',
           'gpuDriverManager.title' => 'GPU Driver Manager',
           'gpuDriverManager.systemDriver' => 'System Driver',
           'gpuDriverManager.installDriver' => 'Install Driver',
           'gpuDriverManager.installDriverDescription' =>
             'Install a custom driver from a zip file',
           'gpuDriverManager.installFailed' => 'Failed to install the driver',
-          'articBaseConnectDialog.title' => 'Artic Base Connect',
-          'articBaseConnectDialog.addressHint' => 'Server address',
-          'articBaseConnectDialog.connect' => 'Connect',
+          'articBaseConnectDialog.title' => 'Enter Artic Base server address',
           'about.title' => 'About',
           'about.description' => 'An open-source 3DS emulator',
           'about.contributors' => 'Contributors',
           'about.contributorsDescription' =>
             'Contributors who made Azahar possible',
           'about.licenses' => 'Licenses',
-          'about.licensesDescription' => 'Projects used by Azahar',
+          'about.licensesDescription' => 'Projects used by Azahar for Android',
           'about.build' => 'Build',
           'settings.title' => 'Settings',
           'settings.resetToDefault' => 'Reset to Default',
@@ -2566,83 +2613,107 @@ extension on Translations {
           'settings.camera.innerCamera' => 'Inner Camera',
           'settings.camera.outerLeftCamera' => 'Outer Left Camera',
           'settings.camera.outerRightCamera' => 'Outer Right Camera',
-          'settings.camera.imageSource' => 'Image Source',
+          'settings.camera.imageSource' => 'Camera Image Source',
+          'settings.camera.imageSourceDescription' =>
+            'Sets the image source of the virtual camera. You can use an image file, or a device camera when supported.',
           'settings.camera.imageSourceBlank' => 'Blank',
           'settings.camera.imageSourceStillImage' => 'Still Image',
           'settings.camera.imageSourceDeviceCamera' => 'Device Camera',
-          'settings.camera.cameraDevice' => 'Camera Device',
+          'settings.camera.cameraDevice' => 'Camera',
+          'settings.camera.cameraDeviceDescription' =>
+            'If the "Image Source" setting is set to "Device Camera", this sets the physical camera to use.',
           'settings.camera.cameraDeviceDefault' => 'Default',
           'settings.camera.cameraDeviceAnyFront' => 'Any Front Camera',
           'settings.camera.cameraDeviceAnyBack' => 'Any Back Camera',
-          'settings.camera.imageFlip' => 'Image Flip',
+          'settings.camera.imageFlip' => 'Flip',
           'settings.camera.imageFlipNone' => 'None',
           'settings.camera.imageFlipHorizontal' => 'Horizontal',
           'settings.camera.imageFlipVertical' => 'Vertical',
           'settings.camera.imageFlipReverse' => 'Reverse',
-          'settings.controls.title' => 'Controls',
-          'settings.controls.controllerInputMode' => 'Controller Input Mode',
-          'settings.controls.controllerInputModeManual' => 'Manual',
-          'settings.controls.controllerInputModeAutoDetect' => 'Auto-Detect',
-          'settings.controls.invertLeftStickYAxis' =>
-            'Invert Left Stick Y Axis',
-          'settings.controls.gyroSettings' => 'Gyro Settings',
-          'settings.controls.gyroInputSource' => 'Gyro Input Source',
-          'settings.controls.gyroInputSourceDevice' => 'Device',
-          'settings.controls.gyroInputSourceController' => 'Controller',
-          'settings.controls.gyroSensitivityVertical' =>
-            'Gyro Sensitivity (Vertical)',
-          'settings.controls.invertGyroVertical' => 'Invert Gyro Vertical',
-          'settings.controls.gyroSensitivityHorizontal' =>
-            'Gyro Sensitivity (Horizontal)',
-          'settings.controls.invertGyroHorizontal' => 'Invert Gyro Horizontal',
-          'settings.controls.genericButtons' => 'Generic Buttons',
-          'settings.controls.buttonA' => 'A',
-          'settings.controls.buttonB' => 'B',
-          'settings.controls.buttonX' => 'X',
-          'settings.controls.buttonY' => 'Y',
-          'settings.controls.buttonSelect' => 'Select',
-          'settings.controls.buttonStart' => 'Start',
-          'settings.controls.buttonHome' => 'Home',
-          'settings.controls.circlePad' => 'Circle-Pad',
-          'settings.controls.cStick' => 'C-Stick',
-          'settings.controls.axisVertical' => 'Vertical Axis',
-          'settings.controls.axisHorizontal' => 'Horizontal Axis',
-          'settings.controls.dpadAxis' => 'D-Pad Axis',
-          'settings.controls.dpadButtons' => 'D-Pad Buttons',
-          'settings.controls.buttonUp' => 'Up',
-          'settings.controls.buttonDown' => 'Down',
-          'settings.controls.buttonLeft' => 'Left',
-          'settings.controls.buttonRight' => 'Right',
-          'settings.controls.triggers' => 'Triggers',
-          'settings.controls.buttonL' => 'L',
-          'settings.controls.buttonR' => 'R',
-          'settings.controls.buttonZl' => 'ZL',
-          'settings.controls.buttonZr' => 'ZR',
-          'settings.controls.hotkeys' => 'Hotkeys',
-          'settings.controls.hotkeySwapScreens' => 'Swap Screens',
-          'settings.controls.hotkeyCycleLayout' => 'Cycle Layout',
-          'settings.controls.hotkeyCloseGame' => 'Close Game',
-          'settings.controls.hotkeyPauseOrResume' => 'Pause or Resume',
-          'settings.controls.hotkeyQuicksave' => 'Quicksave',
-          'settings.controls.hotkeyQuickload' => 'Quickload',
-          'settings.controls.miscellaneous' => 'Miscellaneous',
-          'settings.controls.useArticBaseController' =>
-            'Use Artic Base Controller',
+          'settings.gamepad.title' => 'Gamepad',
+          'settings.gamepad.controllerInputMode' => 'Controller Input Mode',
+          'settings.gamepad.controllerInputModeDescription' =>
+            'Choose how physical game controllers are mapped to 3DS input.',
+          'settings.gamepad.controllerInputModeManual' => 'Manual',
+          'settings.gamepad.controllerInputModeAutoDetect' => 'Auto-Detect',
+          'settings.gamepad.invertLeftStickYAxis' => 'Invert Left Stick Y Axis',
+          'settings.gamepad.invertLeftStickYAxisDescription' =>
+            'Invert the left stick\'s vertical axis when using auto-detected controllers.',
+          'settings.gamepad.gyroSettings' => 'Gyro Settings',
+          'settings.gamepad.gyroInputSource' => 'Gyro Input Source',
+          'settings.gamepad.gyroInputSourceDescription' =>
+            'Choose whether motion (gyro) controls come from this device or a connected controller\'s gyroscope. Falls back to this device if the controller has no gyroscope.',
+          'settings.gamepad.gyroInputSourceDevice' => 'Device',
+          'settings.gamepad.gyroInputSourceController' => 'Controller',
+          'settings.gamepad.gyroSensitivityVertical' =>
+            'Gyro Vertical Sensitivity',
+          'settings.gamepad.gyroSensitivityVerticalDescription' =>
+            'Adjust the gyroscope\'s vertical (pitch) sensitivity.',
+          'settings.gamepad.invertGyroVertical' => 'Invert Gyro Vertical Axis',
+          'settings.gamepad.invertGyroVerticalDescription' =>
+            'Invert the gyroscope\'s vertical (pitch) axis.',
+          'settings.gamepad.gyroSensitivityHorizontal' =>
+            'Gyro Horizontal Sensitivity',
+          'settings.gamepad.gyroSensitivityHorizontalDescription' =>
+            'Adjust the gyroscope\'s horizontal (yaw) sensitivity.',
+          'settings.gamepad.invertGyroHorizontal' =>
+            'Invert Gyro Horizontal Axis',
+          'settings.gamepad.invertGyroHorizontalDescription' =>
+            'Invert the gyroscope\'s horizontal (yaw) axis.',
+          'settings.gamepad.genericButtons' => 'Buttons',
+          'settings.gamepad.buttonA' => 'A',
+          'settings.gamepad.buttonB' => 'B',
+          'settings.gamepad.buttonX' => 'X',
+          'settings.gamepad.buttonY' => 'Y',
+          'settings.gamepad.buttonSelect' => 'SELECT',
+          'settings.gamepad.buttonStart' => 'START',
+          'settings.gamepad.buttonHome' => 'HOME',
+          'settings.gamepad.circlePad' => 'Circle Pad',
+          'settings.gamepad.cStick' => 'C-Stick',
+          'settings.gamepad.axisVertical' => 'Up/Down Axis',
+          'settings.gamepad.axisHorizontal' => 'Left/Right Axis',
+          'settings.gamepad.dpadAxis' => 'D-Pad (Axis)',
+          'settings.gamepad.dpadAxisDescription' =>
+            'Some controllers may not be able to map their D-pad as an axis. If that\'s the case, use the D-Pad (buttons) section.',
+          'settings.gamepad.dpadButtons' => 'D-Pad (Button)',
+          'settings.gamepad.dpadButtonsDescription' =>
+            'Only map the D-pad to these if you\'re facing issues with the D-Pad (Axis) button mappings.',
+          'settings.gamepad.buttonUp' => 'Up',
+          'settings.gamepad.buttonDown' => 'Down',
+          'settings.gamepad.buttonLeft' => 'Left',
+          'settings.gamepad.buttonRight' => 'Right',
+          'settings.gamepad.triggers' => 'Triggers',
+          'settings.gamepad.buttonL' => 'L',
+          'settings.gamepad.buttonR' => 'R',
+          'settings.gamepad.buttonZl' => 'ZL',
+          'settings.gamepad.buttonZr' => 'ZR',
+          'settings.gamepad.hotkeys' => 'Hotkeys',
+          'settings.gamepad.hotkeySwapScreens' => 'Swap Screens',
+          'settings.gamepad.hotkeyCycleLayout' => 'Cycle Layouts',
+          'settings.gamepad.hotkeyCloseGame' => 'Close Game',
+          'settings.gamepad.hotkeyPauseOrResume' => 'Toggle Pause',
+          'settings.gamepad.hotkeyQuicksave' => 'Quicksave',
+          'settings.gamepad.hotkeyQuickload' => 'Quickload',
+          'settings.gamepad.miscellaneous' => 'Miscellaneous',
+          'settings.gamepad.useArticBaseController' =>
+            'Use Artic Controller when connected to Artic Base Server',
+          'settings.gamepad.useArticBaseControllerDescription' =>
+            'Use the controls provided by Artic Base Server when connected to it instead of the configured input device.',
           'settings.layout.title' => 'Layout',
           'settings.layout.screenOrientation' => 'Screen Orientation',
-          'settings.layout.screenOrientationAutoSensor' => 'Auto (Sensor)',
+          'settings.layout.screenOrientationAutoSensor' => 'Automatic',
           'settings.layout.screenOrientationLandscape' => 'Landscape',
           'settings.layout.screenOrientationLandscapeReverse' =>
             'Reverse Landscape',
           'settings.layout.screenOrientationPortrait' => 'Portrait',
           'settings.layout.screenOrientationPortraitReverse' =>
             'Reverse Portrait',
-          'settings.layout.customLandscapeLayout' => 'Custom Landscape Layout',
-          'settings.layout.customPortraitLayout' => 'Custom Portrait Layout',
+          'settings.layout.customLandscapeLayout' => 'Landscape Custom Layout',
+          'settings.layout.customPortraitLayout' => 'Portrait Custom Layout',
           'settings.layout.topScreen' => 'Top Screen',
           'settings.layout.bottomScreen' => 'Bottom Screen',
-          'settings.layout.positionX' => 'X',
-          'settings.layout.positionY' => 'Y',
+          'settings.layout.positionX' => 'X-Position',
+          'settings.layout.positionY' => 'Y-Position',
           'settings.layout.width' => 'Width',
           'settings.layout.height' => 'Height',
           'settings.audio.title' => 'Audio',
@@ -2688,6 +2759,9 @@ extension on Translations {
             'Delay Start for LLE Modules',
           'settings.debug.delayStartLleModulesDescription' =>
             'Delays the start of LLE modules to work around race conditions.',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.debug.deterministicAsyncOperations' =>
             'Deterministic Async Operations',
           'settings.debug.deterministicAsyncOperationsDescription' =>
@@ -2701,9 +2775,6 @@ extension on Translations {
           'settings.theme.staticThemeColorCyan' => 'Cyan',
           'settings.theme.staticThemeColorRed' => 'Red',
           'settings.theme.staticThemeColorGreen' => 'Green',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.theme.staticThemeColorYellow' => 'Yellow',
           'settings.theme.staticThemeColorOrange' => 'Orange',
           'settings.theme.staticThemeColorViolet' => 'Violet',

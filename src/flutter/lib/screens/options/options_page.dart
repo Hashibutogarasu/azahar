@@ -43,22 +43,10 @@ class OptionsPage extends ConsumerWidget {
                   onTap: () => const SettingsMenuRoute().push(context),
                 ),
                 _OptionCard(
-                  icon: Icons.palette_outlined,
-                  title: t.options.themeAndColor,
-                  description: t.options.themeAndColorDescription,
-                  onTap: () => const ThemeSettingsRoute().push(context),
-                ),
-                _OptionCard(
-                  icon: Icons.folder_outlined,
-                  title: t.options.selectUserFolder,
-                  description: t.options.selectUserFolderDescription,
-                  onTap: () => _selectUserFolder(context, ref.read(userDirectoriesProvider)),
-                ),
-                _OptionCard(
-                  icon: Icons.videogame_asset_outlined,
-                  title: t.options.selectGamesFolder,
-                  description: t.options.selectGamesFolderDescription,
-                  onTap: () => _selectGamesFolder(context, ref.read(userDirectoriesProvider)),
+                  icon: Icons.wifi_tethering,
+                  title: t.options.articBaseConnect,
+                  description: t.options.articBaseConnectDescription,
+                  onTap: () => _connectArticBase(context, ref.read(articBaseProvider)),
                 ),
                 _OptionCard(
                   icon: Icons.install_mobile,
@@ -73,18 +61,6 @@ class OptionsPage extends ConsumerWidget {
                   onTap: () => const SystemFilesRoute().push(context),
                 ),
                 _OptionCard(
-                  icon: Icons.info_outline,
-                  title: t.options.about,
-                  description: t.options.aboutDescription,
-                  onTap: () => const AboutRoute().push(context),
-                ),
-                _OptionCard(
-                  icon: Icons.wifi_tethering,
-                  title: t.options.articBaseConnect,
-                  description: t.options.articBaseConnectDescription,
-                  onTap: () => _connectArticBase(context, ref.read(articBaseProvider)),
-                ),
-                _OptionCard(
                   icon: Icons.share_outlined,
                   title: t.options.shareLog,
                   description: t.options.shareLogDescription,
@@ -97,6 +73,30 @@ class OptionsPage extends ConsumerWidget {
                     description: t.options.gpuDriverManagerDescription,
                     onTap: () => const GpuDriverManagerRoute().push(context),
                   ),
+                _OptionCard(
+                  icon: Icons.folder_outlined,
+                  title: t.options.selectUserFolder,
+                  description: t.options.selectUserFolderDescription,
+                  onTap: () => _selectUserFolder(context, ref.read(userDirectoriesProvider)),
+                ),
+                _OptionCard(
+                  icon: Icons.videogame_asset_outlined,
+                  title: t.options.selectGamesFolder,
+                  description: t.options.selectGamesFolderDescription,
+                  onTap: () => _selectGamesFolder(context, ref.read(userDirectoriesProvider)),
+                ),
+                _OptionCard(
+                  icon: Icons.palette_outlined,
+                  title: t.options.themeAndColor,
+                  description: t.options.themeAndColorDescription,
+                  onTap: () => const ThemeSettingsRoute().push(context),
+                ),
+                _OptionCard(
+                  icon: Icons.info_outline,
+                  title: t.options.about,
+                  description: t.options.aboutDescription,
+                  onTap: () => const AboutRoute().push(context),
+                ),
               ],
             );
           },

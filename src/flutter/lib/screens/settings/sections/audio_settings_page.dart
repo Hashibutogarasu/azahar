@@ -14,30 +14,14 @@ class AudioSettingsPage extends StatefulWidget {
 }
 
 class _AudioSettingsPageState extends State<AudioSettingsPage> {
-  late final SystemSaveValueStore _store;
-  late final Future<void> _loaded;
-
-  @override
-  void initState() {
-    super.initState();
-    _store = SystemSaveValueStore(AppServices.systemSaveRepository);
-    _loaded = AppServices.systemSaveRepository.load();
-  }
+  late final _store = SystemSaveValueStore(AppServices.systemSaveRepository);
 
   @override
   Widget build(BuildContext context) {
     final t = context.t;
     return Scaffold(
       appBar: AppBar(title: Text(t.settings.audio.title)),
-      body: FutureBuilder<void>(
-        future: _loaded,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return SettingsList(items: buildAudioSettingsItems(t, _store));
-        },
-      ),
+      body: SettingsList(items: buildAudioSettingsItems(t, _store)),
     );
   }
 }
