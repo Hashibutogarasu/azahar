@@ -4,6 +4,7 @@ import '../../app_services.dart';
 import '../../data/game_repository.dart';
 import '../../i18n/translations.g.dart';
 import '../../models/game.dart';
+import 'widgets/about_game_bottom_sheet.dart';
 import 'widgets/game_card.dart';
 
 class GamesListPage extends StatefulWidget {
@@ -57,6 +58,37 @@ class _GamesListPageState extends State<GamesListPage> with WidgetsBindingObserv
     if (_query.isEmpty) return _games;
     final lowerQuery = _query.toLowerCase();
     return _games.where((game) => game.title.toLowerCase().contains(lowerQuery)).toList();
+  }
+
+  Future<void> _launchGame(Game game) async {
+    await _gameRepository.markLastPlayed(game.path);
+    await AppServices.nativeBridge.launchEmulationActivity(game.path);
+  }
+
+  void _onGameLongPress(Game game) {
+    final t = context.t;
+    if (game.titleId == 0) {
+      showDialog<void>(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text(t.games.properties),
+          content: Text(t.games.propertiesNotLoaded),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(MaterialLocalizations.of(context).okButtonLabel),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+    AboutGameBottomSheet.show(
+      context,
+      game: game,
+      onPlay: () => _launchGame(game),
+      onUninstalled: _rescan,
+    );
   }
 
   @override
@@ -128,12 +160,8 @@ class _GamesListPageState extends State<GamesListPage> with WidgetsBindingObserv
                               final game = games[index];
                               return GameCard(
                                 game: game,
-                                onTap: () async {
-                                  await _gameRepository.markLastPlayed(game.path);
-                                  await AppServices.nativeBridge.launchEmulationActivity(
-                                    game.path,
-                                  );
-                                },
+                                onTap: () => _launchGame(game),
+                                onLongPress: () => _onGameLongPress(game),
                               );
                             },
                           );

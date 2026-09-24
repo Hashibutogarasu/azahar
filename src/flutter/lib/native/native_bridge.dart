@@ -1,8 +1,13 @@
 import 'package:flutter/services.dart';
 
 import '../models/copy_dir_progress.dart';
+import '../models/create_shortcut_request.dart';
 import '../models/game.dart';
+import '../models/game_folder_kind.dart';
+import '../models/game_folder_status.dart';
+import '../models/game_uninstall_target.dart';
 import '../models/gpu_driver_info.dart';
+import '../models/shader_cache_backend.dart';
 import '../models/shader_cache_progress.dart';
 
 class NativeBridge {
@@ -250,6 +255,58 @@ class NativeBridge {
   Future<bool> selectGpuDriver(String? uri) async {
     final result = await _channel.invokeMethod<bool>('selectGpuDriver', {'uri': uri});
     return result ?? false;
+  }
+
+  Future<GameFolderStatus> getGameFolderStatus(Game game) async {
+    final result = await _channel.invokeMethod<List<Object?>>('getGameFolderStatus', {
+      'titleId': game.titleId,
+      'path': game.path,
+    });
+    final flags = result?.cast<bool>() ?? List<bool>.filled(GameFolderKind.values.length, false);
+    return GameFolderStatus(
+      app: flags[GameFolderKind.app.index],
+      save: flags[GameFolderKind.save.index],
+      updates: flags[GameFolderKind.updates.index],
+      dlc: flags[GameFolderKind.dlc.index],
+      extra: flags[GameFolderKind.extra.index],
+      textures: flags[GameFolderKind.textures.index],
+      mods: flags[GameFolderKind.mods.index],
+    );
+  }
+
+  Future<bool> openGameFolder(Game game, GameFolderKind folder) async {
+    final result = await _channel.invokeMethod<bool>('openGameFolder', {
+      'titleId': game.titleId,
+      'path': game.path,
+      'folder': folder.name,
+    });
+    return result ?? false;
+  }
+
+  Future<bool> deleteGameFolder(Game game, GameUninstallTarget target) async {
+    final result = await _channel.invokeMethod<bool>('deleteGameFolder', {
+      'titleId': game.titleId,
+      'path': game.path,
+      'target': target.name,
+    });
+    return result ?? false;
+  }
+
+  Future<void> deleteShaderCache(Game game, ShaderCacheBackend backend) {
+    return _channel.invokeMethod<void>('deleteShaderCache', {
+      'titleId': game.titleId,
+      'backend': backend.name,
+    });
+  }
+
+  Future<void> createGameShortcut(CreateShortcutRequest request) {
+    return _channel.invokeMethod<void>('createGameShortcut', {
+      'titleId': request.titleId,
+      'path': request.path,
+      'name': request.name,
+      'iconFilePath': request.iconFilePath,
+      'stretch': request.stretch,
+    });
   }
 
   Game _gameFromMap(Map<Object?, Object?> map) {
