@@ -8,6 +8,8 @@ environment:
   sdk: ^3.12.2
 
 dependencies:
+  babstrap_settings_screen:
+    path: packages/babstrap_settings_screen
   drift: ^2.35.0
   dynamic_color: ^1.9.0
   file_picker: ^13.1.0

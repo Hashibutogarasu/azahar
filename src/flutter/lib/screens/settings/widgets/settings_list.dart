@@ -1,3 +1,4 @@
+import 'package:babstrap_settings_screen/babstrap_settings_screen.dart' as babstrap;
 import 'package:flutter/material.dart';
 import 'package:gamepads/gamepads.dart';
 
@@ -6,9 +7,14 @@ import '../../../data/settings/settings_item.dart';
 import '../../../data/settings/settings_value_store.dart';
 import '../../../errors/app_exception.dart';
 import '../../../i18n/translations.g.dart';
+import 'settings_group_card.dart';
 
-/// Renders a list of [SettingsItem]s using standard Material widgets, reading and writing each
-/// item's value through [AppServices.emulatorSettingsRepository].
+/// Renders a list of [SettingsItem]s using [SettingsGroupCard]/[babstrap.SettingsItem], so
+/// every settings screen shares the same visual design as the redesigned Options page. Items are
+/// split into groups at each [SettingsHeaderItem]; a header's title becomes the group's title
+/// instead of being rendered as its own row. Reads and writes each item's value through
+/// [AppServices.emulatorSettingsRepository] (or the item's own [SettingsValueStore]), saving
+/// immediately after every change.
 class SettingsList extends StatefulWidget {
   const SettingsList({super.key, required this.items});
 
@@ -23,85 +29,121 @@ class _SettingsListState extends State<SettingsList> {
 
   SettingsValueStore _storeFor(SettingsValueStore? store) => store ?? _repository;
 
+  Future<void> _persist(SettingsValueStore? store) async {
+    if ((store ?? _repository) == _repository) {
+      await _repository.save();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: widget.items.length,
-      itemBuilder: (context, index) => _buildItem(context, widget.items[index]),
+    final groups = <(String?, List<SettingsItem>)>[];
+    String? currentTitle;
+    var currentItems = <SettingsItem>[];
+    for (final item in widget.items) {
+      if (item is SettingsHeaderItem) {
+        if (currentItems.isNotEmpty || currentTitle != null) {
+          groups.add((currentTitle, currentItems));
+        }
+        currentTitle = item.title;
+        currentItems = [];
+      } else {
+        currentItems.add(item);
+      }
+    }
+    if (currentItems.isNotEmpty || currentTitle != null) {
+      groups.add((currentTitle, currentItems));
+    }
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        for (final group in groups)
+          if (group.$2.isNotEmpty)
+            SettingsGroupCard(
+              settingsGroupTitle: group.$1,
+              items: [for (final item in group.$2) _buildItem(context, item)],
+            ),
+      ],
     );
   }
 
-  Widget _buildItem(BuildContext context, SettingsItem item) {
+  babstrap.SettingsItem _buildItem(BuildContext context, SettingsItem item) {
     return switch (item) {
-      SettingsHeaderItem() => ListTile(
-        title: Text(item.title, style: Theme.of(context).textTheme.labelLarge),
-        subtitle: item.description == null ? null : Text(item.description!),
-        enabled: false,
+      SettingsHeaderItem() => throw StateError('Headers are consumed while grouping.'),
+      SettingsSwitchItem() => babstrap.SettingsItem(
+        icons: Icons.toggle_on_outlined,
+        title: item.title,
+        subtitle: item.description,
+        trailing: Switch(
+          value: _storeFor(item.store).readBool(item.setting),
+          onChanged: (value) async {
+            await _storeFor(item.store).writeBool(item.setting, value);
+            await _persist(item.store);
+            setState(() {});
+          },
+        ),
       ),
-      SettingsSwitchItem() => SwitchListTile(
-        title: Text(item.title),
-        subtitle: item.description == null ? null : Text(item.description!),
-        value: _storeFor(item.store).readBool(item.setting),
-        onChanged: (value) async {
-          await _storeFor(item.store).writeBool(item.setting, value);
-          setState(() {});
-        },
-      ),
-      SettingsSliderItem() => ListTile(
-        title: Text(item.title),
-        subtitle: item.description == null ? null : Text(item.description!),
+      SettingsSliderItem() => babstrap.SettingsItem(
+        icons: Icons.tune,
+        title: item.title,
+        subtitle: item.description,
         trailing: Text('${_storeFor(item.store).readInt(item.setting)}${item.units}'),
         onTap: () => _showSliderDialog(item),
       ),
-      SettingsSingleChoiceItem() => ListTile(
-        title: Text(item.title),
-        subtitle: item.description == null ? null : Text(item.description!),
+      SettingsSingleChoiceItem() => babstrap.SettingsItem(
+        icons: Icons.list,
+        title: item.title,
+        subtitle: item.description,
         trailing: Text(_singleChoiceLabel(item)),
         onTap: () => _showSingleChoiceDialog(item),
       ),
-      SettingsFloatSliderItem() => ListTile(
-        title: Text(item.title),
-        subtitle: item.description == null ? null : Text(item.description!),
-        trailing: Text(
-          '${_storeFor(item.store).readFloat(item.setting).round()}${item.units}',
-        ),
+      SettingsFloatSliderItem() => babstrap.SettingsItem(
+        icons: Icons.tune,
+        title: item.title,
+        subtitle: item.description,
+        trailing: Text('${_storeFor(item.store).readFloat(item.setting).round()}${item.units}'),
         onTap: () => _showFloatSliderDialog(item),
       ),
-      SettingsStringSingleChoiceItem() => ListTile(
-        title: Text(item.title),
-        subtitle: item.description == null ? null : Text(item.description!),
+      SettingsStringSingleChoiceItem() => babstrap.SettingsItem(
+        icons: Icons.list,
+        title: item.title,
+        subtitle: item.description,
         trailing: Text(_stringSingleChoiceLabel(item)),
         onTap: () => _showStringSingleChoiceDialog(item),
       ),
-      SettingsStringInputItem() => ListTile(
-        title: Text(item.title),
-        subtitle: item.description == null ? null : Text(item.description!),
+      SettingsStringInputItem() => babstrap.SettingsItem(
+        icons: Icons.edit_outlined,
+        title: item.title,
+        subtitle: item.description,
         trailing: Text(_storeFor(item.store).readString(item.setting)),
         onTap: () => _showStringInputDialog(item),
       ),
-      SettingsDateTimeItem() => ListTile(
-        title: Text(item.title),
-        subtitle: item.description == null ? null : Text(item.description!),
+      SettingsDateTimeItem() => babstrap.SettingsItem(
+        icons: Icons.schedule,
+        title: item.title,
+        subtitle: item.description,
         trailing: Text(_dateTimeLabel(item)),
         onTap: () => _showDateTimeDialog(item),
       ),
-      SettingsInputBindingItem() => ListTile(
-        title: Text(item.title),
-        subtitle: item.description == null ? null : Text(item.description!),
+      SettingsInputBindingItem() => babstrap.SettingsItem(
+        icons: Icons.sports_esports_outlined,
+        title: item.title,
+        subtitle: item.description,
         trailing: Text(_storeFor(item.store).readString(item.setting)),
         onTap: () => _showInputBindingDialog(item),
       ),
-      SettingsActionItem() => ListTile(
-        leading: item.icon == null ? null : Icon(item.icon),
-        title: Text(item.title),
-        subtitle: item.description == null ? null : Text(item.description!),
+      SettingsActionItem() => babstrap.SettingsItem(
+        icons: item.icon ?? Icons.chevron_right,
+        title: item.title,
+        subtitle: item.description,
+        trailing: const SizedBox.shrink(),
         onTap: () => item.onTap(context),
       ),
-      SettingsSubmenuItem() => ListTile(
-        leading: item.icon == null ? null : Icon(item.icon),
-        title: Text(item.title),
-        subtitle: item.description == null ? null : Text(item.description!),
-        trailing: const Icon(Icons.chevron_right),
+      SettingsSubmenuItem() => babstrap.SettingsItem(
+        icons: item.icon ?? Icons.chevron_right,
+        title: item.title,
+        subtitle: item.description,
         onTap: () => item.onTap(context),
       ),
     };
@@ -213,6 +255,7 @@ class _SettingsListState extends State<SettingsList> {
     textController.dispose();
     if (result == null) return;
     await store.writeInt(item.setting, result);
+    await _persist(item.store);
     setState(() {});
   }
 
@@ -245,6 +288,7 @@ class _SettingsListState extends State<SettingsList> {
     );
     if (result == null) return;
     await store.writeInt(item.setting, result);
+    await _persist(item.store);
     setState(() {});
   }
 
@@ -337,6 +381,7 @@ class _SettingsListState extends State<SettingsList> {
     textController.dispose();
     if (result == null) return;
     await store.writeFloat(item.setting, result.toDouble());
+    await _persist(item.store);
     setState(() {});
   }
 
@@ -369,6 +414,7 @@ class _SettingsListState extends State<SettingsList> {
     );
     if (result == null) return;
     await store.writeString(item.setting, result);
+    await _persist(item.store);
     setState(() {});
   }
 
@@ -398,6 +444,7 @@ class _SettingsListState extends State<SettingsList> {
     textController.dispose();
     if (result == null) return;
     await store.writeString(item.setting, result);
+    await _persist(item.store);
     setState(() {});
   }
 
@@ -425,6 +472,7 @@ class _SettingsListState extends State<SettingsList> {
       item.setting,
       (combined.toUtc().millisecondsSinceEpoch ~/ 1000).toString(),
     );
+    await _persist(item.store);
     setState(() {});
   }
 
@@ -456,6 +504,7 @@ class _SettingsListState extends State<SettingsList> {
     await subscription.cancel();
     if (result == null) return;
     await store.writeString(item.setting, result);
+    await _persist(item.store);
     setState(() {});
   }
 }

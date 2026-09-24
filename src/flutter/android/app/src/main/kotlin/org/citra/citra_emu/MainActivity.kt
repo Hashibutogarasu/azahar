@@ -1,5 +1,8 @@
 package org.citra.citra_emu
 
+import android.app.ActivityManager
+import android.content.Context
+import android.os.Bundle
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import io.flutter.embedding.android.FlutterFragmentActivity
@@ -13,6 +16,7 @@ import org.citra.citra_emu.channel.AzaharMethodHandler
 import org.citra.citra_emu.channel.CiaInstallController
 import org.citra.citra_emu.channel.DirectoryController
 import org.citra.citra_emu.channel.EmulationController
+import org.citra.citra_emu.channel.GameActionsController
 import org.citra.citra_emu.channel.GamesController
 import org.citra.citra_emu.channel.GpuDriverController
 import org.citra.citra_emu.channel.SettingsController
@@ -41,10 +45,25 @@ class MainActivity : FlutterFragmentActivity() {
         DirectoryController(this, contentResolver, openUserDirectoryLauncher, openGamesDirectoryLauncher)
     }
     private val gamesController: GamesController by lazy { GamesController(this, cacheDir) }
+    private val gameActionsController: GameActionsController by lazy { GameActionsController(this) }
     private val settingsController = SettingsController()
     private val gpuDriverController = GpuDriverController()
     private val ciaInstallController by lazy { CiaInstallController(this) }
     private val systemFilesController = SystemFilesController()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null && isEmulationProcessRunning()) {
+            EmulationActivity.start(this, "")
+        }
+    }
+
+    private fun isEmulationProcessRunning(): Boolean {
+        val emulationProcessName = packageName + EmulationActivity.PROCESS_SUFFIX
+        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        return activityManager.runningAppProcesses.orEmpty()
+            .any { it.processName == emulationProcessName }
+    }
 
     override fun onResume() {
         super.onResume()
@@ -70,6 +89,7 @@ class MainActivity : FlutterFragmentActivity() {
         val emulationController = EmulationController(flutterEngine.renderer)
         val handlers: Map<String, AzaharMethodHandler> =
             (directoryController.handlers + gamesController.handlers +
+                gameActionsController.handlers +
                 emulationController.handlers + settingsController.handlers +
                 gpuDriverController.handlers + ciaInstallController.handlers +
                 systemFilesController.handlers)

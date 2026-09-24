@@ -1,43 +1,53 @@
+import 'package:babstrap_settings_screen/babstrap_settings_screen.dart' as babstrap;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../app_services.dart';
+import '../../../data/settings/options_settings_provider.dart';
 import '../../../i18n/translations.g.dart';
+import '../widgets/settings_group_card.dart';
 
-class LanguageSettingsPage extends StatefulWidget {
+class LanguageSettingsPage extends ConsumerStatefulWidget {
   const LanguageSettingsPage({super.key});
 
   @override
-  State<LanguageSettingsPage> createState() => _LanguageSettingsPageState();
+  ConsumerState<LanguageSettingsPage> createState() => _LanguageSettingsPageState();
 }
 
-class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
+class _LanguageSettingsPageState extends ConsumerState<LanguageSettingsPage> {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final selected = AppServices.settingsRepository.languageCode;
+    final settings = ref.read(optionsSettingsProvider);
+    final selected = settings.languageCode;
+
+    Future<void> select(String? value) async {
+      await settings.setLanguageCode(value);
+      setState(() {});
+    }
+
     return Scaffold(
       appBar: AppBar(title: Text(t.settings.language.title)),
-      body: RadioGroup<String?>(
-        groupValue: selected,
-        onChanged: (value) async {
-          await AppServices.settingsRepository.setLanguageCode(value);
-          if (value == null) {
-            await LocaleSettings.useDeviceLocale();
-          } else {
-            await LocaleSettings.setLocaleRaw(value);
-          }
-          setState(() {});
-        },
-        child: Column(
-          children: [
-            RadioListTile<String?>(title: Text(t.settings.language.systemDefault), value: null),
-            for (final locale in AppLocale.values)
-              RadioListTile<String?>(
-                title: Text(t.settings.language.english),
-                value: locale.languageCode,
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          SettingsGroupCard(
+            items: [
+              babstrap.SettingsItem(
+                icons: Icons.phone_android,
+                title: t.settings.language.systemDefault,
+                trailing: selected == null ? const Icon(Icons.check) : null,
+                onTap: () => select(null),
               ),
-          ],
-        ),
+              for (final locale in AppLocale.values)
+                babstrap.SettingsItem(
+                  icons: Icons.language,
+                  title: locale.languageCode,
+                  trailing: selected == locale.languageCode ? const Icon(Icons.check) : null,
+                  onTap: () => select(locale.languageCode),
+                ),
+            ],
+          ),
+        ],
       ),
     );
   }

@@ -68,13 +68,45 @@
   },
   "games": {
     "searchHint": "Search Applications",
-    "emptyGamelist": "No files were found or no game directory has been selected yet."
+    "emptyGamelist": "No files were found or no game directory has been selected yet.",
+    "properties": "Properties",
+    "propertiesNotLoaded": "This application's properties are not yet available. Please wait for the application list to finish loading and try again.",
+    "play": "Play",
+    "openFolder": "Open Folder",
+    "delete": "Delete",
+    "shortcut": "Create Shortcut",
+    "cheats": "Cheats",
+    "cheatsUnavailable": "Cheats are not available yet in this version of the app.",
+    "compress": "Compress",
+    "deleteShaderCache": "Delete Shader Cache",
+    "deleteCacheSelectBackend": "Select the graphics API whose shader cache should be deleted",
+    "vulkan": "Vulkan",
+    "opengles": "OpenGLES",
+    "shaderCacheDeleted": "Shader cache deleted",
+    "createShortcut": "Create Shortcut",
+    "shortcutName": "Shortcut Name",
+    "shortcutNameEmpty": "The shortcut name cannot be empty",
+    "shortcutImageStretchToggle": "Stretch image",
+    "editIcon": "Edit icon",
+    "openApp": "Application",
+    "openSaveDir": "Save Data",
+    "openUpdates": "Updates",
+    "openDlc": "DLC",
+    "openExtra": "Extra Data",
+    "openTextures": "Textures",
+    "openMods": "Mods",
+    "uninstallCia": "Application",
+    "uninstallUpdates": "Updates",
+    "uninstallDlc": "DLC"
   },
   "emulation": {
     "loading": "Loading…",
     "preparingShaders": "Preparing Shaders",
     "buildingShaders": "Building Shaders",
     "shaderProgress": "${progress}/${max}",
+    "menuSectionGeneral": "General",
+    "pauseEmulation": "Pause Emulation",
+    "resumeEmulation": "Resume Emulation",
     "menuSectionOther": "Other",
     "closeGame": "Close Game",
     "closeGameMessage": "Are you sure that you would like to close the current game?"
@@ -104,8 +136,25 @@
     "selectGamesFolderDescription": "Allows Azahar to populate the application list",
     "themeAndColor": "Theme and Color",
     "themeAndColorDescription": "Modify the look of the app",
+    "media": "Media",
+    "mediaDescription": "Background playback and media session settings",
     "about": "About",
-    "aboutDescription": "Build version, credits, and more"
+    "aboutDescription": "Build version, credits, and more",
+    "groupGeneral": "General",
+    "groupSystem": "System",
+    "groupGraphics": "Graphics",
+    "groupTools": "Tools",
+    "groupFolderSettings": "Folder Settings",
+    "groupOther": "Other",
+    "emulation": "Emulation",
+    "emulationDescription": "General, System, Audio, Camera and Controls settings",
+    "useLegacySettingsUI": "Use Legacy Settings UI",
+    "useLegacySettingsUIDescription": "Switch back to the previous Options screen design",
+    "useLegacySettingsUIDialog": {
+      "title": "Switch Settings UI?",
+      "message": "This changes how the Options screen looks. You can switch back at any time.",
+      "confirm": "Switch"
+    }
   },
   "systemFiles": {
     "title": "System Files",
@@ -166,6 +215,11 @@
       "frameLimitEnableDescription": "When enabled, emulation speed will be limited to a specified percentage of normal speed.",
       "frameLimitSlider": "Limit Speed Percent",
       "frameLimitSliderDescription": "Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit."
+    },
+    "media": {
+      "title": "Media",
+      "treatAudioAsMediaSession": "Treat as Android Media",
+      "treatAudioAsMediaSessionDescription": "Shows playback controls on the lock screen and notification like a music app, and keeps audio playing when the app is in the background instead of pausing automatically."
     },
     "graphics": {
       "title": "Graphics",

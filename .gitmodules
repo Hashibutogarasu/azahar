@@ -97,3 +97,6 @@
 [submodule "radial-gamepad"]
 	path = externals/radial-gamepad
 	url = git@github.com:Hashibutogarasu/RadialGamePad.git
+[submodule "babstrap_settings_screen"]
+	path = src/flutter/packages/babstrap_settings_screen
+	url = git@github.com:Hashibutogarasu/babstrap_settings_screen.git

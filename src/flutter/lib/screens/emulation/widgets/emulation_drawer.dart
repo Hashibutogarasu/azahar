@@ -6,9 +6,17 @@ import '../../../i18n/translations.g.dart';
 /// `SidebarWidget` (a 300dp-wide panel rounded on the outer edge), but for now only carries the
 /// "Other" section's close-game action; the rest of the sidebar's sections are not ported yet.
 class EmulationDrawer extends StatelessWidget {
-  const EmulationDrawer({super.key, required this.gameTitle, required this.onCloseGame});
+  const EmulationDrawer({
+    super.key,
+    required this.gameTitle,
+    required this.isPaused,
+    required this.onTogglePause,
+    required this.onCloseGame,
+  });
 
   final String gameTitle;
+  final bool isPaused;
+  final VoidCallback onTogglePause;
   final VoidCallback onCloseGame;
 
   @override
@@ -25,6 +33,16 @@ class EmulationDrawer extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
               child: Text(gameTitle, style: Theme.of(context).textTheme.headlineMedium),
+            ),
+            _MenuSection(
+              title: t.emulation.menuSectionGeneral,
+              children: [
+                _MenuItem(
+                  icon: isPaused ? Icons.play_arrow : Icons.pause,
+                  title: isPaused ? t.emulation.resumeEmulation : t.emulation.pauseEmulation,
+                  onTap: onTogglePause,
+                ),
+              ],
             ),
             _MenuSection(
               title: t.emulation.menuSectionOther,

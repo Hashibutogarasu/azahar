@@ -11,7 +11,7 @@ import 'errors/app_exception.dart';
 import 'i18n/translations.g.dart';
 import 'native/applet_channel.dart';
 import 'routing/app_routes.dart';
-import 'screens/settings/settings_routes.dart' as settings;
+import 'screens/settings/settings_routes.dart' as legacy_settings;
 import 'theme/app_theme.dart';
 import 'theme/theme_settings_provider.dart';
 
@@ -110,7 +110,10 @@ class AzaharApp extends ConsumerWidget {
 
 final GoRouter _router = GoRouter(
   navigatorKey: _navigatorKey,
-  routes: [...$appRoutes, ...settings.$appRoutes],
+  // The `/settings` hub itself is never linked to from the current UI (only reachable through
+  // the legacy Options UI, via useLegacySettingsUI); its route tree stays registered so that
+  // legacy UI still works end-to-end.
+  routes: [...$appRoutes, ...legacy_settings.$appRoutes],
   redirect: (context, state) async {
     final isFirstLaunch = await AppServices.settingsRepository.isFirstApplicationLaunch();
     final isGoingToSetup = state.matchedLocation == const SetupRoute().location;

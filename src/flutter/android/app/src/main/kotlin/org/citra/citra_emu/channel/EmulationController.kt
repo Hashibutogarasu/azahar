@@ -39,6 +39,8 @@ class EmulationController(private val textureRegistry: TextureRegistry) {
         StartEmulation(),
         PauseEmulation(),
         ResumeEmulation(),
+        PauseRendering(),
+        ResumeRendering(),
         SwapScreens(),
         StopEmulation(),
         TouchEvent(),
@@ -100,6 +102,22 @@ class EmulationController(private val textureRegistry: TextureRegistry) {
         override val name = "resumeEmulation"
         override fun execute(call: MethodCall, result: MethodChannel.Result) {
             NativeLibrary.unPauseEmulation()
+            result.success(null)
+        }
+    }
+
+    private inner class PauseRendering : AzaharMethodHandler {
+        override val name = "pauseRendering"
+        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+            stopPresentingFrames()
+            result.success(null)
+        }
+    }
+
+    private inner class ResumeRendering : AzaharMethodHandler {
+        override val name = "resumeRendering"
+        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+            startPresentingFrames()
             result.success(null)
         }
     }

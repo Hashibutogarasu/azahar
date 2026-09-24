@@ -78,4 +78,18 @@ class SettingsRepository {
   Future<void> setArticBaseAddress(String address) {
     return write(SettingsKeys.articBaseAddress, address);
   }
+
+  bool _useLegacySettingsUI = false;
+
+  /// Whether the Options tab should show the pre-redesign UI instead of the current one.
+  bool get useLegacySettingsUI => _useLegacySettingsUI;
+
+  Future<void> loadUseLegacySettingsUI() async {
+    _useLegacySettingsUI = await readBool(SettingsKeys.useLegacySettingsUI);
+  }
+
+  Future<void> setUseLegacySettingsUI(bool value) async {
+    await writeBool(SettingsKeys.useLegacySettingsUI, value);
+    _useLegacySettingsUI = value;
+  }
 }

@@ -1,8 +1,10 @@
+import 'package:babstrap_settings_screen/babstrap_settings_screen.dart' as babstrap;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../i18n/translations.g.dart';
 import '../../../theme/theme_settings_provider.dart';
+import '../widgets/settings_group_card.dart';
 
 class ThemeSettingsPage extends ConsumerWidget {
   const ThemeSettingsPage({super.key});
@@ -33,80 +35,93 @@ class ThemeSettingsPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(theme.title)),
       body: ListView(
+        padding: const EdgeInsets.all(16),
         children: [
-          SwitchListTile(
-            title: Text(theme.materialYou),
-            subtitle: Text(theme.materialYouDescription),
-            value: settings.materialYou,
-            onChanged: notifier.setMaterialYou,
-          ),
-          ListTile(
-            title: Text(theme.staticThemeColor),
-            trailing: Text(colorLabels[settings.staticThemeColor]),
-            onTap: () async {
-              final result = await showDialog<int>(
-                context: context,
-                builder: (context) {
-                  return SimpleDialog(
-                    title: Text(theme.staticThemeColor),
-                    children: [
-                      RadioGroup<int>(
-                        groupValue: settings.staticThemeColor,
-                        onChanged: (value) => Navigator.of(context).pop(value),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            for (var i = 0; i < colorLabels.length; i++)
-                              RadioListTile<int>(
-                                title: Text(colorLabels[i]),
-                                value: i,
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
+          SettingsGroupCard(
+            items: [
+              babstrap.SettingsItem(
+                icons: Icons.auto_awesome,
+                title: theme.materialYou,
+                subtitle: theme.materialYouDescription,
+                trailing: Switch(
+                  value: settings.materialYou,
+                  onChanged: notifier.setMaterialYou,
+                ),
+              ),
+              babstrap.SettingsItem(
+                icons: Icons.palette_outlined,
+                title: theme.staticThemeColor,
+                trailing: Text(colorLabels[settings.staticThemeColor]),
+                onTap: () async {
+                  final result = await showDialog<int>(
+                    context: context,
+                    builder: (context) {
+                      return SimpleDialog(
+                        title: Text(theme.staticThemeColor),
+                        children: [
+                          RadioGroup<int>(
+                            groupValue: settings.staticThemeColor,
+                            onChanged: (value) => Navigator.of(context).pop(value),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                for (var i = 0; i < colorLabels.length; i++)
+                                  RadioListTile<int>(
+                                    title: Text(colorLabels[i]),
+                                    value: i,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   );
+                  if (result != null) await notifier.setStaticThemeColor(result);
                 },
-              );
-              if (result != null) await notifier.setStaticThemeColor(result);
-            },
-          ),
-          ListTile(
-            title: Text(theme.themeMode),
-            trailing: Text(themeModeLabels[settings.themeMode] ?? settings.themeMode),
-            onTap: () async {
-              final result = await showDialog<String>(
-                context: context,
-                builder: (context) {
-                  return SimpleDialog(
-                    title: Text(theme.themeMode),
-                    children: [
-                      RadioGroup<String>(
-                        groupValue: settings.themeMode,
-                        onChanged: (value) => Navigator.of(context).pop(value),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            for (final entry in themeModeLabels.entries)
-                              RadioListTile<String>(
-                                title: Text(entry.value),
-                                value: entry.key,
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
+              ),
+              babstrap.SettingsItem(
+                icons: Icons.brightness_6_outlined,
+                title: theme.themeMode,
+                trailing: Text(themeModeLabels[settings.themeMode] ?? settings.themeMode),
+                onTap: () async {
+                  final result = await showDialog<String>(
+                    context: context,
+                    builder: (context) {
+                      return SimpleDialog(
+                        title: Text(theme.themeMode),
+                        children: [
+                          RadioGroup<String>(
+                            groupValue: settings.themeMode,
+                            onChanged: (value) => Navigator.of(context).pop(value),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                for (final entry in themeModeLabels.entries)
+                                  RadioListTile<String>(
+                                    title: Text(entry.value),
+                                    value: entry.key,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   );
+                  if (result != null) await notifier.setThemeMode(result);
                 },
-              );
-              if (result != null) await notifier.setThemeMode(result);
-            },
-          ),
-          SwitchListTile(
-            title: Text(theme.useBlackBackgrounds),
-            subtitle: Text(theme.useBlackBackgroundsDescription),
-            value: settings.blackBackgrounds,
-            onChanged: notifier.setBlackBackgrounds,
+              ),
+              babstrap.SettingsItem(
+                icons: Icons.contrast,
+                title: theme.useBlackBackgrounds,
+                subtitle: theme.useBlackBackgroundsDescription,
+                trailing: Switch(
+                  value: settings.blackBackgrounds,
+                  onChanged: notifier.setBlackBackgrounds,
+                ),
+              ),
+            ],
           ),
         ],
       ),

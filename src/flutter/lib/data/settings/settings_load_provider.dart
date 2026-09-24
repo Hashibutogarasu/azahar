@@ -18,6 +18,7 @@ class SettingsLoadNotifier extends Notifier<bool> {
     await AppServices.systemSaveRepository.load();
     await AppServices.controlBindingsValueStore.load();
     await AppServices.settingsRepository.loadLanguageCode();
+    await AppServices.settingsRepository.loadUseLegacySettingsUI();
     state = true;
   }
 }

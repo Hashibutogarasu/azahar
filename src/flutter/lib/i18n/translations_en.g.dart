@@ -164,6 +164,96 @@ class Translations$games$en {
   /// en: 'No files were found or no game directory has been selected yet.'
   String get emptyGamelist =>
       'No files were found or no game directory has been selected yet.';
+
+  /// en: 'Properties'
+  String get properties => 'Properties';
+
+  /// en: 'This application's properties are not yet available. Please wait for the application list to finish loading and try again.'
+  String get propertiesNotLoaded =>
+      'This application\'s properties are not yet available. Please wait for the application list to finish loading and try again.';
+
+  /// en: 'Play'
+  String get play => 'Play';
+
+  /// en: 'Open Folder'
+  String get openFolder => 'Open Folder';
+
+  /// en: 'Delete'
+  String get delete => 'Delete';
+
+  /// en: 'Create Shortcut'
+  String get shortcut => 'Create Shortcut';
+
+  /// en: 'Cheats'
+  String get cheats => 'Cheats';
+
+  /// en: 'Cheats are not available yet in this version of the app.'
+  String get cheatsUnavailable =>
+      'Cheats are not available yet in this version of the app.';
+
+  /// en: 'Compress'
+  String get compress => 'Compress';
+
+  /// en: 'Delete Shader Cache'
+  String get deleteShaderCache => 'Delete Shader Cache';
+
+  /// en: 'Select the graphics API whose shader cache should be deleted'
+  String get deleteCacheSelectBackend =>
+      'Select the graphics API whose shader cache should be deleted';
+
+  /// en: 'Vulkan'
+  String get vulkan => 'Vulkan';
+
+  /// en: 'OpenGLES'
+  String get opengles => 'OpenGLES';
+
+  /// en: 'Shader cache deleted'
+  String get shaderCacheDeleted => 'Shader cache deleted';
+
+  /// en: 'Create Shortcut'
+  String get createShortcut => 'Create Shortcut';
+
+  /// en: 'Shortcut Name'
+  String get shortcutName => 'Shortcut Name';
+
+  /// en: 'The shortcut name cannot be empty'
+  String get shortcutNameEmpty => 'The shortcut name cannot be empty';
+
+  /// en: 'Stretch image'
+  String get shortcutImageStretchToggle => 'Stretch image';
+
+  /// en: 'Edit icon'
+  String get editIcon => 'Edit icon';
+
+  /// en: 'Application'
+  String get openApp => 'Application';
+
+  /// en: 'Save Data'
+  String get openSaveDir => 'Save Data';
+
+  /// en: 'Updates'
+  String get openUpdates => 'Updates';
+
+  /// en: 'DLC'
+  String get openDlc => 'DLC';
+
+  /// en: 'Extra Data'
+  String get openExtra => 'Extra Data';
+
+  /// en: 'Textures'
+  String get openTextures => 'Textures';
+
+  /// en: 'Mods'
+  String get openMods => 'Mods';
+
+  /// en: 'Application'
+  String get uninstallCia => 'Application';
+
+  /// en: 'Updates'
+  String get uninstallUpdates => 'Updates';
+
+  /// en: 'DLC'
+  String get uninstallDlc => 'DLC';
 }
 
 // Path: emulation
@@ -186,6 +276,15 @@ class Translations$emulation$en {
   /// en: '${progress}/${max}'
   String shaderProgress({required Object progress, required Object max}) =>
       '${progress}/${max}';
+
+  /// en: 'General'
+  String get menuSectionGeneral => 'General';
+
+  /// en: 'Pause Emulation'
+  String get pauseEmulation => 'Pause Emulation';
+
+  /// en: 'Resume Emulation'
+  String get resumeEmulation => 'Resume Emulation';
 
   /// en: 'Other'
   String get menuSectionOther => 'Other';
@@ -287,11 +386,54 @@ class Translations$options$en {
   /// en: 'Modify the look of the app'
   String get themeAndColorDescription => 'Modify the look of the app';
 
+  /// en: 'Media'
+  String get media => 'Media';
+
+  /// en: 'Background playback and media session settings'
+  String get mediaDescription =>
+      'Background playback and media session settings';
+
   /// en: 'About'
   String get about => 'About';
 
   /// en: 'Build version, credits, and more'
   String get aboutDescription => 'Build version, credits, and more';
+
+  /// en: 'General'
+  String get groupGeneral => 'General';
+
+  /// en: 'System'
+  String get groupSystem => 'System';
+
+  /// en: 'Graphics'
+  String get groupGraphics => 'Graphics';
+
+  /// en: 'Tools'
+  String get groupTools => 'Tools';
+
+  /// en: 'Folder Settings'
+  String get groupFolderSettings => 'Folder Settings';
+
+  /// en: 'Other'
+  String get groupOther => 'Other';
+
+  /// en: 'Emulation'
+  String get emulation => 'Emulation';
+
+  /// en: 'General, System, Audio, Camera and Controls settings'
+  String get emulationDescription =>
+      'General, System, Audio, Camera and Controls settings';
+
+  /// en: 'Use Legacy Settings UI'
+  String get useLegacySettingsUI => 'Use Legacy Settings UI';
+
+  /// en: 'Switch back to the previous Options screen design'
+  String get useLegacySettingsUIDescription =>
+      'Switch back to the previous Options screen design';
+
+  late final Translations$options$useLegacySettingsUIDialog$en
+  useLegacySettingsUIDialog =
+      Translations$options$useLegacySettingsUIDialog$en.internal(_root);
 }
 
 // Path: systemFiles
@@ -449,6 +591,8 @@ class Translations$settings$en {
       Translations$settings$inputBindingDialog$en.internal(_root);
   late final Translations$settings$general$en general =
       Translations$settings$general$en.internal(_root);
+  late final Translations$settings$media$en media =
+      Translations$settings$media$en.internal(_root);
   late final Translations$settings$graphics$en graphics =
       Translations$settings$graphics$en.internal(_root);
   late final Translations$settings$system$en system =
@@ -667,6 +811,25 @@ class Translations$setup$done$en {
   String get continueLabel => 'Continue';
 }
 
+// Path: options.useLegacySettingsUIDialog
+class Translations$options$useLegacySettingsUIDialog$en {
+  Translations$options$useLegacySettingsUIDialog$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Switch Settings UI?'
+  String get title => 'Switch Settings UI?';
+
+  /// en: 'This changes how the Options screen looks. You can switch back at any time.'
+  String get message =>
+      'This changes how the Options screen looks. You can switch back at any time.';
+
+  /// en: 'Switch'
+  String get confirm => 'Switch';
+}
+
 // Path: settings.resetToDefaultDialog
 class Translations$settings$resetToDefaultDialog$en {
   Translations$settings$resetToDefaultDialog$en.internal(this._root);
@@ -741,6 +904,25 @@ class Translations$settings$general$en {
   /// en: 'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.'
   String get frameLimitSliderDescription =>
       'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.';
+}
+
+// Path: settings.media
+class Translations$settings$media$en {
+  Translations$settings$media$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Media'
+  String get title => 'Media';
+
+  /// en: 'Treat as Android Media'
+  String get treatAudioAsMediaSession => 'Treat as Android Media';
+
+  /// en: 'Shows playback controls on the lock screen and notification like a music app, and keeps audio playing when the app is in the background instead of pausing automatically.'
+  String get treatAudioAsMediaSessionDescription =>
+      'Shows playback controls on the lock screen and notification like a music app, and keeps audio playing when the app is in the background instead of pausing automatically.';
 }
 
 // Path: settings.graphics
@@ -2194,12 +2376,47 @@ extension on Translations {
           'games.searchHint' => 'Search Applications',
           'games.emptyGamelist' =>
             'No files were found or no game directory has been selected yet.',
+          'games.properties' => 'Properties',
+          'games.propertiesNotLoaded' =>
+            'This application\'s properties are not yet available. Please wait for the application list to finish loading and try again.',
+          'games.play' => 'Play',
+          'games.openFolder' => 'Open Folder',
+          'games.delete' => 'Delete',
+          'games.shortcut' => 'Create Shortcut',
+          'games.cheats' => 'Cheats',
+          'games.cheatsUnavailable' =>
+            'Cheats are not available yet in this version of the app.',
+          'games.compress' => 'Compress',
+          'games.deleteShaderCache' => 'Delete Shader Cache',
+          'games.deleteCacheSelectBackend' =>
+            'Select the graphics API whose shader cache should be deleted',
+          'games.vulkan' => 'Vulkan',
+          'games.opengles' => 'OpenGLES',
+          'games.shaderCacheDeleted' => 'Shader cache deleted',
+          'games.createShortcut' => 'Create Shortcut',
+          'games.shortcutName' => 'Shortcut Name',
+          'games.shortcutNameEmpty' => 'The shortcut name cannot be empty',
+          'games.shortcutImageStretchToggle' => 'Stretch image',
+          'games.editIcon' => 'Edit icon',
+          'games.openApp' => 'Application',
+          'games.openSaveDir' => 'Save Data',
+          'games.openUpdates' => 'Updates',
+          'games.openDlc' => 'DLC',
+          'games.openExtra' => 'Extra Data',
+          'games.openTextures' => 'Textures',
+          'games.openMods' => 'Mods',
+          'games.uninstallCia' => 'Application',
+          'games.uninstallUpdates' => 'Updates',
+          'games.uninstallDlc' => 'DLC',
           'emulation.loading' => 'Loading…',
           'emulation.preparingShaders' => 'Preparing Shaders',
           'emulation.buildingShaders' => 'Building Shaders',
           'emulation.shaderProgress' =>
             ({required Object progress, required Object max}) =>
                 '${progress}/${max}',
+          'emulation.menuSectionGeneral' => 'General',
+          'emulation.pauseEmulation' => 'Pause Emulation',
+          'emulation.resumeEmulation' => 'Resume Emulation',
           'emulation.menuSectionOther' => 'Other',
           'emulation.closeGame' => 'Close Game',
           'emulation.closeGameMessage' =>
@@ -2234,8 +2451,27 @@ extension on Translations {
             'Allows Azahar to populate the application list',
           'options.themeAndColor' => 'Theme and Color',
           'options.themeAndColorDescription' => 'Modify the look of the app',
+          'options.media' => 'Media',
+          'options.mediaDescription' =>
+            'Background playback and media session settings',
           'options.about' => 'About',
           'options.aboutDescription' => 'Build version, credits, and more',
+          'options.groupGeneral' => 'General',
+          'options.groupSystem' => 'System',
+          'options.groupGraphics' => 'Graphics',
+          'options.groupTools' => 'Tools',
+          'options.groupFolderSettings' => 'Folder Settings',
+          'options.groupOther' => 'Other',
+          'options.emulation' => 'Emulation',
+          'options.emulationDescription' =>
+            'General, System, Audio, Camera and Controls settings',
+          'options.useLegacySettingsUI' => 'Use Legacy Settings UI',
+          'options.useLegacySettingsUIDescription' =>
+            'Switch back to the previous Options screen design',
+          'options.useLegacySettingsUIDialog.title' => 'Switch Settings UI?',
+          'options.useLegacySettingsUIDialog.message' =>
+            'This changes how the Options screen looks. You can switch back at any time.',
+          'options.useLegacySettingsUIDialog.confirm' => 'Switch',
           'systemFiles.title' => 'System Files',
           'systemFiles.preamble' =>
             'Azahar needs console unique data and firmware files from a real console to be able to use some of its features. Such files and data can be set up with the Azahar Artic Setup Tool.\n\nNotes:\n• This operation will install console unique data to Azahar, do not share your user or nand folders after performing the setup process!\n• While doing the setup process, Azahar will link to the console running the setup tool. You can unlink the console later from the System Files tab in the emulator options menu.\n• Do not go online with both Azahar and your 3DS console at the same time after setting up system files, as this could cause issues.\n• Old 3DS setup is needed for the New 3DS setup to work (setting up both is recommended).\n• Both setup modes will work regardless of the model of the console running the setup tool.',
@@ -2296,6 +2532,10 @@ extension on Translations {
           'settings.general.frameLimitSlider' => 'Limit Speed Percent',
           'settings.general.frameLimitSliderDescription' =>
             'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.',
+          'settings.media.title' => 'Media',
+          'settings.media.treatAudioAsMediaSession' => 'Treat as Android Media',
+          'settings.media.treatAudioAsMediaSessionDescription' =>
+            'Shows playback controls on the lock screen and notification like a music app, and keeps audio playing when the app is in the background instead of pausing automatically.',
           'settings.graphics.title' => 'Graphics',
           'settings.graphics.renderer' => 'Renderer',
           'settings.graphics.graphicsApi' => 'Graphics API',
@@ -2694,6 +2934,9 @@ extension on Translations {
           'settings.gamepad.hotkeyPauseOrResume' => 'Toggle Pause',
           'settings.gamepad.hotkeyQuicksave' => 'Quicksave',
           'settings.gamepad.hotkeyQuickload' => 'Quickload',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.gamepad.miscellaneous' => 'Miscellaneous',
           'settings.gamepad.useArticBaseController' =>
             'Use Artic Controller when connected to Artic Base Server',
@@ -2759,9 +3002,6 @@ extension on Translations {
             'Delay Start for LLE Modules',
           'settings.debug.delayStartLleModulesDescription' =>
             'Delays the start of LLE modules to work around race conditions.',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.debug.deterministicAsyncOperations' =>
             'Deterministic Async Operations',
           'settings.debug.deterministicAsyncOperationsDescription' =>

@@ -9,18 +9,18 @@ import '../../i18n/translations.g.dart';
 import 'settings_routes.dart';
 import 'widgets/settings_list.dart';
 
-/// The settings root menu, mirroring the original app's `SettingsSectionScreen` for
-/// `FILE_NAME_CONFIG`: a list of submenus, one per settings section.
-///
-/// Loads `config.ini` on entry and saves it on exit, like `SettingsActivity`.
-class SettingsMenuPage extends ConsumerStatefulWidget {
-  const SettingsMenuPage({super.key});
+/// The pre-redesign settings root menu, kept only for the legacy Options UI
+/// (`useLegacySettingsUI`). The current UI reaches every section directly from the Options
+/// page/`EmulationSettingsPage` instead of through this hub.
+@Deprecated('Superseded by the Options page groups. Kept for the legacy Options UI only.')
+class LegacySettingsMenuPage extends ConsumerStatefulWidget {
+  const LegacySettingsMenuPage({super.key});
 
   @override
-  ConsumerState<SettingsMenuPage> createState() => _SettingsMenuPageState();
+  ConsumerState<LegacySettingsMenuPage> createState() => _LegacySettingsMenuPageState();
 }
 
-class _SettingsMenuPageState extends ConsumerState<SettingsMenuPage> {
+class _LegacySettingsMenuPageState extends ConsumerState<LegacySettingsMenuPage> {
   @override
   void dispose() {
     AppServices.emulatorSettingsRepository.save();
@@ -42,47 +42,47 @@ class _SettingsMenuPageState extends ConsumerState<SettingsMenuPage> {
       SettingsItem.submenu(
         title: t.settings.general.title,
         icon: Icons.tune,
-        onTap: (context) => const GeneralSettingsRoute().push(context),
+        onTap: (context) => const LegacyGeneralSettingsRoute().push(context),
       ),
       SettingsItem.submenu(
         title: t.settings.system.title,
         icon: Icons.memory,
-        onTap: (context) => const SystemSettingsRoute().push(context),
+        onTap: (context) => const LegacySystemSettingsRoute().push(context),
       ),
       SettingsItem.submenu(
         title: t.settings.camera.title,
         icon: Icons.camera_alt,
-        onTap: (context) => const CameraSettingsRoute().push(context),
+        onTap: (context) => const LegacyCameraSettingsRoute().push(context),
       ),
       SettingsItem.submenu(
         title: t.settings.gamepad.title,
         icon: Icons.sports_esports,
-        onTap: (context) => const ControlsSettingsRoute().push(context),
+        onTap: (context) => const LegacyControlsSettingsRoute().push(context),
       ),
       SettingsItem.submenu(
         title: t.settings.graphics.title,
         icon: Icons.monitor,
-        onTap: (context) => const GraphicsSettingsRoute().push(context),
+        onTap: (context) => const LegacyGraphicsSettingsRoute().push(context),
       ),
       SettingsItem.submenu(
         title: t.settings.layout.title,
         icon: Icons.fit_screen,
-        onTap: (context) => const LayoutSettingsRoute().push(context),
+        onTap: (context) => const LegacyLayoutSettingsRoute().push(context),
       ),
       SettingsItem.submenu(
         title: t.settings.audio.title,
         icon: Icons.volume_up,
-        onTap: (context) => const AudioSettingsRoute().push(context),
+        onTap: (context) => const LegacyAudioSettingsRoute().push(context),
       ),
       SettingsItem.submenu(
         title: t.settings.debug.title,
         icon: Icons.code,
-        onTap: (context) => const DebugSettingsRoute().push(context),
+        onTap: (context) => const LegacyDebugSettingsRoute().push(context),
       ),
       SettingsItem.submenu(
         title: t.settings.language.title,
         icon: Icons.language,
-        onTap: (context) => const LanguageSettingsRoute().push(context),
+        onTap: (context) => const LegacyLanguageSettingsRoute().push(context),
       ),
       SettingsItem.action(
         title: t.settings.resetToDefault,

@@ -7,6 +7,7 @@ class EmulationSessionState {
     this.isLaunched = false,
     this.emulationStarted = false,
     this.isPaused = false,
+    this.isAutoPaused = false,
     this.isScreensSwapped = false,
     this.topTextureId,
     this.bottomTextureId,
@@ -17,6 +18,7 @@ class EmulationSessionState {
   final bool isLaunched;
   final bool emulationStarted;
   final bool isPaused;
+  final bool isAutoPaused;
   final bool isScreensSwapped;
   final int? topTextureId;
   final int? bottomTextureId;
@@ -27,6 +29,7 @@ class EmulationSessionState {
     bool? isLaunched,
     bool? emulationStarted,
     bool? isPaused,
+    bool? isAutoPaused,
     bool? isScreensSwapped,
     int? topTextureId,
     int? bottomTextureId,
@@ -37,6 +40,7 @@ class EmulationSessionState {
       isLaunched: isLaunched ?? this.isLaunched,
       emulationStarted: emulationStarted ?? this.emulationStarted,
       isPaused: isPaused ?? this.isPaused,
+      isAutoPaused: isAutoPaused ?? this.isAutoPaused,
       isScreensSwapped: isScreensSwapped ?? this.isScreensSwapped,
       topTextureId: topTextureId ?? this.topTextureId,
       bottomTextureId: bottomTextureId ?? this.bottomTextureId,

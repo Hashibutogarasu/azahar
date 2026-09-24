@@ -1,15 +1,32 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../app_services.dart';
+import '../data/settings/settings_load_provider.dart';
 import '../screens/games/games_list_page.dart';
 import '../screens/home/app_shell.dart';
 import '../screens/options/about_page.dart';
+import '../screens/options/emulation_settings_page.dart';
 import '../screens/options/gpu_driver_manager_page.dart';
+import '../screens/options/legacy_options_page.dart';
 import '../screens/options/options_page.dart';
 import '../screens/options/system_files_page.dart';
+import '../screens/settings/sections/audio_settings_page.dart';
+import '../screens/settings/sections/camera_settings_page.dart';
+import '../screens/settings/sections/controls_settings_page.dart';
+import '../screens/settings/sections/debug_settings_page.dart';
+import '../screens/settings/sections/general_settings_page.dart';
+import '../screens/settings/sections/graphics_settings_page.dart';
+import '../screens/settings/sections/language_settings_page.dart';
+import '../screens/settings/sections/layout_settings_page.dart';
+import '../screens/settings/sections/media_settings_page.dart';
+import '../screens/settings/sections/system_settings_page.dart';
+import '../screens/settings/sections/theme_settings_page.dart';
 import '../screens/setup/setup_wizard_page.dart';
 
 part 'app_routes.g.dart';
+part 'options_page_routes.dart';
 
 @TypedGoRoute<SetupRoute>(path: '/setup')
 class SetupRoute extends GoRouteData with $SetupRoute {
@@ -90,10 +107,25 @@ class OptionsBranchData extends StatefulShellBranchData {
 }
 
 class OptionsRoute extends GoRouteData with $OptionsRoute {
-  const OptionsRoute();
+  const OptionsRoute({this.isLegacy});
+
+  /// Overrides which Options UI to show. When omitted, falls back to
+  /// [AppServices.settingsRepository]'s `useLegacySettingsUI` setting.
+  final bool? isLegacy;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const OptionsPage();
+    if (isLegacy != null) {
+      // ignore: deprecated_member_use_from_same_package
+      return isLegacy! ? const LegacyOptionsPage() : const OptionsPage();
+    }
+    return Consumer(
+      builder: (context, ref, _) {
+        ref.watch(settingsLoadProvider);
+        final useLegacy = AppServices.settingsRepository.useLegacySettingsUI;
+        // ignore: deprecated_member_use_from_same_package
+        return useLegacy ? const LegacyOptionsPage() : const OptionsPage();
+      },
+    );
   }
 }

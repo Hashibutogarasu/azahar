@@ -1,8 +1,13 @@
 import 'package:flutter/services.dart';
 
 import '../models/copy_dir_progress.dart';
+import '../models/create_shortcut_request.dart';
 import '../models/game.dart';
+import '../models/game_folder_kind.dart';
+import '../models/game_folder_status.dart';
+import '../models/game_uninstall_target.dart';
 import '../models/gpu_driver_info.dart';
+import '../models/shader_cache_backend.dart';
 import '../models/shader_cache_progress.dart';
 
 class NativeBridge {
@@ -11,11 +16,21 @@ class NativeBridge {
         _shaderProgressChannel =
             const EventChannel('org.citra.citra_emu/azahar_bridge/shader_progress'),
         _copyProgressChannel =
-            const EventChannel('org.citra.citra_emu/azahar_bridge/copy_progress');
+            const EventChannel('org.citra.citra_emu/azahar_bridge/copy_progress'),
+        _systemVolumeChannel =
+            const EventChannel('org.citra.citra_emu/azahar_bridge/system_volume'),
+        _mediaNotificationStopChannel =
+            const EventChannel('org.citra.citra_emu/azahar_bridge/media_notification_stop'),
+        _mediaNotificationPlayPauseChannel = const EventChannel(
+          'org.citra.citra_emu/azahar_bridge/media_notification_play_pause',
+        );
 
   final MethodChannel _channel;
   final EventChannel _shaderProgressChannel;
   final EventChannel _copyProgressChannel;
+  final EventChannel _mediaNotificationStopChannel;
+  final EventChannel _mediaNotificationPlayPauseChannel;
+  final EventChannel _systemVolumeChannel;
 
   Stream<CopyDirProgress> copyDirProgress() {
     return _copyProgressChannel.receiveBroadcastStream().map((event) {
@@ -144,8 +159,61 @@ class NativeBridge {
     return _channel.invokeMethod<void>('resumeEmulation');
   }
 
+  Future<void> pauseRendering() {
+    return _channel.invokeMethod<void>('pauseRendering');
+  }
+
+  Future<void> resumeRendering() {
+    return _channel.invokeMethod<void>('resumeRendering');
+  }
+
   Future<void> stopEmulation() {
     return _channel.invokeMethod<void>('stopEmulation');
+  }
+
+  Future<double> getSystemMediaVolume() async {
+    final result = await _channel.invokeMethod<double>('getSystemMediaVolume');
+    return result ?? 0;
+  }
+
+  Future<void> setSystemMediaVolume(double volume) {
+    return _channel.invokeMethod<void>('setSystemMediaVolume', {'volume': volume});
+  }
+
+  Stream<double> systemMediaVolumeChanges() {
+    return _systemVolumeChannel.receiveBroadcastStream().map((event) => (event as num).toDouble());
+  }
+
+  Future<void> activateMediaNotification({
+    required String title,
+    String? artworkPath,
+    required bool isPlaying,
+  }) {
+    return _channel.invokeMethod<void>('activateMediaNotification', {
+      'title': title,
+      'artworkPath': artworkPath,
+      'isPlaying': isPlaying,
+    });
+  }
+
+  Future<void> updateMediaNotificationPlaybackState({required bool isPlaying}) {
+    return _channel.invokeMethod<void>('updateMediaNotificationPlaybackState', {
+      'isPlaying': isPlaying,
+    });
+  }
+
+  Future<void> deactivateMediaNotification() {
+    return _channel.invokeMethod<void>('deactivateMediaNotification');
+  }
+
+  Stream<void> mediaNotificationStopRequests() {
+    return _mediaNotificationStopChannel.receiveBroadcastStream().map((_) {});
+  }
+
+  Stream<bool> mediaNotificationPlayPauseRequests() {
+    return _mediaNotificationPlayPauseChannel.receiveBroadcastStream().map(
+          (event) => event as bool,
+        );
   }
 
   Future<void> launchEmulationActivity(String gamePath) {
@@ -250,6 +318,58 @@ class NativeBridge {
   Future<bool> selectGpuDriver(String? uri) async {
     final result = await _channel.invokeMethod<bool>('selectGpuDriver', {'uri': uri});
     return result ?? false;
+  }
+
+  Future<GameFolderStatus> getGameFolderStatus(Game game) async {
+    final result = await _channel.invokeMethod<List<Object?>>('getGameFolderStatus', {
+      'titleId': game.titleId,
+      'path': game.path,
+    });
+    final flags = result?.cast<bool>() ?? List<bool>.filled(GameFolderKind.values.length, false);
+    return GameFolderStatus(
+      app: flags[GameFolderKind.app.index],
+      save: flags[GameFolderKind.save.index],
+      updates: flags[GameFolderKind.updates.index],
+      dlc: flags[GameFolderKind.dlc.index],
+      extra: flags[GameFolderKind.extra.index],
+      textures: flags[GameFolderKind.textures.index],
+      mods: flags[GameFolderKind.mods.index],
+    );
+  }
+
+  Future<bool> openGameFolder(Game game, GameFolderKind folder) async {
+    final result = await _channel.invokeMethod<bool>('openGameFolder', {
+      'titleId': game.titleId,
+      'path': game.path,
+      'folder': folder.name,
+    });
+    return result ?? false;
+  }
+
+  Future<bool> deleteGameFolder(Game game, GameUninstallTarget target) async {
+    final result = await _channel.invokeMethod<bool>('deleteGameFolder', {
+      'titleId': game.titleId,
+      'path': game.path,
+      'target': target.name,
+    });
+    return result ?? false;
+  }
+
+  Future<void> deleteShaderCache(Game game, ShaderCacheBackend backend) {
+    return _channel.invokeMethod<void>('deleteShaderCache', {
+      'titleId': game.titleId,
+      'backend': backend.name,
+    });
+  }
+
+  Future<void> createGameShortcut(CreateShortcutRequest request) {
+    return _channel.invokeMethod<void>('createGameShortcut', {
+      'titleId': request.titleId,
+      'path': request.path,
+      'name': request.name,
+      'iconFilePath': request.iconFilePath,
+      'stretch': request.stretch,
+    });
   }
 
   Game _gameFromMap(Map<Object?, Object?> map) {

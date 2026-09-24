@@ -1,13 +1,17 @@
 package org.citra.citra_emu
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Process
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
@@ -18,7 +22,10 @@ import org.citra.citra_emu.applets.SoftwareKeyboard
 import org.citra.citra_emu.camera.StillImageCameraHelper
 import org.citra.citra_emu.channel.AzaharMethodHandler
 import org.citra.citra_emu.channel.EmulationController
+import org.citra.citra_emu.channel.MediaNotificationController
+import org.citra.citra_emu.channel.SettingsController
 import org.citra.citra_emu.channel.ShowMiiSelector
+import org.citra.citra_emu.channel.SystemVolumeController
 import org.citra.citra_emu.utils.AppletBridge
 import org.citra.citra_emu.utils.DiskShaderCacheProgress
 
@@ -35,6 +42,16 @@ class EmulationActivity : FlutterFragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         gamePath = intent.getStringExtra(EXTRA_GAME_PATH) ?: ""
         super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+                PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                REQUEST_CODE_NOTIFICATION_PERMISSION
+            )
+        }
     }
 
     override fun onResume() {
@@ -76,6 +93,8 @@ class EmulationActivity : FlutterFragmentActivity() {
                     grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
                 )
 
+            REQUEST_CODE_NOTIFICATION_PERMISSION -> Unit
+
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
@@ -84,8 +103,13 @@ class EmulationActivity : FlutterFragmentActivity() {
         super.configureFlutterEngine(flutterEngine)
 
         val emulationController = EmulationController(flutterEngine.renderer)
+        val systemVolumeController = SystemVolumeController(this)
+        val settingsController = SettingsController()
+        val mediaNotificationController = MediaNotificationController(this)
         val handlers: Map<String, AzaharMethodHandler> =
-            (emulationController.handlers + TerminateProcess())
+            (emulationController.handlers + systemVolumeController.handlers +
+                settingsController.handlers + mediaNotificationController.handlers +
+                TerminateProcess())
                 .associateBy { it.name }
 
         val appletChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, APPLET_CHANNEL)
@@ -153,6 +177,15 @@ class EmulationActivity : FlutterFragmentActivity() {
                 }
             })
 
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, SYSTEM_VOLUME_CHANNEL)
+            .setStreamHandler(systemVolumeController.createVolumeChangeStreamHandler())
+
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, MEDIA_NOTIFICATION_STOP_CHANNEL)
+            .setStreamHandler(mediaNotificationController.createStopEventStreamHandler())
+
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, MEDIA_NOTIFICATION_PLAY_PAUSE_CHANNEL)
+            .setStreamHandler(mediaNotificationController.createPlayPauseEventStreamHandler())
+
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
                 handlers[call.method]?.execute(call, result) ?: result.notImplemented()
@@ -169,16 +202,24 @@ class EmulationActivity : FlutterFragmentActivity() {
     }
 
     companion object {
+        const val PROCESS_SUFFIX = ":emulation"
+        private const val REQUEST_CODE_NOTIFICATION_PERMISSION = 0x617a6169
         private const val EXTRA_GAME_PATH = "gamePath"
         private const val CHANNEL = "org.citra.citra_emu/azahar_bridge"
         private const val SHADER_PROGRESS_CHANNEL = "org.citra.citra_emu/azahar_bridge/shader_progress"
         private const val APPLET_CHANNEL = "org.citra.citra_emu/azahar_bridge/applet"
+        private const val SYSTEM_VOLUME_CHANNEL = "org.citra.citra_emu/azahar_bridge/system_volume"
+        private const val MEDIA_NOTIFICATION_STOP_CHANNEL =
+            "org.citra.citra_emu/azahar_bridge/media_notification_stop"
+        private const val MEDIA_NOTIFICATION_PLAY_PAUSE_CHANNEL =
+            "org.citra.citra_emu/azahar_bridge/media_notification_play_pause"
 
         fun start(context: Context, gamePath: String) {
-            context.startActivity(
-                Intent(context, EmulationActivity::class.java)
-                    .putExtra(EXTRA_GAME_PATH, gamePath)
-            )
+            context.startActivity(createLaunchIntent(context, gamePath))
         }
+
+        fun createLaunchIntent(context: Context, gamePath: String): Intent =
+            Intent(context, EmulationActivity::class.java)
+                .putExtra(EXTRA_GAME_PATH, gamePath)
     }
 }
