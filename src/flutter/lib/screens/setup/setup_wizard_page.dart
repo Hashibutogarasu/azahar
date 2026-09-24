@@ -28,6 +28,7 @@ class _SetupWizardPageState extends State<SetupWizardPage> {
     AppServices.nativeBridge,
     AppServices.settingsRepository,
     UserDirectoriesService(),
+    AppServices.gameRepository,
   );
   final Set<int> _hasBeenWarned = {};
   int _currentPage = 0;

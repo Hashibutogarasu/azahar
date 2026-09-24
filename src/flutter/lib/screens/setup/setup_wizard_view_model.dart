@@ -1,17 +1,24 @@
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../data/game_repository.dart';
 import '../../data/settings/user_directories_provider.dart';
 import '../../data/settings_repository.dart';
 import '../../models/copy_dir_progress.dart';
 import '../../native/native_bridge.dart';
 
 class SetupWizardViewModel extends ChangeNotifier {
-  SetupWizardViewModel(this._nativeBridge, this._settingsRepository, this._userDirectories);
+  SetupWizardViewModel(
+    this._nativeBridge,
+    this._settingsRepository,
+    this._userDirectories,
+    this._gameRepository,
+  );
 
   final NativeBridge _nativeBridge;
   final SettingsRepository _settingsRepository;
   final UserDirectoriesService _userDirectories;
+  final GameRepository _gameRepository;
 
   bool isLoaded = false;
   bool notificationsCompleted = false;
@@ -82,7 +89,8 @@ class SetupWizardViewModel extends ChangeNotifier {
     return true;
   }
 
-  Future<void> completeSetup() {
-    return _settingsRepository.setFirstApplicationLaunchComplete();
+  Future<void> completeSetup() async {
+    await _settingsRepository.setFirstApplicationLaunchComplete();
+    await _gameRepository.rescan();
   }
 }

@@ -13,7 +13,7 @@ class GamesListPage extends StatefulWidget {
   State<GamesListPage> createState() => _GamesListPageState();
 }
 
-class _GamesListPageState extends State<GamesListPage> {
+class _GamesListPageState extends State<GamesListPage> with WidgetsBindingObserver {
   final GameRepository _gameRepository = AppServices.gameRepository;
   final _queryController = TextEditingController();
   List<Game> _games = const [];
@@ -22,13 +22,20 @@ class _GamesListPageState extends State<GamesListPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadCachedThenRescan();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _queryController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _rescan();
   }
 
   Future<void> _loadCachedThenRescan() async {

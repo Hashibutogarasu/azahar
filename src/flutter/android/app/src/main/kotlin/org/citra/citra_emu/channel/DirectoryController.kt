@@ -85,10 +85,12 @@ class DirectoryController(
             val previousUri = call.argument<String>("previousUri")
             val moveData = call.argument<Boolean>("moveData") ?: false
             val parsed = Uri.parse(uri)
-            contentResolver.takePersistableUriPermission(
-                parsed,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-            )
+            if (uri != previousUri) {
+                contentResolver.takePersistableUriPermission(
+                    parsed,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+            }
 
             fun commit() {
                 PermissionsHandler.setCitraDirectory(uri)
