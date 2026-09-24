@@ -39,8 +39,7 @@ class ArticBaseAddressEntryDialog extends StatefulWidget {
 
 class _ArticBaseAddressEntryDialogState extends State<ArticBaseAddressEntryDialog> {
   final _addressController = TextEditingController();
-  bool _selectedO3ds = false;
-  bool _selectedN3ds = false;
+  String? _selected;
 
   @override
   void dispose() {
@@ -55,55 +54,61 @@ class _ArticBaseAddressEntryDialogState extends State<ArticBaseAddressEntryDialo
     final localizations = MaterialLocalizations.of(context);
     return StatefulBuilder(
       builder: (context, setDialogState) {
-        final canConfirm =
-            _addressController.text.isNotEmpty && (_selectedO3ds || _selectedN3ds);
+        final canConfirm = _addressController.text.isNotEmpty && _selected != null;
         return AlertDialog(
           title: Text(s.enterAddress),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _addressController,
-                keyboardType: TextInputType.url,
-                onChanged: (_) => setDialogState(() {}),
-              ),
-              RadioGroup<bool>(
-                groupValue: _selectedO3ds,
-                onChanged: (value) => setDialogState(() {
-                  _selectedO3ds = true;
-                  _selectedN3ds = false;
-                }),
-                child: RadioListTile<bool>(title: Text(s.old3ds), value: true),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 48),
-                child: Text(
-                  widget.o3dsInstalled ? s.statusCompleted : s.statusPossible,
-                  style: Theme.of(context).textTheme.labelSmall,
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _addressController,
+                  keyboardType: TextInputType.url,
+                  decoration: const InputDecoration(border: OutlineInputBorder()),
+                  onChanged: (_) => setDialogState(() {}),
                 ),
-              ),
-              RadioGroup<bool>(
-                groupValue: _selectedN3ds,
-                onChanged: (value) => setDialogState(() {
-                  _selectedN3ds = true;
-                  _selectedO3ds = false;
-                }),
-                child: RadioListTile<bool>(
-                  title: Text(s.new3ds),
-                  value: true,
-                  enabled: widget.o3dsInstalled,
+                RadioGroup<String>(
+                  groupValue: _selected,
+                  onChanged: (value) => setDialogState(() => _selected = value),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: RadioListTile<String>(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(s.old3ds),
+                          value: 'o3ds',
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 48),
+                        child: Text(
+                          widget.o3dsInstalled ? s.statusCompleted : s.statusPossible,
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                      ),
+                      RadioListTile<String>(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(s.new3ds),
+                        value: 'n3ds',
+                        enabled: widget.o3dsInstalled,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 48),
+                        child: Text(
+                          !widget.o3dsInstalled
+                              ? s.statusOld3dsNeeded
+                              : (widget.n3dsInstalled ? s.statusCompleted : s.statusPossible),
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 48),
-                child: Text(
-                  !widget.o3dsInstalled
-                      ? s.statusOld3dsNeeded
-                      : (widget.n3dsInstalled ? s.statusCompleted : s.statusPossible),
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -115,7 +120,7 @@ class _ArticBaseAddressEntryDialogState extends State<ArticBaseAddressEntryDialo
                   ? () => Navigator.of(context).pop(
                         ArticBaseAddressEntryResult(
                           address: _addressController.text,
-                          installO3ds: _selectedO3ds,
+                          installO3ds: _selected == 'o3ds',
                         ),
                       )
                   : null,

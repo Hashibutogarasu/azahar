@@ -21,13 +21,29 @@ class _SystemFilesPageState extends ConsumerState<SystemFilesPage> {
 
   bool _consoleLinked = false;
   bool _runSystemSetup = false;
-  int _selectedRegion = 0;
+  int? _selectedRegion;
+
+  Map<int, String> _homeMenuPaths = {};
 
   @override
   void initState() {
     super.initState();
     _service.isFullConsoleLinked().then((value) => setState(() => _consoleLinked = value));
     _service.isSystemSetupNeeded().then((value) => setState(() => _runSystemSetup = value));
+    _loadHomeMenuPaths();
+  }
+
+  Future<void> _loadHomeMenuPaths() async {
+    final paths = <int, String>{};
+    for (var i = 0; i < _regionLabels.length; i++) {
+      final path = await _service.getHomeMenuPath(i);
+      if (path.isNotEmpty) paths[i] = path;
+    }
+    if (!mounted) return;
+    setState(() {
+      _homeMenuPaths = paths;
+      _selectedRegion = paths.keys.isEmpty ? null : paths.keys.first;
+    });
   }
 
   Future<void> _connectSetupTool() async {
@@ -81,6 +97,7 @@ class _SystemFilesPageState extends ConsumerState<SystemFilesPage> {
     if (mounted) Navigator.of(context, rootNavigator: true).pop();
     final linked = await _service.isFullConsoleLinked();
     if (mounted) setState(() => _consoleLinked = linked);
+    unawaited(_loadHomeMenuPaths());
     await _service.launchArticInstall(address: result.address, installO3ds: result.installO3ds);
   }
 
@@ -107,6 +124,7 @@ class _SystemFilesPageState extends ConsumerState<SystemFilesPage> {
     await _service.unlinkConsole();
     final linked = await _service.isFullConsoleLinked();
     if (mounted) setState(() => _consoleLinked = linked);
+    unawaited(_loadHomeMenuPaths());
   }
 
   @override
@@ -132,14 +150,18 @@ class _SystemFilesPageState extends ConsumerState<SystemFilesPage> {
           DropdownButtonFormField<int>(
             initialValue: _selectedRegion,
             items: [
-              for (var i = 0; i < _regionLabels.length; i++)
+              for (final i in _homeMenuPaths.keys)
                 DropdownMenuItem(value: i, child: Text(_regionLabels[i])),
             ],
-            onChanged: (value) => setState(() => _selectedRegion = value ?? 0),
+            onChanged: _homeMenuPaths.isEmpty
+                ? null
+                : (value) => setState(() => _selectedRegion = value),
           ),
           const SizedBox(height: 16),
           FilledButton(
-            onPressed: () => _service.launchHomeMenu(_selectedRegion),
+            onPressed: _selectedRegion == null
+                ? null
+                : () => _service.launchHomeMenu(_selectedRegion!),
             child: Text(s.start),
           ),
           SwitchListTile(

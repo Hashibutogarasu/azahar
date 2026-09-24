@@ -59,6 +59,7 @@ class SystemFilesController {
     private inner class IsSystemSetupNeeded : AzaharMethodHandler {
         override val name = "isSystemSetupNeeded"
         override fun execute(call: MethodCall, result: MethodChannel.Result) {
+            SystemSaveGame.load()
             result.success(SystemSaveGame.getIsSystemSetupNeeded())
         }
     }
@@ -67,6 +68,7 @@ class SystemFilesController {
         override val name = "setSystemSetupNeeded"
         override fun execute(call: MethodCall, result: MethodChannel.Result) {
             val needed = call.argument<Boolean>("needed")!!
+            SystemSaveGame.load()
             SystemSaveGame.setSystemSetupNeeded(needed)
             result.success(null)
         }
