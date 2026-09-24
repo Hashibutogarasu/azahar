@@ -41,6 +41,8 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
   }) async {
     if (state.isLaunched) return;
 
+    await AppServices.emulatorSettingsRepository.load();
+
     _shaderProgressSubscription = _bridge.shaderCacheProgress().listen((progress) {
       switch (progress.stage) {
         case ShaderCacheStage.prepare:

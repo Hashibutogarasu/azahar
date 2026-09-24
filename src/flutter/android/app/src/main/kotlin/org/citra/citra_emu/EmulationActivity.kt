@@ -18,6 +18,7 @@ import org.citra.citra_emu.applets.SoftwareKeyboard
 import org.citra.citra_emu.camera.StillImageCameraHelper
 import org.citra.citra_emu.channel.AzaharMethodHandler
 import org.citra.citra_emu.channel.EmulationController
+import org.citra.citra_emu.channel.SettingsController
 import org.citra.citra_emu.channel.ShowMiiSelector
 import org.citra.citra_emu.channel.SystemVolumeController
 import org.citra.citra_emu.utils.AppletBridge
@@ -86,8 +87,10 @@ class EmulationActivity : FlutterFragmentActivity() {
 
         val emulationController = EmulationController(flutterEngine.renderer)
         val systemVolumeController = SystemVolumeController(this)
+        val settingsController = SettingsController()
         val handlers: Map<String, AzaharMethodHandler> =
-            (emulationController.handlers + systemVolumeController.handlers + TerminateProcess())
+            (emulationController.handlers + systemVolumeController.handlers +
+                settingsController.handlers + TerminateProcess())
                 .associateBy { it.name }
 
         val appletChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, APPLET_CHANNEL)
