@@ -104,13 +104,17 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
   Future<void> cancelClosePrompt() => _bridge.resumeEmulation();
 
   Future<void> handleAppBackground() async {
-    if (!state.isLaunched || state.isPaused) return;
+    if (!state.isLaunched) return;
+    await _bridge.pauseRendering();
+    if (state.isPaused) return;
     if (_treatAsMediaSession) return;
     await _bridge.pauseEmulation();
     state = state.copyWith(isPaused: true, isAutoPaused: true);
   }
 
   Future<void> handleAppForeground() async {
+    if (!state.isLaunched) return;
+    await _bridge.resumeRendering();
     if (!state.isAutoPaused) return;
     await _bridge.resumeEmulation();
     state = state.copyWith(isPaused: false, isAutoPaused: false);

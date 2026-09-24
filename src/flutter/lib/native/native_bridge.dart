@@ -152,6 +152,14 @@ class NativeBridge {
     return _channel.invokeMethod<void>('resumeEmulation');
   }
 
+  Future<void> pauseRendering() {
+    return _channel.invokeMethod<void>('pauseRendering');
+  }
+
+  Future<void> resumeRendering() {
+    return _channel.invokeMethod<void>('resumeRendering');
+  }
+
   Future<void> stopEmulation() {
     return _channel.invokeMethod<void>('stopEmulation');
   }
