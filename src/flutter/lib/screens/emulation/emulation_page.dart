@@ -20,9 +20,36 @@ class EmulationPage extends ConsumerStatefulWidget {
   ConsumerState<EmulationPage> createState() => _EmulationPageState();
 }
 
-class _EmulationPageState extends ConsumerState<EmulationPage> {
+class _EmulationPageState extends ConsumerState<EmulationPage> with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _launchRequested = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final notifier = ref.read(emulationSessionProvider.notifier);
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.hidden:
+        notifier.handleAppBackground();
+      case AppLifecycleState.resumed:
+        notifier.handleAppForeground();
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.detached:
+        break;
+    }
+  }
 
   void _requestLaunch(EmulationScreensLayout layout) {
     if (_launchRequested) return;
@@ -34,6 +61,7 @@ class _EmulationPageState extends ConsumerState<EmulationPage> {
             gamePath: widget.gamePath,
             layout: layout,
             devicePixelRatio: devicePixelRatio,
+            game: widget.game,
           );
     });
   }

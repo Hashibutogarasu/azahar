@@ -19,6 +19,7 @@ import org.citra.citra_emu.camera.StillImageCameraHelper
 import org.citra.citra_emu.channel.AzaharMethodHandler
 import org.citra.citra_emu.channel.EmulationController
 import org.citra.citra_emu.channel.ShowMiiSelector
+import org.citra.citra_emu.channel.SystemVolumeController
 import org.citra.citra_emu.utils.AppletBridge
 import org.citra.citra_emu.utils.DiskShaderCacheProgress
 
@@ -84,8 +85,9 @@ class EmulationActivity : FlutterFragmentActivity() {
         super.configureFlutterEngine(flutterEngine)
 
         val emulationController = EmulationController(flutterEngine.renderer)
+        val systemVolumeController = SystemVolumeController(this)
         val handlers: Map<String, AzaharMethodHandler> =
-            (emulationController.handlers + TerminateProcess())
+            (emulationController.handlers + systemVolumeController.handlers + TerminateProcess())
                 .associateBy { it.name }
 
         val appletChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, APPLET_CHANNEL)
@@ -153,6 +155,9 @@ class EmulationActivity : FlutterFragmentActivity() {
                 }
             })
 
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, SYSTEM_VOLUME_CHANNEL)
+            .setStreamHandler(systemVolumeController.createVolumeChangeStreamHandler())
+
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
                 handlers[call.method]?.execute(call, result) ?: result.notImplemented()
@@ -169,10 +174,12 @@ class EmulationActivity : FlutterFragmentActivity() {
     }
 
     companion object {
+        const val PROCESS_SUFFIX = ":emulation"
         private const val EXTRA_GAME_PATH = "gamePath"
         private const val CHANNEL = "org.citra.citra_emu/azahar_bridge"
         private const val SHADER_PROGRESS_CHANNEL = "org.citra.citra_emu/azahar_bridge/shader_progress"
         private const val APPLET_CHANNEL = "org.citra.citra_emu/azahar_bridge/applet"
+        private const val SYSTEM_VOLUME_CHANNEL = "org.citra.citra_emu/azahar_bridge/system_volume"
 
         fun start(context: Context, gamePath: String) {
             context.startActivity(createLaunchIntent(context, gamePath))

@@ -1,6 +1,5 @@
-import 'package:flutter/widgets.dart';
-
 import '../../../i18n/translations.g.dart';
+import '../../../routing/app_routes.dart';
 import '../emulator_setting_key.dart';
 import '../settings_item.dart';
 
@@ -30,11 +29,7 @@ abstract final class CustomPortraitLayoutSettingKeys {
   static const bottomHeight = IntKey('Layout', 'custom_portrait_bottom_height', 480);
 }
 
-List<SettingsItem> buildLayoutSettingsItems(
-  Translations t, {
-  required void Function(BuildContext context) onOpenCustomLandscapeLayout,
-  required void Function(BuildContext context) onOpenCustomPortraitLayout,
-}) {
+List<SettingsItem> buildLayoutSettingsItems(Translations t) {
   final l = t.settings.layout;
   return [
     SettingsItem.singleChoice(
@@ -49,8 +44,14 @@ List<SettingsItem> buildLayoutSettingsItems(
       ],
       choiceValues: const [2, 0, 8, 1, 9],
     ),
-    SettingsItem.submenu(title: l.customLandscapeLayout, onTap: onOpenCustomLandscapeLayout),
-    SettingsItem.submenu(title: l.customPortraitLayout, onTap: onOpenCustomPortraitLayout),
+    SettingsItem.submenu(
+      title: l.customLandscapeLayout,
+      onTap: (context) => const OptionsCustomLandscapeLayoutSettingsRoute().push(context),
+    ),
+    SettingsItem.submenu(
+      title: l.customPortraitLayout,
+      onTap: (context) => const OptionsCustomPortraitLayoutSettingsRoute().push(context),
+    ),
   ];
 }
 

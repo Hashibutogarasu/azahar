@@ -1,5 +1,8 @@
 package org.citra.citra_emu
 
+import android.app.ActivityManager
+import android.content.Context
+import android.os.Bundle
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import io.flutter.embedding.android.FlutterFragmentActivity
@@ -47,6 +50,20 @@ class MainActivity : FlutterFragmentActivity() {
     private val gpuDriverController = GpuDriverController()
     private val ciaInstallController by lazy { CiaInstallController(this) }
     private val systemFilesController = SystemFilesController()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null && isEmulationProcessRunning()) {
+            EmulationActivity.start(this, "")
+        }
+    }
+
+    private fun isEmulationProcessRunning(): Boolean {
+        val emulationProcessName = packageName + EmulationActivity.PROCESS_SUFFIX
+        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        return activityManager.runningAppProcesses.orEmpty()
+            .any { it.processName == emulationProcessName }
+    }
 
     override fun onResume() {
         super.onResume()

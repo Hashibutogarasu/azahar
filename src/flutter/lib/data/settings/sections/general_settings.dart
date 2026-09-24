@@ -1,4 +1,5 @@
 import '../../../i18n/translations.g.dart';
+import '../../../routing/app_routes.dart';
 import '../emulator_setting_key.dart';
 import '../settings_item.dart';
 
@@ -21,6 +22,11 @@ List<SettingsItem> buildGeneralSettingsItems(Translations t) {
       min: 1,
       max: 200,
       units: '%',
+    ),
+    SettingsItem.submenu(
+      title: t.settings.general.media,
+      description: t.settings.general.mediaDescription,
+      onTap: (context) => const OptionsMediaSettingsRoute().push(context),
     ),
   ];
 }

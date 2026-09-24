@@ -575,6 +575,8 @@ class Translations$settings$en {
       Translations$settings$inputBindingDialog$en.internal(_root);
   late final Translations$settings$general$en general =
       Translations$settings$general$en.internal(_root);
+  late final Translations$settings$media$en media =
+      Translations$settings$media$en.internal(_root);
   late final Translations$settings$graphics$en graphics =
       Translations$settings$graphics$en.internal(_root);
   late final Translations$settings$system$en system =
@@ -886,6 +888,32 @@ class Translations$settings$general$en {
   /// en: 'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.'
   String get frameLimitSliderDescription =>
       'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.';
+
+  /// en: 'Media'
+  String get media => 'Media';
+
+  /// en: 'Background playback and media session settings'
+  String get mediaDescription =>
+      'Background playback and media session settings';
+}
+
+// Path: settings.media
+class Translations$settings$media$en {
+  Translations$settings$media$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Media'
+  String get title => 'Media';
+
+  /// en: 'Treat as Android Media'
+  String get treatAudioAsMediaSession => 'Treat as Android Media';
+
+  /// en: 'Shows playback controls on the lock screen and notification like a music app, and keeps audio playing when the app is in the background instead of pausing automatically.'
+  String get treatAudioAsMediaSessionDescription =>
+      'Shows playback controls on the lock screen and notification like a music app, and keeps audio playing when the app is in the background instead of pausing automatically.';
 }
 
 // Path: settings.graphics
@@ -2489,6 +2517,13 @@ extension on Translations {
           'settings.general.frameLimitSlider' => 'Limit Speed Percent',
           'settings.general.frameLimitSliderDescription' =>
             'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.',
+          'settings.general.media' => 'Media',
+          'settings.general.mediaDescription' =>
+            'Background playback and media session settings',
+          'settings.media.title' => 'Media',
+          'settings.media.treatAudioAsMediaSession' => 'Treat as Android Media',
+          'settings.media.treatAudioAsMediaSessionDescription' =>
+            'Shows playback controls on the lock screen and notification like a music app, and keeps audio playing when the app is in the background instead of pausing automatically.',
           'settings.graphics.title' => 'Graphics',
           'settings.graphics.renderer' => 'Renderer',
           'settings.graphics.graphicsApi' => 'Graphics API',
@@ -2892,15 +2927,15 @@ extension on Translations {
             'Use Artic Controller when connected to Artic Base Server',
           'settings.gamepad.useArticBaseControllerDescription' =>
             'Use the controls provided by Artic Base Server when connected to it instead of the configured input device.',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.layout.title' => 'Layout',
           'settings.layout.screenOrientation' => 'Screen Orientation',
           'settings.layout.screenOrientationAutoSensor' => 'Automatic',
           'settings.layout.screenOrientationLandscape' => 'Landscape',
           'settings.layout.screenOrientationLandscapeReverse' =>
             'Reverse Landscape',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.layout.screenOrientationPortrait' => 'Portrait',
           'settings.layout.screenOrientationPortraitReverse' =>
             'Reverse Portrait',

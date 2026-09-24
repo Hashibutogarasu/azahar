@@ -4,10 +4,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app_services.dart';
+import '../../data/settings/media_volume_provider.dart';
+import '../../data/settings/sections/media_settings.dart';
+import '../../models/game.dart';
 import '../../models/shader_cache_progress.dart';
 import '../../native/native_bridge.dart';
 import 'emulation_screens_layout.dart';
 import 'emulation_session_state.dart';
+import 'media_session_metadata.dart';
+import 'media_session_service.dart';
 
 final emulationSessionProvider =
     NotifierProvider.autoDispose<EmulationSessionNotifier, EmulationSessionState>(
@@ -17,6 +22,10 @@ final emulationSessionProvider =
 class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
   NativeBridge get _bridge => AppServices.nativeBridge;
   StreamSubscription<ShaderCacheProgress>? _shaderProgressSubscription;
+  final _mediaSession = MediaSessionService();
+
+  bool get _treatAsMediaSession =>
+      AppServices.emulatorSettingsRepository.readBool(MediaSettingKeys.treatAudioAsMediaSession);
 
   @override
   EmulationSessionState build() {
@@ -28,6 +37,7 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
     required String gamePath,
     required EmulationScreensLayout layout,
     required double devicePixelRatio,
+    Game? game,
   }) async {
     if (state.isLaunched) return;
 
@@ -62,6 +72,15 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
       isLaunched: true,
     );
     await _bridge.startEmulation(gamePath);
+
+    if (_treatAsMediaSession && game != null) {
+      await _mediaSession.activate(
+        MediaSessionMetadata(title: game.title, artworkUri: game.iconPath),
+        isPlaying: true,
+        onStop: () => unawaited(terminate()),
+      );
+      await ref.read(mediaVolumeProvider.notifier).startNativeSync();
+    }
   }
 
   Future<void> togglePause() async {
@@ -70,12 +89,26 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
     } else {
       await _bridge.pauseEmulation();
     }
-    state = state.copyWith(isPaused: !state.isPaused);
+    state = state.copyWith(isPaused: !state.isPaused, isAutoPaused: false);
+    await _mediaSession.updatePlaybackState(isPlaying: !state.isPaused);
   }
 
   Future<void> pauseForClosePrompt() => _bridge.pauseEmulation();
 
   Future<void> cancelClosePrompt() => _bridge.resumeEmulation();
+
+  Future<void> handleAppBackground() async {
+    if (!state.isLaunched || state.isPaused) return;
+    if (_treatAsMediaSession) return;
+    await _bridge.pauseEmulation();
+    state = state.copyWith(isPaused: true, isAutoPaused: true);
+  }
+
+  Future<void> handleAppForeground() async {
+    if (!state.isAutoPaused) return;
+    await _bridge.resumeEmulation();
+    state = state.copyWith(isPaused: false, isAutoPaused: false);
+  }
 
   Offset? _toSurfacePosition(Offset position, Size screenSize) {
     final textureSize = state.bottomTextureSize;
@@ -115,6 +148,8 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
   Future<void> _teardownNativeSession() async {
     await _shaderProgressSubscription?.cancel();
     _shaderProgressSubscription = null;
+    await ref.read(mediaVolumeProvider.notifier).stopNativeSync();
+    await _mediaSession.deactivate();
     if (state.isLaunched) {
       await _bridge.stopEmulation();
     }
