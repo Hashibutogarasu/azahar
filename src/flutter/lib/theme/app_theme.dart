@@ -13,19 +13,32 @@ abstract final class AppTheme {
     Colors.blueGrey,
   ];
 
-  static ThemeData light({int staticThemeColor = 0}) {
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: staticThemeColors[staticThemeColor],
-      brightness: Brightness.light,
-    );
+  static ThemeData light({
+    int staticThemeColor = 0,
+    bool materialYou = false,
+    ColorScheme? dynamicScheme,
+  }) {
+    final colorScheme = materialYou && dynamicScheme != null
+        ? dynamicScheme
+        : ColorScheme.fromSeed(
+            seedColor: staticThemeColors[staticThemeColor],
+            brightness: Brightness.light,
+          );
     return ThemeData(useMaterial3: true, colorScheme: colorScheme);
   }
 
-  static ThemeData dark({int staticThemeColor = 0, bool blackBackgrounds = false}) {
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: staticThemeColors[staticThemeColor],
-      brightness: Brightness.dark,
-    );
+  static ThemeData dark({
+    int staticThemeColor = 0,
+    bool blackBackgrounds = false,
+    bool materialYou = false,
+    ColorScheme? dynamicScheme,
+  }) {
+    final colorScheme = materialYou && dynamicScheme != null
+        ? dynamicScheme
+        : ColorScheme.fromSeed(
+            seedColor: staticThemeColors[staticThemeColor],
+            brightness: Brightness.dark,
+          );
     return ThemeData(
       useMaterial3: true,
       colorScheme: blackBackgrounds

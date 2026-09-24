@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -72,16 +73,26 @@ class AzaharApp extends ConsumerWidget {
     return TranslationProvider(
       child: Builder(
         builder: (context) {
-          return MaterialApp.router(
-            title: context.t.appName,
-            themeMode: _themeMode(themeSettings.themeMode),
-            theme: AppTheme.light(staticThemeColor: themeSettings.staticThemeColor),
-            darkTheme: AppTheme.dark(
-              staticThemeColor: themeSettings.staticThemeColor,
-              blackBackgrounds: themeSettings.blackBackgrounds,
-            ),
-            routerConfig: _router,
-            scaffoldMessengerKey: _scaffoldMessengerKey,
+          return DynamicColorBuilder(
+            builder: (lightDynamic, darkDynamic) {
+              return MaterialApp.router(
+                title: context.t.appName,
+                themeMode: _themeMode(themeSettings.themeMode),
+                theme: AppTheme.light(
+                  staticThemeColor: themeSettings.staticThemeColor,
+                  materialYou: themeSettings.materialYou,
+                  dynamicScheme: lightDynamic,
+                ),
+                darkTheme: AppTheme.dark(
+                  staticThemeColor: themeSettings.staticThemeColor,
+                  blackBackgrounds: themeSettings.blackBackgrounds,
+                  materialYou: themeSettings.materialYou,
+                  dynamicScheme: darkDynamic,
+                ),
+                routerConfig: _router,
+                scaffoldMessengerKey: _scaffoldMessengerKey,
+              );
+            },
           );
         },
       ),
