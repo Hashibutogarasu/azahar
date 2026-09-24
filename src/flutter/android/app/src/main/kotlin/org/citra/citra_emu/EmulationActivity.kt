@@ -183,6 +183,9 @@ class EmulationActivity : FlutterFragmentActivity() {
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, MEDIA_NOTIFICATION_STOP_CHANNEL)
             .setStreamHandler(mediaNotificationController.createStopEventStreamHandler())
 
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, MEDIA_NOTIFICATION_PLAY_PAUSE_CHANNEL)
+            .setStreamHandler(mediaNotificationController.createPlayPauseEventStreamHandler())
+
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
                 handlers[call.method]?.execute(call, result) ?: result.notImplemented()
@@ -208,6 +211,8 @@ class EmulationActivity : FlutterFragmentActivity() {
         private const val SYSTEM_VOLUME_CHANNEL = "org.citra.citra_emu/azahar_bridge/system_volume"
         private const val MEDIA_NOTIFICATION_STOP_CHANNEL =
             "org.citra.citra_emu/azahar_bridge/media_notification_stop"
+        private const val MEDIA_NOTIFICATION_PLAY_PAUSE_CHANNEL =
+            "org.citra.citra_emu/azahar_bridge/media_notification_play_pause"
 
         fun start(context: Context, gamePath: String) {
             context.startActivity(createLaunchIntent(context, gamePath))

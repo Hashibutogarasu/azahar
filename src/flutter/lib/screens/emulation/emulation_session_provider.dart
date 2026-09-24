@@ -85,6 +85,14 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
       MediaSessionMetadata(title: game.title, artworkPath: game.iconPath),
       isPlaying: !state.isPaused,
       onStop: () => unawaited(terminate()),
+      onPlay: () {
+        if (!state.isPaused) return;
+        unawaited(togglePause());
+      },
+      onPause: () {
+        if (state.isPaused) return;
+        unawaited(togglePause());
+      },
     );
     await ref.read(mediaVolumeProvider.notifier).startNativeSync();
   }

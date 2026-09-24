@@ -1,7 +1,9 @@
 package org.citra.citra_emu
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import androidx.core.content.ContextCompat
 import androidx.media3.common.MediaItem
@@ -20,9 +22,24 @@ class PlaybackService : MediaSessionService() {
     private var mediaSession: MediaSession? = null
     private lateinit var player: EmulationPlayer
 
+    private val stopReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (intent.action == PlaybackNotificationProvider.ACTION_STOP) {
+                onStopRequested?.invoke()
+            }
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         instance = this
+        setMediaNotificationProvider(PlaybackNotificationProvider(this))
+        ContextCompat.registerReceiver(
+            this,
+            stopReceiver,
+            IntentFilter(PlaybackNotificationProvider.ACTION_STOP),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
         player = EmulationPlayer()
         val session = MediaSession.Builder(this, player).build()
         mediaSession = session
@@ -34,6 +51,7 @@ class PlaybackService : MediaSessionService() {
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? = mediaSession
 
     override fun onDestroy() {
+        unregisterReceiver(stopReceiver)
         mediaSession?.let {
             removeSession(it)
             player.release()
@@ -84,8 +102,10 @@ class PlaybackService : MediaSessionService() {
                 .build()
         }
 
-        override fun handleSetPlayWhenReady(playWhenReady: Boolean): ListenableFuture<*> =
-            Futures.immediateVoidFuture()
+        override fun handleSetPlayWhenReady(playWhenReady: Boolean): ListenableFuture<*> {
+            onPlayPauseRequested?.invoke(playWhenReady)
+            return Futures.immediateVoidFuture()
+        }
 
         override fun handleStop(): ListenableFuture<*> {
             onStopRequested?.invoke()
@@ -101,6 +121,7 @@ class PlaybackService : MediaSessionService() {
         var instance: PlaybackService? = null
             private set
         var onStopRequested: (() -> Unit)? = null
+        var onPlayPauseRequested: ((Boolean) -> Unit)? = null
         private var pendingTitle: String? = null
         private var pendingArtworkPath: String? = null
         private var pendingIsPlaying: Boolean = true

@@ -8,9 +8,11 @@ import org.citra.citra_emu.PlaybackService
 
 class MediaNotificationController(private val context: Context) {
     private var stopEventSink: EventChannel.EventSink? = null
+    private var playPauseEventSink: EventChannel.EventSink? = null
 
     init {
         PlaybackService.onStopRequested = { stopEventSink?.success(null) }
+        PlaybackService.onPlayPauseRequested = { playing -> playPauseEventSink?.success(playing) }
     }
 
     val handlers: List<AzaharMethodHandler> = listOf(
@@ -27,6 +29,18 @@ class MediaNotificationController(private val context: Context) {
 
             override fun onCancel(arguments: Any?) {
                 stopEventSink = null
+            }
+        }
+    }
+
+    fun createPlayPauseEventStreamHandler(): EventChannel.StreamHandler {
+        return object : EventChannel.StreamHandler {
+            override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
+                playPauseEventSink = events
+            }
+
+            override fun onCancel(arguments: Any?) {
+                playPauseEventSink = null
             }
         }
     }
