@@ -104,6 +104,9 @@
     "preparingShaders": "Preparing Shaders",
     "buildingShaders": "Building Shaders",
     "shaderProgress": "${progress}/${max}",
+    "menuSectionGeneral": "General",
+    "pauseEmulation": "Pause Emulation",
+    "resumeEmulation": "Resume Emulation",
     "menuSectionOther": "Other",
     "closeGame": "Close Game",
     "closeGameMessage": "Are you sure that you would like to close the current game?"

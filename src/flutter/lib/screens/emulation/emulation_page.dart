@@ -131,6 +131,8 @@ class _EmulationPageState extends ConsumerState<EmulationPage> with WidgetsBindi
         drawer: state.emulationStarted
             ? EmulationDrawer(
                 gameTitle: widget.game?.title ?? '',
+                isPaused: state.isPaused,
+                onTogglePause: () => ref.read(emulationSessionProvider.notifier).togglePause(),
                 onCloseGame: _confirmCloseGame,
               )
             : null,

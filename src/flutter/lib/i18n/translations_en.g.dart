@@ -277,6 +277,15 @@ class Translations$emulation$en {
   String shaderProgress({required Object progress, required Object max}) =>
       '${progress}/${max}';
 
+  /// en: 'General'
+  String get menuSectionGeneral => 'General';
+
+  /// en: 'Pause Emulation'
+  String get pauseEmulation => 'Pause Emulation';
+
+  /// en: 'Resume Emulation'
+  String get resumeEmulation => 'Resume Emulation';
+
   /// en: 'Other'
   String get menuSectionOther => 'Other';
 
@@ -2405,6 +2414,9 @@ extension on Translations {
           'emulation.shaderProgress' =>
             ({required Object progress, required Object max}) =>
                 '${progress}/${max}',
+          'emulation.menuSectionGeneral' => 'General',
+          'emulation.pauseEmulation' => 'Pause Emulation',
+          'emulation.resumeEmulation' => 'Resume Emulation',
           'emulation.menuSectionOther' => 'Other',
           'emulation.closeGame' => 'Close Game',
           'emulation.closeGameMessage' =>
@@ -2922,14 +2934,14 @@ extension on Translations {
           'settings.gamepad.hotkeyPauseOrResume' => 'Toggle Pause',
           'settings.gamepad.hotkeyQuicksave' => 'Quicksave',
           'settings.gamepad.hotkeyQuickload' => 'Quickload',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.gamepad.miscellaneous' => 'Miscellaneous',
           'settings.gamepad.useArticBaseController' =>
             'Use Artic Controller when connected to Artic Base Server',
           'settings.gamepad.useArticBaseControllerDescription' =>
             'Use the controls provided by Artic Base Server when connected to it instead of the configured input device.',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.layout.title' => 'Layout',
           'settings.layout.screenOrientation' => 'Screen Orientation',
           'settings.layout.screenOrientationAutoSensor' => 'Automatic',
