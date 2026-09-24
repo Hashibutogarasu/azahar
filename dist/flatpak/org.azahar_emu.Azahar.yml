@@ -1,0 +1,27 @@
+app-id: org.azahar_emu.Azahar
+runtime: org.kde.Platform
+runtime-version: '6.7'
+sdk: org.kde.Sdk
+command: azahar
+
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --socket=x11
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --device=all
+  - --filesystem=home
+
+modules:
+  - name: azahar
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DENABLE_QT_TRANSLATION=ON
+      - -DUSE_DISCORD_PRESENCE=OFF
+      - -DUSE_SYSTEM_SDL2=OFF
+      - -DUSE_SYSTEM_BOOST=OFF
+    sources:
+      - type: dir
+        path: ../..
