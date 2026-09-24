@@ -16,8 +16,6 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.text.Html
 import android.text.method.LinkMovementMethod
-import android.view.KeyEvent
-import android.view.MotionEvent
 import android.view.Surface
 import android.view.View
 import android.widget.TextView
@@ -26,7 +24,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.citra.citra_emu.activities.EmulationActivity
-import org.citra.citra_emu.utils.EmulationMenuSettings
 import org.citra.citra_emu.utils.FileUtil
 import org.citra.citra_emu.utils.Log
 import java.lang.ref.WeakReference
@@ -84,25 +81,8 @@ object NativeLibrary {
      */
     external fun onGamePadAxisEvent(device: String?, axisId: Int, axisVal: Float): Boolean
 
-    /** Records a virtual (touch overlay) button's pressed state, merged by GameControllerManager. */
-    external fun setVirtualButton(button: Int, pressed: Boolean)
-
-    /** Records a virtual (touch overlay) stick's position, merged by GameControllerManager. */
-    external fun setVirtualStick(axis: Int, xAxis: Float, yAxis: Float)
-
-    /** Releases every virtual (touch overlay) button/stick tracked by GameControllerManager. */
-    external fun clearVirtualControllerInputs()
-
     /**
-     * Selects whether a gyroscope-capable physical controller's gyroscope should be used in
-     * place of the Android device's own gyroscope. Has no effect when no such controller is
-     * connected; the device's own gyroscope is used in that case regardless of this setting.
-     */
-    external fun setGyroPreferExternalController(preferExternal: Boolean)
-
-    /**
-     * Sets the gyroscope's per-axis output multiplier (1.0 = unchanged), applied regardless of
-     * whether the device's own gyroscope or a physical controller's is currently active.
+     * Sets the gyroscope's per-axis output multiplier (1.0 = unchanged).
      */
     external fun setGyroSensitivity(verticalScale: Float, horizontalScale: Float)
 
@@ -161,28 +141,6 @@ object NativeLibrary {
     external fun surfaceChangedSecondary(surf: Surface)
     external fun surfaceDestroyedSecondary()
     external fun doFrameSecondary()
-
-    /**
-     * Initializes the Android Game Controller Library so physical controllers can be
-     * auto-detected and mapped to standardized inputs, instead of relying on manual bindings.
-     */
-    external fun initGameControllerManager(context: Context)
-    external fun shutdownGameControllerManager()
-
-    /**
-     * Merges the virtual controller with, when readPhysicalControllers is true, every connected
-     * physical controller, and forwards the result to the emulated core. Must be called once per
-     * frame regardless of controller input mode, since the virtual overlay is always active.
-     * invertLeftStickY flips a physical left stick's Y axis back to Android's raw convention.
-     */
-    external fun updateGameControllers(invertLeftStickY: Boolean, readPhysicalControllers: Boolean)
-
-    /**
-     * Forwards a physical controller key/motion event for auto-detect processing. Returns false
-     * (and does nothing) on API levels below 31, letting the caller fall back to manual mapping.
-     */
-    external fun onGameControllerKeyEvent(event: KeyEvent): Boolean
-    external fun onGameControllerMotionEvent(event: MotionEvent): Boolean
 
     /**
      * Unpauses emulation from a paused state.
@@ -433,18 +391,6 @@ object NativeLibrary {
                 fragment.arguments = args
                 return fragment
             }
-        }
-    }
-
-    /**
-     * Called from native code when the Game Controller Library detects a physical controller
-     * connecting or disconnecting, so the UI can react (e.g. auto-hide the virtual overlay).
-     */
-    @Keep
-    @JvmStatic
-    fun onControllerConnectionChanged(connected: Boolean) {
-        if (connected && EmulationMenuSettings.autoDisableOverlayOnController) {
-            sEmulationActivity.get()?.setOverlayAutoHidden(true)
         }
     }
 

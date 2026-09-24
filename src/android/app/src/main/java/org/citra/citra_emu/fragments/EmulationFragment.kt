@@ -113,14 +113,6 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
      */
     private val topFirstState = mutableStateOf(!EmulationMenuSettings.swapScreens)
 
-    /**
-     * Tracks whether Paddleboat is currently initialized, so [doFrame] can react to the user
-     * changing [IntSetting.CONTROLLER_INPUT_MODE] or [IntSetting.GYRO_INPUT_SOURCE] mid-session.
-     * [NativeLibrary.updateGameControllers] itself is still called every frame regardless, since
-     * it also merges in the virtual (touch overlay) controller.
-     */
-    private var gameControllerManagerActive = false
-
     private val sidebarViewModel: SidebarViewModel by viewModels()
 
     /**
@@ -536,7 +528,6 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
     }
 
     override fun onPause() {
-        NativeLibrary.clearVirtualControllerInputs()
         if (NativeLibrary.isRunning()) {
             emulationState.pause()
             sidebarViewModel.setPaused(true)
@@ -1055,22 +1046,6 @@ class EmulationFragment : Fragment(), Choreographer.FrameCallback {
         NativeLibrary.doFrame()
         NativeLibrary.doFrameSecondary()
 
-        val autoDetectEnabled = IntSetting.CONTROLLER_INPUT_MODE.int != 0
-        val gyroPreferExternal = IntSetting.GYRO_INPUT_SOURCE.int != 0
-        val needsGameControllerManager = autoDetectEnabled || gyroPreferExternal
-        if (needsGameControllerManager != gameControllerManagerActive) {
-            gameControllerManagerActive = needsGameControllerManager
-            if (needsGameControllerManager) {
-                NativeLibrary.initGameControllerManager(requireContext().applicationContext)
-            } else {
-                NativeLibrary.shutdownGameControllerManager()
-            }
-        }
-        NativeLibrary.updateGameControllers(
-            BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS.boolean,
-            autoDetectEnabled
-        )
-        NativeLibrary.setGyroPreferExternalController(gyroPreferExternal)
         NativeLibrary.setGyroSensitivity(
             ScaledFloatSetting.GYRO_SENSITIVITY_VERTICAL.float /
                 ScaledFloatSetting.GYRO_SENSITIVITY_VERTICAL.scale,

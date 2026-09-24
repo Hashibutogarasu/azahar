@@ -33,7 +33,6 @@ static jmethodID s_request_camera_permission;
 static jmethodID s_request_mic_permission;
 static jmethodID s_request_wifi_permission;
 static jmethodID s_scan_wifi_access_points;
-static jmethodID s_on_controller_connection_changed;
 
 static jclass s_cheat_class;
 static jfieldID s_cheat_pointer;
@@ -118,10 +117,6 @@ jmethodID GetScanWifiAccessPoints() {
     return s_scan_wifi_access_points;
 }
 
-jmethodID GetOnControllerConnectionChanged() {
-    return s_on_controller_connection_changed;
-}
-
 jclass GetCheatClass() {
     return s_cheat_class;
 }
@@ -203,8 +198,6 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
     s_scan_wifi_access_points = env->GetStaticMethodID(s_native_library_class,
                                                        "scanWifiAccessPoints",
                                                        "()[Ljava/lang/String;");
-    s_on_controller_connection_changed = env->GetStaticMethodID(
-        s_native_library_class, "onControllerConnectionChanged", "(Z)V");
     env->DeleteLocalRef(native_library_class);
 
     // Initialize Cheat

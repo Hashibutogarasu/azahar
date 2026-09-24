@@ -20,11 +20,6 @@ enum class BooleanSetting(
     DELAY_START_LLE_MODULES("delay_start_for_lle_modules", Settings.SECTION_DEBUG, true),
     DETERMINISTIC_ASYNC_OPERATIONS("deterministic_async_operations", Settings.SECTION_DEBUG, false),
     REQUIRED_ONLINE_LLE_MODULES("enable_required_online_lle_modules", Settings.SECTION_SYSTEM, false),
-    INVERT_CONTROLLER_LEFT_STICK_Y_AXIS(
-        "invert_controller_left_stick_y_axis",
-        Settings.SECTION_CONTROLS,
-        false
-    ),
     INVERT_GYRO_VERTICAL("invert_gyro_vertical", Settings.SECTION_CONTROLS, false),
     INVERT_GYRO_HORIZONTAL("invert_gyro_horizontal", Settings.SECTION_CONTROLS, false);
 

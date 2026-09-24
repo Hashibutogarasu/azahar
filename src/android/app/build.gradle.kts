@@ -54,7 +54,6 @@ android {
     buildFeatures {
         viewBinding = true
         compose = true
-        prefab = true
     }
 
     lint {
@@ -83,8 +82,7 @@ android {
                     "-DENABLE_QT=0", // Don't use QT
                     "-DENABLE_SDL2=0", // Don't use SDL
                     "-DANDROID_ARM_NEON=true", // cryptopp requires Neon to work
-                    "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON", // Support Android 15 16KiB page sizes
-                    "-DANDROID_STL=c++_shared"
+                    "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON" // Support Android 15 16KiB page sizes
                 )
             }
         }
@@ -184,7 +182,6 @@ dependencies {
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.work:work-runtime:2.9.1")
     implementation("com.google.android.material:material:1.9.0")
-    implementation("androidx.games:games-controller:2.0.2")
     implementation(project(":radialgamepad"))
     implementation("info.debatty:java-string-similarity:2.0.0")
     implementation("io.coil-kt:coil-compose:2.7.0")

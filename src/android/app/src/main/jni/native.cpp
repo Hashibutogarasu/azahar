@@ -60,7 +60,6 @@
 #ifdef ENABLE_VULKAN
 #include "jni/emu_window/emu_window_vk.h"
 #endif
-#include "jni/game_controller_manager.h"
 #include "jni/id_cache.h"
 #include "jni/input_manager.h"
 #include "jni/ndk_motion.h"
@@ -146,7 +145,6 @@ static void TryShutdown() {
     secondary_window.reset();
     window.reset();
     InputManager::Shutdown();
-    GameControllerManager::Shutdown(IDCache::GetEnvForThread());
     MicroProfileShutdown();
 }
 
@@ -510,56 +508,6 @@ void Java_org_citra_citra_1emu_NativeLibrary_doFrameSecondary([[maybe_unused]] J
     }
 }
 
-void Java_org_citra_citra_1emu_NativeLibrary_initGameControllerManager(JNIEnv* env,
-                                                                        [[maybe_unused]] jobject obj,
-                                                                        jobject context) {
-    GameControllerManager::Init(env, context);
-}
-
-void Java_org_citra_citra_1emu_NativeLibrary_shutdownGameControllerManager(JNIEnv* env,
-                                                                            [[maybe_unused]] jobject
-                                                                                obj) {
-    GameControllerManager::Shutdown(env);
-}
-
-void Java_org_citra_citra_1emu_NativeLibrary_updateGameControllers(
-    JNIEnv* env, [[maybe_unused]] jobject obj, jboolean invert_left_stick_y,
-    jboolean read_physical_controllers) {
-    GameControllerManager::Update(env, invert_left_stick_y != JNI_FALSE,
-                                  read_physical_controllers != JNI_FALSE);
-}
-
-void Java_org_citra_citra_1emu_NativeLibrary_setVirtualButton(
-    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jint button, jboolean pressed) {
-    GameControllerManager::SetVirtualButton(button, pressed == JNI_TRUE);
-}
-
-/** Forwards virtual stick input to GameControllerManager, normalized like onGamePadMoveEvent(). */
-void Java_org_citra_citra_1emu_NativeLibrary_setVirtualStick(
-    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jint axis, jfloat x, jfloat y) {
-    x = std::clamp(x, -1.f, 1.f);
-    y = std::clamp(-y, -1.f, 1.f);
-
-    float r = x * x + y * y;
-    if (r > 1.0f) {
-        r = std::sqrt(r);
-        x /= r;
-        y /= r;
-    }
-    GameControllerManager::SetVirtualStick(axis, x, y);
-}
-
-/** Releases every virtual button/stick tracked by GameControllerManager. */
-void Java_org_citra_citra_1emu_NativeLibrary_clearVirtualControllerInputs(
-    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj) {
-    GameControllerManager::ClearVirtualInputs();
-}
-
-void Java_org_citra_citra_1emu_NativeLibrary_setGyroPreferExternalController(
-    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jboolean prefer) {
-    GameControllerManager::SetGyroPreferExternalController(prefer == JNI_TRUE);
-}
-
 void Java_org_citra_citra_1emu_NativeLibrary_setGyroSensitivity(
     [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jfloat vertical_scale,
     jfloat horizontal_scale) {
@@ -570,16 +518,6 @@ void Java_org_citra_citra_1emu_NativeLibrary_setGyroInvert(
     [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jboolean invert_vertical,
     jboolean invert_horizontal) {
     InputManager::SetGyroInvert(invert_vertical == JNI_TRUE, invert_horizontal == JNI_TRUE);
-}
-
-jboolean Java_org_citra_citra_1emu_NativeLibrary_onGameControllerKeyEvent(
-    JNIEnv* env, [[maybe_unused]] jobject obj, jobject key_event) {
-    return static_cast<jboolean>(GameControllerManager::ProcessKeyEvent(env, key_event));
-}
-
-jboolean Java_org_citra_citra_1emu_NativeLibrary_onGameControllerMotionEvent(
-    JNIEnv* env, [[maybe_unused]] jobject obj, jobject motion_event) {
-    return static_cast<jboolean>(GameControllerManager::ProcessMotionEvent(env, motion_event));
 }
 
 void JNICALL Java_org_citra_citra_1emu_NativeLibrary_initializeGpuDriver(
