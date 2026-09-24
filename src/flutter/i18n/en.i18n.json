@@ -133,6 +133,8 @@
     "selectGamesFolderDescription": "Allows Azahar to populate the application list",
     "themeAndColor": "Theme and Color",
     "themeAndColorDescription": "Modify the look of the app",
+    "media": "Media",
+    "mediaDescription": "Background playback and media session settings",
     "about": "About",
     "aboutDescription": "Build version, credits, and more",
     "groupGeneral": "General",
@@ -209,9 +211,7 @@
       "frameLimitEnable": "Limit Speed",
       "frameLimitEnableDescription": "When enabled, emulation speed will be limited to a specified percentage of normal speed.",
       "frameLimitSlider": "Limit Speed Percent",
-      "frameLimitSliderDescription": "Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.",
-      "media": "Media",
-      "mediaDescription": "Background playback and media session settings"
+      "frameLimitSliderDescription": "Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit."
     },
     "media": {
       "title": "Media",

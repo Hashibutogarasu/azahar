@@ -53,6 +53,12 @@ class OptionsPage extends ConsumerWidget {
                       subtitle: t.options.themeAndColorDescription,
                       onTap: () => const OptionsThemeSettingsRoute().push(context),
                     ),
+                    babstrap.SettingsItem(
+                      icons: Icons.music_note_outlined,
+                      title: t.options.media,
+                      subtitle: t.options.mediaDescription,
+                      onTap: () => const OptionsMediaSettingsRoute().push(context),
+                    ),
                   ],
                 ),
                 SettingsGroupCard(

@@ -20,7 +20,7 @@ class OptionsGeneralSettingsRoute extends GoRouteData with $OptionsGeneralSettin
   }
 }
 
-@TypedGoRoute<OptionsMediaSettingsRoute>(path: '/options/emulation/general/media')
+@TypedGoRoute<OptionsMediaSettingsRoute>(path: '/options/media')
 class OptionsMediaSettingsRoute extends GoRouteData with $OptionsMediaSettingsRoute {
   const OptionsMediaSettingsRoute();
 

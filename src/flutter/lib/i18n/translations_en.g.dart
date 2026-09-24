@@ -377,6 +377,13 @@ class Translations$options$en {
   /// en: 'Modify the look of the app'
   String get themeAndColorDescription => 'Modify the look of the app';
 
+  /// en: 'Media'
+  String get media => 'Media';
+
+  /// en: 'Background playback and media session settings'
+  String get mediaDescription =>
+      'Background playback and media session settings';
+
   /// en: 'About'
   String get about => 'About';
 
@@ -888,13 +895,6 @@ class Translations$settings$general$en {
   /// en: 'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.'
   String get frameLimitSliderDescription =>
       'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.';
-
-  /// en: 'Media'
-  String get media => 'Media';
-
-  /// en: 'Background playback and media session settings'
-  String get mediaDescription =>
-      'Background playback and media session settings';
 }
 
 // Path: settings.media
@@ -2439,6 +2439,9 @@ extension on Translations {
             'Allows Azahar to populate the application list',
           'options.themeAndColor' => 'Theme and Color',
           'options.themeAndColorDescription' => 'Modify the look of the app',
+          'options.media' => 'Media',
+          'options.mediaDescription' =>
+            'Background playback and media session settings',
           'options.about' => 'About',
           'options.aboutDescription' => 'Build version, credits, and more',
           'options.groupGeneral' => 'General',
@@ -2517,9 +2520,6 @@ extension on Translations {
           'settings.general.frameLimitSlider' => 'Limit Speed Percent',
           'settings.general.frameLimitSliderDescription' =>
             'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.',
-          'settings.general.media' => 'Media',
-          'settings.general.mediaDescription' =>
-            'Background playback and media session settings',
           'settings.media.title' => 'Media',
           'settings.media.treatAudioAsMediaSession' => 'Treat as Android Media',
           'settings.media.treatAudioAsMediaSessionDescription' =>

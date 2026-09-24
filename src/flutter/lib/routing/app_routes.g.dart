@@ -292,7 +292,7 @@ mixin $OptionsGeneralSettingsRoute on GoRouteData {
 }
 
 RouteBase get $optionsMediaSettingsRoute => GoRouteData.$route(
-  path: '/options/emulation/general/media',
+  path: '/options/media',
   hasOverriddenOnExit: false,
   factory: $OptionsMediaSettingsRoute._fromState,
 );
@@ -302,8 +302,7 @@ mixin $OptionsMediaSettingsRoute on GoRouteData {
       const OptionsMediaSettingsRoute();
 
   @override
-  String get location =>
-      GoRouteData.$location('/options/emulation/general/media');
+  String get location => GoRouteData.$location('/options/media');
 
   @override
   void go(BuildContext context) => context.go(location);
