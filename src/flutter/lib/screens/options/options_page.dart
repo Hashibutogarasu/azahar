@@ -37,7 +37,9 @@ class OptionsPage extends ConsumerWidget {
           future: ref.read(gpuDriverProvider).isSupported(),
           builder: (context, snapshot) {
             final supportsGpuDriverLoading = snapshot.data ?? false;
-            return ListView(
+            return Material(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
                 babstrap.SettingsGroup(
@@ -175,6 +177,7 @@ class OptionsPage extends ConsumerWidget {
                   ],
                 ),
               ],
+              ),
             );
           },
         ),

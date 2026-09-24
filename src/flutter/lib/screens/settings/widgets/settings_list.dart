@@ -54,7 +54,9 @@ class _SettingsListState extends State<SettingsList> {
       groups.add((currentTitle, currentItems));
     }
 
-    return ListView(
+    return Material(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: ListView(
       padding: const EdgeInsets.all(16),
       children: [
         for (final group in groups)
@@ -64,6 +66,7 @@ class _SettingsListState extends State<SettingsList> {
               items: [for (final item in group.$2) _buildItem(context, item)],
             ),
       ],
+      ),
     );
   }
 
