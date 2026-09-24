@@ -1,7 +1,9 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../app_services.dart';
+import '../data/settings/settings_load_provider.dart';
 import '../screens/games/games_list_page.dart';
 import '../screens/home/app_shell.dart';
 import '../screens/options/about_page.dart';
@@ -100,8 +102,17 @@ class OptionsRoute extends GoRouteData with $OptionsRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    final useLegacy = isLegacy ?? AppServices.settingsRepository.useLegacySettingsUI;
-    // ignore: deprecated_member_use_from_same_package
-    return useLegacy ? const LegacyOptionsPage() : const OptionsPage();
+    if (isLegacy != null) {
+      // ignore: deprecated_member_use_from_same_package
+      return isLegacy! ? const LegacyOptionsPage() : const OptionsPage();
+    }
+    return Consumer(
+      builder: (context, ref, _) {
+        ref.watch(settingsLoadProvider);
+        final useLegacy = AppServices.settingsRepository.useLegacySettingsUI;
+        // ignore: deprecated_member_use_from_same_package
+        return useLegacy ? const LegacyOptionsPage() : const OptionsPage();
+      },
+    );
   }
 }

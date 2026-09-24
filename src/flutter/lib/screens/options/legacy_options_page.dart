@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../data/settings/artic_base_provider.dart';
 import '../../data/settings/cia_install_provider.dart';
 import '../../data/settings/gpu_driver_provider.dart';
+import '../../data/settings/options_settings_provider.dart';
 import '../../data/settings/share_log_provider.dart';
 import '../../data/settings/user_directories_provider.dart';
 import '../../i18n/translations.g.dart';
@@ -25,6 +27,7 @@ class LegacyOptionsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = context.t;
+    final settings = ref.read(optionsSettingsProvider);
     return Scaffold(
       body: SafeArea(
         child: FutureBuilder<bool>(
@@ -92,6 +95,13 @@ class LegacyOptionsPage extends ConsumerWidget {
                   title: t.options.themeAndColor,
                   description: t.options.themeAndColorDescription,
                   onTap: () => const LegacyThemeSettingsRoute().push(context),
+                ),
+                _LegacyOptionSwitchCard(
+                  icon: Icons.history_toggle_off,
+                  title: t.options.useLegacySettingsUI,
+                  description: t.options.useLegacySettingsUIDescription,
+                  value: settings.useLegacySettingsUI,
+                  onChanged: (value) => _confirmLegacyToggle(context, ref, t, value),
                 ),
                 _LegacyOptionCard(
                   icon: Icons.info_outline,
@@ -162,6 +172,82 @@ class LegacyOptionsPage extends ConsumerWidget {
     if (!found && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.options.shareLogNotFound)));
     }
+  }
+
+  Future<void> _confirmLegacyToggle(
+    BuildContext context,
+    WidgetRef ref,
+    Translations t,
+    bool value,
+  ) async {
+    final dialog = t.options.useLegacySettingsUIDialog;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(dialog.title),
+          content: Text(dialog.message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(dialog.confirm),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed != true || !context.mounted) return;
+    await ref.read(optionsSettingsProvider).setUseLegacySettingsUI(value);
+    if (context.mounted) {
+      context.go(OptionsRoute(isLegacy: value).location);
+    }
+  }
+}
+
+class _LegacyOptionSwitchCard extends StatelessWidget {
+  const _LegacyOptionSwitchCard({
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final IconData icon;
+  final String title;
+  final String description;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        child: Row(
+          children: [
+            Icon(icon),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(title, style: Theme.of(context).textTheme.titleMedium),
+                  Text(description, style: Theme.of(context).textTheme.bodySmall),
+                ],
+              ),
+            ),
+            Switch(value: value, onChanged: onChanged),
+          ],
+        ),
+      ),
+    );
   }
 }
 
