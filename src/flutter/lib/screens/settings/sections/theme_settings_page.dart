@@ -2,8 +2,8 @@ import 'package:babstrap_settings_screen/babstrap_settings_screen.dart' as babst
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../data/settings/options_settings_provider.dart';
 import '../../../i18n/translations.g.dart';
+import '../../../theme/theme_settings_provider.dart';
 import '../widgets/settings_group_card.dart';
 
 class ThemeSettingsPage extends ConsumerWidget {
@@ -13,9 +13,8 @@ class ThemeSettingsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = context.t;
     final theme = t.settings.theme;
-    final options = ref.watch(optionsSettingsProvider);
-    final settings = options.themeSettings;
-    final notifier = options.themeSettingsNotifier;
+    final settings = ref.watch(themeSettingsProvider);
+    final notifier = ref.read(themeSettingsProvider.notifier);
     final colorLabels = [
       theme.staticThemeColorBlue,
       theme.staticThemeColorCyan,
