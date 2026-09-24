@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/settings/options_settings_provider.dart';
 import '../../../i18n/translations.g.dart';
+import '../widgets/settings_group_card.dart';
 
 class LanguageSettingsPage extends ConsumerStatefulWidget {
   const LanguageSettingsPage({super.key});
@@ -29,7 +30,7 @@ class _LanguageSettingsPageState extends ConsumerState<LanguageSettingsPage> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          babstrap.SettingsGroup(
+          SettingsGroupCard(
             items: [
               babstrap.SettingsItem(
                 icons: Icons.phone_android,

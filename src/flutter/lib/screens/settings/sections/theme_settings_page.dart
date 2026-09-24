@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/settings/options_settings_provider.dart';
 import '../../../i18n/translations.g.dart';
+import '../widgets/settings_group_card.dart';
 
 class ThemeSettingsPage extends ConsumerWidget {
   const ThemeSettingsPage({super.key});
@@ -37,7 +38,7 @@ class ThemeSettingsPage extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          babstrap.SettingsGroup(
+          SettingsGroupCard(
             items: [
               babstrap.SettingsItem(
                 icons: Icons.auto_awesome,

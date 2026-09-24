@@ -7,8 +7,9 @@ import '../../../data/settings/settings_item.dart';
 import '../../../data/settings/settings_value_store.dart';
 import '../../../errors/app_exception.dart';
 import '../../../i18n/translations.g.dart';
+import 'settings_group_card.dart';
 
-/// Renders a list of [SettingsItem]s using [babstrap.SettingsGroup]/[babstrap.SettingsItem], so
+/// Renders a list of [SettingsItem]s using [SettingsGroupCard]/[babstrap.SettingsItem], so
 /// every settings screen shares the same visual design as the redesigned Options page. Items are
 /// split into groups at each [SettingsHeaderItem]; a header's title becomes the group's title
 /// instead of being rendered as its own row. Reads and writes each item's value through
@@ -54,19 +55,16 @@ class _SettingsListState extends State<SettingsList> {
       groups.add((currentTitle, currentItems));
     }
 
-    return Material(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: ListView(
+    return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         for (final group in groups)
           if (group.$2.isNotEmpty)
-            babstrap.SettingsGroup(
+            SettingsGroupCard(
               settingsGroupTitle: group.$1,
               items: [for (final item in group.$2) _buildItem(context, item)],
             ),
       ],
-      ),
     );
   }
 

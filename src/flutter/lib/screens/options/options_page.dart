@@ -16,6 +16,7 @@ import '../../i18n/translations.g.dart';
 import '../../routing/app_routes.dart';
 import '../setup/dialogs/citra_directory_dialog.dart';
 import '../setup/dialogs/copy_dir_progress_dialog.dart';
+import '../settings/widgets/settings_group_card.dart';
 import 'dialogs/artic_base_connect_dialog.dart';
 import 'options_routes.dart';
 
@@ -37,12 +38,10 @@ class OptionsPage extends ConsumerWidget {
           future: ref.read(gpuDriverProvider).isSupported(),
           builder: (context, snapshot) {
             final supportsGpuDriverLoading = snapshot.data ?? false;
-            return Material(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: ListView(
+            return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                babstrap.SettingsGroup(
+                SettingsGroupCard(
                   settingsGroupTitle: t.options.groupGeneral,
                   items: [
                     babstrap.SettingsItem(
@@ -58,7 +57,7 @@ class OptionsPage extends ConsumerWidget {
                     ),
                   ],
                 ),
-                babstrap.SettingsGroup(
+                SettingsGroupCard(
                   settingsGroupTitle: t.options.groupSystem,
                   items: [
                     babstrap.SettingsItem(
@@ -69,7 +68,7 @@ class OptionsPage extends ConsumerWidget {
                     ),
                   ],
                 ),
-                babstrap.SettingsGroup(
+                SettingsGroupCard(
                   settingsGroupTitle: t.options.groupGraphics,
                   items: [
                     babstrap.SettingsItem(
@@ -84,7 +83,7 @@ class OptionsPage extends ConsumerWidget {
                     ),
                   ],
                 ),
-                babstrap.SettingsGroup(
+                SettingsGroupCard(
                   settingsGroupTitle: t.options.groupTools,
                   items: [
                     babstrap.SettingsItem(
@@ -120,7 +119,7 @@ class OptionsPage extends ConsumerWidget {
                       ),
                   ],
                 ),
-                babstrap.SettingsGroup(
+                SettingsGroupCard(
                   settingsGroupTitle: t.options.groupFolderSettings,
                   items: [
                     babstrap.SettingsItem(
@@ -137,7 +136,7 @@ class OptionsPage extends ConsumerWidget {
                     ),
                   ],
                 ),
-                babstrap.SettingsGroup(
+                SettingsGroupCard(
                   settingsGroupTitle: t.options.groupOther,
                   items: [
                     babstrap.SettingsItem(
@@ -177,7 +176,6 @@ class OptionsPage extends ConsumerWidget {
                   ],
                 ),
               ],
-              ),
             );
           },
         ),

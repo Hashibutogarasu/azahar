@@ -2,6 +2,7 @@ import 'package:babstrap_settings_screen/babstrap_settings_screen.dart' as babst
 import 'package:flutter/material.dart';
 
 import '../../i18n/translations.g.dart';
+import '../settings/widgets/settings_group_card.dart';
 import 'options_routes.dart';
 
 /// The "Emulation" subpage reached from the Options page's システム (System) group. Groups the
@@ -18,7 +19,7 @@ class EmulationSettingsPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          babstrap.SettingsGroup(
+          SettingsGroupCard(
             items: [
               babstrap.SettingsItem(
                 icons: Icons.tune,
