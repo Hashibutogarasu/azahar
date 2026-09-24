@@ -25,11 +25,13 @@ class MediaVolumeNotifier extends Notifier<double> {
     return AppServices.emulatorSettingsRepository.readFloat(AudioSettingKeys.volume);
   }
 
-  Future<void> setVolume(double percentage) async {
+  Future<void> setVolume(double percentage) => _applyVolume(percentage, pushToNative: true);
+
+  Future<void> _applyVolume(double percentage, {required bool pushToNative}) async {
     state = percentage;
     await AppServices.emulatorSettingsRepository.writeFloat(AudioSettingKeys.volume, percentage);
     await AppServices.emulatorSettingsRepository.save();
-    if (_nativeSubscription != null) {
+    if (pushToNative && _nativeSubscription != null) {
       await _bridge.setSystemMediaVolume(percentage / 100);
     }
   }
@@ -37,9 +39,9 @@ class MediaVolumeNotifier extends Notifier<double> {
   Future<void> startNativeSync() async {
     if (_nativeSubscription != null) return;
     final nativeVolume = await _bridge.getSystemMediaVolume();
-    await setVolume(nativeVolume * 100);
+    await _applyVolume(nativeVolume * 100, pushToNative: false);
     _nativeSubscription = _bridge.systemMediaVolumeChanges().listen((fraction) {
-      unawaited(setVolume(fraction * 100));
+      unawaited(_applyVolume(fraction * 100, pushToNative: false));
     });
   }
 
