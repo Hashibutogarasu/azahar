@@ -23,6 +23,7 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
   NativeBridge get _bridge => AppServices.nativeBridge;
   StreamSubscription<ShaderCacheProgress>? _shaderProgressSubscription;
   final _mediaSession = MediaSessionService();
+  bool _mediaSessionActivated = false;
 
   bool get _treatAsMediaSession =>
       AppServices.emulatorSettingsRepository.readBool(MediaSettingKeys.treatAudioAsMediaSession);
@@ -37,7 +38,6 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
     required String gamePath,
     required EmulationScreensLayout layout,
     required double devicePixelRatio,
-    Game? game,
   }) async {
     if (state.isLaunched) return;
 
@@ -74,15 +74,19 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
       isLaunched: true,
     );
     await _bridge.startEmulation(gamePath);
+  }
 
-    if (_treatAsMediaSession && game != null) {
-      await _mediaSession.activate(
-        MediaSessionMetadata(title: game.title, artworkPath: game.iconPath),
-        isPlaying: true,
-        onStop: () => unawaited(terminate()),
-      );
-      await ref.read(mediaVolumeProvider.notifier).startNativeSync();
-    }
+  Future<void> activateMediaSessionIfNeeded(Game? game) async {
+    if (!state.isLaunched || game == null) return;
+    if (_mediaSessionActivated) return;
+    if (!_treatAsMediaSession) return;
+    _mediaSessionActivated = true;
+    await _mediaSession.activate(
+      MediaSessionMetadata(title: game.title, artworkPath: game.iconPath),
+      isPlaying: !state.isPaused,
+      onStop: () => unawaited(terminate()),
+    );
+    await ref.read(mediaVolumeProvider.notifier).startNativeSync();
   }
 
   Future<void> togglePause() async {
@@ -154,6 +158,7 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
   Future<void> _teardownNativeSession() async {
     await _shaderProgressSubscription?.cancel();
     _shaderProgressSubscription = null;
+    _mediaSessionActivated = false;
     await ref.read(mediaVolumeProvider.notifier).stopNativeSync();
     await _mediaSession.deactivate();
     if (state.isLaunched) {

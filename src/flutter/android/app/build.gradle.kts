@@ -46,7 +46,7 @@ dependencies {
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.work:work-runtime:2.9.1")
     implementation("androidx.documentfile:documentfile:1.0.1")
-    implementation("androidx.media:media:1.7.0")
+    implementation("androidx.media3:media3-session:1.5.1")
 }
 
 flutter {

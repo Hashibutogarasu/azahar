@@ -1,13 +1,17 @@
 package org.citra.citra_emu
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Process
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
@@ -38,6 +42,16 @@ class EmulationActivity : FlutterFragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         gamePath = intent.getStringExtra(EXTRA_GAME_PATH) ?: ""
         super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+                PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                REQUEST_CODE_NOTIFICATION_PERMISSION
+            )
+        }
     }
 
     override fun onResume() {
@@ -78,6 +92,8 @@ class EmulationActivity : FlutterFragmentActivity() {
                 NativeLibrary.wifiPermissionResult(
                     grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
                 )
+
+            REQUEST_CODE_NOTIFICATION_PERMISSION -> Unit
 
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
@@ -184,6 +200,7 @@ class EmulationActivity : FlutterFragmentActivity() {
 
     companion object {
         const val PROCESS_SUFFIX = ":emulation"
+        private const val REQUEST_CODE_NOTIFICATION_PERMISSION = 0x617a6169
         private const val EXTRA_GAME_PATH = "gamePath"
         private const val CHANNEL = "org.citra.citra_emu/azahar_bridge"
         private const val SHADER_PROGRESS_CHANNEL = "org.citra.citra_emu/azahar_bridge/shader_progress"

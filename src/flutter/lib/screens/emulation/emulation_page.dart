@@ -61,8 +61,15 @@ class _EmulationPageState extends ConsumerState<EmulationPage> with WidgetsBindi
             gamePath: widget.gamePath,
             layout: layout,
             devicePixelRatio: devicePixelRatio,
-            game: widget.game,
           );
+    });
+  }
+
+  void _requestMediaSessionActivation() {
+    final game = widget.game;
+    if (game == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(emulationSessionProvider.notifier).activateMediaSessionIfNeeded(game);
     });
   }
 
@@ -93,6 +100,7 @@ class _EmulationPageState extends ConsumerState<EmulationPage> with WidgetsBindi
   Widget _screens(BoxConstraints constraints) {
     final layout = EmulationScreensLayout.fit(constraints.biggest);
     _requestLaunch(layout);
+    _requestMediaSessionActivation();
     final notifier = ref.read(emulationSessionProvider.notifier);
     final state = ref.watch(emulationSessionProvider);
     final topScreen = TopScreen(textureId: state.topTextureId, size: layout.topScreen);
