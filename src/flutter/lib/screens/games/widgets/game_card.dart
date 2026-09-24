@@ -4,10 +4,11 @@ import '../../../models/game.dart';
 import 'game_icon.dart';
 
 class GameCard extends StatelessWidget {
-  const GameCard({super.key, required this.game, required this.onTap});
+  const GameCard({super.key, required this.game, required this.onTap, this.onLongPress});
 
   final Game game;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
 
   bool get _isValidExtension {
     final extension = game.filename.split('.').last.toLowerCase();
@@ -28,6 +29,7 @@ class GameCard extends StatelessWidget {
         ),
         child: InkWell(
           onTap: onTap,
+          onLongPress: onLongPress,
           borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.all(8),

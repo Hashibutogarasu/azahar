@@ -175,10 +175,11 @@ class EmulationActivity : FlutterFragmentActivity() {
         private const val APPLET_CHANNEL = "org.citra.citra_emu/azahar_bridge/applet"
 
         fun start(context: Context, gamePath: String) {
-            context.startActivity(
-                Intent(context, EmulationActivity::class.java)
-                    .putExtra(EXTRA_GAME_PATH, gamePath)
-            )
+            context.startActivity(createLaunchIntent(context, gamePath))
         }
+
+        fun createLaunchIntent(context: Context, gamePath: String): Intent =
+            Intent(context, EmulationActivity::class.java)
+                .putExtra(EXTRA_GAME_PATH, gamePath)
     }
 }

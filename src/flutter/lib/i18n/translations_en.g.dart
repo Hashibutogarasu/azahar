@@ -164,6 +164,96 @@ class Translations$games$en {
   /// en: 'No files were found or no game directory has been selected yet.'
   String get emptyGamelist =>
       'No files were found or no game directory has been selected yet.';
+
+  /// en: 'Properties'
+  String get properties => 'Properties';
+
+  /// en: 'This application's properties are not yet available. Please wait for the application list to finish loading and try again.'
+  String get propertiesNotLoaded =>
+      'This application\'s properties are not yet available. Please wait for the application list to finish loading and try again.';
+
+  /// en: 'Play'
+  String get play => 'Play';
+
+  /// en: 'Open Folder'
+  String get openFolder => 'Open Folder';
+
+  /// en: 'Delete'
+  String get delete => 'Delete';
+
+  /// en: 'Create Shortcut'
+  String get shortcut => 'Create Shortcut';
+
+  /// en: 'Cheats'
+  String get cheats => 'Cheats';
+
+  /// en: 'Cheats are not available yet in this version of the app.'
+  String get cheatsUnavailable =>
+      'Cheats are not available yet in this version of the app.';
+
+  /// en: 'Compress'
+  String get compress => 'Compress';
+
+  /// en: 'Delete Shader Cache'
+  String get deleteShaderCache => 'Delete Shader Cache';
+
+  /// en: 'Select the graphics API whose shader cache should be deleted'
+  String get deleteCacheSelectBackend =>
+      'Select the graphics API whose shader cache should be deleted';
+
+  /// en: 'Vulkan'
+  String get vulkan => 'Vulkan';
+
+  /// en: 'OpenGLES'
+  String get opengles => 'OpenGLES';
+
+  /// en: 'Shader cache deleted'
+  String get shaderCacheDeleted => 'Shader cache deleted';
+
+  /// en: 'Create Shortcut'
+  String get createShortcut => 'Create Shortcut';
+
+  /// en: 'Shortcut Name'
+  String get shortcutName => 'Shortcut Name';
+
+  /// en: 'The shortcut name cannot be empty'
+  String get shortcutNameEmpty => 'The shortcut name cannot be empty';
+
+  /// en: 'Stretch image'
+  String get shortcutImageStretchToggle => 'Stretch image';
+
+  /// en: 'Edit icon'
+  String get editIcon => 'Edit icon';
+
+  /// en: 'Application'
+  String get openApp => 'Application';
+
+  /// en: 'Save Data'
+  String get openSaveDir => 'Save Data';
+
+  /// en: 'Updates'
+  String get openUpdates => 'Updates';
+
+  /// en: 'DLC'
+  String get openDlc => 'DLC';
+
+  /// en: 'Extra Data'
+  String get openExtra => 'Extra Data';
+
+  /// en: 'Textures'
+  String get openTextures => 'Textures';
+
+  /// en: 'Mods'
+  String get openMods => 'Mods';
+
+  /// en: 'Application'
+  String get uninstallCia => 'Application';
+
+  /// en: 'Updates'
+  String get uninstallUpdates => 'Updates';
+
+  /// en: 'DLC'
+  String get uninstallDlc => 'DLC';
 }
 
 // Path: emulation
@@ -2194,6 +2284,38 @@ extension on Translations {
           'games.searchHint' => 'Search Applications',
           'games.emptyGamelist' =>
             'No files were found or no game directory has been selected yet.',
+          'games.properties' => 'Properties',
+          'games.propertiesNotLoaded' =>
+            'This application\'s properties are not yet available. Please wait for the application list to finish loading and try again.',
+          'games.play' => 'Play',
+          'games.openFolder' => 'Open Folder',
+          'games.delete' => 'Delete',
+          'games.shortcut' => 'Create Shortcut',
+          'games.cheats' => 'Cheats',
+          'games.cheatsUnavailable' =>
+            'Cheats are not available yet in this version of the app.',
+          'games.compress' => 'Compress',
+          'games.deleteShaderCache' => 'Delete Shader Cache',
+          'games.deleteCacheSelectBackend' =>
+            'Select the graphics API whose shader cache should be deleted',
+          'games.vulkan' => 'Vulkan',
+          'games.opengles' => 'OpenGLES',
+          'games.shaderCacheDeleted' => 'Shader cache deleted',
+          'games.createShortcut' => 'Create Shortcut',
+          'games.shortcutName' => 'Shortcut Name',
+          'games.shortcutNameEmpty' => 'The shortcut name cannot be empty',
+          'games.shortcutImageStretchToggle' => 'Stretch image',
+          'games.editIcon' => 'Edit icon',
+          'games.openApp' => 'Application',
+          'games.openSaveDir' => 'Save Data',
+          'games.openUpdates' => 'Updates',
+          'games.openDlc' => 'DLC',
+          'games.openExtra' => 'Extra Data',
+          'games.openTextures' => 'Textures',
+          'games.openMods' => 'Mods',
+          'games.uninstallCia' => 'Application',
+          'games.uninstallUpdates' => 'Updates',
+          'games.uninstallDlc' => 'DLC',
           'emulation.loading' => 'Loading…',
           'emulation.preparingShaders' => 'Preparing Shaders',
           'emulation.buildingShaders' => 'Building Shaders',
@@ -2719,6 +2841,9 @@ extension on Translations {
           'settings.audio.title' => 'Audio',
           'settings.audio.volume' => 'Volume',
           'settings.audio.audioStretching' => 'Audio Stretching',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.audio.audioStretchingDescription' =>
             'Stretches audio to reduce stuttering. Increases audio latency and slightly reduces performance.',
           'settings.audio.realtimeAudio' => 'Realtime Audio',
@@ -2759,9 +2884,6 @@ extension on Translations {
             'Delay Start for LLE Modules',
           'settings.debug.delayStartLleModulesDescription' =>
             'Delays the start of LLE modules to work around race conditions.',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.debug.deterministicAsyncOperations' =>
             'Deterministic Async Operations',
           'settings.debug.deterministicAsyncOperationsDescription' =>
