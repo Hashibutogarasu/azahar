@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MediaSessionMetadata {
 
- String get title; String? get artworkUri;
+ String get title; String? get artworkPath;
 /// Create a copy of MediaSessionMetadata
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $MediaSessionMetadataCopyWith<MediaSessionMetadata> get copyWith => _$MediaSessi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MediaSessionMetadata&&(identical(other.title, title) || other.title == title)&&(identical(other.artworkUri, artworkUri) || other.artworkUri == artworkUri));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MediaSessionMetadata&&(identical(other.title, title) || other.title == title)&&(identical(other.artworkPath, artworkPath) || other.artworkPath == artworkPath));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,artworkUri);
+int get hashCode => Object.hash(runtimeType,title,artworkPath);
 
 @override
 String toString() {
-  return 'MediaSessionMetadata(title: $title, artworkUri: $artworkUri)';
+  return 'MediaSessionMetadata(title: $title, artworkPath: $artworkPath)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $MediaSessionMetadataCopyWith<$Res>  {
   factory $MediaSessionMetadataCopyWith(MediaSessionMetadata value, $Res Function(MediaSessionMetadata) _then) = _$MediaSessionMetadataCopyWithImpl;
 @useResult
 $Res call({
- String title, String? artworkUri
+ String title, String? artworkPath
 });
 
 
@@ -63,10 +63,10 @@ class _$MediaSessionMetadataCopyWithImpl<$Res>
 
 /// Create a copy of MediaSessionMetadata
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? artworkUri = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? artworkPath = freezed,}) {
   return _then(MediaSessionMetadata(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String,artworkUri: freezed == artworkUri ? _self.artworkUri : artworkUri // ignore: cast_nullable_to_non_nullable
+as String,artworkPath: freezed == artworkPath ? _self.artworkPath : artworkPath // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -152,10 +152,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String? artworkUri)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String? artworkPath)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MediaSessionMetadata() when $default != null:
-return $default(_that.title,_that.artworkUri);case _:
+return $default(_that.title,_that.artworkPath);case _:
   return orElse();
 
 }
@@ -173,10 +173,10 @@ return $default(_that.title,_that.artworkUri);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String? artworkUri)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String? artworkPath)  $default,) {final _that = this;
 switch (_that) {
 case _MediaSessionMetadata():
-return $default(_that.title,_that.artworkUri);case _:
+return $default(_that.title,_that.artworkPath);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -193,10 +193,10 @@ return $default(_that.title,_that.artworkUri);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String? artworkUri)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String? artworkPath)?  $default,) {final _that = this;
 switch (_that) {
 case _MediaSessionMetadata() when $default != null:
-return $default(_that.title,_that.artworkUri);case _:
+return $default(_that.title,_that.artworkPath);case _:
   return null;
 
 }
@@ -208,11 +208,11 @@ return $default(_that.title,_that.artworkUri);case _:
 
 
 class _MediaSessionMetadata implements MediaSessionMetadata {
-  const _MediaSessionMetadata({required this.title, this.artworkUri});
+  const _MediaSessionMetadata({required this.title, this.artworkPath});
   
 
 @override final  String title;
-@override final  String? artworkUri;
+@override final  String? artworkPath;
 
 /// Create a copy of MediaSessionMetadata
 /// with the given fields replaced by the non-null parameter values.
@@ -224,16 +224,16 @@ _$MediaSessionMetadataCopyWith<_MediaSessionMetadata> get copyWith => __$MediaSe
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MediaSessionMetadata&&(identical(other.title, title) || other.title == title)&&(identical(other.artworkUri, artworkUri) || other.artworkUri == artworkUri));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MediaSessionMetadata&&(identical(other.title, title) || other.title == title)&&(identical(other.artworkPath, artworkPath) || other.artworkPath == artworkPath));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,artworkUri);
+int get hashCode => Object.hash(runtimeType,title,artworkPath);
 
 @override
 String toString() {
-  return 'MediaSessionMetadata(title: $title, artworkUri: $artworkUri)';
+  return 'MediaSessionMetadata(title: $title, artworkPath: $artworkPath)';
 }
 
 
@@ -244,7 +244,7 @@ abstract mixin class _$MediaSessionMetadataCopyWith<$Res> implements $MediaSessi
   factory _$MediaSessionMetadataCopyWith(_MediaSessionMetadata value, $Res Function(_MediaSessionMetadata) _then) = __$MediaSessionMetadataCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String? artworkUri
+ String title, String? artworkPath
 });
 
 
@@ -261,10 +261,10 @@ class __$MediaSessionMetadataCopyWithImpl<$Res>
 
 /// Create a copy of MediaSessionMetadata
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? artworkUri = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? artworkPath = freezed,}) {
   return _then(_MediaSessionMetadata(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String,artworkUri: freezed == artworkUri ? _self.artworkUri : artworkUri // ignore: cast_nullable_to_non_nullable
+as String,artworkPath: freezed == artworkPath ? _self.artworkPath : artworkPath // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

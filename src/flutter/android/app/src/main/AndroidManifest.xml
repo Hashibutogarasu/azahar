@@ -1,5 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false"/>
@@ -71,10 +70,6 @@
                 android:name="io.flutter.embedding.android.NormalTheme"
                 android:resource="@style/NormalTheme" />
         </activity>
-        <service
-            android:name="dev.wyrin.flutter_media_session.FlutterMediaSessionService"
-            android:process=":emulation"
-            tools:node="merge" />
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />

@@ -76,12 +76,8 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
     await _bridge.startEmulation(gamePath);
 
     if (_treatAsMediaSession && game != null) {
-      final iconPath = game.iconPath;
       await _mediaSession.activate(
-        MediaSessionMetadata(
-          title: game.title,
-          artworkUri: iconPath == null ? null : Uri.file(iconPath).toString(),
-        ),
+        MediaSessionMetadata(title: game.title, artworkPath: game.iconPath),
         isPlaying: true,
         onStop: () => unawaited(terminate()),
       );

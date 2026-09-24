@@ -1,10 +1,15 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter_media_session/flutter_media_session.dart';
+import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+
+import '../../app_services.dart';
+import '../../native/native_bridge.dart';
 import 'media_session_metadata.dart';
 
 class MediaSessionService {
+  NativeBridge get _bridge => AppServices.nativeBridge;
   bool _active = false;
+  StreamSubscription<void>? _stopSubscription;
 
   Future<void> activate(
     MediaSessionMetadata metadata, {
@@ -13,25 +18,25 @@ class MediaSessionService {
   }) async {
     if (defaultTargetPlatform != TargetPlatform.android) return;
     _active = true;
-    FlutterMediaSession().setActionHandler(onStop: onStop);
-    await FlutterMediaSession().activate();
-    await FlutterMediaSessionPlatform.instance.updateMetadata(
-      MediaMetadata(title: metadata.title, artworkUri: metadata.artworkUri),
+    await _stopSubscription?.cancel();
+    _stopSubscription = _bridge.mediaNotificationStopRequests().listen((_) => onStop());
+    await _bridge.activateMediaNotification(
+      title: metadata.title,
+      artworkPath: metadata.artworkPath,
+      isPlaying: isPlaying,
     );
-    await updatePlaybackState(isPlaying: isPlaying);
   }
 
   Future<void> updatePlaybackState({required bool isPlaying}) async {
     if (!_active) return;
-    await FlutterMediaSessionPlatform.instance.updatePlaybackState(
-      PlaybackState(status: isPlaying ? PlaybackStatus.playing : PlaybackStatus.paused),
-    );
+    await _bridge.updateMediaNotificationPlaybackState(isPlaying: isPlaying);
   }
 
   Future<void> deactivate() async {
     if (!_active) return;
     _active = false;
-    FlutterMediaSession().clearActionHandler();
-    await FlutterMediaSession().deactivate();
+    await _stopSubscription?.cancel();
+    _stopSubscription = null;
+    await _bridge.deactivateMediaNotification();
   }
 }

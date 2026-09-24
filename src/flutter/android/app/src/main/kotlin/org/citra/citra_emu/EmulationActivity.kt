@@ -18,6 +18,7 @@ import org.citra.citra_emu.applets.SoftwareKeyboard
 import org.citra.citra_emu.camera.StillImageCameraHelper
 import org.citra.citra_emu.channel.AzaharMethodHandler
 import org.citra.citra_emu.channel.EmulationController
+import org.citra.citra_emu.channel.MediaNotificationController
 import org.citra.citra_emu.channel.SettingsController
 import org.citra.citra_emu.channel.ShowMiiSelector
 import org.citra.citra_emu.channel.SystemVolumeController
@@ -88,9 +89,11 @@ class EmulationActivity : FlutterFragmentActivity() {
         val emulationController = EmulationController(flutterEngine.renderer)
         val systemVolumeController = SystemVolumeController(this)
         val settingsController = SettingsController()
+        val mediaNotificationController = MediaNotificationController(this)
         val handlers: Map<String, AzaharMethodHandler> =
             (emulationController.handlers + systemVolumeController.handlers +
-                settingsController.handlers + TerminateProcess())
+                settingsController.handlers + mediaNotificationController.handlers +
+                TerminateProcess())
                 .associateBy { it.name }
 
         val appletChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, APPLET_CHANNEL)
@@ -161,6 +164,9 @@ class EmulationActivity : FlutterFragmentActivity() {
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, SYSTEM_VOLUME_CHANNEL)
             .setStreamHandler(systemVolumeController.createVolumeChangeStreamHandler())
 
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, MEDIA_NOTIFICATION_STOP_CHANNEL)
+            .setStreamHandler(mediaNotificationController.createStopEventStreamHandler())
+
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
                 handlers[call.method]?.execute(call, result) ?: result.notImplemented()
@@ -183,6 +189,8 @@ class EmulationActivity : FlutterFragmentActivity() {
         private const val SHADER_PROGRESS_CHANNEL = "org.citra.citra_emu/azahar_bridge/shader_progress"
         private const val APPLET_CHANNEL = "org.citra.citra_emu/azahar_bridge/applet"
         private const val SYSTEM_VOLUME_CHANNEL = "org.citra.citra_emu/azahar_bridge/system_volume"
+        private const val MEDIA_NOTIFICATION_STOP_CHANNEL =
+            "org.citra.citra_emu/azahar_bridge/media_notification_stop"
 
         fun start(context: Context, gamePath: String) {
             context.startActivity(createLaunchIntent(context, gamePath))

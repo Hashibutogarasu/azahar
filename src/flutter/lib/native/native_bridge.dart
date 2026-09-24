@@ -18,11 +18,14 @@ class NativeBridge {
         _copyProgressChannel =
             const EventChannel('org.citra.citra_emu/azahar_bridge/copy_progress'),
         _systemVolumeChannel =
-            const EventChannel('org.citra.citra_emu/azahar_bridge/system_volume');
+            const EventChannel('org.citra.citra_emu/azahar_bridge/system_volume'),
+        _mediaNotificationStopChannel =
+            const EventChannel('org.citra.citra_emu/azahar_bridge/media_notification_stop');
 
   final MethodChannel _channel;
   final EventChannel _shaderProgressChannel;
   final EventChannel _copyProgressChannel;
+  final EventChannel _mediaNotificationStopChannel;
   final EventChannel _systemVolumeChannel;
 
   Stream<CopyDirProgress> copyDirProgress() {
@@ -175,6 +178,32 @@ class NativeBridge {
 
   Stream<double> systemMediaVolumeChanges() {
     return _systemVolumeChannel.receiveBroadcastStream().map((event) => (event as num).toDouble());
+  }
+
+  Future<void> activateMediaNotification({
+    required String title,
+    String? artworkPath,
+    required bool isPlaying,
+  }) {
+    return _channel.invokeMethod<void>('activateMediaNotification', {
+      'title': title,
+      'artworkPath': artworkPath,
+      'isPlaying': isPlaying,
+    });
+  }
+
+  Future<void> updateMediaNotificationPlaybackState({required bool isPlaying}) {
+    return _channel.invokeMethod<void>('updateMediaNotificationPlaybackState', {
+      'isPlaying': isPlaying,
+    });
+  }
+
+  Future<void> deactivateMediaNotification() {
+    return _channel.invokeMethod<void>('deactivateMediaNotification');
+  }
+
+  Stream<void> mediaNotificationStopRequests() {
+    return _mediaNotificationStopChannel.receiveBroadcastStream().map((_) {});
   }
 
   Future<void> launchEmulationActivity(String gamePath) {
