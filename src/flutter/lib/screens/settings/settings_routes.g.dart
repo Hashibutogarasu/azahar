@@ -7,30 +7,30 @@ part of 'settings_routes.dart';
 // **************************************************************************
 
 List<RouteBase> get $appRoutes => [
-  $settingsMenuRoute,
-  $generalSettingsRoute,
-  $graphicsSettingsRoute,
-  $systemSettingsRoute,
-  $cameraSettingsRoute,
-  $controlsSettingsRoute,
-  $layoutSettingsRoute,
-  $customLandscapeLayoutSettingsRoute,
-  $customPortraitLayoutSettingsRoute,
-  $audioSettingsRoute,
-  $debugSettingsRoute,
-  $themeSettingsRoute,
-  $languageSettingsRoute,
+  $legacySettingsMenuRoute,
+  $legacyGeneralSettingsRoute,
+  $legacyGraphicsSettingsRoute,
+  $legacySystemSettingsRoute,
+  $legacyCameraSettingsRoute,
+  $legacyControlsSettingsRoute,
+  $legacyLayoutSettingsRoute,
+  $legacyCustomLandscapeLayoutSettingsRoute,
+  $legacyCustomPortraitLayoutSettingsRoute,
+  $legacyAudioSettingsRoute,
+  $legacyDebugSettingsRoute,
+  $legacyThemeSettingsRoute,
+  $legacyLanguageSettingsRoute,
 ];
 
-RouteBase get $settingsMenuRoute => GoRouteData.$route(
+RouteBase get $legacySettingsMenuRoute => GoRouteData.$route(
   path: '/settings',
   hasOverriddenOnExit: false,
-  factory: $SettingsMenuRoute._fromState,
+  factory: $LegacySettingsMenuRoute._fromState,
 );
 
-mixin $SettingsMenuRoute on GoRouteData {
-  static SettingsMenuRoute _fromState(GoRouterState state) =>
-      const SettingsMenuRoute();
+mixin $LegacySettingsMenuRoute on GoRouteData {
+  static LegacySettingsMenuRoute _fromState(GoRouterState state) =>
+      const LegacySettingsMenuRoute();
 
   @override
   String get location => GoRouteData.$location('/settings');
@@ -49,15 +49,15 @@ mixin $SettingsMenuRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $generalSettingsRoute => GoRouteData.$route(
+RouteBase get $legacyGeneralSettingsRoute => GoRouteData.$route(
   path: '/settings/general',
   hasOverriddenOnExit: false,
-  factory: $GeneralSettingsRoute._fromState,
+  factory: $LegacyGeneralSettingsRoute._fromState,
 );
 
-mixin $GeneralSettingsRoute on GoRouteData {
-  static GeneralSettingsRoute _fromState(GoRouterState state) =>
-      const GeneralSettingsRoute();
+mixin $LegacyGeneralSettingsRoute on GoRouteData {
+  static LegacyGeneralSettingsRoute _fromState(GoRouterState state) =>
+      const LegacyGeneralSettingsRoute();
 
   @override
   String get location => GoRouteData.$location('/settings/general');
@@ -76,15 +76,15 @@ mixin $GeneralSettingsRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $graphicsSettingsRoute => GoRouteData.$route(
+RouteBase get $legacyGraphicsSettingsRoute => GoRouteData.$route(
   path: '/settings/graphics',
   hasOverriddenOnExit: false,
-  factory: $GraphicsSettingsRoute._fromState,
+  factory: $LegacyGraphicsSettingsRoute._fromState,
 );
 
-mixin $GraphicsSettingsRoute on GoRouteData {
-  static GraphicsSettingsRoute _fromState(GoRouterState state) =>
-      const GraphicsSettingsRoute();
+mixin $LegacyGraphicsSettingsRoute on GoRouteData {
+  static LegacyGraphicsSettingsRoute _fromState(GoRouterState state) =>
+      const LegacyGraphicsSettingsRoute();
 
   @override
   String get location => GoRouteData.$location('/settings/graphics');
@@ -103,15 +103,15 @@ mixin $GraphicsSettingsRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $systemSettingsRoute => GoRouteData.$route(
+RouteBase get $legacySystemSettingsRoute => GoRouteData.$route(
   path: '/settings/system',
   hasOverriddenOnExit: false,
-  factory: $SystemSettingsRoute._fromState,
+  factory: $LegacySystemSettingsRoute._fromState,
 );
 
-mixin $SystemSettingsRoute on GoRouteData {
-  static SystemSettingsRoute _fromState(GoRouterState state) =>
-      const SystemSettingsRoute();
+mixin $LegacySystemSettingsRoute on GoRouteData {
+  static LegacySystemSettingsRoute _fromState(GoRouterState state) =>
+      const LegacySystemSettingsRoute();
 
   @override
   String get location => GoRouteData.$location('/settings/system');
@@ -130,15 +130,15 @@ mixin $SystemSettingsRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $cameraSettingsRoute => GoRouteData.$route(
+RouteBase get $legacyCameraSettingsRoute => GoRouteData.$route(
   path: '/settings/camera',
   hasOverriddenOnExit: false,
-  factory: $CameraSettingsRoute._fromState,
+  factory: $LegacyCameraSettingsRoute._fromState,
 );
 
-mixin $CameraSettingsRoute on GoRouteData {
-  static CameraSettingsRoute _fromState(GoRouterState state) =>
-      const CameraSettingsRoute();
+mixin $LegacyCameraSettingsRoute on GoRouteData {
+  static LegacyCameraSettingsRoute _fromState(GoRouterState state) =>
+      const LegacyCameraSettingsRoute();
 
   @override
   String get location => GoRouteData.$location('/settings/camera');
@@ -157,15 +157,15 @@ mixin $CameraSettingsRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $controlsSettingsRoute => GoRouteData.$route(
+RouteBase get $legacyControlsSettingsRoute => GoRouteData.$route(
   path: '/settings/controls',
   hasOverriddenOnExit: false,
-  factory: $ControlsSettingsRoute._fromState,
+  factory: $LegacyControlsSettingsRoute._fromState,
 );
 
-mixin $ControlsSettingsRoute on GoRouteData {
-  static ControlsSettingsRoute _fromState(GoRouterState state) =>
-      const ControlsSettingsRoute();
+mixin $LegacyControlsSettingsRoute on GoRouteData {
+  static LegacyControlsSettingsRoute _fromState(GoRouterState state) =>
+      const LegacyControlsSettingsRoute();
 
   @override
   String get location => GoRouteData.$location('/settings/controls');
@@ -184,15 +184,15 @@ mixin $ControlsSettingsRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $layoutSettingsRoute => GoRouteData.$route(
+RouteBase get $legacyLayoutSettingsRoute => GoRouteData.$route(
   path: '/settings/layout',
   hasOverriddenOnExit: false,
-  factory: $LayoutSettingsRoute._fromState,
+  factory: $LegacyLayoutSettingsRoute._fromState,
 );
 
-mixin $LayoutSettingsRoute on GoRouteData {
-  static LayoutSettingsRoute _fromState(GoRouterState state) =>
-      const LayoutSettingsRoute();
+mixin $LegacyLayoutSettingsRoute on GoRouteData {
+  static LegacyLayoutSettingsRoute _fromState(GoRouterState state) =>
+      const LegacyLayoutSettingsRoute();
 
   @override
   String get location => GoRouteData.$location('/settings/layout');
@@ -211,15 +211,16 @@ mixin $LayoutSettingsRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $customLandscapeLayoutSettingsRoute => GoRouteData.$route(
+RouteBase get $legacyCustomLandscapeLayoutSettingsRoute => GoRouteData.$route(
   path: '/settings/layout/custom-landscape',
   hasOverriddenOnExit: false,
-  factory: $CustomLandscapeLayoutSettingsRoute._fromState,
+  factory: $LegacyCustomLandscapeLayoutSettingsRoute._fromState,
 );
 
-mixin $CustomLandscapeLayoutSettingsRoute on GoRouteData {
-  static CustomLandscapeLayoutSettingsRoute _fromState(GoRouterState state) =>
-      const CustomLandscapeLayoutSettingsRoute();
+mixin $LegacyCustomLandscapeLayoutSettingsRoute on GoRouteData {
+  static LegacyCustomLandscapeLayoutSettingsRoute _fromState(
+    GoRouterState state,
+  ) => const LegacyCustomLandscapeLayoutSettingsRoute();
 
   @override
   String get location =>
@@ -239,15 +240,16 @@ mixin $CustomLandscapeLayoutSettingsRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $customPortraitLayoutSettingsRoute => GoRouteData.$route(
+RouteBase get $legacyCustomPortraitLayoutSettingsRoute => GoRouteData.$route(
   path: '/settings/layout/custom-portrait',
   hasOverriddenOnExit: false,
-  factory: $CustomPortraitLayoutSettingsRoute._fromState,
+  factory: $LegacyCustomPortraitLayoutSettingsRoute._fromState,
 );
 
-mixin $CustomPortraitLayoutSettingsRoute on GoRouteData {
-  static CustomPortraitLayoutSettingsRoute _fromState(GoRouterState state) =>
-      const CustomPortraitLayoutSettingsRoute();
+mixin $LegacyCustomPortraitLayoutSettingsRoute on GoRouteData {
+  static LegacyCustomPortraitLayoutSettingsRoute _fromState(
+    GoRouterState state,
+  ) => const LegacyCustomPortraitLayoutSettingsRoute();
 
   @override
   String get location =>
@@ -267,15 +269,15 @@ mixin $CustomPortraitLayoutSettingsRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $audioSettingsRoute => GoRouteData.$route(
+RouteBase get $legacyAudioSettingsRoute => GoRouteData.$route(
   path: '/settings/audio',
   hasOverriddenOnExit: false,
-  factory: $AudioSettingsRoute._fromState,
+  factory: $LegacyAudioSettingsRoute._fromState,
 );
 
-mixin $AudioSettingsRoute on GoRouteData {
-  static AudioSettingsRoute _fromState(GoRouterState state) =>
-      const AudioSettingsRoute();
+mixin $LegacyAudioSettingsRoute on GoRouteData {
+  static LegacyAudioSettingsRoute _fromState(GoRouterState state) =>
+      const LegacyAudioSettingsRoute();
 
   @override
   String get location => GoRouteData.$location('/settings/audio');
@@ -294,15 +296,15 @@ mixin $AudioSettingsRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $debugSettingsRoute => GoRouteData.$route(
+RouteBase get $legacyDebugSettingsRoute => GoRouteData.$route(
   path: '/settings/debug',
   hasOverriddenOnExit: false,
-  factory: $DebugSettingsRoute._fromState,
+  factory: $LegacyDebugSettingsRoute._fromState,
 );
 
-mixin $DebugSettingsRoute on GoRouteData {
-  static DebugSettingsRoute _fromState(GoRouterState state) =>
-      const DebugSettingsRoute();
+mixin $LegacyDebugSettingsRoute on GoRouteData {
+  static LegacyDebugSettingsRoute _fromState(GoRouterState state) =>
+      const LegacyDebugSettingsRoute();
 
   @override
   String get location => GoRouteData.$location('/settings/debug');
@@ -321,15 +323,15 @@ mixin $DebugSettingsRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $themeSettingsRoute => GoRouteData.$route(
+RouteBase get $legacyThemeSettingsRoute => GoRouteData.$route(
   path: '/settings/theme',
   hasOverriddenOnExit: false,
-  factory: $ThemeSettingsRoute._fromState,
+  factory: $LegacyThemeSettingsRoute._fromState,
 );
 
-mixin $ThemeSettingsRoute on GoRouteData {
-  static ThemeSettingsRoute _fromState(GoRouterState state) =>
-      const ThemeSettingsRoute();
+mixin $LegacyThemeSettingsRoute on GoRouteData {
+  static LegacyThemeSettingsRoute _fromState(GoRouterState state) =>
+      const LegacyThemeSettingsRoute();
 
   @override
   String get location => GoRouteData.$location('/settings/theme');
@@ -348,15 +350,15 @@ mixin $ThemeSettingsRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $languageSettingsRoute => GoRouteData.$route(
+RouteBase get $legacyLanguageSettingsRoute => GoRouteData.$route(
   path: '/settings/language',
   hasOverriddenOnExit: false,
-  factory: $LanguageSettingsRoute._fromState,
+  factory: $LegacyLanguageSettingsRoute._fromState,
 );
 
-mixin $LanguageSettingsRoute on GoRouteData {
-  static LanguageSettingsRoute _fromState(GoRouterState state) =>
-      const LanguageSettingsRoute();
+mixin $LegacyLanguageSettingsRoute on GoRouteData {
+  static LegacyLanguageSettingsRoute _fromState(GoRouterState state) =>
+      const LegacyLanguageSettingsRoute();
 
   @override
   String get location => GoRouteData.$location('/settings/language');

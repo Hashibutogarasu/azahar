@@ -105,7 +105,22 @@
     "themeAndColor": "Theme and Color",
     "themeAndColorDescription": "Modify the look of the app",
     "about": "About",
-    "aboutDescription": "Build version, credits, and more"
+    "aboutDescription": "Build version, credits, and more",
+    "groupGeneral": "General",
+    "groupSystem": "System",
+    "groupGraphics": "Graphics",
+    "groupTools": "Tools",
+    "groupFolderSettings": "Folder Settings",
+    "groupOther": "Other",
+    "emulation": "Emulation",
+    "emulationDescription": "General, System, Audio, Camera and Controls settings",
+    "useLegacySettingsUI": "Use Legacy Settings UI",
+    "useLegacySettingsUIDescription": "Switch back to the previous Options screen design",
+    "useLegacySettingsUIDialog": {
+      "title": "Switch Settings UI?",
+      "message": "This changes how the Options screen looks. You can switch back at any time.",
+      "confirm": "Switch"
+    }
   },
   "systemFiles": {
     "title": "System Files",

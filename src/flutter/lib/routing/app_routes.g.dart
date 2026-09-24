@@ -171,10 +171,23 @@ mixin $GamesListRoute on GoRouteData {
 }
 
 mixin $OptionsRoute on GoRouteData {
-  static OptionsRoute _fromState(GoRouterState state) => const OptionsRoute();
+  static OptionsRoute _fromState(GoRouterState state) => OptionsRoute(
+    isLegacy: _$convertMapValue(
+      'is-legacy',
+      state.uri.queryParameters,
+      _$boolConverter,
+    ),
+  );
+
+  OptionsRoute get _self => this as OptionsRoute;
 
   @override
-  String get location => GoRouteData.$location('/options');
+  String get location => GoRouteData.$location(
+    '/options',
+    queryParams: {
+      if (_self.isLegacy != null) 'is-legacy': _self.isLegacy!.toString(),
+    },
+  );
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -188,4 +201,24 @@ mixin $OptionsRoute on GoRouteData {
 
   @override
   void replace(BuildContext context) => context.replace(location);
+}
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T? Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}
+
+bool _$boolConverter(String value) {
+  switch (value) {
+    case 'true':
+      return true;
+    case 'false':
+      return false;
+    default:
+      throw UnsupportedError('Cannot convert "$value" into a bool.');
+  }
 }

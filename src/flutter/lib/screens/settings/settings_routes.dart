@@ -15,19 +15,25 @@ import 'settings_menu_page.dart';
 
 part 'settings_routes.g.dart';
 
-@TypedGoRoute<SettingsMenuRoute>(path: '/settings')
-class SettingsMenuRoute extends GoRouteData with $SettingsMenuRoute {
-  const SettingsMenuRoute();
+/// The pre-redesign `/settings` route tree. Not registered in the app's router (see
+/// `lib/main.dart`); kept only so the legacy Options UI (`useLegacySettingsUI`) can still reach
+/// it. The current UI uses the routes in `lib/screens/options/options_routes.dart` instead, which
+/// build the very same page widgets referenced below.
+@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@TypedGoRoute<LegacySettingsMenuRoute>(path: '/settings')
+class LegacySettingsMenuRoute extends GoRouteData with $LegacySettingsMenuRoute {
+  const LegacySettingsMenuRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const SettingsMenuPage();
+    return const LegacySettingsMenuPage();
   }
 }
 
-@TypedGoRoute<GeneralSettingsRoute>(path: '/settings/general')
-class GeneralSettingsRoute extends GoRouteData with $GeneralSettingsRoute {
-  const GeneralSettingsRoute();
+@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@TypedGoRoute<LegacyGeneralSettingsRoute>(path: '/settings/general')
+class LegacyGeneralSettingsRoute extends GoRouteData with $LegacyGeneralSettingsRoute {
+  const LegacyGeneralSettingsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -35,9 +41,10 @@ class GeneralSettingsRoute extends GoRouteData with $GeneralSettingsRoute {
   }
 }
 
-@TypedGoRoute<GraphicsSettingsRoute>(path: '/settings/graphics')
-class GraphicsSettingsRoute extends GoRouteData with $GraphicsSettingsRoute {
-  const GraphicsSettingsRoute();
+@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@TypedGoRoute<LegacyGraphicsSettingsRoute>(path: '/settings/graphics')
+class LegacyGraphicsSettingsRoute extends GoRouteData with $LegacyGraphicsSettingsRoute {
+  const LegacyGraphicsSettingsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -45,9 +52,10 @@ class GraphicsSettingsRoute extends GoRouteData with $GraphicsSettingsRoute {
   }
 }
 
-@TypedGoRoute<SystemSettingsRoute>(path: '/settings/system')
-class SystemSettingsRoute extends GoRouteData with $SystemSettingsRoute {
-  const SystemSettingsRoute();
+@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@TypedGoRoute<LegacySystemSettingsRoute>(path: '/settings/system')
+class LegacySystemSettingsRoute extends GoRouteData with $LegacySystemSettingsRoute {
+  const LegacySystemSettingsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -55,9 +63,10 @@ class SystemSettingsRoute extends GoRouteData with $SystemSettingsRoute {
   }
 }
 
-@TypedGoRoute<CameraSettingsRoute>(path: '/settings/camera')
-class CameraSettingsRoute extends GoRouteData with $CameraSettingsRoute {
-  const CameraSettingsRoute();
+@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@TypedGoRoute<LegacyCameraSettingsRoute>(path: '/settings/camera')
+class LegacyCameraSettingsRoute extends GoRouteData with $LegacyCameraSettingsRoute {
+  const LegacyCameraSettingsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -65,9 +74,10 @@ class CameraSettingsRoute extends GoRouteData with $CameraSettingsRoute {
   }
 }
 
-@TypedGoRoute<ControlsSettingsRoute>(path: '/settings/controls')
-class ControlsSettingsRoute extends GoRouteData with $ControlsSettingsRoute {
-  const ControlsSettingsRoute();
+@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@TypedGoRoute<LegacyControlsSettingsRoute>(path: '/settings/controls')
+class LegacyControlsSettingsRoute extends GoRouteData with $LegacyControlsSettingsRoute {
+  const LegacyControlsSettingsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -75,9 +85,10 @@ class ControlsSettingsRoute extends GoRouteData with $ControlsSettingsRoute {
   }
 }
 
-@TypedGoRoute<LayoutSettingsRoute>(path: '/settings/layout')
-class LayoutSettingsRoute extends GoRouteData with $LayoutSettingsRoute {
-  const LayoutSettingsRoute();
+@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@TypedGoRoute<LegacyLayoutSettingsRoute>(path: '/settings/layout')
+class LegacyLayoutSettingsRoute extends GoRouteData with $LegacyLayoutSettingsRoute {
+  const LegacyLayoutSettingsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -85,10 +96,13 @@ class LayoutSettingsRoute extends GoRouteData with $LayoutSettingsRoute {
   }
 }
 
-@TypedGoRoute<CustomLandscapeLayoutSettingsRoute>(path: '/settings/layout/custom-landscape')
-class CustomLandscapeLayoutSettingsRoute extends GoRouteData
-    with $CustomLandscapeLayoutSettingsRoute {
-  const CustomLandscapeLayoutSettingsRoute();
+@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@TypedGoRoute<LegacyCustomLandscapeLayoutSettingsRoute>(
+  path: '/settings/layout/custom-landscape',
+)
+class LegacyCustomLandscapeLayoutSettingsRoute extends GoRouteData
+    with $LegacyCustomLandscapeLayoutSettingsRoute {
+  const LegacyCustomLandscapeLayoutSettingsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -96,10 +110,11 @@ class CustomLandscapeLayoutSettingsRoute extends GoRouteData
   }
 }
 
-@TypedGoRoute<CustomPortraitLayoutSettingsRoute>(path: '/settings/layout/custom-portrait')
-class CustomPortraitLayoutSettingsRoute extends GoRouteData
-    with $CustomPortraitLayoutSettingsRoute {
-  const CustomPortraitLayoutSettingsRoute();
+@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@TypedGoRoute<LegacyCustomPortraitLayoutSettingsRoute>(path: '/settings/layout/custom-portrait')
+class LegacyCustomPortraitLayoutSettingsRoute extends GoRouteData
+    with $LegacyCustomPortraitLayoutSettingsRoute {
+  const LegacyCustomPortraitLayoutSettingsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -107,9 +122,10 @@ class CustomPortraitLayoutSettingsRoute extends GoRouteData
   }
 }
 
-@TypedGoRoute<AudioSettingsRoute>(path: '/settings/audio')
-class AudioSettingsRoute extends GoRouteData with $AudioSettingsRoute {
-  const AudioSettingsRoute();
+@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@TypedGoRoute<LegacyAudioSettingsRoute>(path: '/settings/audio')
+class LegacyAudioSettingsRoute extends GoRouteData with $LegacyAudioSettingsRoute {
+  const LegacyAudioSettingsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -117,9 +133,10 @@ class AudioSettingsRoute extends GoRouteData with $AudioSettingsRoute {
   }
 }
 
-@TypedGoRoute<DebugSettingsRoute>(path: '/settings/debug')
-class DebugSettingsRoute extends GoRouteData with $DebugSettingsRoute {
-  const DebugSettingsRoute();
+@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@TypedGoRoute<LegacyDebugSettingsRoute>(path: '/settings/debug')
+class LegacyDebugSettingsRoute extends GoRouteData with $LegacyDebugSettingsRoute {
+  const LegacyDebugSettingsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -127,9 +144,10 @@ class DebugSettingsRoute extends GoRouteData with $DebugSettingsRoute {
   }
 }
 
-@TypedGoRoute<ThemeSettingsRoute>(path: '/settings/theme')
-class ThemeSettingsRoute extends GoRouteData with $ThemeSettingsRoute {
-  const ThemeSettingsRoute();
+@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@TypedGoRoute<LegacyThemeSettingsRoute>(path: '/settings/theme')
+class LegacyThemeSettingsRoute extends GoRouteData with $LegacyThemeSettingsRoute {
+  const LegacyThemeSettingsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -137,9 +155,10 @@ class ThemeSettingsRoute extends GoRouteData with $ThemeSettingsRoute {
   }
 }
 
-@TypedGoRoute<LanguageSettingsRoute>(path: '/settings/language')
-class LanguageSettingsRoute extends GoRouteData with $LanguageSettingsRoute {
-  const LanguageSettingsRoute();
+@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@TypedGoRoute<LegacyLanguageSettingsRoute>(path: '/settings/language')
+class LegacyLanguageSettingsRoute extends GoRouteData with $LegacyLanguageSettingsRoute {
+  const LegacyLanguageSettingsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {

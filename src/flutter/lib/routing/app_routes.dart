@@ -1,10 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../app_services.dart';
 import '../screens/games/games_list_page.dart';
 import '../screens/home/app_shell.dart';
 import '../screens/options/about_page.dart';
 import '../screens/options/gpu_driver_manager_page.dart';
+import '../screens/options/legacy_options_page.dart';
 import '../screens/options/options_page.dart';
 import '../screens/options/system_files_page.dart';
 import '../screens/setup/setup_wizard_page.dart';
@@ -90,10 +92,16 @@ class OptionsBranchData extends StatefulShellBranchData {
 }
 
 class OptionsRoute extends GoRouteData with $OptionsRoute {
-  const OptionsRoute();
+  const OptionsRoute({this.isLegacy});
+
+  /// Overrides which Options UI to show. When omitted, falls back to
+  /// [AppServices.settingsRepository]'s `useLegacySettingsUI` setting.
+  final bool? isLegacy;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const OptionsPage();
+    final useLegacy = isLegacy ?? AppServices.settingsRepository.useLegacySettingsUI;
+    // ignore: deprecated_member_use_from_same_package
+    return useLegacy ? const LegacyOptionsPage() : const OptionsPage();
   }
 }

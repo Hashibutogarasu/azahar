@@ -292,6 +292,42 @@ class Translations$options$en {
 
   /// en: 'Build version, credits, and more'
   String get aboutDescription => 'Build version, credits, and more';
+
+  /// en: 'General'
+  String get groupGeneral => 'General';
+
+  /// en: 'System'
+  String get groupSystem => 'System';
+
+  /// en: 'Graphics'
+  String get groupGraphics => 'Graphics';
+
+  /// en: 'Tools'
+  String get groupTools => 'Tools';
+
+  /// en: 'Folder Settings'
+  String get groupFolderSettings => 'Folder Settings';
+
+  /// en: 'Other'
+  String get groupOther => 'Other';
+
+  /// en: 'Emulation'
+  String get emulation => 'Emulation';
+
+  /// en: 'General, System, Audio, Camera and Controls settings'
+  String get emulationDescription =>
+      'General, System, Audio, Camera and Controls settings';
+
+  /// en: 'Use Legacy Settings UI'
+  String get useLegacySettingsUI => 'Use Legacy Settings UI';
+
+  /// en: 'Switch back to the previous Options screen design'
+  String get useLegacySettingsUIDescription =>
+      'Switch back to the previous Options screen design';
+
+  late final Translations$options$useLegacySettingsUIDialog$en
+  useLegacySettingsUIDialog =
+      Translations$options$useLegacySettingsUIDialog$en.internal(_root);
 }
 
 // Path: systemFiles
@@ -665,6 +701,25 @@ class Translations$setup$done$en {
 
   /// en: 'Continue'
   String get continueLabel => 'Continue';
+}
+
+// Path: options.useLegacySettingsUIDialog
+class Translations$options$useLegacySettingsUIDialog$en {
+  Translations$options$useLegacySettingsUIDialog$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Switch Settings UI?'
+  String get title => 'Switch Settings UI?';
+
+  /// en: 'This changes how the Options screen looks. You can switch back at any time.'
+  String get message =>
+      'This changes how the Options screen looks. You can switch back at any time.';
+
+  /// en: 'Switch'
+  String get confirm => 'Switch';
 }
 
 // Path: settings.resetToDefaultDialog
@@ -2236,6 +2291,22 @@ extension on Translations {
           'options.themeAndColorDescription' => 'Modify the look of the app',
           'options.about' => 'About',
           'options.aboutDescription' => 'Build version, credits, and more',
+          'options.groupGeneral' => 'General',
+          'options.groupSystem' => 'System',
+          'options.groupGraphics' => 'Graphics',
+          'options.groupTools' => 'Tools',
+          'options.groupFolderSettings' => 'Folder Settings',
+          'options.groupOther' => 'Other',
+          'options.emulation' => 'Emulation',
+          'options.emulationDescription' =>
+            'General, System, Audio, Camera and Controls settings',
+          'options.useLegacySettingsUI' => 'Use Legacy Settings UI',
+          'options.useLegacySettingsUIDescription' =>
+            'Switch back to the previous Options screen design',
+          'options.useLegacySettingsUIDialog.title' => 'Switch Settings UI?',
+          'options.useLegacySettingsUIDialog.message' =>
+            'This changes how the Options screen looks. You can switch back at any time.',
+          'options.useLegacySettingsUIDialog.confirm' => 'Switch',
           'systemFiles.title' => 'System Files',
           'systemFiles.preamble' =>
             'Azahar needs console unique data and firmware files from a real console to be able to use some of its features. Such files and data can be set up with the Azahar Artic Setup Tool.\n\nNotes:\n• This operation will install console unique data to Azahar, do not share your user or nand folders after performing the setup process!\n• While doing the setup process, Azahar will link to the console running the setup tool. You can unlink the console later from the System Files tab in the emulator options menu.\n• Do not go online with both Azahar and your 3DS console at the same time after setting up system files, as this could cause issues.\n• Old 3DS setup is needed for the New 3DS setup to work (setting up both is recommended).\n• Both setup modes will work regardless of the model of the console running the setup tool.',
@@ -2738,6 +2809,9 @@ extension on Translations {
           'settings.debug.warning' =>
             'These settings are for debugging purposes only. Changing them may cause instability.',
           'settings.debug.cpuClockSpeed' => 'CPU Clock Speed',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.debug.cpuClockSpeedDescription' =>
             'Over/Underclocks the emulated CPU. Not recommended.',
           'settings.debug.cpuJit' => 'CPU JIT',
@@ -2759,9 +2833,6 @@ extension on Translations {
             'Delay Start for LLE Modules',
           'settings.debug.delayStartLleModulesDescription' =>
             'Delays the start of LLE modules to work around race conditions.',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.debug.deterministicAsyncOperations' =>
             'Deterministic Async Operations',
           'settings.debug.deterministicAsyncOperationsDescription' =>

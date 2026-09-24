@@ -41,6 +41,7 @@ abstract final class SettingsKeys {
   static const String gamePath = 'game_path';
   static const String languageCode = 'AppLanguage';
   static const String articBaseAddress = 'last_artic_base_addr';
+  static const String useLegacySettingsUI = 'use_legacy_settings_ui';
 }
 
 class ThemeSettings extends Table {
