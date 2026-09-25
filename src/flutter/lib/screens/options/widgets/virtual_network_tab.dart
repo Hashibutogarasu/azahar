@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/settings/wifi_access_points_provider.dart';
 import '../../../i18n/translations.g.dart';
-import '../dialogs/add_access_point_dialog.dart';
+import '../../../models/access_point.dart';
+import '../dialogs/access_point_form_dialog.dart';
 import 'wifi_signal_icon.dart';
 
 class VirtualNetworkTab extends ConsumerWidget {
@@ -41,12 +42,13 @@ class VirtualNetworkTab extends ConsumerWidget {
                   icon: const Icon(Icons.delete_outline),
                   onPressed: () => notifier.removeAccessPoint(accessPoint),
                 ),
+                onTap: () => _edit(context, notifier, accessPoint),
               ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final accessPoint = await AddAccessPointDialog.show(context);
+          final accessPoint = await AccessPointFormDialog.show(context);
           if (accessPoint != null) {
             await notifier.addAccessPoint(accessPoint);
           }
@@ -54,5 +56,16 @@ class VirtualNetworkTab extends ConsumerWidget {
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  Future<void> _edit(
+    BuildContext context,
+    VirtualAccessPointsNotifier notifier,
+    AccessPoint accessPoint,
+  ) async {
+    final updated = await AccessPointFormDialog.show(context, initial: accessPoint);
+    if (updated != null) {
+      await notifier.updateAccessPoint(accessPoint, updated);
+    }
   }
 }

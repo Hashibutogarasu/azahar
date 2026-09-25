@@ -4,22 +4,32 @@ import '../../../i18n/translations.g.dart';
 import '../../../models/access_point.dart';
 import '../../../widgets/dialog_cancel_button.dart';
 
-class AddAccessPointDialog extends StatefulWidget {
-  const AddAccessPointDialog({super.key});
+/// Adds a new virtual access point, or edits [initial] when provided.
+class AccessPointFormDialog extends StatefulWidget {
+  const AccessPointFormDialog({super.key, this.initial});
 
-  static Future<AccessPoint?> show(BuildContext context) {
-    return showDialog<AccessPoint>(context: context, builder: (_) => const AddAccessPointDialog());
+  final AccessPoint? initial;
+
+  static Future<AccessPoint?> show(BuildContext context, {AccessPoint? initial}) {
+    return showDialog<AccessPoint>(
+      context: context,
+      builder: (_) => AccessPointFormDialog(initial: initial),
+    );
   }
 
   @override
-  State<AddAccessPointDialog> createState() => _AddAccessPointDialogState();
+  State<AccessPointFormDialog> createState() => _AccessPointFormDialogState();
 }
 
-class _AddAccessPointDialogState extends State<AddAccessPointDialog> {
-  final _ssidController = TextEditingController();
-  final _bssidController = TextEditingController();
-  final _frequencyController = TextEditingController(text: '2437');
-  final _levelController = TextEditingController(text: '-50');
+class _AccessPointFormDialogState extends State<AccessPointFormDialog> {
+  late final _ssidController = TextEditingController(text: widget.initial?.ssid ?? '');
+  late final _bssidController = TextEditingController(text: widget.initial?.bssid ?? '');
+  late final _frequencyController = TextEditingController(
+    text: (widget.initial?.frequency ?? 2437).toString(),
+  );
+  late final _levelController = TextEditingController(
+    text: (widget.initial?.level ?? -50).toString(),
+  );
 
   @override
   void dispose() {
@@ -30,7 +40,7 @@ class _AddAccessPointDialogState extends State<AddAccessPointDialog> {
     super.dispose();
   }
 
-  void _add() {
+  void _submit() {
     Navigator.of(context).pop(
       AccessPoint(
         ssid: _ssidController.text,
@@ -45,8 +55,9 @@ class _AddAccessPointDialogState extends State<AddAccessPointDialog> {
   Widget build(BuildContext context) {
     final t = context.t;
     final n = t.settings.networking;
+    final isEditing = widget.initial != null;
     return AlertDialog(
-      title: Text(n.addAccessPoint),
+      title: Text(isEditing ? n.editAccessPoint : n.addAccessPoint),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -70,7 +81,10 @@ class _AddAccessPointDialogState extends State<AddAccessPointDialog> {
           ),
         ],
       ),
-      actions: [const DialogCancelButton(), TextButton(onPressed: _add, child: Text(n.addAccessPoint))],
+      actions: [
+        const DialogCancelButton(),
+        TextButton(onPressed: _submit, child: Text(isEditing ? t.common.save : n.addAccessPoint)),
+      ],
     );
   }
 }

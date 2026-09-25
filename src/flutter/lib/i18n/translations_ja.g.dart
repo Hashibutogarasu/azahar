@@ -104,6 +104,8 @@ class _Translations$common$ja extends Translations$common$en {
   // Translations
   @override
   String get cancel => 'キャンセル';
+  @override
+  String get save => '保存';
 }
 
 // Path: setup
@@ -931,6 +933,8 @@ class _Translations$settings$networking$ja
   @override
   String get addAccessPoint => 'アクセスポイントを追加';
   @override
+  String get editAccessPoint => 'アクセスポイントを編集';
+  @override
   String get ssidHint => '空欄で非公開ネットワークになります';
   @override
   String get bssidHint => '00:00:00:00:00:00';
@@ -938,6 +942,10 @@ class _Translations$settings$networking$ja
   String get frequencyHint => 'MHz、例: 2437';
   @override
   String get levelHint => '信号レベル（dBm）、例: -50';
+  @override
+  String get copySelected => '選択したものをコピー';
+  @override
+  String get pasteAccessPoints => '貼り付け';
 }
 
 // Path: settings.media
@@ -1968,6 +1976,7 @@ extension on TranslationsJa {
     return switch (path) {
           'appName' => 'Azahar',
           'common.cancel' => 'キャンセル',
+          'common.save' => '保存',
           'setup.next' => '次へ',
           'setup.back' => '戻る',
           'setup.stepComplete' => '完了！',
@@ -2203,10 +2212,13 @@ extension on TranslationsJa {
           'settings.networking.useVirtualNetworkDescription' =>
             '実際のアクセスポイントの代わりに、以下のアクセスポイントをエミュレートされたコンソールに報告します。',
           'settings.networking.addAccessPoint' => 'アクセスポイントを追加',
+          'settings.networking.editAccessPoint' => 'アクセスポイントを編集',
           'settings.networking.ssidHint' => '空欄で非公開ネットワークになります',
           'settings.networking.bssidHint' => '00:00:00:00:00:00',
           'settings.networking.frequencyHint' => 'MHz、例: 2437',
           'settings.networking.levelHint' => '信号レベル（dBm）、例: -50',
+          'settings.networking.copySelected' => '選択したものをコピー',
+          'settings.networking.pasteAccessPoints' => '貼り付け',
           'settings.media.title' => 'メディア',
           'settings.media.groupApp' => 'アプリ',
           'settings.media.groupEmulator' => 'エミュレータ',
@@ -2544,15 +2556,15 @@ extension on TranslationsJa {
           'settings.gamepad.controllerInputModeManual' => '手動',
           'settings.gamepad.controllerInputModeAutoDetect' => '自動検出',
           'settings.gamepad.invertLeftStickYAxis' => '左スティックのY軸を反転',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.gamepad.invertLeftStickYAxisDescription' =>
             '自動検出されたコントローラー使用時に、左スティックの垂直軸を反転します。',
           'settings.gamepad.gyroSettings' => 'ジャイロ設定',
           'settings.gamepad.gyroInputSource' => 'ジャイロ入力ソース',
           'settings.gamepad.gyroInputSourceDescription' =>
             'モーション（ジャイロ）操作の入力元を、この端末か接続したコントローラーのジャイロスコープかを選択します。コントローラーにジャイロスコープがない場合はこの端末が使用されます。',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.gamepad.gyroInputSourceDevice' => '端末',
           'settings.gamepad.gyroInputSourceController' => 'コントローラー',
           'settings.gamepad.gyroSensitivityVertical' => 'ジャイロの垂直感度',

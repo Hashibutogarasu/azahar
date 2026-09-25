@@ -1,7 +1,8 @@
 {
   "appName": "Azahar",
   "common": {
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "save": "Save"
   },
   "setup": {
     "next": "Next",
@@ -256,10 +257,13 @@
       "useVirtualNetwork": "Use Virtual Network",
       "useVirtualNetworkDescription": "Reports the access points below to the emulated console instead of the real ones.",
       "addAccessPoint": "Add Access Point",
+      "editAccessPoint": "Edit Access Point",
       "ssidHint": "Leave blank for a hidden network",
       "bssidHint": "00:00:00:00:00:00",
       "frequencyHint": "MHz, e.g. 2437",
-      "levelHint": "Signal level in dBm, e.g. -50"
+      "levelHint": "Signal level in dBm, e.g. -50",
+      "copySelected": "Copy selected",
+      "pasteAccessPoints": "Paste"
     },
     "media": {
       "title": "Media",

@@ -1,7 +1,8 @@
 {
   "appName": "Azahar",
   "common": {
-    "cancel": "キャンセル"
+    "cancel": "キャンセル",
+    "save": "保存"
   },
   "setup": {
     "next": "次へ",
@@ -256,10 +257,13 @@
       "useVirtualNetwork": "仮想ネットワークを使用する",
       "useVirtualNetworkDescription": "実際のアクセスポイントの代わりに、以下のアクセスポイントをエミュレートされたコンソールに報告します。",
       "addAccessPoint": "アクセスポイントを追加",
+      "editAccessPoint": "アクセスポイントを編集",
       "ssidHint": "空欄で非公開ネットワークになります",
       "bssidHint": "00:00:00:00:00:00",
       "frequencyHint": "MHz、例: 2437",
-      "levelHint": "信号レベル（dBm）、例: -50"
+      "levelHint": "信号レベル（dBm）、例: -50",
+      "copySelected": "選択したものをコピー",
+      "pasteAccessPoints": "貼り付け"
     },
     "media": {
       "title": "メディア",

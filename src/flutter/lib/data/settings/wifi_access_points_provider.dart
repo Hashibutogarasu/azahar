@@ -55,8 +55,22 @@ class VirtualAccessPointsNotifier extends Notifier<VirtualAccessPointsState> {
     await _push();
   }
 
-  Future<void> addAccessPoint(AccessPoint accessPoint) async {
-    state = state.copyWith(accessPoints: [...state.accessPoints, accessPoint]);
+  Future<void> addAccessPoint(AccessPoint accessPoint) => addAll([accessPoint]);
+
+  Future<void> addAll(List<AccessPoint> accessPoints) async {
+    if (accessPoints.isEmpty) return;
+    final result = [...state.accessPoints];
+    for (final accessPoint in accessPoints) {
+      final index = result.indexWhere(
+        (it) => it.ssid == accessPoint.ssid && it.bssid == accessPoint.bssid,
+      );
+      if (index == -1) {
+        result.add(accessPoint);
+      } else {
+        result[index] = accessPoint;
+      }
+    }
+    state = state.copyWith(accessPoints: result);
     await _push();
   }
 
@@ -67,7 +81,49 @@ class VirtualAccessPointsNotifier extends Notifier<VirtualAccessPointsState> {
     await _push();
   }
 
+  Future<void> updateAccessPoint(AccessPoint oldValue, AccessPoint newValue) async {
+    state = state.copyWith(
+      accessPoints: [
+        for (final accessPoint in state.accessPoints)
+          if (accessPoint == oldValue) newValue else accessPoint,
+      ],
+    );
+    await _push();
+  }
+
   Future<void> _push() {
     return _bridge.setVirtualAccessPoints(state.enabled ? state.accessPoints : null);
   }
+}
+
+final selectedRealAccessPointsProvider =
+    NotifierProvider<SelectedAccessPointsNotifier, Set<AccessPoint>>(
+  SelectedAccessPointsNotifier.new,
+);
+
+class SelectedAccessPointsNotifier extends Notifier<Set<AccessPoint>> {
+  @override
+  Set<AccessPoint> build() => const {};
+
+  void toggle(AccessPoint accessPoint) {
+    final next = {...state};
+    if (!next.remove(accessPoint)) {
+      next.add(accessPoint);
+    }
+    state = next;
+  }
+
+  void clear() => state = const {};
+}
+
+final copiedAccessPointsProvider =
+    NotifierProvider<CopiedAccessPointsNotifier, List<AccessPoint>>(
+  CopiedAccessPointsNotifier.new,
+);
+
+class CopiedAccessPointsNotifier extends Notifier<List<AccessPoint>> {
+  @override
+  List<AccessPoint> build() => const [];
+
+  void copy(List<AccessPoint> accessPoints) => state = accessPoints;
 }

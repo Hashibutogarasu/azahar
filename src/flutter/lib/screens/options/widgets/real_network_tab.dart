@@ -12,6 +12,9 @@ class RealNetworkTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = context.t;
     final accessPoints = ref.watch(realAccessPointsProvider);
+    final selected = ref.watch(selectedRealAccessPointsProvider);
+    final selectionNotifier = ref.read(selectedRealAccessPointsProvider.notifier);
+    final isSelecting = selected.isNotEmpty;
     return RefreshIndicator(
       onRefresh: () => ref.read(realAccessPointsProvider.notifier).refresh(),
       child: accessPoints.when(
@@ -37,7 +40,22 @@ class RealNetworkTab extends ConsumerWidget {
             itemBuilder: (context, index) {
               final accessPoint = data[index];
               return ListTile(
-                leading: WifiSignalIcon(level: accessPoint.level),
+                leading: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Visibility(
+                      visible: isSelecting,
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      child: Checkbox(
+                        value: selected.contains(accessPoint),
+                        onChanged: (_) => selectionNotifier.toggle(accessPoint),
+                      ),
+                    ),
+                    WifiSignalIcon(level: accessPoint.level),
+                  ],
+                ),
                 title: Text(
                   accessPoint.ssid.isEmpty ? t.settings.networking.hiddenNetwork : accessPoint.ssid,
                 ),
@@ -45,6 +63,8 @@ class RealNetworkTab extends ConsumerWidget {
                   '${t.settings.networking.bssid}: ${accessPoint.bssid}  '
                   '${t.settings.networking.frequency}: ${accessPoint.frequency} MHz',
                 ),
+                onTap: isSelecting ? () => selectionNotifier.toggle(accessPoint) : null,
+                onLongPress: () => selectionNotifier.toggle(accessPoint),
               );
             },
           );

@@ -99,6 +99,9 @@ class Translations$common$en {
 
   /// en: 'Cancel'
   String get cancel => 'Cancel';
+
+  /// en: 'Save'
+  String get save => 'Save';
 }
 
 // Path: setup
@@ -1053,6 +1056,9 @@ class Translations$settings$networking$en {
   /// en: 'Add Access Point'
   String get addAccessPoint => 'Add Access Point';
 
+  /// en: 'Edit Access Point'
+  String get editAccessPoint => 'Edit Access Point';
+
   /// en: 'Leave blank for a hidden network'
   String get ssidHint => 'Leave blank for a hidden network';
 
@@ -1064,6 +1070,12 @@ class Translations$settings$networking$en {
 
   /// en: 'Signal level in dBm, e.g. -50'
   String get levelHint => 'Signal level in dBm, e.g. -50';
+
+  /// en: 'Copy selected'
+  String get copySelected => 'Copy selected';
+
+  /// en: 'Paste'
+  String get pasteAccessPoints => 'Paste';
 }
 
 // Path: settings.media
@@ -2508,6 +2520,7 @@ extension on Translations {
     return switch (path) {
           'appName' => 'Azahar',
           'common.cancel' => 'Cancel',
+          'common.save' => 'Save',
           'setup.next' => 'Next',
           'setup.back' => 'Back',
           'setup.stepComplete' => 'Complete!',
@@ -2765,10 +2778,13 @@ extension on Translations {
           'settings.networking.useVirtualNetworkDescription' =>
             'Reports the access points below to the emulated console instead of the real ones.',
           'settings.networking.addAccessPoint' => 'Add Access Point',
+          'settings.networking.editAccessPoint' => 'Edit Access Point',
           'settings.networking.ssidHint' => 'Leave blank for a hidden network',
           'settings.networking.bssidHint' => '00:00:00:00:00:00',
           'settings.networking.frequencyHint' => 'MHz, e.g. 2437',
           'settings.networking.levelHint' => 'Signal level in dBm, e.g. -50',
+          'settings.networking.copySelected' => 'Copy selected',
+          'settings.networking.pasteAccessPoints' => 'Paste',
           'settings.media.title' => 'Media',
           'settings.media.groupApp' => 'App',
           'settings.media.groupEmulator' => 'Emulator',
@@ -3124,15 +3140,15 @@ extension on Translations {
           'settings.gamepad.controllerInputModeManual' => 'Manual',
           'settings.gamepad.controllerInputModeAutoDetect' => 'Auto-Detect',
           'settings.gamepad.invertLeftStickYAxis' => 'Invert Left Stick Y Axis',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.gamepad.invertLeftStickYAxisDescription' =>
             'Invert the left stick\'s vertical axis when using auto-detected controllers.',
           'settings.gamepad.gyroSettings' => 'Gyro Settings',
           'settings.gamepad.gyroInputSource' => 'Gyro Input Source',
           'settings.gamepad.gyroInputSourceDescription' =>
             'Choose whether motion (gyro) controls come from this device or a connected controller\'s gyroscope. Falls back to this device if the controller has no gyroscope.',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.gamepad.gyroInputSourceDevice' => 'Device',
           'settings.gamepad.gyroInputSourceController' => 'Controller',
           'settings.gamepad.gyroSensitivityVertical' =>
