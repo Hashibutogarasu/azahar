@@ -1,18 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../data/settings/media_volume_provider.dart';
 import '../../../data/settings/sections/media_settings.dart';
 import '../../../i18n/translations.g.dart';
 import '../widgets/settings_list.dart';
 
-class MediaSettingsPage extends StatelessWidget {
+class MediaSettingsPage extends ConsumerWidget {
   const MediaSettingsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final t = context.t;
+    final volume = ref.watch(masterVolumeProvider);
     return Scaffold(
       appBar: AppBar(title: Text(t.settings.media.title)),
-      body: SettingsList(items: buildMediaSettingsItems(t)),
+      body: ListView(
+        children: [
+          SettingsList(items: buildMediaSettingsItems(t), shrinkWrap: true),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: _MasterVolumeCard(volume: volume),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MasterVolumeCard extends ConsumerWidget {
+  const _MasterVolumeCard({required this.volume});
+
+  final double volume;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = context.t;
+    final notifier = ref.read(masterVolumeProvider.notifier);
+    return Material(
+      color: Theme.of(context).cardColor,
+      borderRadius: BorderRadius.circular(15),
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(t.settings.media.masterVolume, style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(t.settings.media.masterVolumePercent(value: volume.round())),
+              ],
+            ),
+            Text(t.settings.media.masterVolumeDescription, style: Theme.of(context).textTheme.bodyMedium),
+            Slider(
+              value: volume.clamp(0, 100),
+              min: 0,
+              max: 100,
+              onChanged: (value) => notifier.setVolume(value),
+              onChangeEnd: (_) => notifier.persistVolume(),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

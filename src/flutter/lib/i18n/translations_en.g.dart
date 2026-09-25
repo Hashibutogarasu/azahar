@@ -917,6 +917,16 @@ class Translations$settings$media$en {
   /// en: 'Media'
   String get title => 'Media';
 
+  /// en: 'Master Volume'
+  String get masterVolume => 'Master Volume';
+
+  /// en: 'Controls the app's overall output volume independently of the emulated game's own volume setting. Hardware volume buttons adjust this value.'
+  String get masterVolumeDescription =>
+      'Controls the app\'s overall output volume independently of the emulated game\'s own volume setting. Hardware volume buttons adjust this value.';
+
+  /// en: '${value}%'
+  String masterVolumePercent({required Object value}) => '${value}%';
+
   /// en: 'Treat as Android Media'
   String get treatAudioAsMediaSession => 'Treat as Android Media';
 
@@ -2533,6 +2543,11 @@ extension on Translations {
           'settings.general.frameLimitSliderDescription' =>
             'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.',
           'settings.media.title' => 'Media',
+          'settings.media.masterVolume' => 'Master Volume',
+          'settings.media.masterVolumeDescription' =>
+            'Controls the app\'s overall output volume independently of the emulated game\'s own volume setting. Hardware volume buttons adjust this value.',
+          'settings.media.masterVolumePercent' =>
+            ({required Object value}) => '${value}%',
           'settings.media.treatAudioAsMediaSession' => 'Treat as Android Media',
           'settings.media.treatAudioAsMediaSessionDescription' =>
             'Shows playback controls on the lock screen and notification like a music app, and keeps audio playing when the app is in the background instead of pausing automatically.',
@@ -2931,12 +2946,12 @@ extension on Translations {
           'settings.gamepad.hotkeySwapScreens' => 'Swap Screens',
           'settings.gamepad.hotkeyCycleLayout' => 'Cycle Layouts',
           'settings.gamepad.hotkeyCloseGame' => 'Close Game',
-          'settings.gamepad.hotkeyPauseOrResume' => 'Toggle Pause',
-          'settings.gamepad.hotkeyQuicksave' => 'Quicksave',
-          'settings.gamepad.hotkeyQuickload' => 'Quickload',
           _ => null,
         } ??
         switch (path) {
+          'settings.gamepad.hotkeyPauseOrResume' => 'Toggle Pause',
+          'settings.gamepad.hotkeyQuicksave' => 'Quicksave',
+          'settings.gamepad.hotkeyQuickload' => 'Quickload',
           'settings.gamepad.miscellaneous' => 'Miscellaneous',
           'settings.gamepad.useArticBaseController' =>
             'Use Artic Controller when connected to Artic Base Server',

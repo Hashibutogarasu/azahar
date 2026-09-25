@@ -2002,6 +2002,209 @@ class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
   }
 }
 
+class $MediaSettingsTable extends MediaSettings
+    with TableInfo<$MediaSettingsTable, MediaSetting> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MediaSettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _masterVolumeMeta = const VerificationMeta(
+    'masterVolume',
+  );
+  @override
+  late final GeneratedColumn<double> masterVolume = GeneratedColumn<double>(
+    'master_volume',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(100.0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, masterVolume];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'media_settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MediaSetting> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('master_volume')) {
+      context.handle(
+        _masterVolumeMeta,
+        masterVolume.isAcceptableOrUnknown(
+          data['master_volume']!,
+          _masterVolumeMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  MediaSetting map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MediaSetting(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      masterVolume: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}master_volume'],
+      )!,
+    );
+  }
+
+  @override
+  $MediaSettingsTable createAlias(String alias) {
+    return $MediaSettingsTable(attachedDatabase, alias);
+  }
+}
+
+class MediaSetting extends DataClass implements Insertable<MediaSetting> {
+  final int id;
+  final double masterVolume;
+  const MediaSetting({required this.id, required this.masterVolume});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['master_volume'] = Variable<double>(masterVolume);
+    return map;
+  }
+
+  MediaSettingsCompanion toCompanion(bool nullToAbsent) {
+    return MediaSettingsCompanion(
+      id: Value(id),
+      masterVolume: Value(masterVolume),
+    );
+  }
+
+  factory MediaSetting.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MediaSetting(
+      id: serializer.fromJson<int>(json['id']),
+      masterVolume: serializer.fromJson<double>(json['masterVolume']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'masterVolume': serializer.toJson<double>(masterVolume),
+    };
+  }
+
+  MediaSetting copyWith({int? id, double? masterVolume}) => MediaSetting(
+    id: id ?? this.id,
+    masterVolume: masterVolume ?? this.masterVolume,
+  );
+  MediaSetting copyWithCompanion(MediaSettingsCompanion data) {
+    return MediaSetting(
+      id: data.id.present ? data.id.value : this.id,
+      masterVolume: data.masterVolume.present
+          ? data.masterVolume.value
+          : this.masterVolume,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MediaSetting(')
+          ..write('id: $id, ')
+          ..write('masterVolume: $masterVolume')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, masterVolume);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MediaSetting &&
+          other.id == this.id &&
+          other.masterVolume == this.masterVolume);
+}
+
+class MediaSettingsCompanion extends UpdateCompanion<MediaSetting> {
+  final Value<int> id;
+  final Value<double> masterVolume;
+  const MediaSettingsCompanion({
+    this.id = const Value.absent(),
+    this.masterVolume = const Value.absent(),
+  });
+  MediaSettingsCompanion.insert({
+    this.id = const Value.absent(),
+    this.masterVolume = const Value.absent(),
+  });
+  static Insertable<MediaSetting> custom({
+    Expression<int>? id,
+    Expression<double>? masterVolume,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (masterVolume != null) 'master_volume': masterVolume,
+    });
+  }
+
+  MediaSettingsCompanion copyWith({
+    Value<int>? id,
+    Value<double>? masterVolume,
+  }) {
+    return MediaSettingsCompanion(
+      id: id ?? this.id,
+      masterVolume: masterVolume ?? this.masterVolume,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (masterVolume.present) {
+      map['master_volume'] = Variable<double>(masterVolume.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MediaSettingsCompanion(')
+          ..write('id: $id, ')
+          ..write('masterVolume: $masterVolume')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2013,6 +2216,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $InputLayoutElementsTable inputLayoutElements =
       $InputLayoutElementsTable(this);
   late final $ThemeSettingsTable themeSettings = $ThemeSettingsTable(this);
+  late final $MediaSettingsTable mediaSettings = $MediaSettingsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2023,6 +2227,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     controlBindings,
     inputLayoutElements,
     themeSettings,
+    mediaSettings,
   ];
 }
 
@@ -3155,6 +3360,151 @@ typedef $$ThemeSettingsTableProcessedTableManager =
       ThemeSetting,
       PrefetchHooks Function()
     >;
+typedef $$MediaSettingsTableCreateCompanionBuilder =
+    MediaSettingsCompanion Function({
+      Value<int> id,
+      Value<double> masterVolume,
+    });
+typedef $$MediaSettingsTableUpdateCompanionBuilder =
+    MediaSettingsCompanion Function({
+      Value<int> id,
+      Value<double> masterVolume,
+    });
+
+class $$MediaSettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $MediaSettingsTable> {
+  $$MediaSettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get masterVolume => $composableBuilder(
+    column: $table.masterVolume,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$MediaSettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $MediaSettingsTable> {
+  $$MediaSettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get masterVolume => $composableBuilder(
+    column: $table.masterVolume,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$MediaSettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $MediaSettingsTable> {
+  $$MediaSettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<double> get masterVolume => $composableBuilder(
+    column: $table.masterVolume,
+    builder: (column) => column,
+  );
+}
+
+class $$MediaSettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $MediaSettingsTable,
+          MediaSetting,
+          $$MediaSettingsTableFilterComposer,
+          $$MediaSettingsTableOrderingComposer,
+          $$MediaSettingsTableAnnotationComposer,
+          $$MediaSettingsTableCreateCompanionBuilder,
+          $$MediaSettingsTableUpdateCompanionBuilder,
+          (
+            MediaSetting,
+            BaseReferences<_$AppDatabase, $MediaSettingsTable, MediaSetting>,
+          ),
+          MediaSetting,
+          PrefetchHooks Function()
+        > {
+  $$MediaSettingsTableTableManager(_$AppDatabase db, $MediaSettingsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MediaSettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$MediaSettingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$MediaSettingsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<double> masterVolume = const Value.absent(),
+              }) => MediaSettingsCompanion(id: id, masterVolume: masterVolume),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<double> masterVolume = const Value.absent(),
+              }) => MediaSettingsCompanion.insert(
+                id: id,
+                masterVolume: masterVolume,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$MediaSettingsTable, MediaSetting>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $MediaSettingsTable,
+                    MediaSetting
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$MediaSettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $MediaSettingsTable,
+      MediaSetting,
+      $$MediaSettingsTableFilterComposer,
+      $$MediaSettingsTableOrderingComposer,
+      $$MediaSettingsTableAnnotationComposer,
+      $$MediaSettingsTableCreateCompanionBuilder,
+      $$MediaSettingsTableUpdateCompanionBuilder,
+      (
+        MediaSetting,
+        BaseReferences<_$AppDatabase, $MediaSettingsTable, MediaSetting>,
+      ),
+      MediaSetting,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3169,4 +3519,6 @@ class $AppDatabaseManager {
       $$InputLayoutElementsTableTableManager(_db, _db.inputLayoutElements);
   $$ThemeSettingsTableTableManager get themeSettings =>
       $$ThemeSettingsTableTableManager(_db, _db.themeSettings);
+  $$MediaSettingsTableTableManager get mediaSettings =>
+      $$MediaSettingsTableTableManager(_db, _db.mediaSettings);
 }

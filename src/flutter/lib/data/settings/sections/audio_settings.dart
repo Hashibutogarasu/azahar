@@ -1,7 +1,6 @@
 import '../../../i18n/translations.g.dart';
 import '../emulator_setting_key.dart';
 import '../settings_item.dart';
-import '../settings_value_store.dart';
 import '../system_save_value_store.dart';
 
 abstract final class AudioSettingKeys {
@@ -12,11 +11,7 @@ abstract final class AudioSettingKeys {
   static const soundOutputMode = IntKey('Audio', 'soundOutputMode', 1);
 }
 
-List<SettingsItem> buildAudioSettingsItems(
-  Translations t,
-  SystemSaveValueStore systemSaveStore, {
-  required SettingsValueStore volumeStore,
-}) {
+List<SettingsItem> buildAudioSettingsItems(Translations t, SystemSaveValueStore systemSaveStore) {
   final a = t.settings.audio;
   return [
     SettingsItem.floatSlider(
@@ -25,7 +20,6 @@ List<SettingsItem> buildAudioSettingsItems(
       min: 0,
       max: 100,
       units: '%',
-      store: volumeStore,
     ),
     SettingsItem.switch_(
       title: a.audioStretching,

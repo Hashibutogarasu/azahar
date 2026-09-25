@@ -55,6 +55,14 @@ class ThemeSettings extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+class MediaSettings extends Table {
+  IntColumn get id => integer().withDefault(const Constant(0))();
+  RealColumn get masterVolume => real().withDefault(const Constant(100.0))();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 class ControlBindings extends Table {
   TextColumn get key => text()();
   TextColumn get value => text()();
@@ -75,7 +83,9 @@ class InputLayoutElements extends Table {
   Set<Column> get primaryKey => {orientation, elementId};
 }
 
-@DriftDatabase(tables: [Games, AppSettings, ControlBindings, InputLayoutElements, ThemeSettings])
+@DriftDatabase(
+  tables: [Games, AppSettings, ControlBindings, InputLayoutElements, ThemeSettings, MediaSettings],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase._(super.e);
 
@@ -86,7 +96,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -95,6 +105,9 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(controlBindings);
         await m.createTable(inputLayoutElements);
         await m.createTable(themeSettings);
+      }
+      if (from < 3) {
+        await m.createTable(mediaSettings);
       }
     },
   );

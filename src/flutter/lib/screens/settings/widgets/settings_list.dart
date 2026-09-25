@@ -16,9 +16,11 @@ import 'settings_group_card.dart';
 /// [AppServices.emulatorSettingsRepository] (or the item's own [SettingsValueStore]), saving
 /// immediately after every change.
 class SettingsList extends StatefulWidget {
-  const SettingsList({super.key, required this.items});
+  const SettingsList({super.key, required this.items, this.shrinkWrap = false});
 
   final List<SettingsItem> items;
+
+  final bool shrinkWrap;
 
   @override
   State<SettingsList> createState() => _SettingsListState();
@@ -57,6 +59,8 @@ class _SettingsListState extends State<SettingsList> {
 
     return ListView(
       padding: const EdgeInsets.all(16),
+      shrinkWrap: widget.shrinkWrap,
+      physics: widget.shrinkWrap ? const NeverScrollableScrollPhysics() : null,
       children: [
         for (final group in groups)
           if (group.$2.isNotEmpty)

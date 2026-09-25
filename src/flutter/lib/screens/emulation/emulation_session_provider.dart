@@ -94,7 +94,7 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
         unawaited(togglePause());
       },
     );
-    await ref.read(mediaVolumeProvider.notifier).startNativeSync();
+    await ref.read(masterVolumeProvider.notifier).startNativeSync();
   }
 
   Future<void> togglePause() async {
@@ -167,7 +167,7 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
     await _shaderProgressSubscription?.cancel();
     _shaderProgressSubscription = null;
     _mediaSessionActivated = false;
-    await ref.read(mediaVolumeProvider.notifier).stopNativeSync();
+    await ref.read(masterVolumeProvider.notifier).stopNativeSync();
     await _mediaSession.deactivate();
     if (state.isLaunched) {
       await _bridge.stopEmulation();
