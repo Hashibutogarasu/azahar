@@ -904,6 +904,40 @@ class _Translations$settings$networking$ja
   @override
   String get useWirelessDescription =>
       '近くにある実際のWi-Fiネットワークを、偽のものではなく3DSのすれちがい通信/SpotPass対応ネットワークとして報告します。';
+  @override
+  String get emulatedNetwork => 'エミュレーションされたネットワーク';
+  @override
+  String get emulatedNetworkDescription =>
+      'エミュレートされたコンソールから見えるWi-Fiアクセスポイントを確認し、必要に応じて仮想のものに置き換えます。';
+  @override
+  String get realNetworkTab => '実際のネットワーク';
+  @override
+  String get virtualNetworkTab => '仮想のネットワーク';
+  @override
+  String get hiddenNetwork => '（非公開ネットワーク）';
+  @override
+  String get ssid => 'SSID';
+  @override
+  String get bssid => 'BSSID';
+  @override
+  String get frequency => '周波数';
+  @override
+  String get noAccessPointsFound => 'アクセスポイントが見つかりませんでした。';
+  @override
+  String get useVirtualNetwork => '仮想ネットワークを使用する';
+  @override
+  String get useVirtualNetworkDescription =>
+      '実際のアクセスポイントの代わりに、以下のアクセスポイントをエミュレートされたコンソールに報告します。';
+  @override
+  String get addAccessPoint => 'アクセスポイントを追加';
+  @override
+  String get ssidHint => '空欄で非公開ネットワークになります';
+  @override
+  String get bssidHint => '00:00:00:00:00:00';
+  @override
+  String get frequencyHint => 'MHz、例: 2437';
+  @override
+  String get levelHint => '信号レベル（dBm）、例: -50';
 }
 
 // Path: settings.media
@@ -2155,6 +2189,24 @@ extension on TranslationsJa {
           'settings.networking.useWireless' => '無線を使用する',
           'settings.networking.useWirelessDescription' =>
             '近くにある実際のWi-Fiネットワークを、偽のものではなく3DSのすれちがい通信/SpotPass対応ネットワークとして報告します。',
+          'settings.networking.emulatedNetwork' => 'エミュレーションされたネットワーク',
+          'settings.networking.emulatedNetworkDescription' =>
+            'エミュレートされたコンソールから見えるWi-Fiアクセスポイントを確認し、必要に応じて仮想のものに置き換えます。',
+          'settings.networking.realNetworkTab' => '実際のネットワーク',
+          'settings.networking.virtualNetworkTab' => '仮想のネットワーク',
+          'settings.networking.hiddenNetwork' => '（非公開ネットワーク）',
+          'settings.networking.ssid' => 'SSID',
+          'settings.networking.bssid' => 'BSSID',
+          'settings.networking.frequency' => '周波数',
+          'settings.networking.noAccessPointsFound' => 'アクセスポイントが見つかりませんでした。',
+          'settings.networking.useVirtualNetwork' => '仮想ネットワークを使用する',
+          'settings.networking.useVirtualNetworkDescription' =>
+            '実際のアクセスポイントの代わりに、以下のアクセスポイントをエミュレートされたコンソールに報告します。',
+          'settings.networking.addAccessPoint' => 'アクセスポイントを追加',
+          'settings.networking.ssidHint' => '空欄で非公開ネットワークになります',
+          'settings.networking.bssidHint' => '00:00:00:00:00:00',
+          'settings.networking.frequencyHint' => 'MHz、例: 2437',
+          'settings.networking.levelHint' => '信号レベル（dBm）、例: -50',
           'settings.media.title' => 'メディア',
           'settings.media.groupApp' => 'アプリ',
           'settings.media.groupEmulator' => 'エミュレータ',
@@ -2498,6 +2550,9 @@ extension on TranslationsJa {
           'settings.gamepad.gyroInputSource' => 'ジャイロ入力ソース',
           'settings.gamepad.gyroInputSourceDescription' =>
             'モーション（ジャイロ）操作の入力元を、この端末か接続したコントローラーのジャイロスコープかを選択します。コントローラーにジャイロスコープがない場合はこの端末が使用されます。',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.gamepad.gyroInputSourceDevice' => '端末',
           'settings.gamepad.gyroInputSourceController' => 'コントローラー',
           'settings.gamepad.gyroSensitivityVertical' => 'ジャイロの垂直感度',
@@ -2518,9 +2573,6 @@ extension on TranslationsJa {
           'settings.gamepad.buttonX' => 'X',
           'settings.gamepad.buttonY' => 'Y',
           'settings.gamepad.buttonSelect' => 'SELECT',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.gamepad.buttonStart' => 'START',
           'settings.gamepad.buttonHome' => 'HOME',
           'settings.gamepad.circlePad' => 'サークルパッド',

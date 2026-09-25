@@ -7,6 +7,7 @@ import '../data/settings/settings_load_provider.dart';
 import '../screens/games/games_list_page.dart';
 import '../screens/home/app_shell.dart';
 import '../screens/options/about_page.dart';
+import '../screens/options/emulated_network_page.dart';
 import '../screens/options/gpu_driver_manager_page.dart';
 import '../screens/options/legacy_options_page.dart';
 import '../screens/options/options_page.dart';

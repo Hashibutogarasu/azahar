@@ -14,6 +14,7 @@ List<RouteBase> get $appRoutes => [
   $appShellRouteData,
   $optionsGeneralSettingsRoute,
   $optionsMediaSettingsRoute,
+  $optionsEmulatedNetworkSettingsRoute,
   $optionsCameraSettingsRoute,
   $optionsControlsSettingsRoute,
   $optionsGraphicsSettingsRoute,
@@ -273,6 +274,34 @@ mixin $OptionsMediaSettingsRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/options/media');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $optionsEmulatedNetworkSettingsRoute => GoRouteData.$route(
+  path: '/options/networking/emulated-network',
+  hasOverriddenOnExit: false,
+  factory: $OptionsEmulatedNetworkSettingsRoute._fromState,
+);
+
+mixin $OptionsEmulatedNetworkSettingsRoute on GoRouteData {
+  static OptionsEmulatedNetworkSettingsRoute _fromState(GoRouterState state) =>
+      const OptionsEmulatedNetworkSettingsRoute();
+
+  @override
+  String get location =>
+      GoRouteData.$location('/options/networking/emulated-network');
 
   @override
   void go(BuildContext context) => context.go(location);

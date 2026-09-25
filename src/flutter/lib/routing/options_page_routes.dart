@@ -20,6 +20,17 @@ class OptionsMediaSettingsRoute extends GoRouteData with $OptionsMediaSettingsRo
   }
 }
 
+@TypedGoRoute<OptionsEmulatedNetworkSettingsRoute>(path: '/options/networking/emulated-network')
+class OptionsEmulatedNetworkSettingsRoute extends GoRouteData
+    with $OptionsEmulatedNetworkSettingsRoute {
+  const OptionsEmulatedNetworkSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const EmulatedNetworkPage();
+  }
+}
+
 @TypedGoRoute<OptionsCameraSettingsRoute>(path: '/options/camera')
 class OptionsCameraSettingsRoute extends GoRouteData with $OptionsCameraSettingsRoute {
   const OptionsCameraSettingsRoute();

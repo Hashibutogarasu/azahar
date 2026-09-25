@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/settings/networking_settings_provider.dart';
 import '../../../i18n/translations.g.dart';
+import '../../../routing/app_routes.dart';
 import '../../settings/widgets/settings_group_card.dart';
 
 class NetworkingOptionsGroup extends ConsumerWidget {
@@ -28,6 +29,12 @@ class NetworkingOptionsGroup extends ConsumerWidget {
           title: t.settings.networking.useWireless,
           subtitle: t.settings.networking.useWirelessDescription,
           trailing: Switch(value: state.useWireless, onChanged: notifier.setUseWireless),
+        ),
+        babstrap.SettingsItem(
+          icons: Icons.router,
+          title: t.settings.networking.emulatedNetwork,
+          subtitle: t.settings.networking.emulatedNetworkDescription,
+          onTap: () => const OptionsEmulatedNetworkSettingsRoute().push(context),
         ),
       ],
     );

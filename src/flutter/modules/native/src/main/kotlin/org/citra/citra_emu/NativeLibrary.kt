@@ -681,22 +681,41 @@ object NativeLibrary {
         }
     }
 
+    private var virtualAccessPoints: Array<String>? = null
+
+    /**
+     * Overrides the access points returned by [scanWifiAccessPoints] with [entries], formatted the
+     * same way ("bssid|rssi|channel|security|ssid" per entry). Pass null to go back to reporting
+     * the device's real Wi-Fi scan results.
+     */
+    fun setVirtualAccessPoints(entries: Array<String>?) {
+        virtualAccessPoints = entries
+    }
+
     /**
      * Returns the Wi-Fi access points of the 2.4 GHz band seen by the device, including the hidden
-     * networks.
+     * networks, or the entries set via [setVirtualAccessPoints] when an override is active.
      *
      * Every entry has the form "bssid|rssi|channel|security|ssid", where the security is 0 for an
-     * open network, 1 for a secured one and 2 when TKIP is allowed. A new scan is requested at
-     * most once every 30 seconds to stay within the scan throttling of Android, the cached results
-     * are returned in between.
+     * open network, 1 for a secured one and 2 when TKIP is allowed.
      *
      * @return The access points, an empty array when the scan found none, and null when the scan
      * is unavailable because the permission is missing.
      */
     @Keep
     @JvmStatic
-    @Suppress("DEPRECATION")
     fun scanWifiAccessPoints(): Array<String>? {
+        return virtualAccessPoints ?: scanRealWifiAccessPoints()
+    }
+
+    /**
+     * Performs the actual device Wi-Fi scan, ignoring any override set via [setVirtualAccessPoints].
+     * A new scan is requested at most once every 30 seconds to stay within the scan throttling of
+     * Android, the cached results are returned in between. See [scanWifiAccessPoints] for the
+     * entry format and return value semantics.
+     */
+    @Suppress("DEPRECATION")
+    fun scanRealWifiAccessPoints(): Array<String>? {
         val context = sEmulationActivity.get() ?: return null
         if (ContextCompat.checkSelfPermission(context, permission.ACCESS_FINE_LOCATION) !=
             PackageManager.PERMISSION_GRANTED

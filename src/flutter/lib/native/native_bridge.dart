@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 
+import '../models/access_point.dart';
 import '../models/copy_dir_progress.dart';
 import '../models/create_shortcut_request.dart';
 import '../models/game.dart';
@@ -132,6 +133,27 @@ class NativeBridge {
         .cast<Map<Object?, Object?>>()
         .map((entry) => _gameFromMap(entry))
         .toList();
+  }
+
+  Future<List<AccessPoint>> scanRealWifiAccessPoints() async {
+    final result = await _channel.invokeMethod<List<Object?>>('scanRealWifiAccessPoints');
+    if (result == null) return const [];
+    return result.cast<Map<Object?, Object?>>().map((entry) => _accessPointFromMap(entry)).toList();
+  }
+
+  Future<void> setVirtualAccessPoints(List<AccessPoint>? accessPoints) {
+    return _channel.invokeMethod<void>('setVirtualAccessPoints', {
+      'accessPoints': accessPoints
+          ?.map(
+            (accessPoint) => {
+              'ssid': accessPoint.ssid,
+              'bssid': accessPoint.bssid,
+              'frequency': accessPoint.frequency,
+              'level': accessPoint.level,
+            },
+          )
+          .toList(),
+    });
   }
 
   Future<int> createEmulationTexture({
@@ -370,6 +392,15 @@ class NativeBridge {
       'iconFilePath': request.iconFilePath,
       'stretch': request.stretch,
     });
+  }
+
+  AccessPoint _accessPointFromMap(Map<Object?, Object?> map) {
+    return AccessPoint(
+      ssid: map['ssid'] as String? ?? '',
+      bssid: map['bssid'] as String? ?? '',
+      frequency: (map['frequency'] as num?)?.toInt() ?? 0,
+      level: (map['level'] as num?)?.toInt() ?? 0,
+    );
   }
 
   Game _gameFromMap(Map<Object?, Object?> map) {

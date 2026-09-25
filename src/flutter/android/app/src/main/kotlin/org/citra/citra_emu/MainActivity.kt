@@ -22,6 +22,7 @@ import org.citra.citra_emu.channel.GpuDriverController
 import org.citra.citra_emu.channel.SettingsController
 import org.citra.citra_emu.channel.ShowMiiSelector
 import org.citra.citra_emu.channel.SystemFilesController
+import org.citra.citra_emu.channel.WifiController
 import org.citra.citra_emu.utils.AppletBridge
 import org.citra.citra_emu.utils.DiskShaderCacheProgress
 
@@ -50,6 +51,7 @@ class MainActivity : FlutterFragmentActivity() {
     private val gpuDriverController = GpuDriverController()
     private val ciaInstallController by lazy { CiaInstallController(this) }
     private val systemFilesController = SystemFilesController()
+    private val wifiController = WifiController()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,7 +94,7 @@ class MainActivity : FlutterFragmentActivity() {
                 gameActionsController.handlers +
                 emulationController.handlers + settingsController.handlers +
                 gpuDriverController.handlers + ciaInstallController.handlers +
-                systemFilesController.handlers)
+                systemFilesController.handlers + wifiController.handlers)
                 .associateBy { it.name }
 
         val appletChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, APPLET_CHANNEL)

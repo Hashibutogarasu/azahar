@@ -1014,6 +1014,56 @@ class Translations$settings$networking$en {
   /// en: 'Reports real nearby Wi-Fi networks as 3DS StreetPass/SpotPass-compatible networks, instead of fake ones.'
   String get useWirelessDescription =>
       'Reports real nearby Wi-Fi networks as 3DS StreetPass/SpotPass-compatible networks, instead of fake ones.';
+
+  /// en: 'Emulated Network'
+  String get emulatedNetwork => 'Emulated Network';
+
+  /// en: 'Inspect the Wi-Fi access points the emulated console can see, and optionally replace them with virtual ones.'
+  String get emulatedNetworkDescription =>
+      'Inspect the Wi-Fi access points the emulated console can see, and optionally replace them with virtual ones.';
+
+  /// en: 'Real Network'
+  String get realNetworkTab => 'Real Network';
+
+  /// en: 'Virtual Network'
+  String get virtualNetworkTab => 'Virtual Network';
+
+  /// en: '(Hidden Network)'
+  String get hiddenNetwork => '(Hidden Network)';
+
+  /// en: 'SSID'
+  String get ssid => 'SSID';
+
+  /// en: 'BSSID'
+  String get bssid => 'BSSID';
+
+  /// en: 'Frequency'
+  String get frequency => 'Frequency';
+
+  /// en: 'No access points found.'
+  String get noAccessPointsFound => 'No access points found.';
+
+  /// en: 'Use Virtual Network'
+  String get useVirtualNetwork => 'Use Virtual Network';
+
+  /// en: 'Reports the access points below to the emulated console instead of the real ones.'
+  String get useVirtualNetworkDescription =>
+      'Reports the access points below to the emulated console instead of the real ones.';
+
+  /// en: 'Add Access Point'
+  String get addAccessPoint => 'Add Access Point';
+
+  /// en: 'Leave blank for a hidden network'
+  String get ssidHint => 'Leave blank for a hidden network';
+
+  /// en: '00:00:00:00:00:00'
+  String get bssidHint => '00:00:00:00:00:00';
+
+  /// en: 'MHz, e.g. 2437'
+  String get frequencyHint => 'MHz, e.g. 2437';
+
+  /// en: 'Signal level in dBm, e.g. -50'
+  String get levelHint => 'Signal level in dBm, e.g. -50';
 }
 
 // Path: settings.media
@@ -2700,6 +2750,25 @@ extension on Translations {
           'settings.networking.useWireless' => 'Use Wireless',
           'settings.networking.useWirelessDescription' =>
             'Reports real nearby Wi-Fi networks as 3DS StreetPass/SpotPass-compatible networks, instead of fake ones.',
+          'settings.networking.emulatedNetwork' => 'Emulated Network',
+          'settings.networking.emulatedNetworkDescription' =>
+            'Inspect the Wi-Fi access points the emulated console can see, and optionally replace them with virtual ones.',
+          'settings.networking.realNetworkTab' => 'Real Network',
+          'settings.networking.virtualNetworkTab' => 'Virtual Network',
+          'settings.networking.hiddenNetwork' => '(Hidden Network)',
+          'settings.networking.ssid' => 'SSID',
+          'settings.networking.bssid' => 'BSSID',
+          'settings.networking.frequency' => 'Frequency',
+          'settings.networking.noAccessPointsFound' =>
+            'No access points found.',
+          'settings.networking.useVirtualNetwork' => 'Use Virtual Network',
+          'settings.networking.useVirtualNetworkDescription' =>
+            'Reports the access points below to the emulated console instead of the real ones.',
+          'settings.networking.addAccessPoint' => 'Add Access Point',
+          'settings.networking.ssidHint' => 'Leave blank for a hidden network',
+          'settings.networking.bssidHint' => '00:00:00:00:00:00',
+          'settings.networking.frequencyHint' => 'MHz, e.g. 2437',
+          'settings.networking.levelHint' => 'Signal level in dBm, e.g. -50',
           'settings.media.title' => 'Media',
           'settings.media.groupApp' => 'App',
           'settings.media.groupEmulator' => 'Emulator',
@@ -3061,6 +3130,9 @@ extension on Translations {
           'settings.gamepad.gyroInputSource' => 'Gyro Input Source',
           'settings.gamepad.gyroInputSourceDescription' =>
             'Choose whether motion (gyro) controls come from this device or a connected controller\'s gyroscope. Falls back to this device if the controller has no gyroscope.',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.gamepad.gyroInputSourceDevice' => 'Device',
           'settings.gamepad.gyroInputSourceController' => 'Controller',
           'settings.gamepad.gyroSensitivityVertical' =>
@@ -3084,9 +3156,6 @@ extension on Translations {
           'settings.gamepad.buttonX' => 'X',
           'settings.gamepad.buttonY' => 'Y',
           'settings.gamepad.buttonSelect' => 'SELECT',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.gamepad.buttonStart' => 'START',
           'settings.gamepad.buttonHome' => 'HOME',
           'settings.gamepad.circlePad' => 'Circle Pad',
