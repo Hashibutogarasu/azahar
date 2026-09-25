@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
-import 'sections/audio_settings_page.dart';
 import 'sections/camera_settings_page.dart';
 import 'sections/controls_settings_page.dart';
 import 'sections/debug_settings_page.dart';
@@ -119,17 +118,6 @@ class LegacyCustomPortraitLayoutSettingsRoute extends GoRouteData
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const CustomPortraitLayoutSettingsPage();
-  }
-}
-
-@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
-@TypedGoRoute<LegacyAudioSettingsRoute>(path: '/settings/audio')
-class LegacyAudioSettingsRoute extends GoRouteData with $LegacyAudioSettingsRoute {
-  const LegacyAudioSettingsRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const AudioSettingsPage();
   }
 }
 

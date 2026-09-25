@@ -399,30 +399,27 @@ class Translations$options$en {
   /// en: 'Build version, credits, and more'
   String get aboutDescription => 'Build version, credits, and more';
 
+  late final Translations$options$group$en group =
+      Translations$options$group$en.internal(_root);
+
   /// en: 'General'
-  String get groupGeneral => 'General';
+  String get general => 'General';
 
-  /// en: 'System'
-  String get groupSystem => 'System';
-
-  /// en: 'Graphics'
-  String get groupGraphics => 'Graphics';
-
-  /// en: 'Tools'
-  String get groupTools => 'Tools';
-
-  /// en: 'Folder Settings'
-  String get groupFolderSettings => 'Folder Settings';
-
-  /// en: 'Other'
-  String get groupOther => 'Other';
+  /// en: 'Profile and birthday settings'
+  String get generalDescription => 'Profile and birthday settings';
 
   /// en: 'Emulation'
   String get emulation => 'Emulation';
 
-  /// en: 'General, System, Audio, Camera and Controls settings'
+  /// en: 'New 3DS mode and high-level emulation settings'
   String get emulationDescription =>
-      'General, System, Audio, Camera and Controls settings';
+      'New 3DS mode and high-level emulation settings';
+
+  /// en: 'Networking'
+  String get networking => 'Networking';
+
+  /// en: 'Network access and wireless settings'
+  String get networkingDescription => 'Network access and wireless settings';
 
   /// en: 'Use Legacy Settings UI'
   String get useLegacySettingsUI => 'Use Legacy Settings UI';
@@ -591,6 +588,10 @@ class Translations$settings$en {
       Translations$settings$inputBindingDialog$en.internal(_root);
   late final Translations$settings$general$en general =
       Translations$settings$general$en.internal(_root);
+  late final Translations$settings$emulation$en emulation =
+      Translations$settings$emulation$en.internal(_root);
+  late final Translations$settings$networking$en networking =
+      Translations$settings$networking$en.internal(_root);
   late final Translations$settings$media$en media =
       Translations$settings$media$en.internal(_root);
   late final Translations$settings$graphics$en graphics =
@@ -811,6 +812,39 @@ class Translations$setup$done$en {
   String get continueLabel => 'Continue';
 }
 
+// Path: options.group
+class Translations$options$group$en {
+  Translations$options$group$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'General'
+  String get general => 'General';
+
+  /// en: 'System'
+  String get system => 'System';
+
+  /// en: 'Graphics'
+  String get graphics => 'Graphics';
+
+  /// en: 'Networking'
+  String get networking => 'Networking';
+
+  /// en: 'Controls'
+  String get controls => 'Controls';
+
+  /// en: 'Tools'
+  String get tools => 'Tools';
+
+  /// en: 'Folder Settings'
+  String get folderSettings => 'Folder Settings';
+
+  /// en: 'Other'
+  String get other => 'Other';
+}
+
 // Path: options.useLegacySettingsUIDialog
 class Translations$options$useLegacySettingsUIDialog$en {
   Translations$options$useLegacySettingsUIDialog$en.internal(this._root);
@@ -904,6 +938,51 @@ class Translations$settings$general$en {
   /// en: 'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.'
   String get frameLimitSliderDescription =>
       'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.';
+}
+
+// Path: settings.emulation
+class Translations$settings$emulation$en {
+  Translations$settings$emulation$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Emulation'
+  String get title => 'Emulation';
+
+  /// en: 'Use High-Level Emulation'
+  String get useHighLevelEmulation => 'Use High-Level Emulation';
+
+  /// en: 'Uses a reimplementation of the system applets instead of low level emulation. Turning this off may be required for some online features to work.'
+  String get useHighLevelEmulationDescription =>
+      'Uses a reimplementation of the system applets instead of low level emulation. Turning this off may be required for some online features to work.';
+}
+
+// Path: settings.networking
+class Translations$settings$networking$en {
+  Translations$settings$networking$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Networking'
+  String get title => 'Networking';
+
+  /// en: 'Access Network'
+  String get accessNetwork => 'Access Network';
+
+  /// en: 'Allows the emulated console to access online features by using low level emulation for the system applets and the modules required for them.'
+  String get accessNetworkDescription =>
+      'Allows the emulated console to access online features by using low level emulation for the system applets and the modules required for them.';
+
+  /// en: 'Use Wireless'
+  String get useWireless => 'Use Wireless';
+
+  /// en: 'Reports real nearby Wi-Fi networks as 3DS StreetPass/SpotPass-compatible networks, instead of fake ones.'
+  String get useWirelessDescription =>
+      'Reports real nearby Wi-Fi networks as 3DS StreetPass/SpotPass-compatible networks, instead of fake ones.';
 }
 
 // Path: settings.media
@@ -2466,15 +2545,22 @@ extension on Translations {
             'Background playback and media session settings',
           'options.about' => 'About',
           'options.aboutDescription' => 'Build version, credits, and more',
-          'options.groupGeneral' => 'General',
-          'options.groupSystem' => 'System',
-          'options.groupGraphics' => 'Graphics',
-          'options.groupTools' => 'Tools',
-          'options.groupFolderSettings' => 'Folder Settings',
-          'options.groupOther' => 'Other',
+          'options.group.general' => 'General',
+          'options.group.system' => 'System',
+          'options.group.graphics' => 'Graphics',
+          'options.group.networking' => 'Networking',
+          'options.group.controls' => 'Controls',
+          'options.group.tools' => 'Tools',
+          'options.group.folderSettings' => 'Folder Settings',
+          'options.group.other' => 'Other',
+          'options.general' => 'General',
+          'options.generalDescription' => 'Profile and birthday settings',
           'options.emulation' => 'Emulation',
           'options.emulationDescription' =>
-            'General, System, Audio, Camera and Controls settings',
+            'New 3DS mode and high-level emulation settings',
+          'options.networking' => 'Networking',
+          'options.networkingDescription' =>
+            'Network access and wireless settings',
           'options.useLegacySettingsUI' => 'Use Legacy Settings UI',
           'options.useLegacySettingsUIDescription' =>
             'Switch back to the previous Options screen design',
@@ -2542,6 +2628,18 @@ extension on Translations {
           'settings.general.frameLimitSlider' => 'Limit Speed Percent',
           'settings.general.frameLimitSliderDescription' =>
             'Specifies the percentage to limit emulation speed. With the default of 100% emulation will be limited to normal speed. Values higher or lower will increase or decrease the speed limit.',
+          'settings.emulation.title' => 'Emulation',
+          'settings.emulation.useHighLevelEmulation' =>
+            'Use High-Level Emulation',
+          'settings.emulation.useHighLevelEmulationDescription' =>
+            'Uses a reimplementation of the system applets instead of low level emulation. Turning this off may be required for some online features to work.',
+          'settings.networking.title' => 'Networking',
+          'settings.networking.accessNetwork' => 'Access Network',
+          'settings.networking.accessNetworkDescription' =>
+            'Allows the emulated console to access online features by using low level emulation for the system applets and the modules required for them.',
+          'settings.networking.useWireless' => 'Use Wireless',
+          'settings.networking.useWirelessDescription' =>
+            'Reports real nearby Wi-Fi networks as 3DS StreetPass/SpotPass-compatible networks, instead of fake ones.',
           'settings.media.title' => 'Media',
           'settings.media.masterVolume' => 'Master Volume',
           'settings.media.masterVolumeDescription' =>
@@ -2931,6 +3029,9 @@ extension on Translations {
           'settings.gamepad.dpadAxisDescription' =>
             'Some controllers may not be able to map their D-pad as an axis. If that\'s the case, use the D-Pad (buttons) section.',
           'settings.gamepad.dpadButtons' => 'D-Pad (Button)',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.gamepad.dpadButtonsDescription' =>
             'Only map the D-pad to these if you\'re facing issues with the D-Pad (Axis) button mappings.',
           'settings.gamepad.buttonUp' => 'Up',
@@ -2946,9 +3047,6 @@ extension on Translations {
           'settings.gamepad.hotkeySwapScreens' => 'Swap Screens',
           'settings.gamepad.hotkeyCycleLayout' => 'Cycle Layouts',
           'settings.gamepad.hotkeyCloseGame' => 'Close Game',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.gamepad.hotkeyPauseOrResume' => 'Toggle Pause',
           'settings.gamepad.hotkeyQuicksave' => 'Quicksave',
           'settings.gamepad.hotkeyQuickload' => 'Quickload',

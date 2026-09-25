@@ -1,23 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../app_services.dart';
 import '../../../data/settings/media_volume_provider.dart';
+import '../../../data/settings/sections/audio_settings.dart';
 import '../../../data/settings/sections/media_settings.dart';
+import '../../../data/settings/settings_item.dart';
+import '../../../data/settings/system_save_value_store.dart';
 import '../../../i18n/translations.g.dart';
 import '../widgets/settings_list.dart';
 
-class MediaSettingsPage extends ConsumerWidget {
+class MediaSettingsPage extends ConsumerStatefulWidget {
   const MediaSettingsPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MediaSettingsPage> createState() => _MediaSettingsPageState();
+}
+
+class _MediaSettingsPageState extends ConsumerState<MediaSettingsPage> {
+  late final _systemSaveStore = SystemSaveValueStore(AppServices.systemSaveRepository);
+
+  @override
+  Widget build(BuildContext context) {
     final t = context.t;
     final volume = ref.watch(masterVolumeProvider);
+    final items = <SettingsItem>[
+      ...buildMediaSettingsItems(t),
+      SettingsItem.header(title: t.settings.audio.title),
+      ...buildAudioSettingsItems(t, _systemSaveStore),
+    ];
     return Scaffold(
       appBar: AppBar(title: Text(t.settings.media.title)),
       body: ListView(
         children: [
-          SettingsList(items: buildMediaSettingsItems(t), shrinkWrap: true),
+          SettingsList(items: items, shrinkWrap: true),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: _MasterVolumeCard(volume: volume),

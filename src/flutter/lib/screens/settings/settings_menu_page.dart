@@ -70,11 +70,6 @@ class _LegacySettingsMenuPageState extends ConsumerState<LegacySettingsMenuPage>
         onTap: (context) => const LegacyLayoutSettingsRoute().push(context),
       ),
       SettingsItem.submenu(
-        title: t.settings.audio.title,
-        icon: Icons.volume_up,
-        onTap: (context) => const LegacyAudioSettingsRoute().push(context),
-      ),
-      SettingsItem.submenu(
         title: t.settings.debug.title,
         icon: Icons.code,
         onTap: (context) => const LegacyDebugSettingsRoute().push(context),

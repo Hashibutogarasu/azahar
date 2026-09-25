@@ -40,8 +40,14 @@ class OptionsPage extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               children: [
                 SettingsGroupCard(
-                  settingsGroupTitle: t.options.groupGeneral,
+                  settingsGroupTitle: t.options.group.general,
                   items: [
+                    babstrap.SettingsItem(
+                      icons: Icons.account_circle_outlined,
+                      title: t.options.general,
+                      subtitle: t.options.generalDescription,
+                      onTap: () => const OptionsGeneralSettingsRoute().push(context),
+                    ),
                     babstrap.SettingsItem(
                       icons: Icons.language,
                       title: t.settings.language.title,
@@ -62,7 +68,7 @@ class OptionsPage extends ConsumerWidget {
                   ],
                 ),
                 SettingsGroupCard(
-                  settingsGroupTitle: t.options.groupSystem,
+                  settingsGroupTitle: t.options.group.system,
                   items: [
                     babstrap.SettingsItem(
                       icons: Icons.memory,
@@ -70,10 +76,15 @@ class OptionsPage extends ConsumerWidget {
                       subtitle: t.options.emulationDescription,
                       onTap: () => const OptionsEmulationSettingsRoute().push(context),
                     ),
+                    babstrap.SettingsItem(
+                      icons: Icons.settings_outlined,
+                      title: t.settings.system.title,
+                      onTap: () => const OptionsSystemSettingsRoute().push(context),
+                    ),
                   ],
                 ),
                 SettingsGroupCard(
-                  settingsGroupTitle: t.options.groupGraphics,
+                  settingsGroupTitle: t.options.group.graphics,
                   items: [
                     babstrap.SettingsItem(
                       icons: Icons.monitor,
@@ -85,10 +96,36 @@ class OptionsPage extends ConsumerWidget {
                       title: t.settings.layout.title,
                       onTap: () => const OptionsLayoutSettingsRoute().push(context),
                     ),
+                    babstrap.SettingsItem(
+                      icons: Icons.camera_alt,
+                      title: t.settings.camera.title,
+                      onTap: () => const OptionsCameraSettingsRoute().push(context),
+                    ),
                   ],
                 ),
                 SettingsGroupCard(
-                  settingsGroupTitle: t.options.groupTools,
+                  settingsGroupTitle: t.options.group.networking,
+                  items: [
+                    babstrap.SettingsItem(
+                      icons: Icons.wifi,
+                      title: t.options.networking,
+                      subtitle: t.options.networkingDescription,
+                      onTap: () => const OptionsNetworkingSettingsRoute().push(context),
+                    ),
+                  ],
+                ),
+                SettingsGroupCard(
+                  settingsGroupTitle: t.options.group.controls,
+                  items: [
+                    babstrap.SettingsItem(
+                      icons: Icons.sports_esports,
+                      title: t.settings.gamepad.title,
+                      onTap: () => const OptionsControlsSettingsRoute().push(context),
+                    ),
+                  ],
+                ),
+                SettingsGroupCard(
+                  settingsGroupTitle: t.options.group.tools,
                   items: [
                     babstrap.SettingsItem(
                       icons: Icons.wifi_tethering,
@@ -124,7 +161,7 @@ class OptionsPage extends ConsumerWidget {
                   ],
                 ),
                 SettingsGroupCard(
-                  settingsGroupTitle: t.options.groupFolderSettings,
+                  settingsGroupTitle: t.options.group.folderSettings,
                   items: [
                     babstrap.SettingsItem(
                       icons: Icons.folder_outlined,
@@ -141,7 +178,7 @@ class OptionsPage extends ConsumerWidget {
                   ],
                 ),
                 SettingsGroupCard(
-                  settingsGroupTitle: t.options.groupOther,
+                  settingsGroupTitle: t.options.group.other,
                   items: [
                     babstrap.SettingsItem(
                       icons: Icons.history_toggle_off,

@@ -10,7 +10,7 @@ class OptionsEmulationSettingsRoute extends GoRouteData with $OptionsEmulationSe
   }
 }
 
-@TypedGoRoute<OptionsGeneralSettingsRoute>(path: '/options/emulation/general')
+@TypedGoRoute<OptionsGeneralSettingsRoute>(path: '/options/general')
 class OptionsGeneralSettingsRoute extends GoRouteData with $OptionsGeneralSettingsRoute {
   const OptionsGeneralSettingsRoute();
 
@@ -30,7 +30,7 @@ class OptionsMediaSettingsRoute extends GoRouteData with $OptionsMediaSettingsRo
   }
 }
 
-@TypedGoRoute<OptionsSystemSettingsRoute>(path: '/options/emulation/system')
+@TypedGoRoute<OptionsSystemSettingsRoute>(path: '/options/system')
 class OptionsSystemSettingsRoute extends GoRouteData with $OptionsSystemSettingsRoute {
   const OptionsSystemSettingsRoute();
 
@@ -40,17 +40,17 @@ class OptionsSystemSettingsRoute extends GoRouteData with $OptionsSystemSettings
   }
 }
 
-@TypedGoRoute<OptionsAudioSettingsRoute>(path: '/options/emulation/audio')
-class OptionsAudioSettingsRoute extends GoRouteData with $OptionsAudioSettingsRoute {
-  const OptionsAudioSettingsRoute();
+@TypedGoRoute<OptionsNetworkingSettingsRoute>(path: '/options/networking')
+class OptionsNetworkingSettingsRoute extends GoRouteData with $OptionsNetworkingSettingsRoute {
+  const OptionsNetworkingSettingsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const AudioSettingsPage();
+    return const NetworkingSettingsPage();
   }
 }
 
-@TypedGoRoute<OptionsCameraSettingsRoute>(path: '/options/emulation/camera')
+@TypedGoRoute<OptionsCameraSettingsRoute>(path: '/options/camera')
 class OptionsCameraSettingsRoute extends GoRouteData with $OptionsCameraSettingsRoute {
   const OptionsCameraSettingsRoute();
 
@@ -60,7 +60,7 @@ class OptionsCameraSettingsRoute extends GoRouteData with $OptionsCameraSettings
   }
 }
 
-@TypedGoRoute<OptionsControlsSettingsRoute>(path: '/options/emulation/controls')
+@TypedGoRoute<OptionsControlsSettingsRoute>(path: '/options/controls')
 class OptionsControlsSettingsRoute extends GoRouteData with $OptionsControlsSettingsRoute {
   const OptionsControlsSettingsRoute();
 
