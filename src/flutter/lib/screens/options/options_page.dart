@@ -40,7 +40,7 @@ class OptionsPage extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               children: [
                 SettingsGroupCard(
-                  settingsGroupTitle: t.options.group.general,
+                  settingsGroupTitle: t.options.groups.general,
                   items: [
                     babstrap.SettingsItem(
                       icons: Icons.account_circle_outlined,
@@ -68,7 +68,7 @@ class OptionsPage extends ConsumerWidget {
                   ],
                 ),
                 SettingsGroupCard(
-                  settingsGroupTitle: t.options.group.system,
+                  settingsGroupTitle: t.options.groups.system,
                   items: [
                     babstrap.SettingsItem(
                       icons: Icons.memory,
@@ -84,7 +84,7 @@ class OptionsPage extends ConsumerWidget {
                   ],
                 ),
                 SettingsGroupCard(
-                  settingsGroupTitle: t.options.group.graphics,
+                  settingsGroupTitle: t.options.groups.graphics,
                   items: [
                     babstrap.SettingsItem(
                       icons: Icons.monitor,
@@ -104,7 +104,7 @@ class OptionsPage extends ConsumerWidget {
                   ],
                 ),
                 SettingsGroupCard(
-                  settingsGroupTitle: t.options.group.networking,
+                  settingsGroupTitle: t.options.groups.networking,
                   items: [
                     babstrap.SettingsItem(
                       icons: Icons.wifi,
@@ -115,7 +115,7 @@ class OptionsPage extends ConsumerWidget {
                   ],
                 ),
                 SettingsGroupCard(
-                  settingsGroupTitle: t.options.group.controls,
+                  settingsGroupTitle: t.options.groups.controls,
                   items: [
                     babstrap.SettingsItem(
                       icons: Icons.sports_esports,
@@ -125,7 +125,7 @@ class OptionsPage extends ConsumerWidget {
                   ],
                 ),
                 SettingsGroupCard(
-                  settingsGroupTitle: t.options.group.tools,
+                  settingsGroupTitle: t.options.groups.tools,
                   items: [
                     babstrap.SettingsItem(
                       icons: Icons.wifi_tethering,
@@ -161,7 +161,7 @@ class OptionsPage extends ConsumerWidget {
                   ],
                 ),
                 SettingsGroupCard(
-                  settingsGroupTitle: t.options.group.folderSettings,
+                  settingsGroupTitle: t.options.groups.folderSettings,
                   items: [
                     babstrap.SettingsItem(
                       icons: Icons.folder_outlined,
@@ -178,7 +178,7 @@ class OptionsPage extends ConsumerWidget {
                   ],
                 ),
                 SettingsGroupCard(
-                  settingsGroupTitle: t.options.group.other,
+                  settingsGroupTitle: t.options.groups.other,
                   items: [
                     babstrap.SettingsItem(
                       icons: Icons.history_toggle_off,
