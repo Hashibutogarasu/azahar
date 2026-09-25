@@ -26,6 +26,7 @@ import org.citra.citra_emu.channel.MediaNotificationController
 import org.citra.citra_emu.channel.SettingsController
 import org.citra.citra_emu.channel.ShowMiiSelector
 import org.citra.citra_emu.channel.SystemVolumeController
+import org.citra.citra_emu.channel.WifiController
 import org.citra.citra_emu.utils.AppletBridge
 import org.citra.citra_emu.utils.DiskShaderCacheProgress
 
@@ -106,10 +107,11 @@ class EmulationActivity : FlutterFragmentActivity() {
         val systemVolumeController = SystemVolumeController(this)
         val settingsController = SettingsController()
         val mediaNotificationController = MediaNotificationController(this)
+        val wifiController = WifiController()
         val handlers: Map<String, AzaharMethodHandler> =
             (emulationController.handlers + systemVolumeController.handlers +
                 settingsController.handlers + mediaNotificationController.handlers +
-                TerminateProcess())
+                wifiController.handlers + TerminateProcess())
                 .associateBy { it.name }
 
         val appletChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, APPLET_CHANNEL)

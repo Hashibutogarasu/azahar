@@ -42,6 +42,7 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
     if (state.isLaunched) return;
 
     await AppServices.emulatorSettingsRepository.load();
+    await _syncVirtualAccessPoints();
 
     _shaderProgressSubscription = _bridge.shaderCacheProgress().listen((progress) {
       switch (progress.stage) {
@@ -74,6 +75,16 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
       isLaunched: true,
     );
     await _bridge.startEmulation(gamePath);
+  }
+
+  /// The emulation core runs in its own process, so the native virtual access point override set
+  /// from the settings screen (running in the main process) never reaches it. Re-apply the
+  /// persisted override here before starting emulation.
+  Future<void> _syncVirtualAccessPoints() async {
+    final enabled = await AppServices.virtualAccessPointsRepository.isEnabled();
+    if (!enabled) return;
+    final accessPoints = await AppServices.virtualAccessPointsRepository.readAll();
+    await _bridge.setVirtualAccessPoints(accessPoints);
   }
 
   Future<void> activateMediaSessionIfNeeded(Game? game) async {
