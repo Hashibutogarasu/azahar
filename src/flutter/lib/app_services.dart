@@ -7,6 +7,7 @@ import 'data/settings/input_layout_repository.dart';
 import 'data/settings/media_settings_repository.dart';
 import 'data/settings/system_save_repository.dart';
 import 'data/settings/theme_settings_repository.dart';
+import 'data/settings/virtual_access_points_repository.dart';
 import 'data/settings_repository.dart';
 import 'native/native_bridge.dart';
 
@@ -31,4 +32,6 @@ abstract final class AppServices {
   static final MediaSettingsRepository mediaSettingsRepository = MediaSettingsRepository(
     database,
   );
+  static final VirtualAccessPointsRepository virtualAccessPointsRepository =
+      VirtualAccessPointsRepository(database);
 }

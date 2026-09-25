@@ -2205,6 +2205,354 @@ class MediaSettingsCompanion extends UpdateCompanion<MediaSetting> {
   }
 }
 
+class $VirtualAccessPointsTable extends VirtualAccessPoints
+    with TableInfo<$VirtualAccessPointsTable, VirtualAccessPoint> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $VirtualAccessPointsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _sortIndexMeta = const VerificationMeta(
+    'sortIndex',
+  );
+  @override
+  late final GeneratedColumn<int> sortIndex = GeneratedColumn<int>(
+    'sort_index',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ssidMeta = const VerificationMeta('ssid');
+  @override
+  late final GeneratedColumn<String> ssid = GeneratedColumn<String>(
+    'ssid',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bssidMeta = const VerificationMeta('bssid');
+  @override
+  late final GeneratedColumn<String> bssid = GeneratedColumn<String>(
+    'bssid',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _frequencyMeta = const VerificationMeta(
+    'frequency',
+  );
+  @override
+  late final GeneratedColumn<int> frequency = GeneratedColumn<int>(
+    'frequency',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _levelMeta = const VerificationMeta('level');
+  @override
+  late final GeneratedColumn<int> level = GeneratedColumn<int>(
+    'level',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    sortIndex,
+    ssid,
+    bssid,
+    frequency,
+    level,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'virtual_access_points';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<VirtualAccessPoint> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('sort_index')) {
+      context.handle(
+        _sortIndexMeta,
+        sortIndex.isAcceptableOrUnknown(data['sort_index']!, _sortIndexMeta),
+      );
+    }
+    if (data.containsKey('ssid')) {
+      context.handle(
+        _ssidMeta,
+        ssid.isAcceptableOrUnknown(data['ssid']!, _ssidMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ssidMeta);
+    }
+    if (data.containsKey('bssid')) {
+      context.handle(
+        _bssidMeta,
+        bssid.isAcceptableOrUnknown(data['bssid']!, _bssidMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bssidMeta);
+    }
+    if (data.containsKey('frequency')) {
+      context.handle(
+        _frequencyMeta,
+        frequency.isAcceptableOrUnknown(data['frequency']!, _frequencyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_frequencyMeta);
+    }
+    if (data.containsKey('level')) {
+      context.handle(
+        _levelMeta,
+        level.isAcceptableOrUnknown(data['level']!, _levelMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_levelMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {sortIndex};
+  @override
+  VirtualAccessPoint map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return VirtualAccessPoint(
+      sortIndex: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_index'],
+      )!,
+      ssid: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ssid'],
+      )!,
+      bssid: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bssid'],
+      )!,
+      frequency: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}frequency'],
+      )!,
+      level: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}level'],
+      )!,
+    );
+  }
+
+  @override
+  $VirtualAccessPointsTable createAlias(String alias) {
+    return $VirtualAccessPointsTable(attachedDatabase, alias);
+  }
+}
+
+class VirtualAccessPoint extends DataClass
+    implements Insertable<VirtualAccessPoint> {
+  final int sortIndex;
+  final String ssid;
+  final String bssid;
+  final int frequency;
+  final int level;
+  const VirtualAccessPoint({
+    required this.sortIndex,
+    required this.ssid,
+    required this.bssid,
+    required this.frequency,
+    required this.level,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['sort_index'] = Variable<int>(sortIndex);
+    map['ssid'] = Variable<String>(ssid);
+    map['bssid'] = Variable<String>(bssid);
+    map['frequency'] = Variable<int>(frequency);
+    map['level'] = Variable<int>(level);
+    return map;
+  }
+
+  VirtualAccessPointsCompanion toCompanion(bool nullToAbsent) {
+    return VirtualAccessPointsCompanion(
+      sortIndex: Value(sortIndex),
+      ssid: Value(ssid),
+      bssid: Value(bssid),
+      frequency: Value(frequency),
+      level: Value(level),
+    );
+  }
+
+  factory VirtualAccessPoint.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return VirtualAccessPoint(
+      sortIndex: serializer.fromJson<int>(json['sortIndex']),
+      ssid: serializer.fromJson<String>(json['ssid']),
+      bssid: serializer.fromJson<String>(json['bssid']),
+      frequency: serializer.fromJson<int>(json['frequency']),
+      level: serializer.fromJson<int>(json['level']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'sortIndex': serializer.toJson<int>(sortIndex),
+      'ssid': serializer.toJson<String>(ssid),
+      'bssid': serializer.toJson<String>(bssid),
+      'frequency': serializer.toJson<int>(frequency),
+      'level': serializer.toJson<int>(level),
+    };
+  }
+
+  VirtualAccessPoint copyWith({
+    int? sortIndex,
+    String? ssid,
+    String? bssid,
+    int? frequency,
+    int? level,
+  }) => VirtualAccessPoint(
+    sortIndex: sortIndex ?? this.sortIndex,
+    ssid: ssid ?? this.ssid,
+    bssid: bssid ?? this.bssid,
+    frequency: frequency ?? this.frequency,
+    level: level ?? this.level,
+  );
+  VirtualAccessPoint copyWithCompanion(VirtualAccessPointsCompanion data) {
+    return VirtualAccessPoint(
+      sortIndex: data.sortIndex.present ? data.sortIndex.value : this.sortIndex,
+      ssid: data.ssid.present ? data.ssid.value : this.ssid,
+      bssid: data.bssid.present ? data.bssid.value : this.bssid,
+      frequency: data.frequency.present ? data.frequency.value : this.frequency,
+      level: data.level.present ? data.level.value : this.level,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VirtualAccessPoint(')
+          ..write('sortIndex: $sortIndex, ')
+          ..write('ssid: $ssid, ')
+          ..write('bssid: $bssid, ')
+          ..write('frequency: $frequency, ')
+          ..write('level: $level')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(sortIndex, ssid, bssid, frequency, level);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is VirtualAccessPoint &&
+          other.sortIndex == this.sortIndex &&
+          other.ssid == this.ssid &&
+          other.bssid == this.bssid &&
+          other.frequency == this.frequency &&
+          other.level == this.level);
+}
+
+class VirtualAccessPointsCompanion extends UpdateCompanion<VirtualAccessPoint> {
+  final Value<int> sortIndex;
+  final Value<String> ssid;
+  final Value<String> bssid;
+  final Value<int> frequency;
+  final Value<int> level;
+  const VirtualAccessPointsCompanion({
+    this.sortIndex = const Value.absent(),
+    this.ssid = const Value.absent(),
+    this.bssid = const Value.absent(),
+    this.frequency = const Value.absent(),
+    this.level = const Value.absent(),
+  });
+  VirtualAccessPointsCompanion.insert({
+    this.sortIndex = const Value.absent(),
+    required String ssid,
+    required String bssid,
+    required int frequency,
+    required int level,
+  }) : ssid = Value(ssid),
+       bssid = Value(bssid),
+       frequency = Value(frequency),
+       level = Value(level);
+  static Insertable<VirtualAccessPoint> custom({
+    Expression<int>? sortIndex,
+    Expression<String>? ssid,
+    Expression<String>? bssid,
+    Expression<int>? frequency,
+    Expression<int>? level,
+  }) {
+    return RawValuesInsertable({
+      if (sortIndex != null) 'sort_index': sortIndex,
+      if (ssid != null) 'ssid': ssid,
+      if (bssid != null) 'bssid': bssid,
+      if (frequency != null) 'frequency': frequency,
+      if (level != null) 'level': level,
+    });
+  }
+
+  VirtualAccessPointsCompanion copyWith({
+    Value<int>? sortIndex,
+    Value<String>? ssid,
+    Value<String>? bssid,
+    Value<int>? frequency,
+    Value<int>? level,
+  }) {
+    return VirtualAccessPointsCompanion(
+      sortIndex: sortIndex ?? this.sortIndex,
+      ssid: ssid ?? this.ssid,
+      bssid: bssid ?? this.bssid,
+      frequency: frequency ?? this.frequency,
+      level: level ?? this.level,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (sortIndex.present) {
+      map['sort_index'] = Variable<int>(sortIndex.value);
+    }
+    if (ssid.present) {
+      map['ssid'] = Variable<String>(ssid.value);
+    }
+    if (bssid.present) {
+      map['bssid'] = Variable<String>(bssid.value);
+    }
+    if (frequency.present) {
+      map['frequency'] = Variable<int>(frequency.value);
+    }
+    if (level.present) {
+      map['level'] = Variable<int>(level.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VirtualAccessPointsCompanion(')
+          ..write('sortIndex: $sortIndex, ')
+          ..write('ssid: $ssid, ')
+          ..write('bssid: $bssid, ')
+          ..write('frequency: $frequency, ')
+          ..write('level: $level')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2217,6 +2565,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $InputLayoutElementsTable(this);
   late final $ThemeSettingsTable themeSettings = $ThemeSettingsTable(this);
   late final $MediaSettingsTable mediaSettings = $MediaSettingsTable(this);
+  late final $VirtualAccessPointsTable virtualAccessPoints =
+      $VirtualAccessPointsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2228,6 +2578,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     inputLayoutElements,
     themeSettings,
     mediaSettings,
+    virtualAccessPoints,
   ];
 }
 
@@ -3505,6 +3856,227 @@ typedef $$MediaSettingsTableProcessedTableManager =
       MediaSetting,
       PrefetchHooks Function()
     >;
+typedef $$VirtualAccessPointsTableCreateCompanionBuilder =
+    VirtualAccessPointsCompanion Function({
+      Value<int> sortIndex,
+      required String ssid,
+      required String bssid,
+      required int frequency,
+      required int level,
+    });
+typedef $$VirtualAccessPointsTableUpdateCompanionBuilder =
+    VirtualAccessPointsCompanion Function({
+      Value<int> sortIndex,
+      Value<String> ssid,
+      Value<String> bssid,
+      Value<int> frequency,
+      Value<int> level,
+    });
+
+class $$VirtualAccessPointsTableFilterComposer
+    extends Composer<_$AppDatabase, $VirtualAccessPointsTable> {
+  $$VirtualAccessPointsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get sortIndex => $composableBuilder(
+    column: $table.sortIndex,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ssid => $composableBuilder(
+    column: $table.ssid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bssid => $composableBuilder(
+    column: $table.bssid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get frequency => $composableBuilder(
+    column: $table.frequency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get level => $composableBuilder(
+    column: $table.level,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$VirtualAccessPointsTableOrderingComposer
+    extends Composer<_$AppDatabase, $VirtualAccessPointsTable> {
+  $$VirtualAccessPointsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get sortIndex => $composableBuilder(
+    column: $table.sortIndex,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ssid => $composableBuilder(
+    column: $table.ssid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bssid => $composableBuilder(
+    column: $table.bssid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get frequency => $composableBuilder(
+    column: $table.frequency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get level => $composableBuilder(
+    column: $table.level,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$VirtualAccessPointsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $VirtualAccessPointsTable> {
+  $$VirtualAccessPointsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get sortIndex =>
+      $composableBuilder(column: $table.sortIndex, builder: (column) => column);
+
+  GeneratedColumn<String> get ssid =>
+      $composableBuilder(column: $table.ssid, builder: (column) => column);
+
+  GeneratedColumn<String> get bssid =>
+      $composableBuilder(column: $table.bssid, builder: (column) => column);
+
+  GeneratedColumn<int> get frequency =>
+      $composableBuilder(column: $table.frequency, builder: (column) => column);
+
+  GeneratedColumn<int> get level =>
+      $composableBuilder(column: $table.level, builder: (column) => column);
+}
+
+class $$VirtualAccessPointsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $VirtualAccessPointsTable,
+          VirtualAccessPoint,
+          $$VirtualAccessPointsTableFilterComposer,
+          $$VirtualAccessPointsTableOrderingComposer,
+          $$VirtualAccessPointsTableAnnotationComposer,
+          $$VirtualAccessPointsTableCreateCompanionBuilder,
+          $$VirtualAccessPointsTableUpdateCompanionBuilder,
+          (
+            VirtualAccessPoint,
+            BaseReferences<
+              _$AppDatabase,
+              $VirtualAccessPointsTable,
+              VirtualAccessPoint
+            >,
+          ),
+          VirtualAccessPoint,
+          PrefetchHooks Function()
+        > {
+  $$VirtualAccessPointsTableTableManager(
+    _$AppDatabase db,
+    $VirtualAccessPointsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$VirtualAccessPointsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$VirtualAccessPointsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$VirtualAccessPointsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> sortIndex = const Value.absent(),
+                Value<String> ssid = const Value.absent(),
+                Value<String> bssid = const Value.absent(),
+                Value<int> frequency = const Value.absent(),
+                Value<int> level = const Value.absent(),
+              }) => VirtualAccessPointsCompanion(
+                sortIndex: sortIndex,
+                ssid: ssid,
+                bssid: bssid,
+                frequency: frequency,
+                level: level,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> sortIndex = const Value.absent(),
+                required String ssid,
+                required String bssid,
+                required int frequency,
+                required int level,
+              }) => VirtualAccessPointsCompanion.insert(
+                sortIndex: sortIndex,
+                ssid: ssid,
+                bssid: bssid,
+                frequency: frequency,
+                level: level,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$VirtualAccessPointsTable, VirtualAccessPoint>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $VirtualAccessPointsTable,
+                    VirtualAccessPoint
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$VirtualAccessPointsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $VirtualAccessPointsTable,
+      VirtualAccessPoint,
+      $$VirtualAccessPointsTableFilterComposer,
+      $$VirtualAccessPointsTableOrderingComposer,
+      $$VirtualAccessPointsTableAnnotationComposer,
+      $$VirtualAccessPointsTableCreateCompanionBuilder,
+      $$VirtualAccessPointsTableUpdateCompanionBuilder,
+      (
+        VirtualAccessPoint,
+        BaseReferences<
+          _$AppDatabase,
+          $VirtualAccessPointsTable,
+          VirtualAccessPoint
+        >,
+      ),
+      VirtualAccessPoint,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3521,4 +4093,6 @@ class $AppDatabaseManager {
       $$ThemeSettingsTableTableManager(_db, _db.themeSettings);
   $$MediaSettingsTableTableManager get mediaSettings =>
       $$MediaSettingsTableTableManager(_db, _db.mediaSettings);
+  $$VirtualAccessPointsTableTableManager get virtualAccessPoints =>
+      $$VirtualAccessPointsTableTableManager(_db, _db.virtualAccessPoints);
 }

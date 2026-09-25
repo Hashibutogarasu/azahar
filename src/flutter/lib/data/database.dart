@@ -42,6 +42,7 @@ abstract final class SettingsKeys {
   static const String languageCode = 'AppLanguage';
   static const String articBaseAddress = 'last_artic_base_addr';
   static const String useLegacySettingsUI = 'use_legacy_settings_ui';
+  static const String virtualNetworkEnabled = 'virtual_network_enabled';
 }
 
 class ThemeSettings extends Table {
@@ -61,6 +62,17 @@ class MediaSettings extends Table {
 
   @override
   Set<Column> get primaryKey => {id};
+}
+
+class VirtualAccessPoints extends Table {
+  IntColumn get sortIndex => integer()();
+  TextColumn get ssid => text()();
+  TextColumn get bssid => text()();
+  IntColumn get frequency => integer()();
+  IntColumn get level => integer()();
+
+  @override
+  Set<Column> get primaryKey => {sortIndex};
 }
 
 class ControlBindings extends Table {
@@ -84,7 +96,15 @@ class InputLayoutElements extends Table {
 }
 
 @DriftDatabase(
-  tables: [Games, AppSettings, ControlBindings, InputLayoutElements, ThemeSettings, MediaSettings],
+  tables: [
+    Games,
+    AppSettings,
+    ControlBindings,
+    InputLayoutElements,
+    ThemeSettings,
+    MediaSettings,
+    VirtualAccessPoints,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase._(super.e);
@@ -96,7 +116,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -108,6 +128,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 3) {
         await m.createTable(mediaSettings);
+      }
+      if (from < 4) {
+        await m.createTable(virtualAccessPoints);
       }
     },
   );
