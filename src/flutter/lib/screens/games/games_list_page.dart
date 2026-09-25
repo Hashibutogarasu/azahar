@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../app_services.dart';
-import '../../data/game_repository.dart';
+import '../../data/repositories/game_repository.dart';
 import '../../i18n/translations.g.dart';
 import '../../models/game.dart';
 import 'widgets/about_game_bottom_sheet.dart';

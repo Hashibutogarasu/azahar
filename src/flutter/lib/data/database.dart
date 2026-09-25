@@ -35,16 +35,6 @@ class AppSettings extends Table {
   Set<Column> get primaryKey => {key};
 }
 
-abstract final class SettingsKeys {
-  static const String firstApplicationLaunch = 'FirstApplicationLaunch';
-  static const String citraDirectory = 'CITRA_DIRECTORY';
-  static const String gamePath = 'game_path';
-  static const String languageCode = 'AppLanguage';
-  static const String articBaseAddress = 'last_artic_base_addr';
-  static const String useLegacySettingsUI = 'use_legacy_settings_ui';
-  static const String virtualNetworkEnabled = 'virtual_network_enabled';
-}
-
 class ThemeSettings extends Table {
   IntColumn get id => integer().withDefault(const Constant(0))();
   TextColumn get themeMode => text().withDefault(const Constant('system'))();

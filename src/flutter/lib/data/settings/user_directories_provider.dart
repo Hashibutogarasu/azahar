@@ -8,7 +8,8 @@ final userDirectoriesProvider = Provider<UserDirectoriesService>(
 );
 
 class UserDirectoriesService {
-  Future<String?> previousUserDirectory() => AppServices.settingsRepository.citraDirectoryUri();
+  Future<String?> previousUserDirectory() =>
+      AppServices.citraDirectoryRepository.citraDirectoryUri();
 
   Future<String?> pickUserDirectory() => AppServices.nativeBridge.openUserDirectory();
 
@@ -24,12 +25,12 @@ class UserDirectoriesService {
       previousUri: previousUri,
       moveData: moveData,
     );
-    await AppServices.settingsRepository.setCitraDirectoryUri(uri);
+    await AppServices.citraDirectoryRepository.setCitraDirectoryUri(uri);
   }
 
   Future<String?> pickGamesDirectory() => AppServices.nativeBridge.openGamesDirectory();
 
   Future<void> confirmGamesDirectory(String uri) {
-    return AppServices.settingsRepository.setGamesDirectoryUri(uri);
+    return AppServices.gamesDirectoryRepository.setGamesDirectoryUri(uri);
   }
 }

@@ -2,15 +2,20 @@ import 'package:drift/drift.dart';
 
 import '../../models/access_point.dart';
 import '../database.dart';
+import 'key_value_repository.dart';
 
-class VirtualAccessPointsRepository {
-  VirtualAccessPointsRepository(this._db);
+class VirtualAccessPointsRepository extends KeyValueRepository {
+  VirtualAccessPointsRepository(super.db);
 
-  final AppDatabase _db;
+  final String _enabledKey = 'virtual_network_enabled';
+
+  Future<bool> isEnabled() => readBool(_enabledKey);
+
+  Future<void> setEnabled(bool value) => writeBool(_enabledKey, value);
 
   Future<List<AccessPoint>> readAll() async {
-    final rows = await (_db.select(
-      _db.virtualAccessPoints,
+    final rows = await (db.select(
+      db.virtualAccessPoints,
     )..orderBy([(tbl) => OrderingTerm.asc(tbl.sortIndex)])).get();
     return rows
         .map(
@@ -25,12 +30,12 @@ class VirtualAccessPointsRepository {
   }
 
   Future<void> writeAll(List<AccessPoint> accessPoints) {
-    return _db.transaction(() async {
-      await _db.delete(_db.virtualAccessPoints).go();
+    return db.transaction(() async {
+      await db.delete(db.virtualAccessPoints).go();
       for (var i = 0; i < accessPoints.length; i++) {
         final accessPoint = accessPoints[i];
-        await _db
-            .into(_db.virtualAccessPoints)
+        await db
+            .into(db.virtualAccessPoints)
             .insert(
               VirtualAccessPointsCompanion.insert(
                 sortIndex: Value(i),

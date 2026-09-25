@@ -29,8 +29,9 @@ void reportAppException(AppException error) {
 
 void main() {
   runZonedGuarded(
-    () {
+    () async {
       WidgetsFlutterBinding.ensureInitialized();
+      await AppServices.migrateKeyValueRepositories();
 
       final initialRoute = WidgetsBinding.instance.platformDispatcher.defaultRouteName;
       if (initialRoute.startsWith(emulationRoutePrefix)) {
@@ -115,7 +116,7 @@ final GoRouter _router = GoRouter(
   // legacy UI still works end-to-end.
   routes: [...$appRoutes, ...legacy_settings.$appRoutes],
   redirect: (context, state) async {
-    final isFirstLaunch = await AppServices.settingsRepository.isFirstApplicationLaunch();
+    final isFirstLaunch = await AppServices.firstLaunchRepository.isFirstApplicationLaunch();
     final isGoingToSetup = state.matchedLocation == const SetupRoute().location;
     if (isFirstLaunch && !isGoingToSetup) {
       return const SetupRoute().location;

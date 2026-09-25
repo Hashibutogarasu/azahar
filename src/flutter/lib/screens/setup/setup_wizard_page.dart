@@ -26,7 +26,8 @@ class _SetupWizardPageState extends State<SetupWizardPage> {
   final _pageController = PageController();
   final SetupWizardViewModel _viewModel = SetupWizardViewModel(
     AppServices.nativeBridge,
-    AppServices.settingsRepository,
+    AppServices.firstLaunchRepository,
+    AppServices.gamesDirectoryRepository,
     UserDirectoriesService(),
     AppServices.gameRepository,
   );

@@ -1,7 +1,8 @@
 import '../../native/native_bridge.dart';
-import 'clearable.dart';
+import '../repositories/clearable.dart';
+import '../repositories/loadable.dart';
 
-class SystemSaveRepository implements Clearable {
+class SystemSaveRepository implements Clearable, Loadable {
   SystemSaveRepository(this._nativeBridge);
 
   final NativeBridge _nativeBridge;
@@ -17,6 +18,7 @@ class SystemSaveRepository implements Clearable {
     185, 186,
   ];
 
+  @override
   Future<void> load() async {
     _fields = await _nativeBridge.readSystemSaveGame();
   }

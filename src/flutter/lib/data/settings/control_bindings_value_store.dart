@@ -1,13 +1,15 @@
-import 'control_bindings_repository.dart';
+import '../repositories/control_bindings_repository.dart';
+import '../repositories/loadable.dart';
 import 'emulator_setting_key.dart';
 import 'settings_value_store.dart';
 
-class ControlBindingsValueStore implements SettingsValueStore {
+class ControlBindingsValueStore implements SettingsValueStore, Loadable {
   ControlBindingsValueStore(this._repository);
 
   final ControlBindingsRepository _repository;
   Map<String, String> _values = const {};
 
+  @override
   Future<void> load() async {
     _values = await _repository.readAll();
   }

@@ -1,22 +1,25 @@
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../data/game_repository.dart';
+import '../../data/repositories/first_launch_repository.dart';
+import '../../data/repositories/game_repository.dart';
+import '../../data/repositories/games_directory_repository.dart';
 import '../../data/settings/user_directories_provider.dart';
-import '../../data/settings_repository.dart';
 import '../../models/copy_dir_progress.dart';
 import '../../native/native_bridge.dart';
 
 class SetupWizardViewModel extends ChangeNotifier {
   SetupWizardViewModel(
     this._nativeBridge,
-    this._settingsRepository,
+    this._firstLaunchRepository,
+    this._gamesDirectoryRepository,
     this._userDirectories,
     this._gameRepository,
   );
 
   final NativeBridge _nativeBridge;
-  final SettingsRepository _settingsRepository;
+  final FirstLaunchRepository _firstLaunchRepository;
+  final GamesDirectoryRepository _gamesDirectoryRepository;
   final UserDirectoriesService _userDirectories;
   final GameRepository _gameRepository;
 
@@ -32,7 +35,7 @@ class SetupWizardViewModel extends ChangeNotifier {
     microphoneCompleted = (await Permission.microphone.status).isGranted;
     cameraCompleted = (await Permission.camera.status).isGranted;
     userDirectoryCompleted = await _nativeBridge.hasUserDirectoryWriteAccess();
-    final gamesUri = await _settingsRepository.gamesDirectoryUri();
+    final gamesUri = await _gamesDirectoryRepository.gamesDirectoryUri();
     gamesDirectoryCompleted = gamesUri != null && gamesUri.isNotEmpty;
     isLoaded = true;
     notifyListeners();
@@ -90,7 +93,7 @@ class SetupWizardViewModel extends ChangeNotifier {
   }
 
   Future<void> completeSetup() async {
-    await _settingsRepository.setFirstApplicationLaunchComplete();
+    await _firstLaunchRepository.setFirstApplicationLaunchComplete();
     await _gameRepository.rescan();
   }
 }

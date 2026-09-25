@@ -108,7 +108,7 @@ class OptionsRoute extends GoRouteData with $OptionsRoute {
   const OptionsRoute({this.isLegacy});
 
   /// Overrides which Options UI to show. When omitted, falls back to
-  /// [AppServices.settingsRepository]'s `useLegacySettingsUI` setting.
+  /// [AppServices.legacySettingsUiRepository]'s `useLegacySettingsUI` setting.
   final bool? isLegacy;
 
   @override
@@ -120,7 +120,7 @@ class OptionsRoute extends GoRouteData with $OptionsRoute {
     return Consumer(
       builder: (context, ref, _) {
         ref.watch(settingsLoadProvider);
-        final useLegacy = AppServices.settingsRepository.useLegacySettingsUI;
+        final useLegacy = AppServices.legacySettingsUiRepository.useLegacySettingsUI;
         // ignore: deprecated_member_use_from_same_package
         return useLegacy ? const LegacyOptionsPage() : const OptionsPage();
       },

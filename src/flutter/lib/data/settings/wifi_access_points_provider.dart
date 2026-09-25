@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app_services.dart';
 import '../../models/access_point.dart';
 import '../../native/native_bridge.dart';
-import '../database.dart';
 
 final realAccessPointsProvider = AsyncNotifierProvider<RealAccessPointsNotifier, List<AccessPoint>>(
   RealAccessPointsNotifier.new,
@@ -53,9 +52,7 @@ class VirtualAccessPointsNotifier extends Notifier<VirtualAccessPointsState> {
   }
 
   Future<void> _loadPersisted() async {
-    final enabled = await AppServices.settingsRepository.readBool(
-      SettingsKeys.virtualNetworkEnabled,
-    );
+    final enabled = await AppServices.virtualAccessPointsRepository.isEnabled();
     final accessPoints = await AppServices.virtualAccessPointsRepository.readAll();
     state = VirtualAccessPointsState(enabled: enabled, accessPoints: accessPoints);
     await _syncNative();
@@ -103,10 +100,7 @@ class VirtualAccessPointsNotifier extends Notifier<VirtualAccessPointsState> {
   }
 
   Future<void> _push() async {
-    await AppServices.settingsRepository.writeBool(
-      SettingsKeys.virtualNetworkEnabled,
-      state.enabled,
-    );
+    await AppServices.virtualAccessPointsRepository.setEnabled(state.enabled);
     await AppServices.virtualAccessPointsRepository.writeAll(state.accessPoints);
     await _syncNative();
   }

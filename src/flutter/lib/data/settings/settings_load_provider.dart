@@ -14,11 +14,7 @@ class SettingsLoadNotifier extends Notifier<bool> {
   }
 
   Future<void> _load() async {
-    await AppServices.emulatorSettingsRepository.load();
-    await AppServices.systemSaveRepository.load();
-    await AppServices.controlBindingsValueStore.load();
-    await AppServices.settingsRepository.loadLanguageCode();
-    await AppServices.settingsRepository.loadUseLegacySettingsUI();
+    await AppServices.loadAll();
     state = true;
   }
 }

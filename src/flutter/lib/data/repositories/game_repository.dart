@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
 
-import '../models/game.dart' as model;
-import '../native/native_bridge.dart';
-import 'database.dart';
+import '../../models/game.dart' as model;
+import '../../native/native_bridge.dart';
+import '../database.dart';
 
 class GameRepository {
   GameRepository(this._db, this._nativeBridge);
