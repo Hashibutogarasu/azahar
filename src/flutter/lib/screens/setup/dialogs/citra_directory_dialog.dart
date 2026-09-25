@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../i18n/translations.g.dart';
+import '../../../widgets/dialog_cancel_button.dart';
 
 class CitraDirectoryDialog extends StatefulWidget {
   const CitraDirectoryDialog({super.key, required this.path, required this.showMoveDataCheckbox});
@@ -47,10 +48,7 @@ class _CitraDirectoryDialogState extends State<CitraDirectoryDialog> {
         ],
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(localizations.cancelButtonLabel),
-        ),
+        const DialogCancelButton(),
         TextButton(
           onPressed: () => Navigator.of(context).pop(_moveData),
           child: Text(localizations.okButtonLabel),

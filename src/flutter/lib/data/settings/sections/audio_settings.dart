@@ -16,6 +16,7 @@ List<SettingsItem> buildAudioSettingsItems(Translations t, SystemSaveValueStore 
   return [
     SettingsItem.floatSlider(
       title: a.volume,
+      description: a.volumeDescription,
       setting: AudioSettingKeys.volume,
       min: 0,
       max: 100,

@@ -1,5 +1,8 @@
 {
   "appName": "Azahar",
+  "common": {
+    "cancel": "Cancel"
+  },
   "setup": {
     "next": "Next",
     "back": "Back",
@@ -97,7 +100,16 @@
     "openMods": "Mods",
     "uninstallCia": "Application",
     "uninstallUpdates": "Updates",
-    "uninstallDlc": "DLC"
+    "uninstallDlc": "DLC",
+    "regionJapan": "Japan",
+    "regionNorthAmerica": "North America",
+    "regionEurope": "Europe",
+    "regionAustralia": "Australia",
+    "regionChina": "China",
+    "regionKorea": "Korea",
+    "regionTaiwan": "Taiwan",
+    "regionFree": "Region free",
+    "invalidRegion": "Invalid region"
   },
   "emulation": {
     "loading": "Loading…",
@@ -140,12 +152,8 @@
     "mediaDescription": "Background playback and media session settings",
     "about": "About",
     "aboutDescription": "Build version, credits, and more",
-    "general": "General",
+    "general": "Profile",
     "generalDescription": "Profile and birthday settings",
-    "emulation": "Emulation",
-    "emulationDescription": "New 3DS mode and high-level emulation settings",
-    "networking": "Networking",
-    "networkingDescription": "Network access and wireless settings",
     "useLegacySettingsUI": "Use Legacy Settings UI",
     "useLegacySettingsUIDescription": "Switch back to the previous Options screen design",
     "useLegacySettingsUIDialog": {
@@ -155,7 +163,8 @@
     },
     "groups": {
       "general": "General",
-      "system": "System",
+      "emulation": "Emulation",
+      "clock": "Clock",
       "graphics": "Graphics",
       "networking": "Networking",
       "controls": "Controls",
@@ -218,7 +227,7 @@
       "waitingForInput": "Press a button on your controller…"
     },
     "general": {
-      "title": "General",
+      "title": "Profile",
       "frameLimitEnable": "Limit Speed",
       "frameLimitEnableDescription": "When enabled, emulation speed will be limited to a specified percentage of normal speed.",
       "frameLimitSlider": "Limit Speed Percent",
@@ -238,6 +247,8 @@
     },
     "media": {
       "title": "Media",
+      "groupApp": "App",
+      "groupEmulator": "Emulator",
       "masterVolume": "Master Volume",
       "masterVolumeDescription": "Controls the app's overall output volume independently of the emulated game's own volume setting. Hardware volume buttons adjust this value.",
       "masterVolumePercent": "${value}%",
@@ -618,6 +629,7 @@
     "audio": {
       "title": "Audio",
       "volume": "Volume",
+      "volumeDescription": "The emulated 3DS console's own internal volume level, separate from the app's Master Volume.",
       "audioStretching": "Audio Stretching",
       "audioStretchingDescription": "Stretches audio to reduce stuttering. Increases audio latency and slightly reduces performance.",
       "realtimeAudio": "Realtime Audio",
@@ -677,7 +689,8 @@
     "language": {
       "title": "Language",
       "systemDefault": "System default",
-      "english": "English"
+      "english": "English",
+      "japanese": "Japanese (日本語)"
     }
   }
 }

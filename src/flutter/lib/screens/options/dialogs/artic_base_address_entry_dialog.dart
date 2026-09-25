@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../i18n/translations.g.dart';
+import '../../../widgets/dialog_cancel_button.dart';
 
 class ArticBaseAddressEntryResult {
   const ArticBaseAddressEntryResult({required this.address, required this.installO3ds});
@@ -111,10 +112,7 @@ class _ArticBaseAddressEntryDialogState extends State<ArticBaseAddressEntryDialo
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(localizations.cancelButtonLabel),
-            ),
+            const DialogCancelButton(),
             TextButton(
               onPressed: canConfirm
                   ? () => Navigator.of(context).pop(

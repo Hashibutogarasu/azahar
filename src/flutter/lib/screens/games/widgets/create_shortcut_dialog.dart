@@ -5,6 +5,7 @@ import '../../../app_services.dart';
 import '../../../i18n/translations.g.dart';
 import '../../../models/create_shortcut_request.dart';
 import '../../../models/game.dart';
+import '../../../widgets/dialog_cancel_button.dart';
 import 'game_icon.dart';
 
 /// Mirrors the Compose client's `CreateShortcutDialog`: lets the user rename the shortcut and
@@ -107,10 +108,7 @@ class _CreateShortcutDialogState extends State<CreateShortcutDialog> {
         ],
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(localizations.cancelButtonLabel),
-        ),
+        const DialogCancelButton(),
         TextButton(onPressed: _confirm, child: Text(localizations.okButtonLabel)),
       ],
     );

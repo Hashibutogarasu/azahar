@@ -7,6 +7,7 @@ import '../../../data/settings/settings_item.dart';
 import '../../../data/settings/settings_value_store.dart';
 import '../../../errors/app_exception.dart';
 import '../../../i18n/translations.g.dart';
+import '../../../widgets/dialog_cancel_button.dart';
 import 'settings_group_card.dart';
 
 /// Renders a list of [SettingsItem]s using [SettingsGroupCard]/[babstrap.SettingsItem], so
@@ -16,11 +17,18 @@ import 'settings_group_card.dart';
 /// [AppServices.emulatorSettingsRepository] (or the item's own [SettingsValueStore]), saving
 /// immediately after every change.
 class SettingsList extends StatefulWidget {
-  const SettingsList({super.key, required this.items, this.shrinkWrap = false});
+  const SettingsList({
+    super.key,
+    required this.items,
+    this.shrinkWrap = false,
+    this.padding = const EdgeInsets.all(16),
+  });
 
   final List<SettingsItem> items;
 
   final bool shrinkWrap;
+
+  final EdgeInsets padding;
 
   @override
   State<SettingsList> createState() => _SettingsListState();
@@ -58,7 +66,7 @@ class _SettingsListState extends State<SettingsList> {
     }
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: widget.padding,
       shrinkWrap: widget.shrinkWrap,
       physics: widget.shrinkWrap ? const NeverScrollableScrollPhysics() : null,
       children: [
@@ -230,10 +238,7 @@ class _SettingsListState extends State<SettingsList> {
                       setDialogState(() => applySliderValue(item.setting.defaultValue)),
                   child: Text(t.settings.sliderDialog.kDefault),
                 ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(localizations.cancelButtonLabel),
-                ),
+                const DialogCancelButton(),
                 TextButton(
                   onPressed: () {
                     final parsed = int.tryParse(pendingText);
@@ -356,10 +361,7 @@ class _SettingsListState extends State<SettingsList> {
                   ),
                   child: Text(t.settings.sliderDialog.kDefault),
                 ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(localizations.cancelButtonLabel),
-                ),
+                const DialogCancelButton(),
                 TextButton(
                   onPressed: () {
                     final parsed = int.tryParse(pendingText);
@@ -433,10 +435,7 @@ class _SettingsListState extends State<SettingsList> {
           title: Text(item.title),
           content: TextField(controller: textController, maxLength: item.maxLength),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(localizations.cancelButtonLabel),
-            ),
+            const DialogCancelButton(),
             TextButton(
               onPressed: () => Navigator.of(context).pop(textController.text),
               child: Text(localizations.okButtonLabel),
@@ -483,7 +482,6 @@ class _SettingsListState extends State<SettingsList> {
   Future<void> _showInputBindingDialog(SettingsInputBindingItem item) async {
     final store = _storeFor(item.store);
     final t = context.t;
-    final localizations = MaterialLocalizations.of(context);
     final subscription = Gamepads.events
         .where((event) => event.type == KeyType.button && event.value > 0.5)
         .listen(null);
@@ -497,10 +495,7 @@ class _SettingsListState extends State<SettingsList> {
           title: Text(item.title),
           content: Text(t.settings.inputBindingDialog.waitingForInput),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(localizations.cancelButtonLabel),
-            ),
+            const DialogCancelButton(),
           ],
         );
       },

@@ -1,7 +1,5 @@
-import '../../../i18n/translations.g.dart';
 import '../emulator_setting_key.dart';
 import '../emulator_settings_repository.dart';
-import '../settings_item.dart';
 import '../settings_value_store.dart';
 import 'system_settings.dart';
 
@@ -42,24 +40,4 @@ class NetworkAccessValueStore implements SettingsValueStore {
 
   @override
   Future<void> writeString(StringKey setting, String value) => Future.value();
-}
-
-List<SettingsItem> buildNetworkingSettingsItems(
-  Translations t,
-  NetworkAccessValueStore networkAccessStore,
-) {
-  final n = t.settings.networking;
-  return [
-    SettingsItem.switch_(
-      title: n.accessNetwork,
-      description: n.accessNetworkDescription,
-      setting: SystemSettingKeys.requiredOnlineLleModules,
-      store: networkAccessStore,
-    ),
-    SettingsItem.switch_(
-      title: n.useWireless,
-      description: n.useWirelessDescription,
-      setting: SystemSettingKeys.scanRealWifiNetworks,
-    ),
-  ];
 }

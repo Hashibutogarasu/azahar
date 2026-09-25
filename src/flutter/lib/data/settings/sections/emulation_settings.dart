@@ -3,6 +3,7 @@ import '../emulator_setting_key.dart';
 import '../emulator_settings_repository.dart';
 import '../settings_item.dart';
 import '../settings_value_store.dart';
+import 'general_settings.dart';
 import 'system_settings.dart';
 
 /// Presents [SystemSettingKeys.lleApplets] inverted, since "use high-level emulation" and
@@ -45,6 +46,7 @@ List<SettingsItem> buildEmulationSettingsItems(
   HighLevelEmulationValueStore highLevelEmulationStore,
 ) {
   final s = t.settings.system;
+  final g = t.settings.general;
   final e = t.settings.emulation;
   return [
     SettingsItem.switch_(
@@ -57,6 +59,29 @@ List<SettingsItem> buildEmulationSettingsItems(
       description: e.useHighLevelEmulationDescription,
       setting: SystemSettingKeys.lleApplets,
       store: highLevelEmulationStore,
+    ),
+    SettingsItem.switch_(
+      title: g.frameLimitEnable,
+      description: g.frameLimitEnableDescription,
+      setting: GeneralSettingKeys.useFrameLimit,
+    ),
+    SettingsItem.slider(
+      title: g.frameLimitSlider,
+      description: g.frameLimitSliderDescription,
+      setting: GeneralSettingKeys.frameLimit,
+      min: 1,
+      max: 200,
+      units: '%',
+    ),
+    SettingsItem.switch_(
+      title: s.pluginLoaderEnable,
+      description: s.pluginLoaderEnableDescription,
+      setting: SystemSettingKeys.pluginLoader,
+    ),
+    SettingsItem.switch_(
+      title: s.allowPluginLoader,
+      description: s.allowPluginLoaderDescription,
+      setting: SystemSettingKeys.allowPluginLoader,
     ),
   ];
 }

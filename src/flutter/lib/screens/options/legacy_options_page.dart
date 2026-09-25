@@ -12,6 +12,7 @@ import '../../data/settings/share_log_provider.dart';
 import '../../data/settings/user_directories_provider.dart';
 import '../../i18n/translations.g.dart';
 import '../../routing/app_routes.dart';
+import '../../widgets/confirmation_dialog.dart';
 import '../settings/settings_routes.dart';
 import '../setup/dialogs/citra_directory_dialog.dart';
 import '../setup/dialogs/copy_dir_progress_dialog.dart';
@@ -181,26 +182,13 @@ class LegacyOptionsPage extends ConsumerWidget {
     bool value,
   ) async {
     final dialog = t.options.useLegacySettingsUIDialog;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(dialog.title),
-          content: Text(dialog.message),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text(dialog.confirm),
-            ),
-          ],
-        );
-      },
+    final confirmed = await ConfirmationDialog.show(
+      context,
+      title: dialog.title,
+      message: dialog.message,
+      confirmLabel: dialog.confirm,
     );
-    if (confirmed != true || !context.mounted) return;
+    if (!confirmed || !context.mounted) return;
     await ref.read(optionsSettingsProvider).setUseLegacySettingsUI(value);
     if (context.mounted) {
       context.go(OptionsRoute(isLegacy: value).location);

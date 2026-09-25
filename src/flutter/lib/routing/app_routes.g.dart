@@ -12,11 +12,8 @@ List<RouteBase> get $appRoutes => [
   $gpuDriverManagerRoute,
   $systemFilesRoute,
   $appShellRouteData,
-  $optionsEmulationSettingsRoute,
   $optionsGeneralSettingsRoute,
   $optionsMediaSettingsRoute,
-  $optionsSystemSettingsRoute,
-  $optionsNetworkingSettingsRoute,
   $optionsCameraSettingsRoute,
   $optionsControlsSettingsRoute,
   $optionsGraphicsSettingsRoute,
@@ -237,33 +234,6 @@ bool _$boolConverter(String value) {
   }
 }
 
-RouteBase get $optionsEmulationSettingsRoute => GoRouteData.$route(
-  path: '/options/emulation',
-  hasOverriddenOnExit: false,
-  factory: $OptionsEmulationSettingsRoute._fromState,
-);
-
-mixin $OptionsEmulationSettingsRoute on GoRouteData {
-  static OptionsEmulationSettingsRoute _fromState(GoRouterState state) =>
-      const OptionsEmulationSettingsRoute();
-
-  @override
-  String get location => GoRouteData.$location('/options/emulation');
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
-}
-
 RouteBase get $optionsGeneralSettingsRoute => GoRouteData.$route(
   path: '/options/general',
   hasOverriddenOnExit: false,
@@ -303,60 +273,6 @@ mixin $OptionsMediaSettingsRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/options/media');
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $optionsSystemSettingsRoute => GoRouteData.$route(
-  path: '/options/system',
-  hasOverriddenOnExit: false,
-  factory: $OptionsSystemSettingsRoute._fromState,
-);
-
-mixin $OptionsSystemSettingsRoute on GoRouteData {
-  static OptionsSystemSettingsRoute _fromState(GoRouterState state) =>
-      const OptionsSystemSettingsRoute();
-
-  @override
-  String get location => GoRouteData.$location('/options/system');
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $optionsNetworkingSettingsRoute => GoRouteData.$route(
-  path: '/options/networking',
-  hasOverriddenOnExit: false,
-  factory: $OptionsNetworkingSettingsRoute._fromState,
-);
-
-mixin $OptionsNetworkingSettingsRoute on GoRouteData {
-  static OptionsNetworkingSettingsRoute _fromState(GoRouterState state) =>
-      const OptionsNetworkingSettingsRoute();
-
-  @override
-  String get location => GoRouteData.$location('/options/networking');
 
   @override
   void go(BuildContext context) => context.go(location);

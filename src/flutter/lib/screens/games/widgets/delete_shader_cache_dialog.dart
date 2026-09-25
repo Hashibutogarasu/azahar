@@ -4,6 +4,7 @@ import '../../../app_services.dart';
 import '../../../i18n/translations.g.dart';
 import '../../../models/game.dart';
 import '../../../models/shader_cache_backend.dart';
+import '../../../widgets/dialog_cancel_button.dart';
 
 /// Mirrors the Compose client's `DeleteShaderCacheButton`: asks which graphics backend's disk
 /// shader cache to delete for [game], then removes it.
@@ -47,10 +48,7 @@ class _DeleteShaderCacheDialogState extends State<DeleteShaderCacheDialog> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(localizations.cancelButtonLabel),
-        ),
+        const DialogCancelButton(),
         TextButton(
           onPressed: _selected == null
               ? null

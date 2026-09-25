@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import 'sections/audio_settings_page.dart';
 import 'sections/camera_settings_page.dart';
 import 'sections/controls_settings_page.dart';
 import 'sections/debug_settings_page.dart';
@@ -58,7 +59,20 @@ class LegacySystemSettingsRoute extends GoRouteData with $LegacySystemSettingsRo
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const SystemSettingsPage();
+    // ignore: deprecated_member_use_from_same_package
+    return const LegacySystemSettingsPage();
+  }
+}
+
+@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@TypedGoRoute<LegacyAudioSettingsRoute>(path: '/settings/audio')
+class LegacyAudioSettingsRoute extends GoRouteData with $LegacyAudioSettingsRoute {
+  const LegacyAudioSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    // ignore: deprecated_member_use_from_same_package
+    return const LegacyAudioSettingsPage();
   }
 }
 

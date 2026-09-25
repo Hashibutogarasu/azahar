@@ -82,13 +82,10 @@ class AppletChannel {
 
     switch (buttonConfig) {
       case 1:
-        return [
-          button(0, localizations.cancelButtonLabel),
-          button(1, localizations.okButtonLabel),
-        ];
+        return [button(0, t.common.cancel), button(1, localizations.okButtonLabel)];
       case 2:
         return [
-          button(0, localizations.cancelButtonLabel),
+          button(0, t.common.cancel),
           button(1, t.applets.iForgot),
           button(2, localizations.okButtonLabel),
         ];
@@ -120,7 +117,7 @@ class AppletChannel {
           if (enableCancelButton)
             SimpleDialogOption(
               onPressed: () => Navigator.of(dialogContext).pop(null),
-              child: Text(MaterialLocalizations.of(dialogContext).cancelButtonLabel),
+              child: Text(t.common.cancel),
             ),
         ],
       ),

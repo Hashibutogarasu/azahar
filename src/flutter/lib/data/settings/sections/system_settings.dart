@@ -28,6 +28,26 @@ abstract final class SystemSettingKeys {
   static const allowPluginLoader = IntBoolKey('System', 'allow_plugin_loader', true);
 }
 
+/// The System category's items in the current Options UI: just the console clock, since New 3DS
+/// mode/high-level emulation/frame limit/plugin loader now live flat under the Emulation
+/// category.
+List<SettingsItem> buildClockSettingsItems(Translations t) {
+  final s = t.settings.system;
+  return [
+    SettingsItem.singleChoice(
+      title: s.initClock,
+      setting: SystemSettingKeys.initClock,
+      choiceLabels: [s.initClockDeviceClock, s.initClockSimulatedClock],
+      choiceValues: const [0, 1],
+    ),
+    SettingsItem.dateTime(title: s.simulatedClock, setting: SystemSettingKeys.initTime),
+  ];
+}
+
+/// The pre-redesign System settings page's items. Kept only for [LegacySystemSettingsPage]
+/// (`useLegacySettingsUI`); the current UI splits this content between the Emulation and System
+/// categories instead.
+@Deprecated('Only used by LegacySystemSettingsPage.')
 List<SettingsItem> buildSystemSettingsItems(Translations t) {
   final s = t.settings.system;
   final g = t.settings.general;
@@ -46,13 +66,7 @@ List<SettingsItem> buildSystemSettingsItems(Translations t) {
       units: '%',
     ),
     SettingsItem.header(title: s.clock),
-    SettingsItem.singleChoice(
-      title: s.initClock,
-      setting: SystemSettingKeys.initClock,
-      choiceLabels: [s.initClockDeviceClock, s.initClockSimulatedClock],
-      choiceValues: const [0, 1],
-    ),
-    SettingsItem.dateTime(title: s.simulatedClock, setting: SystemSettingKeys.initTime),
+    ...buildClockSettingsItems(t),
     SettingsItem.header(title: s.pluginLoader),
     SettingsItem.switch_(
       title: s.pluginLoaderEnable,

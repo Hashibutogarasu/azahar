@@ -58,6 +58,8 @@ class TranslationsJa extends Translations
   @override
   String get appName => 'Azahar';
   @override
+  late final _Translations$common$ja common = _Translations$common$ja._(_root);
+  @override
   late final _Translations$setup$ja setup = _Translations$setup$ja._(_root);
   @override
   late final _Translations$home$ja home = _Translations$home$ja._(_root);
@@ -89,6 +91,19 @@ class TranslationsJa extends Translations
   late final _Translations$settings$ja settings = _Translations$settings$ja._(
     _root,
   );
+}
+
+// Path: common
+class _Translations$common$ja extends Translations$common$en {
+  _Translations$common$ja._(TranslationsJa root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsJa _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get cancel => 'キャンセル';
 }
 
 // Path: setup
@@ -231,6 +246,24 @@ class _Translations$games$ja extends Translations$games$en {
   String get uninstallUpdates => 'アップデート';
   @override
   String get uninstallDlc => 'DLC';
+  @override
+  String get regionJapan => '日本';
+  @override
+  String get regionNorthAmerica => '北米';
+  @override
+  String get regionEurope => '欧州';
+  @override
+  String get regionAustralia => 'オーストラリア';
+  @override
+  String get regionChina => '中国';
+  @override
+  String get regionKorea => '韓国';
+  @override
+  String get regionTaiwan => '台湾';
+  @override
+  String get regionFree => 'リージョンフリー';
+  @override
+  String get invalidRegion => '無効なリージョン';
 }
 
 // Path: emulation
@@ -341,17 +374,9 @@ class _Translations$options$ja extends Translations$options$en {
   @override
   String get aboutDescription => 'ビルドバージョン、クレジットなど';
   @override
-  String get general => '一般';
+  String get general => 'プロフィール';
   @override
   String get generalDescription => 'プロフィール設定と誕生日設定';
-  @override
-  String get emulation => 'エミュレーション';
-  @override
-  String get emulationDescription => 'New 3DSモードと高レベルエミュレーションの設定';
-  @override
-  String get networking => 'ネットワーキング';
-  @override
-  String get networkingDescription => 'ネットワークアクセスと無線に関する設定';
   @override
   String get useLegacySettingsUI => '従来の設定UIを使用';
   @override
@@ -745,7 +770,9 @@ class _Translations$options$groups$ja extends Translations$options$groups$en {
   @override
   String get general => '一般';
   @override
-  String get system => 'システム';
+  String get emulation => 'エミュレーション';
+  @override
+  String get clock => '時計';
   @override
   String get graphics => 'グラフィックス';
   @override
@@ -823,7 +850,7 @@ class _Translations$settings$general$ja
 
   // Translations
   @override
-  String get title => '一般';
+  String get title => 'プロフィール';
   @override
   String get frameLimitEnable => '速度制限';
   @override
@@ -890,6 +917,10 @@ class _Translations$settings$media$ja extends Translations$settings$media$en {
   // Translations
   @override
   String get title => 'メディア';
+  @override
+  String get groupApp => 'アプリ';
+  @override
+  String get groupEmulator => 'エミュレータ';
   @override
   String get masterVolume => 'マスター音量';
   @override
@@ -1459,6 +1490,8 @@ class _Translations$settings$audio$ja extends Translations$settings$audio$en {
   @override
   String get volume => '音量';
   @override
+  String get volumeDescription => 'アプリの「マスター音量」とは別の、エミュレートされた3DS本体自体が持つ内部音量です。';
+  @override
   String get audioStretching => 'オーディオストレッチング';
   @override
   String get audioStretchingDescription =>
@@ -1609,6 +1642,8 @@ class _Translations$settings$language$ja
   String get systemDefault => 'システムのデフォルト';
   @override
   String get english => '英語 (English)';
+  @override
+  String get japanese => '日本語';
 }
 
 // Path: settings.system.countries
@@ -1898,6 +1933,7 @@ extension on TranslationsJa {
   dynamic _flatMapFunction(String path) {
     return switch (path) {
           'appName' => 'Azahar',
+          'common.cancel' => 'キャンセル',
           'setup.next' => '次へ',
           'setup.back' => '戻る',
           'setup.stepComplete' => '完了！',
@@ -1983,6 +2019,15 @@ extension on TranslationsJa {
           'games.uninstallCia' => 'アプリケーション',
           'games.uninstallUpdates' => 'アップデート',
           'games.uninstallDlc' => 'DLC',
+          'games.regionJapan' => '日本',
+          'games.regionNorthAmerica' => '北米',
+          'games.regionEurope' => '欧州',
+          'games.regionAustralia' => 'オーストラリア',
+          'games.regionChina' => '中国',
+          'games.regionKorea' => '韓国',
+          'games.regionTaiwan' => '台湾',
+          'games.regionFree' => 'リージョンフリー',
+          'games.invalidRegion' => '無効なリージョン',
           'emulation.loading' => '読み込み中…',
           'emulation.preparingShaders' => 'シェーダーを準備中',
           'emulation.buildingShaders' => 'シェーダーをビルド中',
@@ -2027,12 +2072,8 @@ extension on TranslationsJa {
           'options.mediaDescription' => 'バックグラウンド再生とメディアセッションの設定',
           'options.about' => 'このアプリについて',
           'options.aboutDescription' => 'ビルドバージョン、クレジットなど',
-          'options.general' => '一般',
+          'options.general' => 'プロフィール',
           'options.generalDescription' => 'プロフィール設定と誕生日設定',
-          'options.emulation' => 'エミュレーション',
-          'options.emulationDescription' => 'New 3DSモードと高レベルエミュレーションの設定',
-          'options.networking' => 'ネットワーキング',
-          'options.networkingDescription' => 'ネットワークアクセスと無線に関する設定',
           'options.useLegacySettingsUI' => '従来の設定UIを使用',
           'options.useLegacySettingsUIDescription' => '以前のオプション画面のデザインに戻します',
           'options.useLegacySettingsUIDialog.title' => '設定UIを切り替えますか？',
@@ -2040,7 +2081,8 @@ extension on TranslationsJa {
             'オプション画面の見た目が変わります。いつでも元に戻すことができます。',
           'options.useLegacySettingsUIDialog.confirm' => '切り替える',
           'options.groups.general' => '一般',
-          'options.groups.system' => 'システム',
+          'options.groups.emulation' => 'エミュレーション',
+          'options.groups.clock' => '時計',
           'options.groups.graphics' => 'グラフィックス',
           'options.groups.networking' => 'ネットワーキング',
           'options.groups.controls' => 'コントロール',
@@ -2095,7 +2137,7 @@ extension on TranslationsJa {
             }) => '${title}: 値は${min}から${max}の間で指定してください。',
           'settings.inputBindingDialog.waitingForInput' =>
             'コントローラーのボタンを押してください…',
-          'settings.general.title' => '一般',
+          'settings.general.title' => 'プロフィール',
           'settings.general.frameLimitEnable' => '速度制限',
           'settings.general.frameLimitEnableDescription' =>
             '有効にすると、エミュレーション速度が指定した通常速度に対する割合に制限されます。',
@@ -2114,6 +2156,8 @@ extension on TranslationsJa {
           'settings.networking.useWirelessDescription' =>
             '近くにある実際のWi-Fiネットワークを、偽のものではなく3DSのすれちがい通信/SpotPass対応ネットワークとして報告します。',
           'settings.media.title' => 'メディア',
+          'settings.media.groupApp' => 'アプリ',
+          'settings.media.groupEmulator' => 'エミュレータ',
           'settings.media.masterVolume' => 'マスター音量',
           'settings.media.masterVolumeDescription' =>
             'エミュレートされたゲーム自体の音量設定とは独立して、アプリ全体の出力音量を調整します。ハードウェアの音量ボタンはこの値を調整します。',
@@ -2474,6 +2518,9 @@ extension on TranslationsJa {
           'settings.gamepad.buttonX' => 'X',
           'settings.gamepad.buttonY' => 'Y',
           'settings.gamepad.buttonSelect' => 'SELECT',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.gamepad.buttonStart' => 'START',
           'settings.gamepad.buttonHome' => 'HOME',
           'settings.gamepad.circlePad' => 'サークルパッド',
@@ -2484,9 +2531,6 @@ extension on TranslationsJa {
           'settings.gamepad.dpadAxisDescription' =>
             'コントローラーによっては十字キーを軸としてマッピングできない場合があります。その場合は十字キー（ボタン）のセクションを使用してください。',
           'settings.gamepad.dpadButtons' => '十字キー（ボタン）',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.gamepad.dpadButtonsDescription' =>
             '十字キー（軸）のボタンマッピングで問題がある場合のみ、こちらに十字キーをマッピングしてください。',
           'settings.gamepad.buttonUp' => '上',
@@ -2527,6 +2571,8 @@ extension on TranslationsJa {
           'settings.layout.height' => '高さ',
           'settings.audio.title' => 'オーディオ',
           'settings.audio.volume' => '音量',
+          'settings.audio.volumeDescription' =>
+            'アプリの「マスター音量」とは別の、エミュレートされた3DS本体自体が持つ内部音量です。',
           'settings.audio.audioStretching' => 'オーディオストレッチング',
           'settings.audio.audioStretchingDescription' =>
             'カクつきを減らすために音声を引き伸ばします。オーディオの遅延が増加し、パフォーマンスがわずかに低下します。',
@@ -2593,6 +2639,7 @@ extension on TranslationsJa {
           'settings.language.title' => '言語',
           'settings.language.systemDefault' => 'システムのデフォルト',
           'settings.language.english' => '英語 (English)',
+          'settings.language.japanese' => '日本語',
           _ => null,
         };
   }

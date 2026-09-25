@@ -24,20 +24,24 @@ class _MediaSettingsPageState extends ConsumerState<MediaSettingsPage> {
   Widget build(BuildContext context) {
     final t = context.t;
     final volume = ref.watch(masterVolumeProvider);
-    final items = <SettingsItem>[
+    final appItems = <SettingsItem>[
+      SettingsItem.header(title: t.settings.media.groupApp),
       ...buildMediaSettingsItems(t),
-      SettingsItem.header(title: t.settings.audio.title),
+    ];
+    final emulatorItems = <SettingsItem>[
+      SettingsItem.header(title: t.settings.media.groupEmulator),
       ...buildAudioSettingsItems(t, _systemSaveStore),
     ];
     return Scaffold(
       appBar: AppBar(title: Text(t.settings.media.title)),
       body: ListView(
         children: [
-          SettingsList(items: items, shrinkWrap: true),
+          SettingsList(items: appItems, shrinkWrap: true),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: _MasterVolumeCard(volume: volume),
           ),
+          SettingsList(items: emulatorItems, shrinkWrap: true),
         ],
       ),
     );

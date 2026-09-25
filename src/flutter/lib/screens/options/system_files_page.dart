@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/settings/system_files_provider.dart';
 import '../../i18n/translations.g.dart';
+import '../../widgets/confirmation_dialog.dart';
 import 'dialogs/artic_base_address_entry_dialog.dart';
 
 class SystemFilesPage extends ConsumerStatefulWidget {
@@ -103,24 +104,13 @@ class _SystemFilesPageState extends ConsumerState<SystemFilesPage> {
 
   Future<void> _confirmDeleteSystemFiles() async {
     final t = context.t;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(t.systemFiles.deleteSystemFiles),
-        content: Text(t.systemFiles.deleteSystemFilesDescription),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(MaterialLocalizations.of(context).okButtonLabel),
-          ),
-        ],
-      ),
+    final confirmed = await ConfirmationDialog.show(
+      context,
+      title: t.systemFiles.deleteSystemFiles,
+      message: t.systemFiles.deleteSystemFilesDescription,
+      confirmLabel: MaterialLocalizations.of(context).okButtonLabel,
     );
-    if (confirmed != true) return;
+    if (!confirmed) return;
     await _service.unlinkConsole();
     final linked = await _service.isFullConsoleLinked();
     if (mounted) setState(() => _consoleLinked = linked);

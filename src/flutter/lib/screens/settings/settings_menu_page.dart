@@ -6,12 +6,13 @@ import '../../data/settings/reset_settings_provider.dart';
 import '../../data/settings/settings_item.dart';
 import '../../data/settings/settings_load_provider.dart';
 import '../../i18n/translations.g.dart';
+import '../../widgets/confirmation_dialog.dart';
 import 'settings_routes.dart';
 import 'widgets/settings_list.dart';
 
 /// The pre-redesign settings root menu, kept only for the legacy Options UI
 /// (`useLegacySettingsUI`). The current UI reaches every section directly from the Options
-/// page/`EmulationSettingsPage` instead of through this hub.
+/// page instead of through this hub.
 @Deprecated('Superseded by the Options page groups. Kept for the legacy Options UI only.')
 class LegacySettingsMenuPage extends ConsumerStatefulWidget {
   const LegacySettingsMenuPage({super.key});
@@ -47,6 +48,7 @@ class _LegacySettingsMenuPageState extends ConsumerState<LegacySettingsMenuPage>
       SettingsItem.submenu(
         title: t.settings.system.title,
         icon: Icons.memory,
+        // ignore: deprecated_member_use_from_same_package
         onTap: (context) => const LegacySystemSettingsRoute().push(context),
       ),
       SettingsItem.submenu(
@@ -70,6 +72,12 @@ class _LegacySettingsMenuPageState extends ConsumerState<LegacySettingsMenuPage>
         onTap: (context) => const LegacyLayoutSettingsRoute().push(context),
       ),
       SettingsItem.submenu(
+        title: t.settings.audio.title,
+        icon: Icons.volume_up,
+        // ignore: deprecated_member_use_from_same_package
+        onTap: (context) => const LegacyAudioSettingsRoute().push(context),
+      ),
+      SettingsItem.submenu(
         title: t.settings.debug.title,
         icon: Icons.code,
         onTap: (context) => const LegacyDebugSettingsRoute().push(context),
@@ -88,26 +96,13 @@ class _LegacySettingsMenuPageState extends ConsumerState<LegacySettingsMenuPage>
   }
 
   Future<void> _confirmReset(BuildContext context, Translations t) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(t.settings.resetToDefaultDialog.title),
-          content: Text(t.settings.resetToDefaultDialog.message),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text(t.settings.resetToDefaultDialog.confirm),
-            ),
-          ],
-        );
-      },
+    final confirmed = await ConfirmationDialog.show(
+      context,
+      title: t.settings.resetToDefaultDialog.title,
+      message: t.settings.resetToDefaultDialog.message,
+      confirmLabel: t.settings.resetToDefaultDialog.confirm,
     );
-    if (confirmed != true) return;
+    if (!confirmed) return;
     await ref.read(resetSettingsProvider).resetAll();
     setState(() {});
   }

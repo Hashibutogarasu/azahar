@@ -58,6 +58,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   /// en: 'Azahar'
   String get appName => 'Azahar';
 
+  late final Translations$common$en common = Translations$common$en.internal(
+    _root,
+  );
   late final Translations$setup$en setup = Translations$setup$en.internal(
     _root,
   );
@@ -84,6 +87,18 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   );
   late final Translations$settings$en settings =
       Translations$settings$en.internal(_root);
+}
+
+// Path: common
+class Translations$common$en {
+  Translations$common$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Cancel'
+  String get cancel => 'Cancel';
 }
 
 // Path: setup
@@ -254,6 +269,33 @@ class Translations$games$en {
 
   /// en: 'DLC'
   String get uninstallDlc => 'DLC';
+
+  /// en: 'Japan'
+  String get regionJapan => 'Japan';
+
+  /// en: 'North America'
+  String get regionNorthAmerica => 'North America';
+
+  /// en: 'Europe'
+  String get regionEurope => 'Europe';
+
+  /// en: 'Australia'
+  String get regionAustralia => 'Australia';
+
+  /// en: 'China'
+  String get regionChina => 'China';
+
+  /// en: 'Korea'
+  String get regionKorea => 'Korea';
+
+  /// en: 'Taiwan'
+  String get regionTaiwan => 'Taiwan';
+
+  /// en: 'Region free'
+  String get regionFree => 'Region free';
+
+  /// en: 'Invalid region'
+  String get invalidRegion => 'Invalid region';
 }
 
 // Path: emulation
@@ -399,24 +441,11 @@ class Translations$options$en {
   /// en: 'Build version, credits, and more'
   String get aboutDescription => 'Build version, credits, and more';
 
-  /// en: 'General'
-  String get general => 'General';
+  /// en: 'Profile'
+  String get general => 'Profile';
 
   /// en: 'Profile and birthday settings'
   String get generalDescription => 'Profile and birthday settings';
-
-  /// en: 'Emulation'
-  String get emulation => 'Emulation';
-
-  /// en: 'New 3DS mode and high-level emulation settings'
-  String get emulationDescription =>
-      'New 3DS mode and high-level emulation settings';
-
-  /// en: 'Networking'
-  String get networking => 'Networking';
-
-  /// en: 'Network access and wireless settings'
-  String get networkingDescription => 'Network access and wireless settings';
 
   /// en: 'Use Legacy Settings UI'
   String get useLegacySettingsUI => 'Use Legacy Settings UI';
@@ -841,8 +870,11 @@ class Translations$options$groups$en {
   /// en: 'General'
   String get general => 'General';
 
-  /// en: 'System'
-  String get system => 'System';
+  /// en: 'Emulation'
+  String get emulation => 'Emulation';
+
+  /// en: 'Clock'
+  String get clock => 'Clock';
 
   /// en: 'Graphics'
   String get graphics => 'Graphics';
@@ -921,8 +953,8 @@ class Translations$settings$general$en {
 
   // Translations
 
-  /// en: 'General'
-  String get title => 'General';
+  /// en: 'Profile'
+  String get title => 'Profile';
 
   /// en: 'Limit Speed'
   String get frameLimitEnable => 'Limit Speed';
@@ -994,6 +1026,12 @@ class Translations$settings$media$en {
 
   /// en: 'Media'
   String get title => 'Media';
+
+  /// en: 'App'
+  String get groupApp => 'App';
+
+  /// en: 'Emulator'
+  String get groupEmulator => 'Emulator';
 
   /// en: 'Master Volume'
   String get masterVolume => 'Master Volume';
@@ -1792,6 +1830,10 @@ class Translations$settings$audio$en {
   /// en: 'Volume'
   String get volume => 'Volume';
 
+  /// en: 'The emulated 3DS console's own internal volume level, separate from the app's Master Volume.'
+  String get volumeDescription =>
+      'The emulated 3DS console\'s own internal volume level, separate from the app\'s Master Volume.';
+
   /// en: 'Audio Stretching'
   String get audioStretching => 'Audio Stretching';
 
@@ -1993,6 +2035,9 @@ class Translations$settings$language$en {
 
   /// en: 'English'
   String get english => 'English';
+
+  /// en: 'Japanese (日本語)'
+  String get japanese => 'Japanese (日本語)';
 }
 
 // Path: settings.system.countries
@@ -2412,6 +2457,7 @@ extension on Translations {
   dynamic _flatMapFunction(String path) {
     return switch (path) {
           'appName' => 'Azahar',
+          'common.cancel' => 'Cancel',
           'setup.next' => 'Next',
           'setup.back' => 'Back',
           'setup.stepComplete' => 'Complete!',
@@ -2507,6 +2553,15 @@ extension on Translations {
           'games.uninstallCia' => 'Application',
           'games.uninstallUpdates' => 'Updates',
           'games.uninstallDlc' => 'DLC',
+          'games.regionJapan' => 'Japan',
+          'games.regionNorthAmerica' => 'North America',
+          'games.regionEurope' => 'Europe',
+          'games.regionAustralia' => 'Australia',
+          'games.regionChina' => 'China',
+          'games.regionKorea' => 'Korea',
+          'games.regionTaiwan' => 'Taiwan',
+          'games.regionFree' => 'Region free',
+          'games.invalidRegion' => 'Invalid region',
           'emulation.loading' => 'Loading…',
           'emulation.preparingShaders' => 'Preparing Shaders',
           'emulation.buildingShaders' => 'Building Shaders',
@@ -2555,14 +2610,8 @@ extension on Translations {
             'Background playback and media session settings',
           'options.about' => 'About',
           'options.aboutDescription' => 'Build version, credits, and more',
-          'options.general' => 'General',
+          'options.general' => 'Profile',
           'options.generalDescription' => 'Profile and birthday settings',
-          'options.emulation' => 'Emulation',
-          'options.emulationDescription' =>
-            'New 3DS mode and high-level emulation settings',
-          'options.networking' => 'Networking',
-          'options.networkingDescription' =>
-            'Network access and wireless settings',
           'options.useLegacySettingsUI' => 'Use Legacy Settings UI',
           'options.useLegacySettingsUIDescription' =>
             'Switch back to the previous Options screen design',
@@ -2571,7 +2620,8 @@ extension on Translations {
             'This changes how the Options screen looks. You can switch back at any time.',
           'options.useLegacySettingsUIDialog.confirm' => 'Switch',
           'options.groups.general' => 'General',
-          'options.groups.system' => 'System',
+          'options.groups.emulation' => 'Emulation',
+          'options.groups.clock' => 'Clock',
           'options.groups.graphics' => 'Graphics',
           'options.groups.networking' => 'Networking',
           'options.groups.controls' => 'Controls',
@@ -2631,7 +2681,7 @@ extension on Translations {
             }) => '${title}: value must be between ${min} and ${max}.',
           'settings.inputBindingDialog.waitingForInput' =>
             'Press a button on your controller…',
-          'settings.general.title' => 'General',
+          'settings.general.title' => 'Profile',
           'settings.general.frameLimitEnable' => 'Limit Speed',
           'settings.general.frameLimitEnableDescription' =>
             'When enabled, emulation speed will be limited to a specified percentage of normal speed.',
@@ -2651,6 +2701,8 @@ extension on Translations {
           'settings.networking.useWirelessDescription' =>
             'Reports real nearby Wi-Fi networks as 3DS StreetPass/SpotPass-compatible networks, instead of fake ones.',
           'settings.media.title' => 'Media',
+          'settings.media.groupApp' => 'App',
+          'settings.media.groupEmulator' => 'Emulator',
           'settings.media.masterVolume' => 'Master Volume',
           'settings.media.masterVolumeDescription' =>
             'Controls the app\'s overall output volume independently of the emulated game\'s own volume setting. Hardware volume buttons adjust this value.',
@@ -3032,6 +3084,9 @@ extension on Translations {
           'settings.gamepad.buttonX' => 'X',
           'settings.gamepad.buttonY' => 'Y',
           'settings.gamepad.buttonSelect' => 'SELECT',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.gamepad.buttonStart' => 'START',
           'settings.gamepad.buttonHome' => 'HOME',
           'settings.gamepad.circlePad' => 'Circle Pad',
@@ -3042,9 +3097,6 @@ extension on Translations {
           'settings.gamepad.dpadAxisDescription' =>
             'Some controllers may not be able to map their D-pad as an axis. If that\'s the case, use the D-Pad (buttons) section.',
           'settings.gamepad.dpadButtons' => 'D-Pad (Button)',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.gamepad.dpadButtonsDescription' =>
             'Only map the D-pad to these if you\'re facing issues with the D-Pad (Axis) button mappings.',
           'settings.gamepad.buttonUp' => 'Up',
@@ -3087,6 +3139,8 @@ extension on Translations {
           'settings.layout.height' => 'Height',
           'settings.audio.title' => 'Audio',
           'settings.audio.volume' => 'Volume',
+          'settings.audio.volumeDescription' =>
+            'The emulated 3DS console\'s own internal volume level, separate from the app\'s Master Volume.',
           'settings.audio.audioStretching' => 'Audio Stretching',
           'settings.audio.audioStretchingDescription' =>
             'Stretches audio to reduce stuttering. Increases audio latency and slightly reduces performance.',
@@ -3156,6 +3210,7 @@ extension on Translations {
           'settings.language.title' => 'Language',
           'settings.language.systemDefault' => 'System default',
           'settings.language.english' => 'English',
+          'settings.language.japanese' => 'Japanese (日本語)',
           _ => null,
         };
   }

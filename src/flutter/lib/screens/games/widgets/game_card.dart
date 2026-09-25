@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../../i18n/translations.g.dart';
 import '../../../models/game.dart';
 import 'game_icon.dart';
+import 'game_regions_translator.dart';
 
 class GameCard extends StatelessWidget {
   const GameCard({super.key, required this.game, required this.onTap, this.onLongPress});
@@ -64,7 +66,7 @@ class GameCard extends StatelessWidget {
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       Text(
-                        game.regions,
+                        translateGameRegions(context.t, game.regions),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodySmall,

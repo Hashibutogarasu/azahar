@@ -41,7 +41,7 @@ class _LanguageSettingsPageState extends ConsumerState<LanguageSettingsPage> {
               for (final locale in AppLocale.values)
                 babstrap.SettingsItem(
                   icons: Icons.language,
-                  title: locale.languageCode,
+                  title: _localeLabel(t, locale),
                   trailing: selected == locale.languageCode ? const Icon(Icons.check) : null,
                   onTap: () => select(locale.languageCode),
                 ),
@@ -50,5 +50,12 @@ class _LanguageSettingsPageState extends ConsumerState<LanguageSettingsPage> {
         ],
       ),
     );
+  }
+
+  String _localeLabel(Translations t, AppLocale locale) {
+    return switch (locale) {
+      AppLocale.en => t.settings.language.english,
+      AppLocale.ja => t.settings.language.japanese,
+    };
   }
 }

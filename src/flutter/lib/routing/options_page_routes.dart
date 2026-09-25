@@ -1,15 +1,5 @@
 part of 'app_routes.dart';
 
-@TypedGoRoute<OptionsEmulationSettingsRoute>(path: '/options/emulation')
-class OptionsEmulationSettingsRoute extends GoRouteData with $OptionsEmulationSettingsRoute {
-  const OptionsEmulationSettingsRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const EmulationSettingsPage();
-  }
-}
-
 @TypedGoRoute<OptionsGeneralSettingsRoute>(path: '/options/general')
 class OptionsGeneralSettingsRoute extends GoRouteData with $OptionsGeneralSettingsRoute {
   const OptionsGeneralSettingsRoute();
@@ -27,26 +17,6 @@ class OptionsMediaSettingsRoute extends GoRouteData with $OptionsMediaSettingsRo
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const MediaSettingsPage();
-  }
-}
-
-@TypedGoRoute<OptionsSystemSettingsRoute>(path: '/options/system')
-class OptionsSystemSettingsRoute extends GoRouteData with $OptionsSystemSettingsRoute {
-  const OptionsSystemSettingsRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const SystemSettingsPage();
-  }
-}
-
-@TypedGoRoute<OptionsNetworkingSettingsRoute>(path: '/options/networking')
-class OptionsNetworkingSettingsRoute extends GoRouteData with $OptionsNetworkingSettingsRoute {
-  const OptionsNetworkingSettingsRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const NetworkingSettingsPage();
   }
 }
 

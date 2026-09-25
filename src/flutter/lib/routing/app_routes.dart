@@ -7,7 +7,6 @@ import '../data/settings/settings_load_provider.dart';
 import '../screens/games/games_list_page.dart';
 import '../screens/home/app_shell.dart';
 import '../screens/options/about_page.dart';
-import '../screens/options/emulation_settings_page.dart';
 import '../screens/options/gpu_driver_manager_page.dart';
 import '../screens/options/legacy_options_page.dart';
 import '../screens/options/options_page.dart';
@@ -20,8 +19,6 @@ import '../screens/settings/sections/graphics_settings_page.dart';
 import '../screens/settings/sections/language_settings_page.dart';
 import '../screens/settings/sections/layout_settings_page.dart';
 import '../screens/settings/sections/media_settings_page.dart';
-import '../screens/settings/sections/networking_settings_page.dart';
-import '../screens/settings/sections/system_settings_page.dart';
 import '../screens/settings/sections/theme_settings_page.dart';
 import '../screens/setup/setup_wizard_page.dart';
 

@@ -1,5 +1,8 @@
 {
   "appName": "Azahar",
+  "common": {
+    "cancel": "キャンセル"
+  },
   "setup": {
     "next": "次へ",
     "back": "戻る",
@@ -97,7 +100,16 @@
     "openMods": "MOD",
     "uninstallCia": "アプリケーション",
     "uninstallUpdates": "アップデート",
-    "uninstallDlc": "DLC"
+    "uninstallDlc": "DLC",
+    "regionJapan": "日本",
+    "regionNorthAmerica": "北米",
+    "regionEurope": "欧州",
+    "regionAustralia": "オーストラリア",
+    "regionChina": "中国",
+    "regionKorea": "韓国",
+    "regionTaiwan": "台湾",
+    "regionFree": "リージョンフリー",
+    "invalidRegion": "無効なリージョン"
   },
   "emulation": {
     "loading": "読み込み中…",
@@ -140,12 +152,8 @@
     "mediaDescription": "バックグラウンド再生とメディアセッションの設定",
     "about": "このアプリについて",
     "aboutDescription": "ビルドバージョン、クレジットなど",
-    "general": "一般",
+    "general": "プロフィール",
     "generalDescription": "プロフィール設定と誕生日設定",
-    "emulation": "エミュレーション",
-    "emulationDescription": "New 3DSモードと高レベルエミュレーションの設定",
-    "networking": "ネットワーキング",
-    "networkingDescription": "ネットワークアクセスと無線に関する設定",
     "useLegacySettingsUI": "従来の設定UIを使用",
     "useLegacySettingsUIDescription": "以前のオプション画面のデザインに戻します",
     "useLegacySettingsUIDialog": {
@@ -155,7 +163,8 @@
     },
     "groups": {
       "general": "一般",
-      "system": "システム",
+      "emulation": "エミュレーション",
+      "clock": "時計",
       "graphics": "グラフィックス",
       "networking": "ネットワーキング",
       "controls": "コントロール",
@@ -218,7 +227,7 @@
       "waitingForInput": "コントローラーのボタンを押してください…"
     },
     "general": {
-      "title": "一般",
+      "title": "プロフィール",
       "frameLimitEnable": "速度制限",
       "frameLimitEnableDescription": "有効にすると、エミュレーション速度が指定した通常速度に対する割合に制限されます。",
       "frameLimitSlider": "速度制限のパーセンテージ",
@@ -238,6 +247,8 @@
     },
     "media": {
       "title": "メディア",
+      "groupApp": "アプリ",
+      "groupEmulator": "エミュレータ",
       "masterVolume": "マスター音量",
       "masterVolumeDescription": "エミュレートされたゲーム自体の音量設定とは独立して、アプリ全体の出力音量を調整します。ハードウェアの音量ボタンはこの値を調整します。",
       "masterVolumePercent": "${value}%",
@@ -618,6 +629,7 @@
     "audio": {
       "title": "オーディオ",
       "volume": "音量",
+      "volumeDescription": "アプリの「マスター音量」とは別の、エミュレートされた3DS本体自体が持つ内部音量です。",
       "audioStretching": "オーディオストレッチング",
       "audioStretchingDescription": "カクつきを減らすために音声を引き伸ばします。オーディオの遅延が増加し、パフォーマンスがわずかに低下します。",
       "realtimeAudio": "リアルタイムオーディオ",
@@ -677,7 +689,8 @@
     "language": {
       "title": "言語",
       "systemDefault": "システムのデフォルト",
-      "english": "英語 (English)"
+      "english": "英語 (English)",
+      "japanese": "日本語"
     }
   }
 }

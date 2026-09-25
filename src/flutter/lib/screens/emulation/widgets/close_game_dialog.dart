@@ -1,31 +1,18 @@
 import 'package:flutter/material.dart';
 
 import '../../../i18n/translations.g.dart';
+import '../../../widgets/confirmation_dialog.dart';
 
-class CloseGameDialog extends StatelessWidget {
-  const CloseGameDialog({super.key});
+class CloseGameDialog {
+  const CloseGameDialog._();
 
-  static Future<bool?> show(BuildContext context) {
-    return showDialog<bool>(context: context, builder: (_) => const CloseGameDialog());
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  static Future<bool> show(BuildContext context) {
     final t = context.t;
-    final localizations = MaterialLocalizations.of(context);
-    return AlertDialog(
-      title: Text(t.emulation.closeGame),
-      content: Text(t.emulation.closeGameMessage),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          child: Text(localizations.cancelButtonLabel),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(true),
-          child: Text(localizations.okButtonLabel),
-        ),
-      ],
+    return ConfirmationDialog.show(
+      context,
+      title: t.emulation.closeGame,
+      message: t.emulation.closeGameMessage,
+      confirmLabel: MaterialLocalizations.of(context).okButtonLabel,
     );
   }
 }

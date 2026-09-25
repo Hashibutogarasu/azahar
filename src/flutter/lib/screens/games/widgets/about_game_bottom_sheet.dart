@@ -8,6 +8,7 @@ import '../../setup/dialogs/message_dialog.dart';
 import 'create_shortcut_dialog.dart';
 import 'delete_shader_cache_dialog.dart';
 import 'game_icon.dart';
+import 'game_regions_translator.dart';
 import 'open_folder_menu_button.dart';
 import 'uninstall_menu_button.dart';
 
@@ -99,7 +100,7 @@ class _AboutGameBottomSheetState extends State<AboutGameBottomSheet> {
                         style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       Text(game.company, style: theme.textTheme.bodyMedium),
-                      Text(game.regions, style: theme.textTheme.bodyMedium),
+                      Text(translateGameRegions(t, game.regions), style: theme.textTheme.bodyMedium),
                       Text(
                         'ID: ${game.titleId.toRadixString(16).toUpperCase().padLeft(16, '0')}',
                         style: theme.textTheme.bodyMedium,

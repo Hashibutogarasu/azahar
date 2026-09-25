@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../i18n/translations.g.dart';
+import '../../../widgets/dialog_cancel_button.dart';
 
 class ArticBaseConnectDialog extends StatefulWidget {
   const ArticBaseConnectDialog({super.key, required this.initialAddress});
@@ -35,10 +36,7 @@ class _ArticBaseConnectDialogState extends State<ArticBaseConnectDialog> {
       title: Text(t.articBaseConnectDialog.title),
       content: TextField(controller: _controller),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(localizations.cancelButtonLabel),
-        ),
+        const DialogCancelButton(),
         TextButton(
           onPressed: () => Navigator.of(context).pop(_controller.text),
           child: Text(localizations.okButtonLabel),
