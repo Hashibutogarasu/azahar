@@ -372,6 +372,10 @@ class _Translations$options$ja extends Translations$options$en {
   @override
   String get mediaDescription => 'バックグラウンド再生とメディアセッションの設定';
   @override
+  String get accessibility => 'アクセシビリティ';
+  @override
+  String get accessibilityDescription => 'モーションなどのアクセシビリティ設定';
+  @override
   String get about => 'このアプリについて';
   @override
   String get aboutDescription => 'ビルドバージョン、クレジットなど';
@@ -563,6 +567,9 @@ class _Translations$settings$ja extends Translations$settings$en {
   @override
   late final _Translations$settings$themes$ja themes =
       _Translations$settings$themes$ja._(_root);
+  @override
+  late final _Translations$settings$accessibility$ja accessibility =
+      _Translations$settings$accessibility$ja._(_root);
   @override
   late final _Translations$settings$language$ja language =
       _Translations$settings$language$ja._(_root);
@@ -790,6 +797,8 @@ class _Translations$options$groups$ja extends Translations$options$groups$en {
   String get folderSettings => 'フォルダ設定';
   @override
   String get other => 'その他';
+  @override
+  String get accessibility => 'アクセシビリティ';
 }
 
 // Path: settings.resetToDefaultDialog
@@ -1690,6 +1699,24 @@ class _Translations$settings$themes$ja extends Translations$settings$themes$en {
   String get legacy => 'Legacy';
 }
 
+// Path: settings.accessibility
+class _Translations$settings$accessibility$ja
+    extends Translations$settings$accessibility$en {
+  _Translations$settings$accessibility$ja._(TranslationsJa root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsJa _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'アクセシビリティ';
+  @override
+  String get reduceMotion => '視差効果を減らす';
+  @override
+  String get reduceMotionDescription => 'アプリ内のアニメーションや動きの効果を減らします。';
+}
+
 // Path: settings.language
 class _Translations$settings$language$ja
     extends Translations$settings$language$en {
@@ -2135,6 +2162,8 @@ extension on TranslationsJa {
           'options.themeAndColorDescription' => 'アプリの見た目を変更します',
           'options.media' => 'メディア',
           'options.mediaDescription' => 'バックグラウンド再生とメディアセッションの設定',
+          'options.accessibility' => 'アクセシビリティ',
+          'options.accessibilityDescription' => 'モーションなどのアクセシビリティ設定',
           'options.about' => 'このアプリについて',
           'options.aboutDescription' => 'ビルドバージョン、クレジットなど',
           'options.general' => 'プロフィール',
@@ -2154,6 +2183,7 @@ extension on TranslationsJa {
           'options.groups.tools' => 'ツール',
           'options.groups.folderSettings' => 'フォルダ設定',
           'options.groups.other' => 'その他',
+          'options.groups.accessibility' => 'アクセシビリティ',
           'systemFiles.title' => 'システムファイル',
           'systemFiles.preamble' =>
             'Azaharが一部の機能を利用するには、実機由来のコンソール固有データとファームウェアファイルが必要です。これらのファイルとデータは、Azahar Artic Setup Toolを使ってセットアップできます。\n\n注意事項:\n• この操作はコンソール固有データをAzaharにインストールします。セットアップ完了後は、userフォルダやnandフォルダを共有しないでください！\n• セットアップ中、Azaharはセットアップツールを実行しているコンソールにリンクされます。後でエミュレータのオプションメニューのシステムファイルタブからリンクを解除できます。\n• システムファイルをセットアップした後は、Azaharと実機の3DSを同時にオンラインにしないでください。問題が発生する可能性があります。\n• New 3DSのセットアップにはOld 3DSのセットアップが必要です（両方のセットアップを推奨します）。\n• どちらのセットアップモードも、セットアップツールを実行しているコンソールの機種に関わらず動作します。',
@@ -2575,12 +2605,12 @@ extension on TranslationsJa {
           'settings.gamepad.controllerInputMode' => 'コントローラー入力モード',
           'settings.gamepad.controllerInputModeDescription' =>
             '物理ゲームコントローラーを3DSの入力にどのようにマッピングするかを選択します。',
-          'settings.gamepad.controllerInputModeManual' => '手動',
-          'settings.gamepad.controllerInputModeAutoDetect' => '自動検出',
-          'settings.gamepad.invertLeftStickYAxis' => '左スティックのY軸を反転',
           _ => null,
         } ??
         switch (path) {
+          'settings.gamepad.controllerInputModeManual' => '手動',
+          'settings.gamepad.controllerInputModeAutoDetect' => '自動検出',
+          'settings.gamepad.invertLeftStickYAxis' => '左スティックのY軸を反転',
           'settings.gamepad.invertLeftStickYAxisDescription' =>
             '自動検出されたコントローラー使用時に、左スティックの垂直軸を反転します。',
           'settings.gamepad.gyroSettings' => 'ジャイロ設定',
@@ -2726,6 +2756,10 @@ extension on TranslationsJa {
             'ダークモード有効時に、ダークグレーの代わりに黒背景を使用します。',
           'settings.themes.azahar' => 'Azahar',
           'settings.themes.legacy' => 'Legacy',
+          'settings.accessibility.title' => 'アクセシビリティ',
+          'settings.accessibility.reduceMotion' => '視差効果を減らす',
+          'settings.accessibility.reduceMotionDescription' =>
+            'アプリ内のアニメーションや動きの効果を減らします。',
           'settings.language.title' => '言語',
           'settings.language.systemDefault' => 'システムのデフォルト',
           'settings.language.english' => '英語 (English)',

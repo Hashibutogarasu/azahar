@@ -2057,6 +2057,215 @@ class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
   }
 }
 
+class $AccessibilitySettingsTable extends AccessibilitySettings
+    with TableInfo<$AccessibilitySettingsTable, AccessibilitySetting> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AccessibilitySettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _reduceMotionMeta = const VerificationMeta(
+    'reduceMotion',
+  );
+  @override
+  late final GeneratedColumn<bool> reduceMotion = GeneratedColumn<bool>(
+    'reduce_motion',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("reduce_motion" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, reduceMotion];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'accessibility_settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AccessibilitySetting> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('reduce_motion')) {
+      context.handle(
+        _reduceMotionMeta,
+        reduceMotion.isAcceptableOrUnknown(
+          data['reduce_motion']!,
+          _reduceMotionMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AccessibilitySetting map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AccessibilitySetting(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      reduceMotion: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}reduce_motion'],
+      )!,
+    );
+  }
+
+  @override
+  $AccessibilitySettingsTable createAlias(String alias) {
+    return $AccessibilitySettingsTable(attachedDatabase, alias);
+  }
+}
+
+class AccessibilitySetting extends DataClass
+    implements Insertable<AccessibilitySetting> {
+  final int id;
+  final bool reduceMotion;
+  const AccessibilitySetting({required this.id, required this.reduceMotion});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['reduce_motion'] = Variable<bool>(reduceMotion);
+    return map;
+  }
+
+  AccessibilitySettingsCompanion toCompanion(bool nullToAbsent) {
+    return AccessibilitySettingsCompanion(
+      id: Value(id),
+      reduceMotion: Value(reduceMotion),
+    );
+  }
+
+  factory AccessibilitySetting.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AccessibilitySetting(
+      id: serializer.fromJson<int>(json['id']),
+      reduceMotion: serializer.fromJson<bool>(json['reduceMotion']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'reduceMotion': serializer.toJson<bool>(reduceMotion),
+    };
+  }
+
+  AccessibilitySetting copyWith({int? id, bool? reduceMotion}) =>
+      AccessibilitySetting(
+        id: id ?? this.id,
+        reduceMotion: reduceMotion ?? this.reduceMotion,
+      );
+  AccessibilitySetting copyWithCompanion(AccessibilitySettingsCompanion data) {
+    return AccessibilitySetting(
+      id: data.id.present ? data.id.value : this.id,
+      reduceMotion: data.reduceMotion.present
+          ? data.reduceMotion.value
+          : this.reduceMotion,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AccessibilitySetting(')
+          ..write('id: $id, ')
+          ..write('reduceMotion: $reduceMotion')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, reduceMotion);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AccessibilitySetting &&
+          other.id == this.id &&
+          other.reduceMotion == this.reduceMotion);
+}
+
+class AccessibilitySettingsCompanion
+    extends UpdateCompanion<AccessibilitySetting> {
+  final Value<int> id;
+  final Value<bool> reduceMotion;
+  const AccessibilitySettingsCompanion({
+    this.id = const Value.absent(),
+    this.reduceMotion = const Value.absent(),
+  });
+  AccessibilitySettingsCompanion.insert({
+    this.id = const Value.absent(),
+    this.reduceMotion = const Value.absent(),
+  });
+  static Insertable<AccessibilitySetting> custom({
+    Expression<int>? id,
+    Expression<bool>? reduceMotion,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (reduceMotion != null) 'reduce_motion': reduceMotion,
+    });
+  }
+
+  AccessibilitySettingsCompanion copyWith({
+    Value<int>? id,
+    Value<bool>? reduceMotion,
+  }) {
+    return AccessibilitySettingsCompanion(
+      id: id ?? this.id,
+      reduceMotion: reduceMotion ?? this.reduceMotion,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (reduceMotion.present) {
+      map['reduce_motion'] = Variable<bool>(reduceMotion.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AccessibilitySettingsCompanion(')
+          ..write('id: $id, ')
+          ..write('reduceMotion: $reduceMotion')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $MediaSettingsTable extends MediaSettings
     with TableInfo<$MediaSettingsTable, MediaSetting> {
   @override
@@ -2619,6 +2828,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $InputLayoutElementsTable inputLayoutElements =
       $InputLayoutElementsTable(this);
   late final $ThemeSettingsTable themeSettings = $ThemeSettingsTable(this);
+  late final $AccessibilitySettingsTable accessibilitySettings =
+      $AccessibilitySettingsTable(this);
   late final $MediaSettingsTable mediaSettings = $MediaSettingsTable(this);
   late final $VirtualAccessPointsTable virtualAccessPoints =
       $VirtualAccessPointsTable(this);
@@ -2632,6 +2843,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     controlBindings,
     inputLayoutElements,
     themeSettings,
+    accessibilitySettings,
     mediaSettings,
     virtualAccessPoints,
   ];
@@ -3789,6 +4001,176 @@ typedef $$ThemeSettingsTableProcessedTableManager =
       ThemeSetting,
       PrefetchHooks Function()
     >;
+typedef $$AccessibilitySettingsTableCreateCompanionBuilder =
+    AccessibilitySettingsCompanion Function({
+      Value<int> id,
+      Value<bool> reduceMotion,
+    });
+typedef $$AccessibilitySettingsTableUpdateCompanionBuilder =
+    AccessibilitySettingsCompanion Function({
+      Value<int> id,
+      Value<bool> reduceMotion,
+    });
+
+class $$AccessibilitySettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $AccessibilitySettingsTable> {
+  $$AccessibilitySettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get reduceMotion => $composableBuilder(
+    column: $table.reduceMotion,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$AccessibilitySettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $AccessibilitySettingsTable> {
+  $$AccessibilitySettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get reduceMotion => $composableBuilder(
+    column: $table.reduceMotion,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AccessibilitySettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AccessibilitySettingsTable> {
+  $$AccessibilitySettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<bool> get reduceMotion => $composableBuilder(
+    column: $table.reduceMotion,
+    builder: (column) => column,
+  );
+}
+
+class $$AccessibilitySettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AccessibilitySettingsTable,
+          AccessibilitySetting,
+          $$AccessibilitySettingsTableFilterComposer,
+          $$AccessibilitySettingsTableOrderingComposer,
+          $$AccessibilitySettingsTableAnnotationComposer,
+          $$AccessibilitySettingsTableCreateCompanionBuilder,
+          $$AccessibilitySettingsTableUpdateCompanionBuilder,
+          (
+            AccessibilitySetting,
+            BaseReferences<
+              _$AppDatabase,
+              $AccessibilitySettingsTable,
+              AccessibilitySetting
+            >,
+          ),
+          AccessibilitySetting,
+          PrefetchHooks Function()
+        > {
+  $$AccessibilitySettingsTableTableManager(
+    _$AppDatabase db,
+    $AccessibilitySettingsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AccessibilitySettingsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$AccessibilitySettingsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$AccessibilitySettingsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<bool> reduceMotion = const Value.absent(),
+              }) => AccessibilitySettingsCompanion(
+                id: id,
+                reduceMotion: reduceMotion,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<bool> reduceMotion = const Value.absent(),
+              }) => AccessibilitySettingsCompanion.insert(
+                id: id,
+                reduceMotion: reduceMotion,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<
+                    $AccessibilitySettingsTable,
+                    AccessibilitySetting
+                  >(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $AccessibilitySettingsTable,
+                    AccessibilitySetting
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$AccessibilitySettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AccessibilitySettingsTable,
+      AccessibilitySetting,
+      $$AccessibilitySettingsTableFilterComposer,
+      $$AccessibilitySettingsTableOrderingComposer,
+      $$AccessibilitySettingsTableAnnotationComposer,
+      $$AccessibilitySettingsTableCreateCompanionBuilder,
+      $$AccessibilitySettingsTableUpdateCompanionBuilder,
+      (
+        AccessibilitySetting,
+        BaseReferences<
+          _$AppDatabase,
+          $AccessibilitySettingsTable,
+          AccessibilitySetting
+        >,
+      ),
+      AccessibilitySetting,
+      PrefetchHooks Function()
+    >;
 typedef $$MediaSettingsTableCreateCompanionBuilder =
     MediaSettingsCompanion Function({
       Value<int> id,
@@ -4169,6 +4551,8 @@ class $AppDatabaseManager {
       $$InputLayoutElementsTableTableManager(_db, _db.inputLayoutElements);
   $$ThemeSettingsTableTableManager get themeSettings =>
       $$ThemeSettingsTableTableManager(_db, _db.themeSettings);
+  $$AccessibilitySettingsTableTableManager get accessibilitySettings =>
+      $$AccessibilitySettingsTableTableManager(_db, _db.accessibilitySettings);
   $$MediaSettingsTableTableManager get mediaSettings =>
       $$MediaSettingsTableTableManager(_db, _db.mediaSettings);
   $$VirtualAccessPointsTableTableManager get virtualAccessPoints =>

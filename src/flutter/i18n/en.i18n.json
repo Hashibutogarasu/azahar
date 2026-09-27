@@ -151,6 +151,8 @@
     "themeAndColorDescription": "Modify the look of the app",
     "media": "Media",
     "mediaDescription": "Background playback and media session settings",
+    "accessibility": "Accessibility",
+    "accessibilityDescription": "Motion and other accessibility settings",
     "about": "About",
     "aboutDescription": "Build version, credits, and more",
     "general": "Profile",
@@ -171,7 +173,8 @@
       "controls": "Controls",
       "tools": "Tools",
       "folderSettings": "Folder Settings",
-      "other": "Other"
+      "other": "Other",
+      "accessibility": "Accessibility"
     }
   },
   "systemFiles": {
@@ -711,6 +714,11 @@
     "themes": {
       "azahar": "Azahar",
       "legacy": "Legacy"
+    },
+    "accessibility": {
+      "title": "Accessibility",
+      "reduceMotion": "Reduce Motion",
+      "reduceMotionDescription": "Reduces animations and motion effects throughout the app."
     },
     "language": {
       "title": "Language",

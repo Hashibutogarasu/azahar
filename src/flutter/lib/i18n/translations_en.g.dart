@@ -438,6 +438,13 @@ class Translations$options$en {
   String get mediaDescription =>
       'Background playback and media session settings';
 
+  /// en: 'Accessibility'
+  String get accessibility => 'Accessibility';
+
+  /// en: 'Motion and other accessibility settings'
+  String get accessibilityDescription =>
+      'Motion and other accessibility settings';
+
   /// en: 'About'
   String get about => 'About';
 
@@ -643,6 +650,8 @@ class Translations$settings$en {
       Translations$settings$theme$en.internal(_root);
   late final Translations$settings$themes$en themes =
       Translations$settings$themes$en.internal(_root);
+  late final Translations$settings$accessibility$en accessibility =
+      Translations$settings$accessibility$en.internal(_root);
   late final Translations$settings$language$en language =
       Translations$settings$language$en.internal(_root);
 }
@@ -898,6 +907,9 @@ class Translations$options$groups$en {
 
   /// en: 'Other'
   String get other => 'Other';
+
+  /// en: 'Accessibility'
+  String get accessibility => 'Accessibility';
 }
 
 // Path: settings.resetToDefaultDialog
@@ -2104,6 +2116,25 @@ class Translations$settings$themes$en {
   String get legacy => 'Legacy';
 }
 
+// Path: settings.accessibility
+class Translations$settings$accessibility$en {
+  Translations$settings$accessibility$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Accessibility'
+  String get title => 'Accessibility';
+
+  /// en: 'Reduce Motion'
+  String get reduceMotion => 'Reduce Motion';
+
+  /// en: 'Reduces animations and motion effects throughout the app.'
+  String get reduceMotionDescription =>
+      'Reduces animations and motion effects throughout the app.';
+}
+
 // Path: settings.language
 class Translations$settings$language$en {
   Translations$settings$language$en.internal(this._root);
@@ -2694,6 +2725,9 @@ extension on Translations {
           'options.media' => 'Media',
           'options.mediaDescription' =>
             'Background playback and media session settings',
+          'options.accessibility' => 'Accessibility',
+          'options.accessibilityDescription' =>
+            'Motion and other accessibility settings',
           'options.about' => 'About',
           'options.aboutDescription' => 'Build version, credits, and more',
           'options.general' => 'Profile',
@@ -2714,6 +2748,7 @@ extension on Translations {
           'options.groups.tools' => 'Tools',
           'options.groups.folderSettings' => 'Folder Settings',
           'options.groups.other' => 'Other',
+          'options.groups.accessibility' => 'Accessibility',
           'systemFiles.title' => 'System Files',
           'systemFiles.preamble' =>
             'Azahar needs console unique data and firmware files from a real console to be able to use some of its features. Such files and data can be set up with the Azahar Artic Setup Tool.\n\nNotes:\n• This operation will install console unique data to Azahar, do not share your user or nand folders after performing the setup process!\n• While doing the setup process, Azahar will link to the console running the setup tool. You can unlink the console later from the System Files tab in the emulator options menu.\n• Do not go online with both Azahar and your 3DS console at the same time after setting up system files, as this could cause issues.\n• Old 3DS setup is needed for the New 3DS setup to work (setting up both is recommended).\n• Both setup modes will work regardless of the model of the console running the setup tool.',
@@ -3160,12 +3195,12 @@ extension on Translations {
           'settings.gamepad.controllerInputMode' => 'Controller Input Mode',
           'settings.gamepad.controllerInputModeDescription' =>
             'Choose how physical game controllers are mapped to 3DS input.',
-          'settings.gamepad.controllerInputModeManual' => 'Manual',
-          'settings.gamepad.controllerInputModeAutoDetect' => 'Auto-Detect',
-          'settings.gamepad.invertLeftStickYAxis' => 'Invert Left Stick Y Axis',
           _ => null,
         } ??
         switch (path) {
+          'settings.gamepad.controllerInputModeManual' => 'Manual',
+          'settings.gamepad.controllerInputModeAutoDetect' => 'Auto-Detect',
+          'settings.gamepad.invertLeftStickYAxis' => 'Invert Left Stick Y Axis',
           'settings.gamepad.invertLeftStickYAxisDescription' =>
             'Invert the left stick\'s vertical axis when using auto-detected controllers.',
           'settings.gamepad.gyroSettings' => 'Gyro Settings',
@@ -3319,6 +3354,10 @@ extension on Translations {
             'Uses black backgrounds when dark mode is enabled, instead of dark gray.',
           'settings.themes.azahar' => 'Azahar',
           'settings.themes.legacy' => 'Legacy',
+          'settings.accessibility.title' => 'Accessibility',
+          'settings.accessibility.reduceMotion' => 'Reduce Motion',
+          'settings.accessibility.reduceMotionDescription' =>
+            'Reduces animations and motion effects throughout the app.',
           'settings.language.title' => 'Language',
           'settings.language.systemDefault' => 'System default',
           'settings.language.english' => 'English',

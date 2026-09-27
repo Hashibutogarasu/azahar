@@ -1,4 +1,5 @@
 import 'data/database.dart';
+import 'data/repositories/accessibility_settings_repository.dart';
 import 'data/repositories/artic_base_address_repository.dart';
 import 'data/repositories/citra_directory_repository.dart';
 import 'data/repositories/control_bindings_repository.dart';
@@ -21,39 +22,41 @@ import 'native/native_bridge.dart';
 abstract final class AppServices {
   static final AppDatabase database = AppDatabase();
   static final NativeBridge nativeBridge = NativeBridge();
-  static final GameRepository gameRepository = GameRepository(database, nativeBridge);
+  static final GameRepository gameRepository = GameRepository(
+    database,
+    nativeBridge,
+  );
   static final EmulatorSettingsRepository emulatorSettingsRepository =
       EmulatorSettingsRepository(nativeBridge);
-  static final SystemSaveRepository systemSaveRepository = SystemSaveRepository(nativeBridge);
-  static final ControlBindingsRepository controlBindingsRepository = ControlBindingsRepository(
-    database,
+  static final SystemSaveRepository systemSaveRepository = SystemSaveRepository(
+    nativeBridge,
   );
-  static final ControlBindingsValueStore controlBindingsValueStore = ControlBindingsValueStore(
-    controlBindingsRepository,
-  );
-  static final InputLayoutRepository inputLayoutRepository = InputLayoutRepository(database);
-  static final ThemeSettingsRepository themeSettingsRepository = ThemeSettingsRepository(
-    database,
-  );
-  static final MediaSettingsRepository mediaSettingsRepository = MediaSettingsRepository(
-    database,
-  );
+  static final ControlBindingsRepository controlBindingsRepository =
+      ControlBindingsRepository(database);
+  static final ControlBindingsValueStore controlBindingsValueStore =
+      ControlBindingsValueStore(controlBindingsRepository);
+  static final InputLayoutRepository inputLayoutRepository =
+      InputLayoutRepository(database);
+  static final ThemeSettingsRepository themeSettingsRepository =
+      ThemeSettingsRepository(database);
+  static final AccessibilitySettingsRepository accessibilitySettingsRepository =
+      AccessibilitySettingsRepository(database);
+  static final MediaSettingsRepository mediaSettingsRepository =
+      MediaSettingsRepository(database);
   static final VirtualAccessPointsRepository virtualAccessPointsRepository =
       VirtualAccessPointsRepository(database);
-  static final FirstLaunchRepository firstLaunchRepository = FirstLaunchRepository(database);
-  static final CitraDirectoryRepository citraDirectoryRepository = CitraDirectoryRepository(
-    database,
-  );
-  static final GamesDirectoryRepository gamesDirectoryRepository = GamesDirectoryRepository(
-    database,
-  );
-  static final LanguageCodeRepository languageCodeRepository = LanguageCodeRepository(database);
-  static final ArticBaseAddressRepository articBaseAddressRepository = ArticBaseAddressRepository(
-    database,
-  );
-  static final LegacySettingsUiRepository legacySettingsUiRepository = LegacySettingsUiRepository(
-    database,
-  );
+  static final FirstLaunchRepository firstLaunchRepository =
+      FirstLaunchRepository(database);
+  static final CitraDirectoryRepository citraDirectoryRepository =
+      CitraDirectoryRepository(database);
+  static final GamesDirectoryRepository gamesDirectoryRepository =
+      GamesDirectoryRepository(database);
+  static final LanguageCodeRepository languageCodeRepository =
+      LanguageCodeRepository(database);
+  static final ArticBaseAddressRepository articBaseAddressRepository =
+      ArticBaseAddressRepository(database);
+  static final LegacySettingsUiRepository legacySettingsUiRepository =
+      LegacySettingsUiRepository(database);
 
   static final List<KeyValueRepository> keyValueRepositories = [
     firstLaunchRepository,

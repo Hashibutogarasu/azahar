@@ -151,6 +151,8 @@
     "themeAndColorDescription": "アプリの見た目を変更します",
     "media": "メディア",
     "mediaDescription": "バックグラウンド再生とメディアセッションの設定",
+    "accessibility": "アクセシビリティ",
+    "accessibilityDescription": "モーションなどのアクセシビリティ設定",
     "about": "このアプリについて",
     "aboutDescription": "ビルドバージョン、クレジットなど",
     "general": "プロフィール",
@@ -171,7 +173,8 @@
       "controls": "コントロール",
       "tools": "ツール",
       "folderSettings": "フォルダ設定",
-      "other": "その他"
+      "other": "その他",
+      "accessibility": "アクセシビリティ"
     }
   },
   "systemFiles": {
@@ -711,6 +714,11 @@
     "themes": {
       "azahar": "Azahar",
       "legacy": "Legacy"
+    },
+    "accessibility": {
+      "title": "アクセシビリティ",
+      "reduceMotion": "視差効果を減らす",
+      "reduceMotionDescription": "アプリ内のアニメーションや動きの効果を減らします。"
     },
     "language": {
       "title": "言語",

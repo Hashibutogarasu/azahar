@@ -24,6 +24,7 @@ List<RouteBase> get $appRoutes => [
   $optionsDebugSettingsRoute,
   $optionsLanguageSettingsRoute,
   $optionsThemeSettingsRoute,
+  $optionsAccessibilitySettingsRoute,
 ];
 
 RouteBase get $setupRoute => GoRouteData.$route(
@@ -549,6 +550,33 @@ mixin $OptionsThemeSettingsRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/options/theme');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $optionsAccessibilitySettingsRoute => GoRouteData.$route(
+  path: '/options/accessibility',
+  hasOverriddenOnExit: false,
+  factory: $OptionsAccessibilitySettingsRoute._fromState,
+);
+
+mixin $OptionsAccessibilitySettingsRoute on GoRouteData {
+  static OptionsAccessibilitySettingsRoute _fromState(GoRouterState state) =>
+      const OptionsAccessibilitySettingsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/options/accessibility');
 
   @override
   void go(BuildContext context) => context.go(location);

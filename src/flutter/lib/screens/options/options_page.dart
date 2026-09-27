@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/settings/settings_load_provider.dart';
+import 'groups/accessibility_options_group.dart';
 import 'groups/clock_options_group.dart';
 import 'groups/controls_options_group.dart';
 import 'groups/emulation_options_group.dart';
@@ -32,6 +33,7 @@ class OptionsPage extends ConsumerWidget {
           ControlsOptionsGroup(),
           ToolsOptionsGroup(),
           FolderSettingsOptionsGroup(),
+          AccessibilityOptionsGroup(),
           OtherOptionsGroup(),
         ],
       ),
