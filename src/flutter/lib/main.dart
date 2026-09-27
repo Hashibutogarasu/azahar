@@ -80,11 +80,13 @@ class AzaharApp extends ConsumerWidget {
                 title: context.t.appName,
                 themeMode: _themeMode(themeSettings.themeMode),
                 theme: AppTheme.light(
+                  style: themeSettings.themeStyle,
                   staticThemeColor: themeSettings.staticThemeColor,
                   materialYou: themeSettings.materialYou,
                   dynamicScheme: lightDynamic,
                 ),
                 darkTheme: AppTheme.dark(
+                  style: themeSettings.themeStyle,
                   staticThemeColor: themeSettings.staticThemeColor,
                   blackBackgrounds: themeSettings.blackBackgrounds,
                   materialYou: themeSettings.materialYou,

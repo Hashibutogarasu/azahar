@@ -687,10 +687,12 @@
     },
     "theme": {
       "title": "テーマと色",
+      "themeStyle": "テーマスタイル",
       "materialYou": "Material You",
       "materialYouDescription": "端末の壁紙から抽出した色を使用します。",
       "staticThemeColor": "固定テーマカラー",
-      "staticThemeColorBlue": "青（デフォルト）",
+      "staticThemeColorDefault": "デフォルト",
+      "staticThemeColorBlue": "青",
       "staticThemeColorCyan": "シアン",
       "staticThemeColorRed": "赤",
       "staticThemeColorGreen": "緑",
@@ -705,6 +707,10 @@
       "themeModeDark": "ダーク",
       "useBlackBackgrounds": "黒背景を使用",
       "useBlackBackgroundsDescription": "ダークモード有効時に、ダークグレーの代わりに黒背景を使用します。"
+    },
+    "themes": {
+      "azahar": "Azahar",
+      "legacy": "Legacy"
     },
     "language": {
       "title": "言語",

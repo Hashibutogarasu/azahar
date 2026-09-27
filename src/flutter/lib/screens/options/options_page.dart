@@ -20,22 +20,20 @@ class OptionsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(settingsLoadProvider);
-    return Scaffold(
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: const [
-            GeneralOptionsGroup(),
-            EmulationOptionsGroup(),
-            ClockOptionsGroup(),
-            GraphicsOptionsGroup(),
-            NetworkingOptionsGroup(),
-            ControlsOptionsGroup(),
-            ToolsOptionsGroup(),
-            FolderSettingsOptionsGroup(),
-            OtherOptionsGroup(),
-          ],
-        ),
+    return SafeArea(
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: const [
+          GeneralOptionsGroup(),
+          EmulationOptionsGroup(),
+          ClockOptionsGroup(),
+          GraphicsOptionsGroup(),
+          NetworkingOptionsGroup(),
+          ControlsOptionsGroup(),
+          ToolsOptionsGroup(),
+          FolderSettingsOptionsGroup(),
+          OtherOptionsGroup(),
+        ],
       ),
     );
   }

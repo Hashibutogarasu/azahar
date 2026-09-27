@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../../i18n/translations.g.dart';
 import '../../../models/game.dart';
+import '../../../theme/extensions/game_card_theme.dart';
+import '../../../theme/extensions/glass_surface_theme.dart';
 import 'game_icon.dart';
 import 'game_regions_translator.dart';
 
+/// A games/applications list row. Its panel and icon-box styling come entirely from
+/// [GlassSurfaceTheme] and [GameCardTheme], so this single widget renders both the Azahar and
+/// Legacy looks.
 class GameCard extends StatelessWidget {
   const GameCard({super.key, required this.game, required this.onTap, this.onLongPress});
 
@@ -19,33 +24,40 @@ class GameCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final surfaceTheme = Theme.of(context).extension<GlassSurfaceTheme>()!;
+    final cardTheme = Theme.of(context).extension<GameCardTheme>()!;
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: Card(
-        margin: EdgeInsets.zero,
-        color: _isValidExtension ? null : colorScheme.errorContainer,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(color: colorScheme.outline),
-          borderRadius: BorderRadius.circular(12),
-        ),
+      child: Material(
+        color: _isValidExtension ? surfaceTheme.fillColor : cardTheme.invalidExtensionColor,
+        borderRadius: surfaceTheme.borderRadius,
         child: InkWell(
           onTap: onTap,
           onLongPress: onLongPress,
-          borderRadius: BorderRadius.circular(12),
-          child: Padding(
+          borderRadius: surfaceTheme.borderRadius,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: surfaceTheme.borderRadius,
+              border: Border.all(
+                color: surfaceTheme.borderColor,
+                width: surfaceTheme.borderWidth,
+              ),
+            ),
             padding: const EdgeInsets.all(8),
             child: Row(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: SizedBox(
-                    width: 75,
-                    height: 75,
-                    child: GameIcon(iconPath: game.iconPath),
+                Container(
+                  width: cardTheme.iconBoxSize,
+                  height: cardTheme.iconBoxSize,
+                  decoration: BoxDecoration(
+                    color: cardTheme.iconBoxFillColor,
+                    borderRadius: cardTheme.iconBoxRadius,
+                    border: Border.all(color: cardTheme.iconBoxBorderColor),
                   ),
+                  clipBehavior: Clip.antiAlias,
+                  child: GameIcon(iconPath: game.iconPath),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -56,20 +68,20 @@ class GameCard extends StatelessWidget {
                           game.title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyMedium,
+                          style: cardTheme.titleStyle,
                         ),
                       if (game.company.isNotEmpty)
                         Text(
                           game.company,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodySmall,
+                          style: cardTheme.subtitleStyle,
                         ),
                       Text(
                         translateGameRegions(context.t, game.regions),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodySmall,
+                        style: cardTheme.subtitleStyle,
                       ),
                     ],
                   ),

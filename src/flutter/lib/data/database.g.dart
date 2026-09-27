@@ -1704,12 +1704,23 @@ class $ThemeSettingsTable extends ThemeSettings
     defaultValue: const Constant(false),
   );
   @override
+  late final GeneratedColumnWithTypeConverter<ThemeStyle, int> themeStyle =
+      GeneratedColumn<int>(
+        'theme_style',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+        defaultValue: Constant(ThemeStyle.azahar.index),
+      ).withConverter<ThemeStyle>($ThemeSettingsTable.$converterthemeStyle);
+  @override
   List<GeneratedColumn> get $columns => [
     id,
     themeMode,
     staticThemeColor,
     blackBackgrounds,
     materialYou,
+    themeStyle,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1788,6 +1799,12 @@ class $ThemeSettingsTable extends ThemeSettings
         DriftSqlType.bool,
         data['${effectivePrefix}material_you'],
       )!,
+      themeStyle: $ThemeSettingsTable.$converterthemeStyle.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}theme_style'],
+        )!,
+      ),
     );
   }
 
@@ -1795,6 +1812,9 @@ class $ThemeSettingsTable extends ThemeSettings
   $ThemeSettingsTable createAlias(String alias) {
     return $ThemeSettingsTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<ThemeStyle, int, int> $converterthemeStyle =
+      const EnumIndexConverter<ThemeStyle>(ThemeStyle.values);
 }
 
 class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
@@ -1803,12 +1823,14 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
   final int staticThemeColor;
   final bool blackBackgrounds;
   final bool materialYou;
+  final ThemeStyle themeStyle;
   const ThemeSetting({
     required this.id,
     required this.themeMode,
     required this.staticThemeColor,
     required this.blackBackgrounds,
     required this.materialYou,
+    required this.themeStyle,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1818,6 +1840,11 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
     map['static_theme_color'] = Variable<int>(staticThemeColor);
     map['black_backgrounds'] = Variable<bool>(blackBackgrounds);
     map['material_you'] = Variable<bool>(materialYou);
+    {
+      map['theme_style'] = Variable<int>(
+        $ThemeSettingsTable.$converterthemeStyle.toSql(themeStyle),
+      );
+    }
     return map;
   }
 
@@ -1828,6 +1855,7 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
       staticThemeColor: Value(staticThemeColor),
       blackBackgrounds: Value(blackBackgrounds),
       materialYou: Value(materialYou),
+      themeStyle: Value(themeStyle),
     );
   }
 
@@ -1842,6 +1870,9 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
       staticThemeColor: serializer.fromJson<int>(json['staticThemeColor']),
       blackBackgrounds: serializer.fromJson<bool>(json['blackBackgrounds']),
       materialYou: serializer.fromJson<bool>(json['materialYou']),
+      themeStyle: $ThemeSettingsTable.$converterthemeStyle.fromJson(
+        serializer.fromJson<int>(json['themeStyle']),
+      ),
     );
   }
   @override
@@ -1853,6 +1884,9 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
       'staticThemeColor': serializer.toJson<int>(staticThemeColor),
       'blackBackgrounds': serializer.toJson<bool>(blackBackgrounds),
       'materialYou': serializer.toJson<bool>(materialYou),
+      'themeStyle': serializer.toJson<int>(
+        $ThemeSettingsTable.$converterthemeStyle.toJson(themeStyle),
+      ),
     };
   }
 
@@ -1862,12 +1896,14 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
     int? staticThemeColor,
     bool? blackBackgrounds,
     bool? materialYou,
+    ThemeStyle? themeStyle,
   }) => ThemeSetting(
     id: id ?? this.id,
     themeMode: themeMode ?? this.themeMode,
     staticThemeColor: staticThemeColor ?? this.staticThemeColor,
     blackBackgrounds: blackBackgrounds ?? this.blackBackgrounds,
     materialYou: materialYou ?? this.materialYou,
+    themeStyle: themeStyle ?? this.themeStyle,
   );
   ThemeSetting copyWithCompanion(ThemeSettingsCompanion data) {
     return ThemeSetting(
@@ -1882,6 +1918,9 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
       materialYou: data.materialYou.present
           ? data.materialYou.value
           : this.materialYou,
+      themeStyle: data.themeStyle.present
+          ? data.themeStyle.value
+          : this.themeStyle,
     );
   }
 
@@ -1892,7 +1931,8 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
           ..write('themeMode: $themeMode, ')
           ..write('staticThemeColor: $staticThemeColor, ')
           ..write('blackBackgrounds: $blackBackgrounds, ')
-          ..write('materialYou: $materialYou')
+          ..write('materialYou: $materialYou, ')
+          ..write('themeStyle: $themeStyle')
           ..write(')'))
         .toString();
   }
@@ -1904,6 +1944,7 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
     staticThemeColor,
     blackBackgrounds,
     materialYou,
+    themeStyle,
   );
   @override
   bool operator ==(Object other) =>
@@ -1913,7 +1954,8 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
           other.themeMode == this.themeMode &&
           other.staticThemeColor == this.staticThemeColor &&
           other.blackBackgrounds == this.blackBackgrounds &&
-          other.materialYou == this.materialYou);
+          other.materialYou == this.materialYou &&
+          other.themeStyle == this.themeStyle);
 }
 
 class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
@@ -1922,12 +1964,14 @@ class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
   final Value<int> staticThemeColor;
   final Value<bool> blackBackgrounds;
   final Value<bool> materialYou;
+  final Value<ThemeStyle> themeStyle;
   const ThemeSettingsCompanion({
     this.id = const Value.absent(),
     this.themeMode = const Value.absent(),
     this.staticThemeColor = const Value.absent(),
     this.blackBackgrounds = const Value.absent(),
     this.materialYou = const Value.absent(),
+    this.themeStyle = const Value.absent(),
   });
   ThemeSettingsCompanion.insert({
     this.id = const Value.absent(),
@@ -1935,6 +1979,7 @@ class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
     this.staticThemeColor = const Value.absent(),
     this.blackBackgrounds = const Value.absent(),
     this.materialYou = const Value.absent(),
+    this.themeStyle = const Value.absent(),
   });
   static Insertable<ThemeSetting> custom({
     Expression<int>? id,
@@ -1942,6 +1987,7 @@ class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
     Expression<int>? staticThemeColor,
     Expression<bool>? blackBackgrounds,
     Expression<bool>? materialYou,
+    Expression<int>? themeStyle,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1949,6 +1995,7 @@ class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
       if (staticThemeColor != null) 'static_theme_color': staticThemeColor,
       if (blackBackgrounds != null) 'black_backgrounds': blackBackgrounds,
       if (materialYou != null) 'material_you': materialYou,
+      if (themeStyle != null) 'theme_style': themeStyle,
     });
   }
 
@@ -1958,6 +2005,7 @@ class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
     Value<int>? staticThemeColor,
     Value<bool>? blackBackgrounds,
     Value<bool>? materialYou,
+    Value<ThemeStyle>? themeStyle,
   }) {
     return ThemeSettingsCompanion(
       id: id ?? this.id,
@@ -1965,6 +2013,7 @@ class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
       staticThemeColor: staticThemeColor ?? this.staticThemeColor,
       blackBackgrounds: blackBackgrounds ?? this.blackBackgrounds,
       materialYou: materialYou ?? this.materialYou,
+      themeStyle: themeStyle ?? this.themeStyle,
     );
   }
 
@@ -1986,6 +2035,11 @@ class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
     if (materialYou.present) {
       map['material_you'] = Variable<bool>(materialYou.value);
     }
+    if (themeStyle.present) {
+      map['theme_style'] = Variable<int>(
+        $ThemeSettingsTable.$converterthemeStyle.toSql(themeStyle.value),
+      );
+    }
     return map;
   }
 
@@ -1996,7 +2050,8 @@ class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
           ..write('themeMode: $themeMode, ')
           ..write('staticThemeColor: $staticThemeColor, ')
           ..write('blackBackgrounds: $blackBackgrounds, ')
-          ..write('materialYou: $materialYou')
+          ..write('materialYou: $materialYou, ')
+          ..write('themeStyle: $themeStyle')
           ..write(')'))
         .toString();
   }
@@ -3509,6 +3564,7 @@ typedef $$ThemeSettingsTableCreateCompanionBuilder =
       Value<int> staticThemeColor,
       Value<bool> blackBackgrounds,
       Value<bool> materialYou,
+      Value<ThemeStyle> themeStyle,
     });
 typedef $$ThemeSettingsTableUpdateCompanionBuilder =
     ThemeSettingsCompanion Function({
@@ -3517,6 +3573,7 @@ typedef $$ThemeSettingsTableUpdateCompanionBuilder =
       Value<int> staticThemeColor,
       Value<bool> blackBackgrounds,
       Value<bool> materialYou,
+      Value<ThemeStyle> themeStyle,
     });
 
 class $$ThemeSettingsTableFilterComposer
@@ -3552,6 +3609,12 @@ class $$ThemeSettingsTableFilterComposer
     column: $table.materialYou,
     builder: (column) => ColumnFilters(column),
   );
+
+  ColumnWithTypeConverterFilters<ThemeStyle, ThemeStyle, int> get themeStyle =>
+      $composableBuilder(
+        column: $table.themeStyle,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
 }
 
 class $$ThemeSettingsTableOrderingComposer
@@ -3587,6 +3650,11 @@ class $$ThemeSettingsTableOrderingComposer
     column: $table.materialYou,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get themeStyle => $composableBuilder(
+    column: $table.themeStyle,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ThemeSettingsTableAnnotationComposer
@@ -3618,6 +3686,12 @@ class $$ThemeSettingsTableAnnotationComposer
     column: $table.materialYou,
     builder: (column) => column,
   );
+
+  GeneratedColumnWithTypeConverter<ThemeStyle, int> get themeStyle =>
+      $composableBuilder(
+        column: $table.themeStyle,
+        builder: (column) => column,
+      );
 }
 
 class $$ThemeSettingsTableTableManager
@@ -3656,12 +3730,14 @@ class $$ThemeSettingsTableTableManager
                 Value<int> staticThemeColor = const Value.absent(),
                 Value<bool> blackBackgrounds = const Value.absent(),
                 Value<bool> materialYou = const Value.absent(),
+                Value<ThemeStyle> themeStyle = const Value.absent(),
               }) => ThemeSettingsCompanion(
                 id: id,
                 themeMode: themeMode,
                 staticThemeColor: staticThemeColor,
                 blackBackgrounds: blackBackgrounds,
                 materialYou: materialYou,
+                themeStyle: themeStyle,
               ),
           createCompanionCallback:
               ({
@@ -3670,12 +3746,14 @@ class $$ThemeSettingsTableTableManager
                 Value<int> staticThemeColor = const Value.absent(),
                 Value<bool> blackBackgrounds = const Value.absent(),
                 Value<bool> materialYou = const Value.absent(),
+                Value<ThemeStyle> themeStyle = const Value.absent(),
               }) => ThemeSettingsCompanion.insert(
                 id: id,
                 themeMode: themeMode,
                 staticThemeColor: staticThemeColor,
                 blackBackgrounds: blackBackgrounds,
                 materialYou: materialYou,
+                themeStyle: themeStyle,
               ),
           withReferenceMapper: (p0) => p0
               .map(

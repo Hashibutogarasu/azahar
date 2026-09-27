@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../app_services.dart';
 import '../data/database.dart';
+import 'theme_style.dart';
 
 final themeSettingsProvider = NotifierProvider<ThemeSettingsNotifier, ThemeSetting>(
   ThemeSettingsNotifier.new,
@@ -17,6 +18,7 @@ class ThemeSettingsNotifier extends Notifier<ThemeSetting> {
       staticThemeColor: 0,
       blackBackgrounds: false,
       materialYou: false,
+      themeStyle: ThemeStyle.azahar,
     );
   }
 
@@ -44,5 +46,9 @@ class ThemeSettingsNotifier extends Notifier<ThemeSetting> {
 
   Future<void> setMaterialYou(bool materialYou) {
     return _update((current) => current.copyWith(materialYou: materialYou));
+  }
+
+  Future<void> setThemeStyle(ThemeStyle themeStyle) {
+    return _update((current) => current.copyWith(themeStyle: themeStyle));
   }
 }

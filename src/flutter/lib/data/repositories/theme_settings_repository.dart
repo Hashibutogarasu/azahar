@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+import '../../theme/theme_style.dart';
 import '../database.dart';
 
 class ThemeSettingsRepository {
@@ -18,6 +19,7 @@ class ThemeSettingsRepository {
           staticThemeColor: 0,
           blackBackgrounds: false,
           materialYou: false,
+          themeStyle: ThemeStyle.azahar,
         );
   }
 

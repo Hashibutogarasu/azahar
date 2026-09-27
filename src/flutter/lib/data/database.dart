@@ -5,6 +5,8 @@ import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import '../theme/theme_style.dart';
+
 part 'database.g.dart';
 
 @DataClassName('GameRow')
@@ -41,6 +43,8 @@ class ThemeSettings extends Table {
   IntColumn get staticThemeColor => integer().withDefault(const Constant(0))();
   BoolColumn get blackBackgrounds => boolean().withDefault(const Constant(false))();
   BoolColumn get materialYou => boolean().withDefault(const Constant(false))();
+  IntColumn get themeStyle =>
+      intEnum<ThemeStyle>().withDefault(Constant(ThemeStyle.azahar.index))();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -106,7 +110,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -121,6 +125,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 4) {
         await m.createTable(virtualAccessPoints);
+      }
+      if (from < 5) {
+        await m.addColumn(themeSettings, themeSettings.themeStyle);
       }
     },
   );

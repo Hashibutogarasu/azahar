@@ -7,6 +7,7 @@ import '../../../data/settings/settings_item.dart';
 import '../../../data/settings/settings_value_store.dart';
 import '../../../errors/app_exception.dart';
 import '../../../i18n/translations.g.dart';
+import '../../../widgets/app_toggle_switch.dart';
 import '../../../widgets/dialog_cancel_button.dart';
 import 'settings_group_card.dart';
 
@@ -87,7 +88,7 @@ class _SettingsListState extends State<SettingsList> {
         icons: Icons.toggle_on_outlined,
         title: item.title,
         subtitle: item.description,
-        trailing: Switch(
+        trailing: AppToggleSwitch(
           value: _storeFor(item.store).readBool(item.setting),
           onChanged: (value) async {
             await _storeFor(item.store).writeBool(item.setting, value);

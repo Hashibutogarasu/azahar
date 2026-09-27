@@ -641,6 +641,8 @@ class Translations$settings$en {
       Translations$settings$debug$en.internal(_root);
   late final Translations$settings$theme$en theme =
       Translations$settings$theme$en.internal(_root);
+  late final Translations$settings$themes$en themes =
+      Translations$settings$themes$en.internal(_root);
   late final Translations$settings$language$en language =
       Translations$settings$language$en.internal(_root);
 }
@@ -2024,6 +2026,9 @@ class Translations$settings$theme$en {
   /// en: 'Theme and Color'
   String get title => 'Theme and Color';
 
+  /// en: 'Theme Style'
+  String get themeStyle => 'Theme Style';
+
   /// en: 'Material You'
   String get materialYou => 'Material You';
 
@@ -2034,8 +2039,11 @@ class Translations$settings$theme$en {
   /// en: 'Static Theme Color'
   String get staticThemeColor => 'Static Theme Color';
 
-  /// en: 'Blue (Default)'
-  String get staticThemeColorBlue => 'Blue (Default)';
+  /// en: 'Default'
+  String get staticThemeColorDefault => 'Default';
+
+  /// en: 'Blue'
+  String get staticThemeColorBlue => 'Blue';
 
   /// en: 'Cyan'
   String get staticThemeColorCyan => 'Cyan';
@@ -2079,6 +2087,21 @@ class Translations$settings$theme$en {
   /// en: 'Uses black backgrounds when dark mode is enabled, instead of dark gray.'
   String get useBlackBackgroundsDescription =>
       'Uses black backgrounds when dark mode is enabled, instead of dark gray.';
+}
+
+// Path: settings.themes
+class Translations$settings$themes$en {
+  Translations$settings$themes$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Azahar'
+  String get azahar => 'Azahar';
+
+  /// en: 'Legacy'
+  String get legacy => 'Legacy';
 }
 
 // Path: settings.language
@@ -3272,11 +3295,13 @@ extension on Translations {
           'settings.debug.deterministicAsyncOperationsDescription' =>
             'Forces asynchronous operations to run in a deterministic order. Reduces performance.',
           'settings.theme.title' => 'Theme and Color',
+          'settings.theme.themeStyle' => 'Theme Style',
           'settings.theme.materialYou' => 'Material You',
           'settings.theme.materialYouDescription' =>
             'Uses colors extracted from your device\'s wallpaper.',
           'settings.theme.staticThemeColor' => 'Static Theme Color',
-          'settings.theme.staticThemeColorBlue' => 'Blue (Default)',
+          'settings.theme.staticThemeColorDefault' => 'Default',
+          'settings.theme.staticThemeColorBlue' => 'Blue',
           'settings.theme.staticThemeColorCyan' => 'Cyan',
           'settings.theme.staticThemeColorRed' => 'Red',
           'settings.theme.staticThemeColorGreen' => 'Green',
@@ -3292,6 +3317,8 @@ extension on Translations {
           'settings.theme.useBlackBackgrounds' => 'Use Black Backgrounds',
           'settings.theme.useBlackBackgroundsDescription' =>
             'Uses black backgrounds when dark mode is enabled, instead of dark gray.',
+          'settings.themes.azahar' => 'Azahar',
+          'settings.themes.legacy' => 'Legacy',
           'settings.language.title' => 'Language',
           'settings.language.systemDefault' => 'System default',
           'settings.language.english' => 'English',

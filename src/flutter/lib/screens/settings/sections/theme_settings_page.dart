@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../i18n/translations.g.dart';
 import '../../../theme/theme_settings_provider.dart';
+import '../../../theme/theme_style.dart';
+import '../../../widgets/app_toggle_switch.dart';
 import '../widgets/settings_group_card.dart';
 
 class ThemeSettingsPage extends ConsumerWidget {
@@ -15,7 +17,7 @@ class ThemeSettingsPage extends ConsumerWidget {
     final theme = t.settings.theme;
     final settings = ref.watch(themeSettingsProvider);
     final notifier = ref.read(themeSettingsProvider.notifier);
-    final colorLabels = [
+    final namedColorLabels = [
       theme.staticThemeColorBlue,
       theme.staticThemeColorCyan,
       theme.staticThemeColorRed,
@@ -26,10 +28,17 @@ class ThemeSettingsPage extends ConsumerWidget {
       theme.staticThemeColorPink,
       theme.staticThemeColorGray,
     ];
+    final colorLabels = settings.themeStyle == ThemeStyle.azahar
+        ? [theme.staticThemeColorDefault, ...namedColorLabels]
+        : namedColorLabels;
     final themeModeLabels = {
       'system': theme.themeModeFollowSystem,
       'light': theme.themeModeLight,
       'dark': theme.themeModeDark,
+    };
+    final themeStyleLabels = {
+      ThemeStyle.azahar: t.settings.themes.azahar,
+      ThemeStyle.legacy: t.settings.themes.legacy,
     };
 
     return Scaffold(
@@ -40,10 +49,42 @@ class ThemeSettingsPage extends ConsumerWidget {
           SettingsGroupCard(
             items: [
               babstrap.SettingsItem(
+                icons: Icons.style_outlined,
+                title: theme.themeStyle,
+                trailing: Text(themeStyleLabels[settings.themeStyle] ?? ''),
+                onTap: () async {
+                  final result = await showDialog<ThemeStyle>(
+                    context: context,
+                    builder: (context) {
+                      return SimpleDialog(
+                        title: Text(theme.themeStyle),
+                        children: [
+                          RadioGroup<ThemeStyle>(
+                            groupValue: settings.themeStyle,
+                            onChanged: (value) => Navigator.of(context).pop(value),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                for (final style in ThemeStyle.values)
+                                  RadioListTile<ThemeStyle>(
+                                    title: Text(themeStyleLabels[style] ?? style.name),
+                                    value: style,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                  if (result != null) await notifier.setThemeStyle(result);
+                },
+              ),
+              babstrap.SettingsItem(
                 icons: Icons.auto_awesome,
                 title: theme.materialYou,
                 subtitle: theme.materialYouDescription,
-                trailing: Switch(
+                trailing: AppToggleSwitch(
                   value: settings.materialYou,
                   onChanged: notifier.setMaterialYou,
                 ),
@@ -116,7 +157,7 @@ class ThemeSettingsPage extends ConsumerWidget {
                 icons: Icons.contrast,
                 title: theme.useBlackBackgrounds,
                 subtitle: theme.useBlackBackgroundsDescription,
-                trailing: Switch(
+                trailing: AppToggleSwitch(
                   value: settings.blackBackgrounds,
                   onChanged: notifier.setBlackBackgrounds,
                 ),

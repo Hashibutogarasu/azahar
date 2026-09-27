@@ -561,6 +561,9 @@ class _Translations$settings$ja extends Translations$settings$en {
   late final _Translations$settings$theme$ja theme =
       _Translations$settings$theme$ja._(_root);
   @override
+  late final _Translations$settings$themes$ja themes =
+      _Translations$settings$themes$ja._(_root);
+  @override
   late final _Translations$settings$language$ja language =
       _Translations$settings$language$ja._(_root);
 }
@@ -1630,13 +1633,17 @@ class _Translations$settings$theme$ja extends Translations$settings$theme$en {
   @override
   String get title => 'テーマと色';
   @override
+  String get themeStyle => 'テーマスタイル';
+  @override
   String get materialYou => 'Material You';
   @override
   String get materialYouDescription => '端末の壁紙から抽出した色を使用します。';
   @override
   String get staticThemeColor => '固定テーマカラー';
   @override
-  String get staticThemeColorBlue => '青（デフォルト）';
+  String get staticThemeColorDefault => 'デフォルト';
+  @override
+  String get staticThemeColorBlue => '青';
   @override
   String get staticThemeColorCyan => 'シアン';
   @override
@@ -1666,6 +1673,21 @@ class _Translations$settings$theme$ja extends Translations$settings$theme$en {
   @override
   String get useBlackBackgroundsDescription =>
       'ダークモード有効時に、ダークグレーの代わりに黒背景を使用します。';
+}
+
+// Path: settings.themes
+class _Translations$settings$themes$ja extends Translations$settings$themes$en {
+  _Translations$settings$themes$ja._(TranslationsJa root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsJa _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get azahar => 'Azahar';
+  @override
+  String get legacy => 'Legacy';
 }
 
 // Path: settings.language
@@ -2681,10 +2703,12 @@ extension on TranslationsJa {
           'settings.debug.deterministicAsyncOperationsDescription' =>
             '非同期処理を決定論的な順序で実行するように強制します。パフォーマンスが低下します。',
           'settings.theme.title' => 'テーマと色',
+          'settings.theme.themeStyle' => 'テーマスタイル',
           'settings.theme.materialYou' => 'Material You',
           'settings.theme.materialYouDescription' => '端末の壁紙から抽出した色を使用します。',
           'settings.theme.staticThemeColor' => '固定テーマカラー',
-          'settings.theme.staticThemeColorBlue' => '青（デフォルト）',
+          'settings.theme.staticThemeColorDefault' => 'デフォルト',
+          'settings.theme.staticThemeColorBlue' => '青',
           'settings.theme.staticThemeColorCyan' => 'シアン',
           'settings.theme.staticThemeColorRed' => '赤',
           'settings.theme.staticThemeColorGreen' => '緑',
@@ -2700,6 +2724,8 @@ extension on TranslationsJa {
           'settings.theme.useBlackBackgrounds' => '黒背景を使用',
           'settings.theme.useBlackBackgroundsDescription' =>
             'ダークモード有効時に、ダークグレーの代わりに黒背景を使用します。',
+          'settings.themes.azahar' => 'Azahar',
+          'settings.themes.legacy' => 'Legacy',
           'settings.language.title' => '言語',
           'settings.language.systemDefault' => 'システムのデフォルト',
           'settings.language.english' => '英語 (English)',
