@@ -445,6 +445,12 @@ class Translations$options$en {
   String get accessibilityDescription =>
       'Motion and other accessibility settings';
 
+  /// en: 'Advanced Settings'
+  String get advanced => 'Advanced Settings';
+
+  /// en: 'Configure more advanced options'
+  String get advancedDescription => 'Configure more advanced options';
+
   /// en: 'About'
   String get about => 'About';
 
@@ -652,6 +658,8 @@ class Translations$settings$en {
       Translations$settings$themes$en.internal(_root);
   late final Translations$settings$accessibility$en accessibility =
       Translations$settings$accessibility$en.internal(_root);
+  late final Translations$settings$advanced$en advanced =
+      Translations$settings$advanced$en.internal(_root);
   late final Translations$settings$language$en language =
       Translations$settings$language$en.internal(_root);
 }
@@ -2135,6 +2143,28 @@ class Translations$settings$accessibility$en {
       'Reduces animations and motion effects throughout the app.';
 }
 
+// Path: settings.advanced
+class Translations$settings$advanced$en {
+  Translations$settings$advanced$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Advanced Settings'
+  String get title => 'Advanced Settings';
+
+  /// en: 'Animation Speed'
+  String get animationSpeedLabel => 'Animation Speed';
+
+  /// en: 'Controls how fast UI transitions play.'
+  String get animationSpeedDescription =>
+      'Controls how fast UI transitions play.';
+
+  late final Translations$settings$advanced$animationSpeed$en animationSpeed =
+      Translations$settings$advanced$animationSpeed$en.internal(_root);
+}
+
 // Path: settings.language
 class Translations$settings$language$en {
   Translations$settings$language$en.internal(this._root);
@@ -2564,6 +2594,24 @@ class Translations$settings$system$countries$en {
   String get bermuda => 'Bermuda';
 }
 
+// Path: settings.advanced.animationSpeed
+class Translations$settings$advanced$animationSpeed$en {
+  Translations$settings$advanced$animationSpeed$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Fast'
+  String get fast => 'Fast';
+
+  /// en: 'Normal'
+  String get normal => 'Normal';
+
+  /// en: 'Slow'
+  String get slow => 'Slow';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -2728,6 +2776,8 @@ extension on Translations {
           'options.accessibility' => 'Accessibility',
           'options.accessibilityDescription' =>
             'Motion and other accessibility settings',
+          'options.advanced' => 'Advanced Settings',
+          'options.advancedDescription' => 'Configure more advanced options',
           'options.about' => 'About',
           'options.aboutDescription' => 'Build version, credits, and more',
           'options.general' => 'Profile',
@@ -3192,12 +3242,12 @@ extension on Translations {
           'settings.camera.imageFlipVertical' => 'Vertical',
           'settings.camera.imageFlipReverse' => 'Reverse',
           'settings.gamepad.title' => 'Gamepad',
-          'settings.gamepad.controllerInputMode' => 'Controller Input Mode',
-          'settings.gamepad.controllerInputModeDescription' =>
-            'Choose how physical game controllers are mapped to 3DS input.',
           _ => null,
         } ??
         switch (path) {
+          'settings.gamepad.controllerInputMode' => 'Controller Input Mode',
+          'settings.gamepad.controllerInputModeDescription' =>
+            'Choose how physical game controllers are mapped to 3DS input.',
           'settings.gamepad.controllerInputModeManual' => 'Manual',
           'settings.gamepad.controllerInputModeAutoDetect' => 'Auto-Detect',
           'settings.gamepad.invertLeftStickYAxis' => 'Invert Left Stick Y Axis',
@@ -3358,6 +3408,13 @@ extension on Translations {
           'settings.accessibility.reduceMotion' => 'Reduce Motion',
           'settings.accessibility.reduceMotionDescription' =>
             'Reduces animations and motion effects throughout the app.',
+          'settings.advanced.title' => 'Advanced Settings',
+          'settings.advanced.animationSpeedLabel' => 'Animation Speed',
+          'settings.advanced.animationSpeedDescription' =>
+            'Controls how fast UI transitions play.',
+          'settings.advanced.animationSpeed.fast' => 'Fast',
+          'settings.advanced.animationSpeed.normal' => 'Normal',
+          'settings.advanced.animationSpeed.slow' => 'Slow',
           'settings.language.title' => 'Language',
           'settings.language.systemDefault' => 'System default',
           'settings.language.english' => 'English',

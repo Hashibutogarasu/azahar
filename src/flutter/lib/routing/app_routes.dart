@@ -6,6 +6,7 @@ import '../app_services.dart';
 import '../data/settings/settings_load_provider.dart';
 import '../screens/games/games_list_page.dart';
 import '../screens/home/app_shell.dart';
+import '../screens/home/slide_branch_container.dart';
 import '../screens/options/about_page.dart';
 import '../screens/options/emulated_network_page.dart';
 import '../screens/options/gpu_driver_manager_page.dart';
@@ -13,6 +14,7 @@ import '../screens/options/legacy_options_page.dart';
 import '../screens/options/options_page.dart';
 import '../screens/options/system_files_page.dart';
 import '../screens/settings/sections/accessibility_settings_page.dart';
+import '../screens/settings/sections/advanced_settings_page.dart';
 import '../screens/settings/sections/camera_settings_page.dart';
 import '../screens/settings/sections/controls_settings_page.dart';
 import '../screens/settings/sections/debug_settings_page.dart';
@@ -69,7 +71,9 @@ class SystemFilesRoute extends GoRouteData with $SystemFilesRoute {
 
 @TypedStatefulShellRoute<AppShellRouteData>(
   branches: [
-    TypedStatefulShellBranch<GamesBranchData>(routes: [TypedGoRoute<GamesListRoute>(path: '/')]),
+    TypedStatefulShellBranch<GamesBranchData>(
+      routes: [TypedGoRoute<GamesListRoute>(path: '/')],
+    ),
     TypedStatefulShellBranch<OptionsBranchData>(
       routes: [TypedGoRoute<OptionsRoute>(path: '/options')],
     ),
@@ -77,6 +81,9 @@ class SystemFilesRoute extends GoRouteData with $SystemFilesRoute {
 )
 class AppShellRouteData extends StatefulShellRouteData {
   const AppShellRouteData();
+
+  static const ShellNavigationContainerBuilder $navigatorContainerBuilder =
+      slideBranchContainerBuilder;
 
   @override
   Widget builder(
@@ -121,7 +128,8 @@ class OptionsRoute extends GoRouteData with $OptionsRoute {
     return Consumer(
       builder: (context, ref, _) {
         ref.watch(settingsLoadProvider);
-        final useLegacy = AppServices.legacySettingsUiRepository.useLegacySettingsUI;
+        final useLegacy =
+            AppServices.legacySettingsUiRepository.useLegacySettingsUI;
         // ignore: deprecated_member_use_from_same_package
         return useLegacy ? const LegacyOptionsPage() : const OptionsPage();
       },

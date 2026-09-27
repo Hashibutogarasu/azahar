@@ -13,14 +13,23 @@ class RealNetworkTab extends ConsumerWidget {
     final t = context.t;
     final accessPoints = ref.watch(realAccessPointsProvider);
     final selected = ref.watch(selectedRealAccessPointsProvider);
-    final selectionNotifier = ref.read(selectedRealAccessPointsProvider.notifier);
+    final selectionNotifier = ref.read(
+      selectedRealAccessPointsProvider.notifier,
+    );
     final isSelecting = selected.isNotEmpty;
     return RefreshIndicator(
       onRefresh: () => ref.read(realAccessPointsProvider.notifier).refresh(),
       child: accessPoints.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => ListView(
-          children: [Center(child: Padding(padding: const EdgeInsets.all(32), child: Text('$error')))],
+          children: [
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Text('$error'),
+              ),
+            ),
+          ],
         ),
         data: (data) {
           if (data.isEmpty) {
@@ -57,13 +66,17 @@ class RealNetworkTab extends ConsumerWidget {
                   ],
                 ),
                 title: Text(
-                  accessPoint.ssid.isEmpty ? t.settings.networking.hiddenNetwork : accessPoint.ssid,
+                  accessPoint.ssid.isEmpty
+                      ? t.settings.networking.hiddenNetwork
+                      : accessPoint.ssid,
                 ),
                 subtitle: Text(
                   '${t.settings.networking.bssid}: ${accessPoint.bssid}  '
                   '${t.settings.networking.frequency}: ${accessPoint.frequency} MHz',
                 ),
-                onTap: isSelecting ? () => selectionNotifier.toggle(accessPoint) : null,
+                onTap: isSelecting
+                    ? () => selectionNotifier.toggle(accessPoint)
+                    : null,
                 onLongPress: () => selectionNotifier.toggle(accessPoint),
               );
             },

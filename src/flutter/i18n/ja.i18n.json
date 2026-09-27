@@ -153,6 +153,8 @@
     "mediaDescription": "バックグラウンド再生とメディアセッションの設定",
     "accessibility": "アクセシビリティ",
     "accessibilityDescription": "モーションなどのアクセシビリティ設定",
+    "advanced": "詳細設定",
+    "advancedDescription": "より詳細なオプションを設定します",
     "about": "このアプリについて",
     "aboutDescription": "ビルドバージョン、クレジットなど",
     "general": "プロフィール",
@@ -719,6 +721,16 @@
       "title": "アクセシビリティ",
       "reduceMotion": "視差効果を減らす",
       "reduceMotionDescription": "アプリ内のアニメーションや動きの効果を減らします。"
+    },
+    "advanced": {
+      "title": "詳細設定",
+      "animationSpeedLabel": "アニメーション速度",
+      "animationSpeedDescription": "画面遷移などのアニメーションの速さを調整します。",
+      "animationSpeed": {
+        "fast": "速い",
+        "normal": "普通",
+        "slow": "遅い"
+      }
     },
     "language": {
       "title": "言語",

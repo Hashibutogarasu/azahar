@@ -36,7 +36,9 @@ class MasterVolumeNotifier extends Notifier<double> {
   /// Persists the current volume. Callers should invoke this once a drag gesture ends, not on
   /// every intermediate value, to avoid frequent database writes.
   Future<void> persistVolume() {
-    return AppServices.mediaSettingsRepository.write(MediaSetting(id: 0, masterVolume: state));
+    return AppServices.mediaSettingsRepository.write(
+      MediaSetting(id: 0, masterVolume: state),
+    );
   }
 
   Future<void> startNativeSync() async {

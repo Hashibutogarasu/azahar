@@ -376,6 +376,10 @@ class _Translations$options$ja extends Translations$options$en {
   @override
   String get accessibilityDescription => 'モーションなどのアクセシビリティ設定';
   @override
+  String get advanced => '詳細設定';
+  @override
+  String get advancedDescription => 'より詳細なオプションを設定します';
+  @override
   String get about => 'このアプリについて';
   @override
   String get aboutDescription => 'ビルドバージョン、クレジットなど';
@@ -570,6 +574,9 @@ class _Translations$settings$ja extends Translations$settings$en {
   @override
   late final _Translations$settings$accessibility$ja accessibility =
       _Translations$settings$accessibility$ja._(_root);
+  @override
+  late final _Translations$settings$advanced$ja advanced =
+      _Translations$settings$advanced$ja._(_root);
   @override
   late final _Translations$settings$language$ja language =
       _Translations$settings$language$ja._(_root);
@@ -1717,6 +1724,27 @@ class _Translations$settings$accessibility$ja
   String get reduceMotionDescription => 'アプリ内のアニメーションや動きの効果を減らします。';
 }
 
+// Path: settings.advanced
+class _Translations$settings$advanced$ja
+    extends Translations$settings$advanced$en {
+  _Translations$settings$advanced$ja._(TranslationsJa root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsJa _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => '詳細設定';
+  @override
+  String get animationSpeedLabel => 'アニメーション速度';
+  @override
+  String get animationSpeedDescription => '画面遷移などのアニメーションの速さを調整します。';
+  @override
+  late final _Translations$settings$advanced$animationSpeed$ja animationSpeed =
+      _Translations$settings$advanced$animationSpeed$ja._(_root);
+}
+
 // Path: settings.language
 class _Translations$settings$language$ja
     extends Translations$settings$language$en {
@@ -2015,6 +2043,24 @@ class _Translations$settings$system$countries$ja
   String get bermuda => 'バミューダ';
 }
 
+// Path: settings.advanced.animationSpeed
+class _Translations$settings$advanced$animationSpeed$ja
+    extends Translations$settings$advanced$animationSpeed$en {
+  _Translations$settings$advanced$animationSpeed$ja._(TranslationsJa root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsJa _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get fast => '速い';
+  @override
+  String get normal => '普通';
+  @override
+  String get slow => '遅い';
+}
+
 /// The flat map containing all translations for locale <ja>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -2164,6 +2210,8 @@ extension on TranslationsJa {
           'options.mediaDescription' => 'バックグラウンド再生とメディアセッションの設定',
           'options.accessibility' => 'アクセシビリティ',
           'options.accessibilityDescription' => 'モーションなどのアクセシビリティ設定',
+          'options.advanced' => '詳細設定',
+          'options.advancedDescription' => 'より詳細なオプションを設定します',
           'options.about' => 'このアプリについて',
           'options.aboutDescription' => 'ビルドバージョン、クレジットなど',
           'options.general' => 'プロフィール',
@@ -2602,12 +2650,12 @@ extension on TranslationsJa {
           'settings.camera.imageFlipVertical' => '垂直',
           'settings.camera.imageFlipReverse' => '反転',
           'settings.gamepad.title' => 'ゲームパッド',
-          'settings.gamepad.controllerInputMode' => 'コントローラー入力モード',
-          'settings.gamepad.controllerInputModeDescription' =>
-            '物理ゲームコントローラーを3DSの入力にどのようにマッピングするかを選択します。',
           _ => null,
         } ??
         switch (path) {
+          'settings.gamepad.controllerInputMode' => 'コントローラー入力モード',
+          'settings.gamepad.controllerInputModeDescription' =>
+            '物理ゲームコントローラーを3DSの入力にどのようにマッピングするかを選択します。',
           'settings.gamepad.controllerInputModeManual' => '手動',
           'settings.gamepad.controllerInputModeAutoDetect' => '自動検出',
           'settings.gamepad.invertLeftStickYAxis' => '左スティックのY軸を反転',
@@ -2760,6 +2808,13 @@ extension on TranslationsJa {
           'settings.accessibility.reduceMotion' => '視差効果を減らす',
           'settings.accessibility.reduceMotionDescription' =>
             'アプリ内のアニメーションや動きの効果を減らします。',
+          'settings.advanced.title' => '詳細設定',
+          'settings.advanced.animationSpeedLabel' => 'アニメーション速度',
+          'settings.advanced.animationSpeedDescription' =>
+            '画面遷移などのアニメーションの速さを調整します。',
+          'settings.advanced.animationSpeed.fast' => '速い',
+          'settings.advanced.animationSpeed.normal' => '普通',
+          'settings.advanced.animationSpeed.slow' => '遅い',
           'settings.language.title' => '言語',
           'settings.language.systemDefault' => 'システムのデフォルト',
           'settings.language.english' => '英語 (English)',

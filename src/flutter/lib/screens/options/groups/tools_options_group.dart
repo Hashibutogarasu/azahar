@@ -1,4 +1,5 @@
-import 'package:babstrap_settings_screen/babstrap_settings_screen.dart' as babstrap;
+import 'package:babstrap_settings_screen/babstrap_settings_screen.dart'
+    as babstrap;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,7 +29,8 @@ class ToolsOptionsGroup extends ConsumerWidget {
               icons: Icons.wifi_tethering,
               title: t.options.articBaseConnect,
               subtitle: t.options.articBaseConnectDescription,
-              onTap: () => _connectArticBase(context, ref.read(articBaseProvider)),
+              onTap: () =>
+                  _connectArticBase(context, ref.read(articBaseProvider)),
             ),
             babstrap.SettingsItem(
               icons: Icons.install_mobile,
@@ -61,7 +63,10 @@ class ToolsOptionsGroup extends ConsumerWidget {
     );
   }
 
-  Future<void> _connectArticBase(BuildContext context, ArticBaseService service) async {
+  Future<void> _connectArticBase(
+    BuildContext context,
+    ArticBaseService service,
+  ) async {
     final previousAddress = await service.previousAddress();
     if (!context.mounted) return;
     final address = await ArticBaseConnectDialog.show(
@@ -76,7 +81,9 @@ class ToolsOptionsGroup extends ConsumerWidget {
     final t = context.t;
     final found = await service.share();
     if (!found && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.options.shareLogNotFound)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(t.options.shareLogNotFound)));
     }
   }
 }

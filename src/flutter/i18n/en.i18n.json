@@ -153,6 +153,8 @@
     "mediaDescription": "Background playback and media session settings",
     "accessibility": "Accessibility",
     "accessibilityDescription": "Motion and other accessibility settings",
+    "advanced": "Advanced Settings",
+    "advancedDescription": "Configure more advanced options",
     "about": "About",
     "aboutDescription": "Build version, credits, and more",
     "general": "Profile",
@@ -719,6 +721,16 @@
       "title": "Accessibility",
       "reduceMotion": "Reduce Motion",
       "reduceMotionDescription": "Reduces animations and motion effects throughout the app."
+    },
+    "advanced": {
+      "title": "Advanced Settings",
+      "animationSpeedLabel": "Animation Speed",
+      "animationSpeedDescription": "Controls how fast UI transitions play.",
+      "animationSpeed": {
+        "fast": "Fast",
+        "normal": "Normal",
+        "slow": "Slow"
+      }
     },
     "language": {
       "title": "Language",

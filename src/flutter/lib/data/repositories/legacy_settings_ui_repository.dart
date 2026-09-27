@@ -1,7 +1,8 @@
 import 'key_value_repository.dart';
 import 'loadable.dart';
 
-class LegacySettingsUiRepository extends KeyValueRepository implements Loadable {
+class LegacySettingsUiRepository extends KeyValueRepository
+    implements Loadable {
   LegacySettingsUiRepository(super.db);
 
   final String _key = 'use_legacy_settings_ui';

@@ -10,7 +10,8 @@ class GpuDriverManagerPage extends ConsumerStatefulWidget {
   const GpuDriverManagerPage({super.key});
 
   @override
-  ConsumerState<GpuDriverManagerPage> createState() => _GpuDriverManagerPageState();
+  ConsumerState<GpuDriverManagerPage> createState() =>
+      _GpuDriverManagerPageState();
 }
 
 class _GpuDriverManagerPageState extends ConsumerState<GpuDriverManagerPage> {
@@ -26,7 +27,10 @@ class _GpuDriverManagerPageState extends ConsumerState<GpuDriverManagerPage> {
 
   Future<void> _installDriver() async {
     final t = context.t;
-    final result = await FilePicker.pickFile(type: FileType.custom, allowedExtensions: ['zip']);
+    final result = await FilePicker.pickFile(
+      type: FileType.custom,
+      allowedExtensions: ['zip'],
+    );
     final path = result?.path;
     if (path == null) return;
     final success = await _service.installDriver(path);
@@ -56,10 +60,14 @@ class _GpuDriverManagerPageState extends ConsumerState<GpuDriverManagerPage> {
           }
           final (drivers, selected) = snapshot.data!;
           return RadioGroup<String>(
-            groupValue: selected == null ? '' : (drivers.firstWhere(
-                  (d) => d.name == selected,
-                  orElse: () => const GpuDriverInfo(uri: ''),
-                ).uri),
+            groupValue: selected == null
+                ? ''
+                : (drivers
+                      .firstWhere(
+                        (d) => d.name == selected,
+                        orElse: () => const GpuDriverInfo(uri: ''),
+                      )
+                      .uri),
             onChanged: (value) {
               if (value != null) _selectDriver(value);
             },
@@ -79,7 +87,9 @@ class _GpuDriverManagerPageState extends ConsumerState<GpuDriverManagerPage> {
                 for (final driver in drivers.where((d) => d.uri.isNotEmpty))
                   RadioListTile<String>(
                     title: Text(driver.name ?? driver.uri),
-                    subtitle: driver.version == null ? null : Text(driver.version!),
+                    subtitle: driver.version == null
+                        ? null
+                        : Text(driver.version!),
                     value: driver.uri,
                   ),
               ],

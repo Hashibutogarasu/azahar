@@ -1,4 +1,5 @@
-import 'package:babstrap_settings_screen/babstrap_settings_screen.dart' as babstrap;
+import 'package:babstrap_settings_screen/babstrap_settings_screen.dart'
+    as babstrap;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,19 +23,26 @@ class NetworkingOptionsGroup extends ConsumerWidget {
           icons: Icons.wifi,
           title: t.settings.networking.accessNetwork,
           subtitle: t.settings.networking.accessNetworkDescription,
-          trailing: Switch(value: state.accessNetwork, onChanged: notifier.setAccessNetwork),
+          trailing: Switch(
+            value: state.accessNetwork,
+            onChanged: notifier.setAccessNetwork,
+          ),
         ),
         babstrap.SettingsItem(
           icons: Icons.wifi_tethering,
           title: t.settings.networking.useWireless,
           subtitle: t.settings.networking.useWirelessDescription,
-          trailing: Switch(value: state.useWireless, onChanged: notifier.setUseWireless),
+          trailing: Switch(
+            value: state.useWireless,
+            onChanged: notifier.setUseWireless,
+          ),
         ),
         babstrap.SettingsItem(
           icons: Icons.router,
           title: t.settings.networking.emulatedNetwork,
           subtitle: t.settings.networking.emulatedNetworkDescription,
-          onTap: () => const OptionsEmulatedNetworkSettingsRoute().push(context),
+          onTap: () =>
+              const OptionsEmulatedNetworkSettingsRoute().push(context),
         ),
       ],
     );

@@ -11,9 +11,11 @@ class UserDirectoriesService {
   Future<String?> previousUserDirectory() =>
       AppServices.citraDirectoryRepository.citraDirectoryUri();
 
-  Future<String?> pickUserDirectory() => AppServices.nativeBridge.openUserDirectory();
+  Future<String?> pickUserDirectory() =>
+      AppServices.nativeBridge.openUserDirectory();
 
-  Stream<CopyDirProgress> copyDirProgress() => AppServices.nativeBridge.copyDirProgress();
+  Stream<CopyDirProgress> copyDirProgress() =>
+      AppServices.nativeBridge.copyDirProgress();
 
   Future<void> confirmUserDirectory({
     required String uri,
@@ -28,7 +30,8 @@ class UserDirectoriesService {
     await AppServices.citraDirectoryRepository.setCitraDirectoryUri(uri);
   }
 
-  Future<String?> pickGamesDirectory() => AppServices.nativeBridge.openGamesDirectory();
+  Future<String?> pickGamesDirectory() =>
+      AppServices.nativeBridge.openGamesDirectory();
 
   Future<void> confirmGamesDirectory(String uri) {
     return AppServices.gamesDirectoryRepository.setGamesDirectoryUri(uri);

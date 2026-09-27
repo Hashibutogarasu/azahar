@@ -2266,6 +2266,219 @@ class AccessibilitySettingsCompanion
   }
 }
 
+class $AdvancedSettingsTable extends AdvancedSettings
+    with TableInfo<$AdvancedSettingsTable, AdvancedSetting> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AdvancedSettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<AnimationSpeed, int>
+  animationSpeed =
+      GeneratedColumn<int>(
+        'animation_speed',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+        defaultValue: Constant(AnimationSpeed.normal.index),
+      ).withConverter<AnimationSpeed>(
+        $AdvancedSettingsTable.$converteranimationSpeed,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [id, animationSpeed];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'advanced_settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AdvancedSetting> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AdvancedSetting map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AdvancedSetting(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      animationSpeed: $AdvancedSettingsTable.$converteranimationSpeed.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}animation_speed'],
+        )!,
+      ),
+    );
+  }
+
+  @override
+  $AdvancedSettingsTable createAlias(String alias) {
+    return $AdvancedSettingsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<AnimationSpeed, int, int> $converteranimationSpeed =
+      const EnumIndexConverter<AnimationSpeed>(AnimationSpeed.values);
+}
+
+class AdvancedSetting extends DataClass implements Insertable<AdvancedSetting> {
+  final int id;
+  final AnimationSpeed animationSpeed;
+  const AdvancedSetting({required this.id, required this.animationSpeed});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    {
+      map['animation_speed'] = Variable<int>(
+        $AdvancedSettingsTable.$converteranimationSpeed.toSql(animationSpeed),
+      );
+    }
+    return map;
+  }
+
+  AdvancedSettingsCompanion toCompanion(bool nullToAbsent) {
+    return AdvancedSettingsCompanion(
+      id: Value(id),
+      animationSpeed: Value(animationSpeed),
+    );
+  }
+
+  factory AdvancedSetting.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AdvancedSetting(
+      id: serializer.fromJson<int>(json['id']),
+      animationSpeed: $AdvancedSettingsTable.$converteranimationSpeed.fromJson(
+        serializer.fromJson<int>(json['animationSpeed']),
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'animationSpeed': serializer.toJson<int>(
+        $AdvancedSettingsTable.$converteranimationSpeed.toJson(animationSpeed),
+      ),
+    };
+  }
+
+  AdvancedSetting copyWith({int? id, AnimationSpeed? animationSpeed}) =>
+      AdvancedSetting(
+        id: id ?? this.id,
+        animationSpeed: animationSpeed ?? this.animationSpeed,
+      );
+  AdvancedSetting copyWithCompanion(AdvancedSettingsCompanion data) {
+    return AdvancedSetting(
+      id: data.id.present ? data.id.value : this.id,
+      animationSpeed: data.animationSpeed.present
+          ? data.animationSpeed.value
+          : this.animationSpeed,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AdvancedSetting(')
+          ..write('id: $id, ')
+          ..write('animationSpeed: $animationSpeed')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, animationSpeed);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AdvancedSetting &&
+          other.id == this.id &&
+          other.animationSpeed == this.animationSpeed);
+}
+
+class AdvancedSettingsCompanion extends UpdateCompanion<AdvancedSetting> {
+  final Value<int> id;
+  final Value<AnimationSpeed> animationSpeed;
+  const AdvancedSettingsCompanion({
+    this.id = const Value.absent(),
+    this.animationSpeed = const Value.absent(),
+  });
+  AdvancedSettingsCompanion.insert({
+    this.id = const Value.absent(),
+    this.animationSpeed = const Value.absent(),
+  });
+  static Insertable<AdvancedSetting> custom({
+    Expression<int>? id,
+    Expression<int>? animationSpeed,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (animationSpeed != null) 'animation_speed': animationSpeed,
+    });
+  }
+
+  AdvancedSettingsCompanion copyWith({
+    Value<int>? id,
+    Value<AnimationSpeed>? animationSpeed,
+  }) {
+    return AdvancedSettingsCompanion(
+      id: id ?? this.id,
+      animationSpeed: animationSpeed ?? this.animationSpeed,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (animationSpeed.present) {
+      map['animation_speed'] = Variable<int>(
+        $AdvancedSettingsTable.$converteranimationSpeed.toSql(
+          animationSpeed.value,
+        ),
+      );
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AdvancedSettingsCompanion(')
+          ..write('id: $id, ')
+          ..write('animationSpeed: $animationSpeed')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $MediaSettingsTable extends MediaSettings
     with TableInfo<$MediaSettingsTable, MediaSetting> {
   @override
@@ -2830,6 +3043,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ThemeSettingsTable themeSettings = $ThemeSettingsTable(this);
   late final $AccessibilitySettingsTable accessibilitySettings =
       $AccessibilitySettingsTable(this);
+  late final $AdvancedSettingsTable advancedSettings = $AdvancedSettingsTable(
+    this,
+  );
   late final $MediaSettingsTable mediaSettings = $MediaSettingsTable(this);
   late final $VirtualAccessPointsTable virtualAccessPoints =
       $VirtualAccessPointsTable(this);
@@ -2844,6 +3060,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     inputLayoutElements,
     themeSettings,
     accessibilitySettings,
+    advancedSettings,
     mediaSettings,
     virtualAccessPoints,
   ];
@@ -4171,6 +4388,162 @@ typedef $$AccessibilitySettingsTableProcessedTableManager =
       AccessibilitySetting,
       PrefetchHooks Function()
     >;
+typedef $$AdvancedSettingsTableCreateCompanionBuilder =
+    AdvancedSettingsCompanion Function({
+      Value<int> id,
+      Value<AnimationSpeed> animationSpeed,
+    });
+typedef $$AdvancedSettingsTableUpdateCompanionBuilder =
+    AdvancedSettingsCompanion Function({
+      Value<int> id,
+      Value<AnimationSpeed> animationSpeed,
+    });
+
+class $$AdvancedSettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $AdvancedSettingsTable> {
+  $$AdvancedSettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<AnimationSpeed, AnimationSpeed, int>
+  get animationSpeed => $composableBuilder(
+    column: $table.animationSpeed,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+}
+
+class $$AdvancedSettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $AdvancedSettingsTable> {
+  $$AdvancedSettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get animationSpeed => $composableBuilder(
+    column: $table.animationSpeed,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AdvancedSettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AdvancedSettingsTable> {
+  $$AdvancedSettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<AnimationSpeed, int> get animationSpeed =>
+      $composableBuilder(
+        column: $table.animationSpeed,
+        builder: (column) => column,
+      );
+}
+
+class $$AdvancedSettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AdvancedSettingsTable,
+          AdvancedSetting,
+          $$AdvancedSettingsTableFilterComposer,
+          $$AdvancedSettingsTableOrderingComposer,
+          $$AdvancedSettingsTableAnnotationComposer,
+          $$AdvancedSettingsTableCreateCompanionBuilder,
+          $$AdvancedSettingsTableUpdateCompanionBuilder,
+          (
+            AdvancedSetting,
+            BaseReferences<
+              _$AppDatabase,
+              $AdvancedSettingsTable,
+              AdvancedSetting
+            >,
+          ),
+          AdvancedSetting,
+          PrefetchHooks Function()
+        > {
+  $$AdvancedSettingsTableTableManager(
+    _$AppDatabase db,
+    $AdvancedSettingsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AdvancedSettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AdvancedSettingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AdvancedSettingsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<AnimationSpeed> animationSpeed = const Value.absent(),
+              }) => AdvancedSettingsCompanion(
+                id: id,
+                animationSpeed: animationSpeed,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<AnimationSpeed> animationSpeed = const Value.absent(),
+              }) => AdvancedSettingsCompanion.insert(
+                id: id,
+                animationSpeed: animationSpeed,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$AdvancedSettingsTable, AdvancedSetting>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $AdvancedSettingsTable,
+                    AdvancedSetting
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$AdvancedSettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AdvancedSettingsTable,
+      AdvancedSetting,
+      $$AdvancedSettingsTableFilterComposer,
+      $$AdvancedSettingsTableOrderingComposer,
+      $$AdvancedSettingsTableAnnotationComposer,
+      $$AdvancedSettingsTableCreateCompanionBuilder,
+      $$AdvancedSettingsTableUpdateCompanionBuilder,
+      (
+        AdvancedSetting,
+        BaseReferences<_$AppDatabase, $AdvancedSettingsTable, AdvancedSetting>,
+      ),
+      AdvancedSetting,
+      PrefetchHooks Function()
+    >;
 typedef $$MediaSettingsTableCreateCompanionBuilder =
     MediaSettingsCompanion Function({
       Value<int> id,
@@ -4553,6 +4926,8 @@ class $AppDatabaseManager {
       $$ThemeSettingsTableTableManager(_db, _db.themeSettings);
   $$AccessibilitySettingsTableTableManager get accessibilitySettings =>
       $$AccessibilitySettingsTableTableManager(_db, _db.accessibilitySettings);
+  $$AdvancedSettingsTableTableManager get advancedSettings =>
+      $$AdvancedSettingsTableTableManager(_db, _db.advancedSettings);
   $$MediaSettingsTableTableManager get mediaSettings =>
       $$MediaSettingsTableTableManager(_db, _db.mediaSettings);
   $$VirtualAccessPointsTableTableManager get virtualAccessPoints =>

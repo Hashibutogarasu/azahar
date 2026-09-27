@@ -148,3 +148,14 @@ class OptionsAccessibilitySettingsRoute extends GoRouteData
     return const AccessibilitySettingsPage();
   }
 }
+
+@TypedGoRoute<OptionsAdvancedSettingsRoute>(path: '/options/advanced')
+class OptionsAdvancedSettingsRoute extends GoRouteData
+    with $OptionsAdvancedSettingsRoute {
+  const OptionsAdvancedSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const AdvancedSettingsPage();
+  }
+}

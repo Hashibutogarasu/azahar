@@ -21,7 +21,9 @@ import 'dialogs/artic_base_connect_dialog.dart';
 /// The pre-redesign Options tab, kept for `useLegacySettingsUI`. Superseded by the grouped,
 /// babstrap-based [OptionsPage][] (see `options_page.dart`); this mirrors the original app's
 /// `HomeSettingsScreen` as it stood before that redesign.
-@Deprecated('Superseded by the grouped Options page. Shown only when useLegacySettingsUI is on.')
+@Deprecated(
+  'Superseded by the grouped Options page. Shown only when useLegacySettingsUI is on.',
+)
 class LegacyOptionsPage extends ConsumerWidget {
   const LegacyOptionsPage({super.key});
 
@@ -52,7 +54,8 @@ class LegacyOptionsPage extends ConsumerWidget {
                   icon: Icons.wifi_tethering,
                   title: t.options.articBaseConnect,
                   description: t.options.articBaseConnectDescription,
-                  onTap: () => _connectArticBase(context, ref.read(articBaseProvider)),
+                  onTap: () =>
+                      _connectArticBase(context, ref.read(articBaseProvider)),
                 ),
                 _LegacyOptionCard(
                   icon: Icons.install_mobile,
@@ -83,13 +86,19 @@ class LegacyOptionsPage extends ConsumerWidget {
                   icon: Icons.folder_outlined,
                   title: t.options.selectUserFolder,
                   description: t.options.selectUserFolderDescription,
-                  onTap: () => _selectUserFolder(context, ref.read(userDirectoriesProvider)),
+                  onTap: () => _selectUserFolder(
+                    context,
+                    ref.read(userDirectoriesProvider),
+                  ),
                 ),
                 _LegacyOptionCard(
                   icon: Icons.videogame_asset_outlined,
                   title: t.options.selectGamesFolder,
                   description: t.options.selectGamesFolderDescription,
-                  onTap: () => _selectGamesFolder(context, ref.read(userDirectoriesProvider)),
+                  onTap: () => _selectGamesFolder(
+                    context,
+                    ref.read(userDirectoriesProvider),
+                  ),
                 ),
                 _LegacyOptionCard(
                   icon: Icons.palette_outlined,
@@ -102,7 +111,8 @@ class LegacyOptionsPage extends ConsumerWidget {
                   title: t.options.useLegacySettingsUI,
                   description: t.options.useLegacySettingsUIDescription,
                   value: settings.useLegacySettingsUI,
-                  onChanged: (value) => _confirmLegacyToggle(context, ref, t, value),
+                  onChanged: (value) =>
+                      _confirmLegacyToggle(context, ref, t, value),
                 ),
                 _LegacyOptionCard(
                   icon: Icons.info_outline,
@@ -118,7 +128,10 @@ class LegacyOptionsPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _selectUserFolder(BuildContext context, UserDirectoriesService service) async {
+  Future<void> _selectUserFolder(
+    BuildContext context,
+    UserDirectoriesService service,
+  ) async {
     final previousUri = await service.previousUserDirectory();
     final pickedUri = await service.pickUserDirectory();
     if (pickedUri == null || !context.mounted) return;
@@ -142,7 +155,10 @@ class LegacyOptionsPage extends ConsumerWidget {
 
     if (!context.mounted) return;
     unawaited(
-      CopyDirProgressDialog.show(context, progressStream: service.copyDirProgress()),
+      CopyDirProgressDialog.show(
+        context,
+        progressStream: service.copyDirProgress(),
+      ),
     );
     await confirmed;
     if (context.mounted) {
@@ -150,13 +166,19 @@ class LegacyOptionsPage extends ConsumerWidget {
     }
   }
 
-  Future<void> _selectGamesFolder(BuildContext context, UserDirectoriesService service) async {
+  Future<void> _selectGamesFolder(
+    BuildContext context,
+    UserDirectoriesService service,
+  ) async {
     final pickedUri = await service.pickGamesDirectory();
     if (pickedUri == null) return;
     await service.confirmGamesDirectory(pickedUri);
   }
 
-  Future<void> _connectArticBase(BuildContext context, ArticBaseService service) async {
+  Future<void> _connectArticBase(
+    BuildContext context,
+    ArticBaseService service,
+  ) async {
     final previousAddress = await service.previousAddress();
     if (!context.mounted) return;
     final address = await ArticBaseConnectDialog.show(
@@ -171,7 +193,9 @@ class LegacyOptionsPage extends ConsumerWidget {
     final t = context.t;
     final found = await service.share();
     if (!found && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.options.shareLogNotFound)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(t.options.shareLogNotFound)));
     }
   }
 
@@ -227,7 +251,10 @@ class _LegacyOptionSwitchCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(title, style: Theme.of(context).textTheme.titleMedium),
-                  Text(description, style: Theme.of(context).textTheme.bodySmall),
+                  Text(
+                    description,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 ],
               ),
             ),
@@ -270,7 +297,10 @@ class _LegacyOptionCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(title, style: Theme.of(context).textTheme.titleMedium),
-                    Text(description, style: Theme.of(context).textTheme.bodySmall),
+                    Text(
+                      description,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
                   ],
                 ),
               ),

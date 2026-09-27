@@ -1,5 +1,6 @@
 import 'data/database.dart';
 import 'data/repositories/accessibility_settings_repository.dart';
+import 'data/repositories/advanced_settings_repository.dart';
 import 'data/repositories/artic_base_address_repository.dart';
 import 'data/repositories/citra_directory_repository.dart';
 import 'data/repositories/control_bindings_repository.dart';
@@ -41,6 +42,8 @@ abstract final class AppServices {
       ThemeSettingsRepository(database);
   static final AccessibilitySettingsRepository accessibilitySettingsRepository =
       AccessibilitySettingsRepository(database);
+  static final AdvancedSettingsRepository advancedSettingsRepository =
+      AdvancedSettingsRepository(database);
   static final MediaSettingsRepository mediaSettingsRepository =
       MediaSettingsRepository(database);
   static final VirtualAccessPointsRepository virtualAccessPointsRepository =

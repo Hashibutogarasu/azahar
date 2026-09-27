@@ -26,11 +26,15 @@ abstract class KeyValueRepository {
   Future<void> write(String key, String value) {
     return db
         .into(db.appSettings)
-        .insertOnConflictUpdate(AppSettingsCompanion.insert(key: key, value: value));
+        .insertOnConflictUpdate(
+          AppSettingsCompanion.insert(key: key, value: value),
+        );
   }
 
   Future<void> delete(String key) {
-    return (db.delete(db.appSettings)..where((tbl) => tbl.key.equals(key))).go();
+    return (db.delete(
+      db.appSettings,
+    )..where((tbl) => tbl.key.equals(key))).go();
   }
 
   Future<bool> readBool(String key, {bool defaultValue = false}) async {

@@ -25,8 +25,16 @@ abstract final class CustomPortraitLayoutSettingKeys {
   static const topHeight = IntKey('Layout', 'custom_portrait_top_height', 480);
   static const bottomX = IntKey('Layout', 'custom_portrait_bottom_x', 80);
   static const bottomY = IntKey('Layout', 'custom_portrait_bottom_y', 480);
-  static const bottomWidth = IntKey('Layout', 'custom_portrait_bottom_width', 640);
-  static const bottomHeight = IntKey('Layout', 'custom_portrait_bottom_height', 480);
+  static const bottomWidth = IntKey(
+    'Layout',
+    'custom_portrait_bottom_width',
+    640,
+  );
+  static const bottomHeight = IntKey(
+    'Layout',
+    'custom_portrait_bottom_height',
+    480,
+  );
 }
 
 List<SettingsItem> buildLayoutSettingsItems(Translations t) {
@@ -46,11 +54,13 @@ List<SettingsItem> buildLayoutSettingsItems(Translations t) {
     ),
     SettingsItem.submenu(
       title: l.customLandscapeLayout,
-      onTap: (context) => const OptionsCustomLandscapeLayoutSettingsRoute().push(context),
+      onTap: (context) =>
+          const OptionsCustomLandscapeLayoutSettingsRoute().push(context),
     ),
     SettingsItem.submenu(
       title: l.customPortraitLayout,
-      onTap: (context) => const OptionsCustomPortraitLayoutSettingsRoute().push(context),
+      onTap: (context) =>
+          const OptionsCustomPortraitLayoutSettingsRoute().push(context),
     ),
   ];
 }
@@ -99,14 +109,62 @@ List<SettingsItem> _buildCustomLayoutItems(
   final l = t.settings.layout;
   return [
     SettingsItem.header(title: l.topScreen),
-    SettingsItem.slider(title: l.positionX, setting: topX, min: 0, max: 4000, units: 'px'),
-    SettingsItem.slider(title: l.positionY, setting: topY, min: 0, max: 4000, units: 'px'),
-    SettingsItem.slider(title: l.width, setting: topWidth, min: 0, max: 4000, units: 'px'),
-    SettingsItem.slider(title: l.height, setting: topHeight, min: 0, max: 4000, units: 'px'),
+    SettingsItem.slider(
+      title: l.positionX,
+      setting: topX,
+      min: 0,
+      max: 4000,
+      units: 'px',
+    ),
+    SettingsItem.slider(
+      title: l.positionY,
+      setting: topY,
+      min: 0,
+      max: 4000,
+      units: 'px',
+    ),
+    SettingsItem.slider(
+      title: l.width,
+      setting: topWidth,
+      min: 0,
+      max: 4000,
+      units: 'px',
+    ),
+    SettingsItem.slider(
+      title: l.height,
+      setting: topHeight,
+      min: 0,
+      max: 4000,
+      units: 'px',
+    ),
     SettingsItem.header(title: l.bottomScreen),
-    SettingsItem.slider(title: l.positionX, setting: bottomX, min: 0, max: 4000, units: 'px'),
-    SettingsItem.slider(title: l.positionY, setting: bottomY, min: 0, max: 4000, units: 'px'),
-    SettingsItem.slider(title: l.width, setting: bottomWidth, min: 0, max: 4000, units: 'px'),
-    SettingsItem.slider(title: l.height, setting: bottomHeight, min: 0, max: 4000, units: 'px'),
+    SettingsItem.slider(
+      title: l.positionX,
+      setting: bottomX,
+      min: 0,
+      max: 4000,
+      units: 'px',
+    ),
+    SettingsItem.slider(
+      title: l.positionY,
+      setting: bottomY,
+      min: 0,
+      max: 4000,
+      units: 'px',
+    ),
+    SettingsItem.slider(
+      title: l.width,
+      setting: bottomWidth,
+      min: 0,
+      max: 4000,
+      units: 'px',
+    ),
+    SettingsItem.slider(
+      title: l.height,
+      setting: bottomHeight,
+      min: 0,
+      max: 4000,
+      units: 'px',
+    ),
   ];
 }

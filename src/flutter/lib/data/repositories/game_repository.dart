@@ -20,15 +20,20 @@ class GameRepository {
     await _db.batch((batch) {
       batch.deleteAll(_db.games);
       for (final game in scanned) {
-        batch.insert(_db.games, _toCompanion(game), mode: InsertMode.insertOrReplace);
+        batch.insert(
+          _db.games,
+          _toCompanion(game),
+          mode: InsertMode.insertOrReplace,
+        );
       }
     });
     return scanned;
   }
 
   Future<model.Game?> gameByPath(String path) async {
-    final row =
-        await (_db.select(_db.games)..where((tbl) => tbl.path.equals(path))).getSingleOrNull();
+    final row = await (_db.select(
+      _db.games,
+    )..where((tbl) => tbl.path.equals(path))).getSingleOrNull();
     return row == null ? null : _fromRow(row);
   }
 

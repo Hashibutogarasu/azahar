@@ -15,7 +15,8 @@ class ControlBindingsValueStore implements SettingsValueStore, Loadable {
   }
 
   @override
-  String readString(StringKey setting) => _values[setting.key] ?? setting.defaultValue;
+  String readString(StringKey setting) =>
+      _values[setting.key] ?? setting.defaultValue;
 
   @override
   Future<void> writeString(StringKey setting, String value) async {

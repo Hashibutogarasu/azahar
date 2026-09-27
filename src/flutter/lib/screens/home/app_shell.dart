@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../data/settings/accessibility_settings_provider.dart';
+import '../../data/settings/advanced_settings_provider.dart';
+import '../../data/settings/animation_speed.dart';
 import '../../theme/extensions/app_navigation_bar_theme.dart';
 import '../../theme/extensions/background_blob_theme.dart';
 import '../../widgets/app_nav_bar.dart';
@@ -53,9 +55,11 @@ class _AppShellState extends ConsumerState<AppShell> {
     final blobVariant =
         BackgroundBlobVariant.values[widget.navigationShell.currentIndex];
     final reduceMotion = ref.watch(accessibilitySettingsProvider).reduceMotion;
-    final animationDuration = reduceMotion
-        ? Duration.zero
-        : const Duration(milliseconds: 250);
+    final animationSpeed = ref.watch(advancedSettingsProvider).animationSpeed;
+    final animationDuration = resolveAnimationDuration(
+      reduceMotion: reduceMotion,
+      speed: animationSpeed,
+    );
     final hiddenBottomOffset =
         -(navBarTheme.barHeight + navBarTheme.bottomMargin + 32);
     return Scaffold(
@@ -83,10 +87,14 @@ class _AppShellState extends ConsumerState<AppShell> {
                 duration: animationDuration,
                 opacity: _navBarVisible ? 1 : 0,
                 child: navBarTheme.stretchToFullWidth
-                    ? AppNavBar(navigationShell: widget.navigationShell)
+                    ? AppNavBar(
+                        navigationShell: widget.navigationShell,
+                        animationDuration: animationDuration,
+                      )
                     : Center(
                         child: AppNavBar(
                           navigationShell: widget.navigationShell,
+                          animationDuration: animationDuration,
                         ),
                       ),
               ),

@@ -1,4 +1,5 @@
-import 'package:babstrap_settings_screen/babstrap_settings_screen.dart' as babstrap;
+import 'package:babstrap_settings_screen/babstrap_settings_screen.dart'
+    as babstrap;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -34,6 +35,12 @@ class OtherOptionsGroup extends ConsumerWidget {
           onTap: () => const OptionsDebugSettingsRoute().push(context),
         ),
         babstrap.SettingsItem(
+          icons: Icons.tune,
+          title: t.options.advanced,
+          subtitle: t.options.advancedDescription,
+          onTap: () => const OptionsAdvancedSettingsRoute().push(context),
+        ),
+        babstrap.SettingsItem(
           icons: Icons.info_outline,
           title: t.options.about,
           subtitle: t.options.aboutDescription,
@@ -42,7 +49,10 @@ class OtherOptionsGroup extends ConsumerWidget {
         babstrap.SettingsItem(
           icons: Icons.restore,
           title: t.settings.resetToDefault,
-          titleStyle: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.error),
+          titleStyle: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.error,
+          ),
           iconStyle: babstrap.IconStyle(
             iconsColor: Theme.of(context).colorScheme.error,
             withBackground: false,
@@ -74,7 +84,11 @@ class OtherOptionsGroup extends ConsumerWidget {
     }
   }
 
-  Future<void> _confirmReset(BuildContext context, WidgetRef ref, Translations t) async {
+  Future<void> _confirmReset(
+    BuildContext context,
+    WidgetRef ref,
+    Translations t,
+  ) async {
     final confirmed = await ConfirmationDialog.show(
       context,
       title: t.settings.resetToDefaultDialog.title,

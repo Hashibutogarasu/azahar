@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import '../theme/theme_style.dart';
+import 'settings/animation_speed.dart';
 
 part 'database.g.dart';
 
@@ -59,6 +60,16 @@ class AccessibilitySettings extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+class AdvancedSettings extends Table {
+  IntColumn get id => integer().withDefault(const Constant(0))();
+  IntColumn get animationSpeed => intEnum<AnimationSpeed>().withDefault(
+    Constant(AnimationSpeed.normal.index),
+  )();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 class MediaSettings extends Table {
   IntColumn get id => integer().withDefault(const Constant(0))();
   RealColumn get masterVolume => real().withDefault(const Constant(100.0))();
@@ -106,6 +117,7 @@ class InputLayoutElements extends Table {
     InputLayoutElements,
     ThemeSettings,
     AccessibilitySettings,
+    AdvancedSettings,
     MediaSettings,
     VirtualAccessPoints,
   ],
@@ -120,7 +132,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -141,6 +153,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 7) {
         await m.createTable(accessibilitySettings);
+      }
+      if (from < 8) {
+        await m.createTable(advancedSettings);
       }
     },
   );
