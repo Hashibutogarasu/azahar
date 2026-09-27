@@ -12,6 +12,7 @@ import '../../data/settings/share_log_provider.dart';
 import '../../data/settings/user_directories_provider.dart';
 import '../../i18n/translations.g.dart';
 import '../../routing/app_routes.dart';
+import '../../widgets/app_toggle_switch.dart';
 import '../../widgets/confirmation_dialog.dart';
 import '../settings/settings_routes.dart';
 import '../setup/dialogs/citra_directory_dialog.dart';
@@ -258,7 +259,7 @@ class _LegacyOptionSwitchCard extends StatelessWidget {
                 ],
               ),
             ),
-            Switch(value: value, onChanged: onChanged),
+            AppToggleSwitch(value: value, onChanged: onChanged),
           ],
         ),
       ),

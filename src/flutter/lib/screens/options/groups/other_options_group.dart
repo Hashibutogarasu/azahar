@@ -9,6 +9,7 @@ import '../../../i18n/translations.g.dart';
 import '../../../routing/app_routes.dart';
 import '../../../widgets/confirmation_dialog.dart';
 import '../../settings/widgets/settings_group_card.dart';
+import '../../settings/widgets/toggle_settings_item.dart';
 
 class OtherOptionsGroup extends ConsumerWidget {
   const OtherOptionsGroup({super.key});
@@ -20,14 +21,12 @@ class OtherOptionsGroup extends ConsumerWidget {
     return SettingsGroupCard(
       settingsGroupTitle: t.options.groups.other,
       items: [
-        babstrap.SettingsItem(
-          icons: Icons.history_toggle_off,
+        ToggleSettingsItem(
+          icon: Icons.history_toggle_off,
           title: t.options.useLegacySettingsUI,
           subtitle: t.options.useLegacySettingsUIDescription,
-          trailing: Switch(
-            value: settings.useLegacySettingsUI,
-            onChanged: (value) => _confirmLegacyToggle(context, ref, t, value),
-          ),
+          value: settings.useLegacySettingsUI,
+          onChanged: (value) => _confirmLegacyToggle(context, ref, t, value),
         ),
         babstrap.SettingsItem(
           icons: Icons.code,

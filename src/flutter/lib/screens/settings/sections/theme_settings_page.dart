@@ -1,12 +1,13 @@
-import 'package:babstrap_settings_screen/babstrap_settings_screen.dart' as babstrap;
+import 'package:babstrap_settings_screen/babstrap_settings_screen.dart'
+    as babstrap;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../i18n/translations.g.dart';
 import '../../../theme/theme_settings_provider.dart';
 import '../../../theme/theme_style.dart';
-import '../../../widgets/app_toggle_switch.dart';
 import '../widgets/settings_group_card.dart';
+import '../widgets/toggle_settings_item.dart';
 
 class ThemeSettingsPage extends ConsumerWidget {
   const ThemeSettingsPage({super.key});
@@ -61,13 +62,16 @@ class ThemeSettingsPage extends ConsumerWidget {
                         children: [
                           RadioGroup<ThemeStyle>(
                             groupValue: settings.themeStyle,
-                            onChanged: (value) => Navigator.of(context).pop(value),
+                            onChanged: (value) =>
+                                Navigator.of(context).pop(value),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 for (final style in ThemeStyle.values)
                                   RadioListTile<ThemeStyle>(
-                                    title: Text(themeStyleLabels[style] ?? style.name),
+                                    title: Text(
+                                      themeStyleLabels[style] ?? style.name,
+                                    ),
                                     value: style,
                                   ),
                               ],
@@ -80,14 +84,12 @@ class ThemeSettingsPage extends ConsumerWidget {
                   if (result != null) await notifier.setThemeStyle(result);
                 },
               ),
-              babstrap.SettingsItem(
-                icons: Icons.auto_awesome,
+              ToggleSettingsItem(
+                icon: Icons.auto_awesome,
                 title: theme.materialYou,
                 subtitle: theme.materialYouDescription,
-                trailing: AppToggleSwitch(
-                  value: settings.materialYou,
-                  onChanged: notifier.setMaterialYou,
-                ),
+                value: settings.materialYou,
+                onChanged: notifier.setMaterialYou,
               ),
               babstrap.SettingsItem(
                 icons: Icons.palette_outlined,
@@ -102,7 +104,8 @@ class ThemeSettingsPage extends ConsumerWidget {
                         children: [
                           RadioGroup<int>(
                             groupValue: settings.staticThemeColor,
-                            onChanged: (value) => Navigator.of(context).pop(value),
+                            onChanged: (value) =>
+                                Navigator.of(context).pop(value),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -118,13 +121,17 @@ class ThemeSettingsPage extends ConsumerWidget {
                       );
                     },
                   );
-                  if (result != null) await notifier.setStaticThemeColor(result);
+                  if (result != null) {
+                    await notifier.setStaticThemeColor(result);
+                  }
                 },
               ),
               babstrap.SettingsItem(
                 icons: Icons.brightness_6_outlined,
                 title: theme.themeMode,
-                trailing: Text(themeModeLabels[settings.themeMode] ?? settings.themeMode),
+                trailing: Text(
+                  themeModeLabels[settings.themeMode] ?? settings.themeMode,
+                ),
                 onTap: () async {
                   final result = await showDialog<String>(
                     context: context,
@@ -134,7 +141,8 @@ class ThemeSettingsPage extends ConsumerWidget {
                         children: [
                           RadioGroup<String>(
                             groupValue: settings.themeMode,
-                            onChanged: (value) => Navigator.of(context).pop(value),
+                            onChanged: (value) =>
+                                Navigator.of(context).pop(value),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -153,14 +161,12 @@ class ThemeSettingsPage extends ConsumerWidget {
                   if (result != null) await notifier.setThemeMode(result);
                 },
               ),
-              babstrap.SettingsItem(
-                icons: Icons.contrast,
+              ToggleSettingsItem(
+                icon: Icons.contrast,
                 title: theme.useBlackBackgrounds,
                 subtitle: theme.useBlackBackgroundsDescription,
-                trailing: AppToggleSwitch(
-                  value: settings.blackBackgrounds,
-                  onChanged: notifier.setBlackBackgrounds,
-                ),
+                value: settings.blackBackgrounds,
+                onChanged: notifier.setBlackBackgrounds,
               ),
             ],
           ),
