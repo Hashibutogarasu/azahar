@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,7 +29,7 @@ void reportAppException(AppException error) {
     ..showSnackBar(SnackBar(content: Text(error.message)));
 }
 
-void main() {
+void main(List<String> args) {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +42,18 @@ void main() {
         );
         runApp(ProviderScope(child: EmulationStandaloneApp(gamePath: gamePath)));
         return;
+      }
+
+      if (Platform.isLinux) {
+        final windowController = await WindowController.fromCurrentEngine();
+        if (windowController.arguments.isNotEmpty) {
+          runApp(
+            ProviderScope(
+              child: EmulationStandaloneApp(gamePath: windowController.arguments),
+            ),
+          );
+          return;
+        }
       }
 
       AppletChannel(_navigatorKey);

@@ -19,6 +19,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "desktop_multi_window/desktop_multi_window_plugin.h"
 #include "flutter/generated_plugin_registrant.h"
 #include "native_bridge/cia_install.h"
 #include "native_bridge/emulator_config.h"
@@ -311,6 +312,11 @@ FlMethodResponse* HandleShowNotification(GtkWindow* window, FlValue* args) {
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
 }
 
+FlMethodResponse* HandleTerminateProcess(GtkWindow* window, FlValue* args) {
+  gtk_window_close(GTK_WINDOW(window));
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
 FlMethodResponse* HandleIsFullConsoleLinked(GtkWindow* window, FlValue* args) {
   g_autoptr(FlValue) result = fl_value_new_bool(SystemFiles::IsFullConsoleLinked());
   return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
@@ -545,6 +551,7 @@ const std::unordered_map<std::string, BridgeMethodHandler>& BridgeMethodHandlers
       {"getCountryCompatibility", HandleGetCountryCompatibility},
       {"installCiaFiles", HandleInstallCiaFiles},
       {"showNotification", HandleShowNotification},
+      {"terminateProcess", HandleTerminateProcess},
       {"isFullConsoleLinked", HandleIsFullConsoleLinked},
       {"unlinkConsole", HandleUnlinkConsole},
       {"areSystemTitlesInstalled", HandleAreSystemTitlesInstalled},
@@ -703,6 +710,22 @@ static void my_application_activate(GApplication* application) {
       messenger, kBridgeChannel, FL_METHOD_CODEC(codec));
   fl_method_channel_set_method_call_handler(
       bridge_channel, HandleBridgeMethodCall, window, nullptr);
+
+  desktop_multi_window_plugin_set_window_created_callback(
+      [](FlPluginRegistry* registry) {
+        fl_register_plugins(registry);
+
+        FlView* new_view = FL_VIEW(registry);
+        GtkWindow* new_window =
+            GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(new_view)));
+        FlBinaryMessenger* new_messenger =
+            fl_engine_get_binary_messenger(fl_view_get_engine(new_view));
+        g_autoptr(FlStandardMethodCodec) new_codec = fl_standard_method_codec_new();
+        FlMethodChannel* new_bridge_channel = fl_method_channel_new(
+            new_messenger, kBridgeChannel, FL_METHOD_CODEC(new_codec));
+        fl_method_channel_set_method_call_handler(
+            new_bridge_channel, HandleBridgeMethodCall, new_window, nullptr);
+      });
 
   gtk_widget_grab_focus(GTK_WIDGET(view));
 }

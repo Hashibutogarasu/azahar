@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app_services.dart';
 import '../../data/repositories/game_repository.dart';
 import '../../i18n/translations.g.dart';
 import '../../models/game.dart';
+import '../../theme/extensions/game_card_theme.dart';
 import '../../widgets/app_search_bar.dart';
+import 'game_process_provider.dart';
 import 'widgets/about_game_bottom_sheet.dart';
 import 'widgets/game_card.dart';
 
-class GamesListPage extends StatefulWidget {
+class GamesListPage extends ConsumerStatefulWidget {
   const GamesListPage({super.key});
 
   @override
-  State<GamesListPage> createState() => _GamesListPageState();
+  ConsumerState<GamesListPage> createState() => _GamesListPageState();
 }
 
-class _GamesListPageState extends State<GamesListPage>
+class _GamesListPageState extends ConsumerState<GamesListPage>
     with WidgetsBindingObserver {
   final GameRepository _gameRepository = AppServices.gameRepository;
   final _queryController = TextEditingController();
   List<Game> _games = const [];
   String _query = '';
+  bool _wasRunning = false;
 
   @override
   void initState() {
@@ -64,11 +68,6 @@ class _GamesListPageState extends State<GamesListPage>
         .toList();
   }
 
-  Future<void> _launchGame(Game game) async {
-    await _gameRepository.markLastPlayed(game.path);
-    await AppServices.nativeBridge.launchEmulationActivity(game.path);
-  }
-
   void _onGameLongPress(Game game) {
     final t = context.t;
     if (game.titleId == 0) {
@@ -90,7 +89,7 @@ class _GamesListPageState extends State<GamesListPage>
     AboutGameBottomSheet.show(
       context,
       game: game,
-      onPlay: () => _launchGame(game),
+      onPlay: () => ref.read(gameProcessProvider.notifier).launch(game),
       onUninstalled: _rescan,
     );
   }
@@ -99,6 +98,13 @@ class _GamesListPageState extends State<GamesListPage>
   Widget build(BuildContext context) {
     final t = context.t;
     final games = _filteredGames;
+    final cardTheme = Theme.of(context).extension<GameCardTheme>()!;
+    final isRunning = ref.watch(gameProcessProvider);
+    if (_wasRunning && !isRunning) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _rescan());
+    }
+    _wasRunning = isRunning;
+
     return SafeArea(
       child: Column(
         children: [
@@ -112,42 +118,43 @@ class _GamesListPageState extends State<GamesListPage>
             },
           ),
           Expanded(
-            child: RefreshIndicator(
-              onRefresh: _rescan,
-              child: games.isEmpty
-                  ? ListView(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: Text(
-                            t.games.emptyGamelist,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    )
-                  : LayoutBuilder(
-                      builder: (context, constraints) {
-                        final columns = constraints.maxWidth >= 600 ? 2 : 1;
-                        return GridView.builder(
-                          padding: const EdgeInsets.all(8),
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: columns,
-                                mainAxisExtent: 107,
+            child: IgnorePointer(
+              ignoring: isRunning,
+              child: AnimatedOpacity(
+                opacity: isRunning ? 0.5 : 1,
+                duration: const Duration(milliseconds: 200),
+                child: RefreshIndicator(
+                  onRefresh: _rescan,
+                  child: games.isEmpty
+                      ? ListView(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Text(
+                                t.games.emptyGamelist,
+                                textAlign: TextAlign.center,
                               ),
+                            ),
+                          ],
+                        )
+                      : GridView.builder(
+                          padding: const EdgeInsets.all(8),
+                          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: GameCard.maxWidth(cardTheme),
+                            mainAxisExtent: GameCard.height(cardTheme),
+                          ),
                           itemCount: games.length,
                           itemBuilder: (context, index) {
                             final game = games[index];
                             return GameCard(
                               game: game,
-                              onTap: () => _launchGame(game),
+                              onTap: () => ref.read(gameProcessProvider.notifier).launch(game),
                               onLongPress: () => _onGameLongPress(game),
                             );
                           },
-                        );
-                      },
-                    ),
+                        ),
+                ),
+              ),
             ),
           ),
         ],
