@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 
 /// A soft, blurred gradient circle drawn behind screen content.
 class BackgroundBlob {
-  const BackgroundBlob({required this.color, required this.alignment, required this.size});
+  const BackgroundBlob({
+    required this.color,
+    required this.alignment,
+    required this.size,
+  });
 
   final Color color;
   final Alignment alignment;
@@ -15,7 +19,10 @@ enum BackgroundBlobVariant { games, options }
 /// Tokens for the decorative blurred background blobs behind a screen. [glass] draws the Azahar
 /// blobs; [flat] draws none, so a single [BackgroundBlobs] widget works for both styles.
 class BackgroundBlobTheme extends ThemeExtension<BackgroundBlobTheme> {
-  const BackgroundBlobTheme({required this.blurSigma, required this.blobsByVariant});
+  const BackgroundBlobTheme({
+    required this.blurSigma,
+    required this.blobsByVariant,
+  });
 
   final double blurSigma;
   final Map<BackgroundBlobVariant, List<BackgroundBlob>> blobsByVariant;
@@ -78,7 +85,10 @@ class BackgroundBlobTheme extends ThemeExtension<BackgroundBlobTheme> {
   }
 
   @override
-  BackgroundBlobTheme lerp(ThemeExtension<BackgroundBlobTheme>? other, double t) {
+  BackgroundBlobTheme lerp(
+    ThemeExtension<BackgroundBlobTheme>? other,
+    double t,
+  ) {
     if (other is! BackgroundBlobTheme) return this;
     return t < 0.5 ? this : other;
   }

@@ -11,7 +11,12 @@ import 'game_regions_translator.dart';
 /// [GlassSurfaceTheme] and [GameCardTheme], so this single widget renders both the Azahar and
 /// Legacy looks.
 class GameCard extends StatelessWidget {
-  const GameCard({super.key, required this.game, required this.onTap, this.onLongPress});
+  const GameCard({
+    super.key,
+    required this.game,
+    required this.onTap,
+    this.onLongPress,
+  });
 
   final Game game;
   final VoidCallback onTap;
@@ -43,7 +48,9 @@ class GameCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(_outerPadding),
       child: Material(
-        color: _isValidExtension ? surfaceTheme.fillColor : cardTheme.invalidExtensionColor,
+        color: _isValidExtension
+            ? surfaceTheme.fillColor
+            : cardTheme.invalidExtensionColor,
         borderRadius: surfaceTheme.borderRadius,
         child: InkWell(
           onTap: onTap,

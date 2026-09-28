@@ -16,16 +16,24 @@ class EmulationScreensLayout {
 
   /// Builds the layout that fits the pair of screens into [available].
   factory EmulationScreensLayout.fit(Size available) {
-    final direction = available.width > available.height ? Axis.horizontal : Axis.vertical;
+    final direction = available.width > available.height
+        ? Axis.horizontal
+        : Axis.vertical;
     final bottomAspect = _bottomScreenWidth / _bottomScreenHeight;
 
     final double zoom;
     if (direction == Axis.horizontal) {
       final combinedWidth = _topScreenWidth + _topScreenHeight * bottomAspect;
-      zoom = min(available.width / combinedWidth, available.height / _topScreenHeight);
+      zoom = min(
+        available.width / combinedWidth,
+        available.height / _topScreenHeight,
+      );
     } else {
       final combinedHeight = _topScreenHeight + _topScreenWidth / bottomAspect;
-      zoom = min(available.width / _topScreenWidth, available.height / combinedHeight);
+      zoom = min(
+        available.width / _topScreenWidth,
+        available.height / combinedHeight,
+      );
     }
 
     final topScreen = Size(zoom * _topScreenWidth, zoom * _topScreenHeight);

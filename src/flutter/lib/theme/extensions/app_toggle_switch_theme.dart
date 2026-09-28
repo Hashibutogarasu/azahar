@@ -67,12 +67,19 @@ class AppToggleSwitchTheme extends ThemeExtension<AppToggleSwitchTheme> {
   }
 
   @override
-  AppToggleSwitchTheme lerp(ThemeExtension<AppToggleSwitchTheme>? other, double t) {
+  AppToggleSwitchTheme lerp(
+    ThemeExtension<AppToggleSwitchTheme>? other,
+    double t,
+  ) {
     if (other is! AppToggleSwitchTheme) return this;
     return AppToggleSwitchTheme(
       trackColorOn: Color.lerp(trackColorOn, other.trackColorOn, t)!,
       trackColorOff: Color.lerp(trackColorOff, other.trackColorOff, t)!,
-      trackBorderColorOff: Color.lerp(trackBorderColorOff, other.trackBorderColorOff, t)!,
+      trackBorderColorOff: Color.lerp(
+        trackBorderColorOff,
+        other.trackBorderColorOff,
+        t,
+      )!,
       thumbColorOn: Color.lerp(thumbColorOn, other.thumbColorOn, t)!,
       thumbColorOff: Color.lerp(thumbColorOff, other.thumbColorOff, t)!,
       trackSize: Size.lerp(trackSize, other.trackSize, t)!,

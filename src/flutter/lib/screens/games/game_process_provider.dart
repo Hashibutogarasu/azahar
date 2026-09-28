@@ -8,7 +8,9 @@ import '../../app_services.dart';
 import '../../models/game.dart';
 
 final gameProcessProvider =
-    NotifierProvider.autoDispose<GameProcessNotifier, bool>(GameProcessNotifier.new);
+    NotifierProvider.autoDispose<GameProcessNotifier, bool>(
+      GameProcessNotifier.new,
+    );
 
 /// Tracks whether a game is currently running, launching it as a separate
 /// window (via `desktop_multi_window`) on Linux, or as Android's separate
@@ -20,7 +22,9 @@ class GameProcessNotifier extends Notifier<bool> {
   @override
   bool build() {
     if (Platform.isLinux) {
-      _windowsChangedSubscription = onWindowsChanged.listen((_) => _checkWindow());
+      _windowsChangedSubscription = onWindowsChanged.listen(
+        (_) => _checkWindow(),
+      );
       ref.onDispose(() => _windowsChangedSubscription?.cancel());
     }
     return false;

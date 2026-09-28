@@ -139,16 +139,21 @@ class _GamesListPageState extends ConsumerState<GamesListPage>
                         )
                       : GridView.builder(
                           padding: const EdgeInsets.all(8),
-                          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: GameCard.maxWidth(cardTheme),
-                            mainAxisExtent: GameCard.height(cardTheme),
-                          ),
+                          gridDelegate:
+                              SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: GameCard.maxWidth(
+                                  cardTheme,
+                                ),
+                                mainAxisExtent: GameCard.height(cardTheme),
+                              ),
                           itemCount: games.length,
                           itemBuilder: (context, index) {
                             final game = games[index];
                             return GameCard(
                               game: game,
-                              onTap: () => ref.read(gameProcessProvider.notifier).launch(game),
+                              onTap: () => ref
+                                  .read(gameProcessProvider.notifier)
+                                  .launch(game),
                               onLongPress: () => _onGameLongPress(game),
                             );
                           },

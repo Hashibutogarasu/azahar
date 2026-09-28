@@ -6,7 +6,11 @@ import 'games_directory_repository.dart';
 import 'installed_titles_repository.dart';
 
 class GameRepository {
-  GameRepository(this._db, this._gamesDirectoryRepository, this._installedTitlesRepository);
+  GameRepository(
+    this._db,
+    this._gamesDirectoryRepository,
+    this._installedTitlesRepository,
+  );
 
   final AppDatabase _db;
   final GamesDirectoryRepository _gamesDirectoryRepository;

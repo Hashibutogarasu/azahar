@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../theme/theme_style.dart';
 import 'settings/animation_speed.dart';
+import 'user_directory_bootstrap.dart';
 
 part 'database.g.dart';
 part 'tables/games.dart';
@@ -36,6 +37,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase._(super.e);
 
   static AppDatabase? _instance;
+  static bool isUsingTemporaryStorage = false;
 
   factory AppDatabase() {
     return _instance ??= AppDatabase._(_openConnection());
@@ -72,9 +74,37 @@ class AppDatabase extends _$AppDatabase {
 
   static QueryExecutor _openConnection() {
     return LazyDatabase(() async {
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File(p.join(directory.path, 'azahar.sqlite'));
-      return NativeDatabase.createInBackground(file);
+      if (!Platform.isLinux) {
+        final directory = await getApplicationDocumentsDirectory();
+        final file = File(
+          p.join(directory.path, UserDirectoryBootstrap.databaseFileName),
+        );
+        return NativeDatabase.createInBackground(file);
+      }
+
+      final configuredDirectory =
+          await UserDirectoryBootstrap.readConfiguredDirectory();
+      if (configuredDirectory == null) {
+        isUsingTemporaryStorage = true;
+        return NativeDatabase.createInBackground(
+          await UserDirectoryBootstrap.pendingDatabaseFile(),
+        );
+      }
+
+      await Directory(configuredDirectory).create(recursive: true);
+      final targetFile = File(
+        p.join(configuredDirectory, UserDirectoryBootstrap.databaseFileName),
+      );
+      if (!await targetFile.exists()) {
+        final pendingFile = await UserDirectoryBootstrap.pendingDatabaseFile();
+        if (await pendingFile.exists()) {
+          await UserDirectoryBootstrap.moveDatabaseFiles(
+            pendingFile,
+            targetFile,
+          );
+        }
+      }
+      return NativeDatabase.createInBackground(targetFile);
     });
   }
 }

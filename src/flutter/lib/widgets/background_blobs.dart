@@ -19,7 +19,10 @@ class BackgroundBlobs extends StatelessWidget {
     return IgnorePointer(
       child: ClipRect(
         child: ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: theme.blurSigma, sigmaY: theme.blurSigma),
+          imageFilter: ImageFilter.blur(
+            sigmaX: theme.blurSigma,
+            sigmaY: theme.blurSigma,
+          ),
           child: Stack(
             children: [
               for (final blob in blobs)
@@ -28,7 +31,10 @@ class BackgroundBlobs extends StatelessWidget {
                   child: Container(
                     width: blob.size,
                     height: blob.size,
-                    decoration: BoxDecoration(shape: BoxShape.circle, color: blob.color),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: blob.color,
+                    ),
                   ),
                 ),
             ],

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 
 import '../../data/repositories/first_launch_repository.dart';
@@ -5,6 +7,7 @@ import '../../data/repositories/game_repository.dart';
 import '../../data/repositories/games_directory_repository.dart';
 import '../../data/repositories/permission_repository.dart';
 import '../../data/settings/user_directories_provider.dart';
+import '../../data/user_directory_bootstrap.dart';
 import '../../models/copy_dir_progress.dart';
 import '../../native/native_bridge.dart';
 
@@ -42,7 +45,7 @@ class SetupWizardViewModel extends ChangeNotifier {
     cameraCompleted = await _permissionRepository.isGranted(
       AppPermission.camera,
     );
-    userDirectoryCompleted = await _nativeBridge.hasUserDirectoryWriteAccess();
+    userDirectoryCompleted = await _isUserDirectoryConfigured();
     final gamesUri = await _gamesDirectoryRepository.gamesDirectoryUri();
     gamesDirectoryCompleted = gamesUri != null && gamesUri.isNotEmpty;
     isLoaded = true;
@@ -66,18 +69,18 @@ class SetupWizardViewModel extends ChangeNotifier {
   }
 
   Future<bool> requestCameraPermission() async {
-    cameraCompleted = await _permissionRepository.request(
-      AppPermission.camera,
-    );
+    cameraCompleted = await _permissionRepository.request(AppPermission.camera);
     notifyListeners();
     return cameraCompleted;
   }
 
-  Future<String?> previousUserDirectory() => _userDirectories.previousUserDirectory();
+  Future<String?> previousUserDirectory() =>
+      _userDirectories.previousUserDirectory();
 
   Future<String?> pickUserDirectory() => _userDirectories.pickUserDirectory();
 
-  Stream<CopyDirProgress> copyDirProgress() => _userDirectories.copyDirProgress();
+  Stream<CopyDirProgress> copyDirProgress() =>
+      _userDirectories.copyDirProgress();
 
   Future<bool> confirmUserDirectory({
     required String uri,
@@ -89,9 +92,16 @@ class SetupWizardViewModel extends ChangeNotifier {
       previousUri: previousUri,
       moveData: moveData,
     );
-    userDirectoryCompleted = await _nativeBridge.hasUserDirectoryWriteAccess();
+    userDirectoryCompleted = await _isUserDirectoryConfigured();
     notifyListeners();
     return userDirectoryCompleted;
+  }
+
+  Future<bool> _isUserDirectoryConfigured() async {
+    if (Platform.isLinux) {
+      return (await UserDirectoryBootstrap.readConfiguredDirectory()) != null;
+    }
+    return _nativeBridge.hasUserDirectoryWriteAccess();
   }
 
   Future<String?> pickGamesDirectory() => _userDirectories.pickGamesDirectory();

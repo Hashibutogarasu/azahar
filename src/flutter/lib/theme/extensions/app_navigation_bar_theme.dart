@@ -48,14 +48,27 @@ class AppNavigationBarTheme extends ThemeExtension<AppNavigationBarTheme> {
       blurSigma: 24,
       borderColor: colorScheme.onSurface.withValues(alpha: 0.12),
       radius: BorderRadius.circular(9999),
-      shadow: [BoxShadow(color: colorScheme.shadow.withValues(alpha: 0.3), blurRadius: 24)],
-      activeIndicatorColor: colorScheme.primaryContainer.withValues(alpha: 0.25),
+      shadow: [
+        BoxShadow(
+          color: colorScheme.shadow.withValues(alpha: 0.3),
+          blurRadius: 24,
+        ),
+      ],
+      activeIndicatorColor: colorScheme.primaryContainer.withValues(
+        alpha: 0.25,
+      ),
       activeIndicatorRadius: BorderRadius.circular(9999),
       activeIndicatorSize: const Size(64, 32),
       activeIconColor: colorScheme.primary,
       inactiveIconColor: colorScheme.onSurfaceVariant,
-      activeLabelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
-      inactiveLabelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+      activeLabelStyle: const TextStyle(
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+      ),
+      inactiveLabelStyle: const TextStyle(
+        fontSize: 11,
+        fontWeight: FontWeight.w500,
+      ),
       barPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       barHeight: 64,
       bottomMargin: 24,
@@ -70,14 +83,25 @@ class AppNavigationBarTheme extends ThemeExtension<AppNavigationBarTheme> {
       blurSigma: 0,
       borderColor: Colors.transparent,
       radius: BorderRadius.zero,
-      shadow: [BoxShadow(color: colorScheme.shadow.withValues(alpha: 0.1), blurRadius: 4)],
+      shadow: [
+        BoxShadow(
+          color: colorScheme.shadow.withValues(alpha: 0.1),
+          blurRadius: 4,
+        ),
+      ],
       activeIndicatorColor: colorScheme.secondaryContainer,
       activeIndicatorRadius: BorderRadius.circular(16),
       activeIndicatorSize: const Size(64, 32),
       activeIconColor: colorScheme.onSecondaryContainer,
       inactiveIconColor: colorScheme.onSurfaceVariant,
-      activeLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-      inactiveLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+      activeLabelStyle: const TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+      ),
+      inactiveLabelStyle: const TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+      ),
       barPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       barHeight: 80,
       bottomMargin: 0,
@@ -113,7 +137,8 @@ class AppNavigationBarTheme extends ThemeExtension<AppNavigationBarTheme> {
       radius: radius ?? this.radius,
       shadow: shadow ?? this.shadow,
       activeIndicatorColor: activeIndicatorColor ?? this.activeIndicatorColor,
-      activeIndicatorRadius: activeIndicatorRadius ?? this.activeIndicatorRadius,
+      activeIndicatorRadius:
+          activeIndicatorRadius ?? this.activeIndicatorRadius,
       activeIndicatorSize: activeIndicatorSize ?? this.activeIndicatorSize,
       activeIconColor: activeIconColor ?? this.activeIconColor,
       inactiveIconColor: inactiveIconColor ?? this.inactiveIconColor,
@@ -128,7 +153,10 @@ class AppNavigationBarTheme extends ThemeExtension<AppNavigationBarTheme> {
   }
 
   @override
-  AppNavigationBarTheme lerp(ThemeExtension<AppNavigationBarTheme>? other, double t) {
+  AppNavigationBarTheme lerp(
+    ThemeExtension<AppNavigationBarTheme>? other,
+    double t,
+  ) {
     if (other is! AppNavigationBarTheme) return this;
     return AppNavigationBarTheme(
       backgroundColor: Color.lerp(backgroundColor, other.backgroundColor, t)!,
@@ -136,19 +164,45 @@ class AppNavigationBarTheme extends ThemeExtension<AppNavigationBarTheme> {
       borderColor: Color.lerp(borderColor, other.borderColor, t)!,
       radius: BorderRadius.lerp(radius, other.radius, t)!,
       shadow: BoxShadow.lerpList(shadow, other.shadow, t) ?? shadow,
-      activeIndicatorColor: Color.lerp(activeIndicatorColor, other.activeIndicatorColor, t)!,
-      activeIndicatorRadius:
-          BorderRadius.lerp(activeIndicatorRadius, other.activeIndicatorRadius, t)!,
-      activeIndicatorSize: Size.lerp(activeIndicatorSize, other.activeIndicatorSize, t)!,
+      activeIndicatorColor: Color.lerp(
+        activeIndicatorColor,
+        other.activeIndicatorColor,
+        t,
+      )!,
+      activeIndicatorRadius: BorderRadius.lerp(
+        activeIndicatorRadius,
+        other.activeIndicatorRadius,
+        t,
+      )!,
+      activeIndicatorSize: Size.lerp(
+        activeIndicatorSize,
+        other.activeIndicatorSize,
+        t,
+      )!,
       activeIconColor: Color.lerp(activeIconColor, other.activeIconColor, t)!,
-      inactiveIconColor: Color.lerp(inactiveIconColor, other.inactiveIconColor, t)!,
-      activeLabelStyle: TextStyle.lerp(activeLabelStyle, other.activeLabelStyle, t)!,
-      inactiveLabelStyle: TextStyle.lerp(inactiveLabelStyle, other.inactiveLabelStyle, t)!,
+      inactiveIconColor: Color.lerp(
+        inactiveIconColor,
+        other.inactiveIconColor,
+        t,
+      )!,
+      activeLabelStyle: TextStyle.lerp(
+        activeLabelStyle,
+        other.activeLabelStyle,
+        t,
+      )!,
+      inactiveLabelStyle: TextStyle.lerp(
+        inactiveLabelStyle,
+        other.inactiveLabelStyle,
+        t,
+      )!,
       barPadding: EdgeInsets.lerp(barPadding, other.barPadding, t)!,
       barHeight: barHeight + (other.barHeight - barHeight) * t,
       bottomMargin: bottomMargin + (other.bottomMargin - bottomMargin) * t,
-      horizontalMargin: horizontalMargin + (other.horizontalMargin - horizontalMargin) * t,
-      stretchToFullWidth: t < 0.5 ? stretchToFullWidth : other.stretchToFullWidth,
+      horizontalMargin:
+          horizontalMargin + (other.horizontalMargin - horizontalMargin) * t,
+      stretchToFullWidth: t < 0.5
+          ? stretchToFullWidth
+          : other.stretchToFullWidth,
     );
   }
 }

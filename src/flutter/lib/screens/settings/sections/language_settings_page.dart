@@ -1,4 +1,5 @@
-import 'package:babstrap_settings_screen/babstrap_settings_screen.dart' as babstrap;
+import 'package:babstrap_settings_screen/babstrap_settings_screen.dart'
+    as babstrap;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,7 +11,8 @@ class LanguageSettingsPage extends ConsumerStatefulWidget {
   const LanguageSettingsPage({super.key});
 
   @override
-  ConsumerState<LanguageSettingsPage> createState() => _LanguageSettingsPageState();
+  ConsumerState<LanguageSettingsPage> createState() =>
+      _LanguageSettingsPageState();
 }
 
 class _LanguageSettingsPageState extends ConsumerState<LanguageSettingsPage> {
@@ -42,7 +44,9 @@ class _LanguageSettingsPageState extends ConsumerState<LanguageSettingsPage> {
                 babstrap.SettingsItem(
                   icons: Icons.language,
                   title: _localeLabel(t, locale),
-                  trailing: selected == locale.languageCode ? const Icon(Icons.check) : null,
+                  trailing: selected == locale.languageCode
+                      ? const Icon(Icons.check)
+                      : null,
                   onTap: () => select(locale.languageCode),
                 ),
             ],

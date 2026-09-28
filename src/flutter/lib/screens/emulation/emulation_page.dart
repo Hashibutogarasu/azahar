@@ -20,7 +20,8 @@ class EmulationPage extends ConsumerStatefulWidget {
   ConsumerState<EmulationPage> createState() => _EmulationPageState();
 }
 
-class _EmulationPageState extends ConsumerState<EmulationPage> with WidgetsBindingObserver {
+class _EmulationPageState extends ConsumerState<EmulationPage>
+    with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _launchRequested = false;
 
@@ -57,7 +58,9 @@ class _EmulationPageState extends ConsumerState<EmulationPage> with WidgetsBindi
     _launchRequested = true;
     final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(emulationSessionProvider.notifier).launch(
+      ref
+          .read(emulationSessionProvider.notifier)
+          .launch(
             gamePath: widget.gamePath,
             layout: layout,
             devicePixelRatio: devicePixelRatio,
@@ -69,7 +72,9 @@ class _EmulationPageState extends ConsumerState<EmulationPage> with WidgetsBindi
     final game = widget.game;
     if (game == null) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(emulationSessionProvider.notifier).activateMediaSessionIfNeeded(game);
+      ref
+          .read(emulationSessionProvider.notifier)
+          .activateMediaSessionIfNeeded(game);
     });
   }
 
@@ -103,12 +108,17 @@ class _EmulationPageState extends ConsumerState<EmulationPage> with WidgetsBindi
     _requestMediaSessionActivation();
     final notifier = ref.read(emulationSessionProvider.notifier);
     final state = ref.watch(emulationSessionProvider);
-    final topScreen = TopScreen(textureId: state.topTextureId, size: layout.topScreen);
+    final topScreen = TopScreen(
+      textureId: state.topTextureId,
+      size: layout.topScreen,
+    );
     final bottomScreen = BottomScreen(
       textureId: state.bottomTextureId,
       size: layout.bottomScreen,
-      onPointerDown: (event) => notifier.touchPressed(event.localPosition, layout.bottomScreen),
-      onPointerMove: (event) => notifier.touchMoved(event.localPosition, layout.bottomScreen),
+      onPointerDown: (event) =>
+          notifier.touchPressed(event.localPosition, layout.bottomScreen),
+      onPointerMove: (event) =>
+          notifier.touchMoved(event.localPosition, layout.bottomScreen),
       onPointerUp: (_) => notifier.touchReleased(),
     );
     return Align(
@@ -140,14 +150,17 @@ class _EmulationPageState extends ConsumerState<EmulationPage> with WidgetsBindi
             ? EmulationDrawer(
                 gameTitle: widget.game?.title ?? '',
                 isPaused: state.isPaused,
-                onTogglePause: () => ref.read(emulationSessionProvider.notifier).togglePause(),
+                onTogglePause: () =>
+                    ref.read(emulationSessionProvider.notifier).togglePause(),
                 onCloseGame: _confirmCloseGame,
               )
             : null,
         body: SafeArea(
           child: Stack(
             children: [
-              LayoutBuilder(builder: (context, constraints) => _screens(constraints)),
+              LayoutBuilder(
+                builder: (context, constraints) => _screens(constraints),
+              ),
               if (!state.emulationStarted)
                 Center(
                   child: EmulationLoadingCard(

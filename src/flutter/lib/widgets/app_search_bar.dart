@@ -31,7 +31,9 @@ class _AppSearchBarState extends State<AppSearchBar> {
   @override
   void initState() {
     super.initState();
-    _focusNode.addListener(() => setState(() => _focused = _focusNode.hasFocus));
+    _focusNode.addListener(
+      () => setState(() => _focused = _focusNode.hasFocus),
+    );
   }
 
   @override
@@ -48,13 +50,18 @@ class _AppSearchBarState extends State<AppSearchBar> {
       child: ClipRRect(
         borderRadius: theme.radius,
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: theme.blurSigma, sigmaY: theme.blurSigma),
+          filter: ImageFilter.blur(
+            sigmaX: theme.blurSigma,
+            sigmaY: theme.blurSigma,
+          ),
           child: Container(
             height: theme.height,
             decoration: BoxDecoration(
               color: theme.fillColor,
               borderRadius: theme.radius,
-              border: Border.all(color: _focused ? theme.focusedBorderColor : theme.borderColor),
+              border: Border.all(
+                color: _focused ? theme.focusedBorderColor : theme.borderColor,
+              ),
             ),
             child: Row(
               children: [
@@ -69,7 +76,9 @@ class _AppSearchBarState extends State<AppSearchBar> {
                     style: theme.textStyle,
                     decoration: InputDecoration(
                       hintText: widget.hintText,
-                      hintStyle: theme.textStyle.copyWith(color: theme.hintColor),
+                      hintStyle: theme.textStyle.copyWith(
+                        color: theme.hintColor,
+                      ),
                       border: InputBorder.none,
                       isDense: true,
                     ),

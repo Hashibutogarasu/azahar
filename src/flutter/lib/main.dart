@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:dynamic_color/dynamic_color.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'app_services.dart';
+import 'data/user_directory_bootstrap.dart';
 import 'emulation_main.dart';
 import 'errors/app_exception.dart';
 import 'i18n/translations.g.dart';
@@ -35,12 +37,15 @@ void main(List<String> args) {
       WidgetsFlutterBinding.ensureInitialized();
       await AppServices.migrateKeyValueRepositories();
 
-      final initialRoute = WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+      final initialRoute =
+          WidgetsBinding.instance.platformDispatcher.defaultRouteName;
       if (initialRoute.startsWith(emulationRoutePrefix)) {
         final gamePath = Uri.decodeComponent(
           initialRoute.substring(emulationRoutePrefix.length),
         );
-        runApp(ProviderScope(child: EmulationStandaloneApp(gamePath: gamePath)));
+        runApp(
+          ProviderScope(child: EmulationStandaloneApp(gamePath: gamePath)),
+        );
         return;
       }
 
@@ -49,11 +54,24 @@ void main(List<String> args) {
         if (windowController.arguments.isNotEmpty) {
           runApp(
             ProviderScope(
-              child: EmulationStandaloneApp(gamePath: windowController.arguments),
+              child: EmulationStandaloneApp(
+                gamePath: windowController.arguments,
+              ),
             ),
           );
           return;
         }
+      }
+
+      if (Platform.isLinux) {
+        late final AppLifecycleListener exitListener;
+        exitListener = AppLifecycleListener(
+          onExitRequested: () async {
+            await UserDirectoryBootstrap.cleanupIfUnconfigured();
+            exitListener.dispose();
+            return AppExitResponse.exit;
+          },
+        );
       }
 
       AppletChannel(_navigatorKey);
@@ -73,7 +91,9 @@ void main(List<String> args) {
       if (error is AppException) {
         reportAppException(error);
       } else {
-        FlutterError.reportError(FlutterErrorDetails(exception: error, stack: stackTrace));
+        FlutterError.reportError(
+          FlutterErrorDetails(exception: error, stack: stackTrace),
+        );
       }
     },
   );
@@ -132,7 +152,8 @@ final GoRouter _router = GoRouter(
   // legacy UI still works end-to-end.
   routes: [...$appRoutes, ...legacy_settings.$appRoutes],
   redirect: (context, state) async {
-    final isFirstLaunch = await AppServices.firstLaunchRepository.isFirstApplicationLaunch();
+    final isFirstLaunch = await AppServices.firstLaunchRepository
+        .isFirstApplicationLaunch();
     final isGoingToSetup = state.matchedLocation == const SetupRoute().location;
     if (isFirstLaunch && !isGoingToSetup) {
       return const SetupRoute().location;

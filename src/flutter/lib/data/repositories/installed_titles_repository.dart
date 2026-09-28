@@ -20,6 +20,9 @@ class InstalledTitlesRepository {
   ];
 
   Future<List<Game>> scan(String? gamesDirectory) {
-    return _nativeBridge.getGames(gamesDirectory, installedTitlePaths: scanPaths);
+    return _nativeBridge.getGames(
+      gamesDirectory,
+      installedTitlePaths: scanPaths,
+    );
   }
 }

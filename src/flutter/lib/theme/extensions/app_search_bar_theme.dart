@@ -85,7 +85,11 @@ class AppSearchBarTheme extends ThemeExtension<AppSearchBarTheme> {
       fillColor: Color.lerp(fillColor, other.fillColor, t)!,
       blurSigma: blurSigma + (other.blurSigma - blurSigma) * t,
       borderColor: Color.lerp(borderColor, other.borderColor, t)!,
-      focusedBorderColor: Color.lerp(focusedBorderColor, other.focusedBorderColor, t)!,
+      focusedBorderColor: Color.lerp(
+        focusedBorderColor,
+        other.focusedBorderColor,
+        t,
+      )!,
       radius: BorderRadius.lerp(radius, other.radius, t)!,
       height: height + (other.height - height) * t,
       iconColor: Color.lerp(iconColor, other.iconColor, t)!,

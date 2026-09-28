@@ -158,7 +158,10 @@ class _SetupWizardPageState extends State<SetupWizardPage> {
     );
   }
 
-  Future<void> _onActionPressed(SetupAction action, BuildContext context) async {
+  Future<void> _onActionPressed(
+    SetupAction action,
+    BuildContext context,
+  ) async {
     await action.performAction(context);
   }
 
@@ -221,7 +224,10 @@ class _SetupWizardPageState extends State<SetupWizardPage> {
 
     if (!context.mounted) return false;
     unawaited(
-      CopyDirProgressDialog.show(context, progressStream: _viewModel.copyDirProgress()),
+      CopyDirProgressDialog.show(
+        context,
+        progressStream: _viewModel.copyDirProgress(),
+      ),
     );
     final completed = await confirmFuture;
     if (context.mounted) {

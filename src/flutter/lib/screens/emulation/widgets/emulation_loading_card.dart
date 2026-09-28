@@ -8,7 +8,11 @@ import '../../games/widgets/game_icon.dart';
 /// Loading card shown over the emulation screens until the game has started, mirroring the
 /// original Android `loading_indicator` in `fragment_emulation.xml`.
 class EmulationLoadingCard extends StatelessWidget {
-  const EmulationLoadingCard({super.key, required this.game, required this.progress});
+  const EmulationLoadingCard({
+    super.key,
+    required this.game,
+    required this.progress,
+  });
 
   final Game? game;
   final ShaderCacheProgress? progress;
@@ -64,7 +68,10 @@ class EmulationLoadingCard extends StatelessWidget {
                   if (isCounting) ...[
                     const SizedBox(height: 4),
                     Text(
-                      t.emulation.shaderProgress(progress: current.progress, max: current.max),
+                      t.emulation.shaderProgress(
+                        progress: current.progress,
+                        max: current.max,
+                      ),
                       style: textTheme.labelSmall,
                     ),
                   ],
