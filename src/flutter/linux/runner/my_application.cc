@@ -739,6 +739,26 @@ void EnsureDesktopEntryInstalled() {
   std::ofstream(desktop_path, std::ios::trunc) << entry;
 }
 
+FlMethodErrorResponse* HandleShaderProgressListen(FlEventChannel* channel, FlValue* args,
+                                                  gpointer user_data) {
+  Emulation::SetShaderProgressChannel(channel);
+  return nullptr;
+}
+
+FlMethodErrorResponse* HandleShaderProgressCancel(FlEventChannel* channel, FlValue* args,
+                                                  gpointer user_data) {
+  Emulation::SetShaderProgressChannel(nullptr);
+  return nullptr;
+}
+
+void RegisterShaderProgressChannel(FlBinaryMessenger* messenger) {
+  g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
+  FlEventChannel* channel = fl_event_channel_new(
+      messenger, "org.citra.citra_emu/azahar_bridge/shader_progress", FL_METHOD_CODEC(codec));
+  fl_event_channel_set_stream_handlers(channel, HandleShaderProgressListen,
+                                       HandleShaderProgressCancel, nullptr, nullptr);
+}
+
 }  // namespace
 
 // Called when first Flutter frame received.
@@ -810,6 +830,7 @@ static void my_application_activate(GApplication* application) {
       messenger, kBridgeChannel, FL_METHOD_CODEC(codec));
   fl_method_channel_set_method_call_handler(
       bridge_channel, HandleBridgeMethodCall, window, nullptr);
+  RegisterShaderProgressChannel(messenger);
 
   desktop_multi_window_plugin_set_window_created_callback(
       [](FlPluginRegistry* registry) {
@@ -825,6 +846,7 @@ static void my_application_activate(GApplication* application) {
             new_messenger, kBridgeChannel, FL_METHOD_CODEC(new_codec));
         fl_method_channel_set_method_call_handler(
             new_bridge_channel, HandleBridgeMethodCall, new_window, nullptr);
+        RegisterShaderProgressChannel(new_messenger);
       });
 
   gtk_widget_grab_focus(GTK_WIDGET(view));

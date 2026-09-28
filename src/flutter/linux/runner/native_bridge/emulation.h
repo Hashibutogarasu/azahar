@@ -9,6 +9,7 @@
 namespace Emulation {
 
 int64_t CreateTexture(FlTextureRegistrar* registrar, int width, int height, bool secondary);
+void SetShaderProgressChannel(FlEventChannel* channel);
 void StartEmulation(const std::string& path);
 void PauseEmulation();
 void ResumeEmulation();

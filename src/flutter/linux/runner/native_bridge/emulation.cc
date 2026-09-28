@@ -25,6 +25,7 @@
 #include "network/network.h"
 #include "user_directory.h"
 #include "video_core/gpu.h"
+#include "video_core/rasterizer_interface.h"
 #include "video_core/renderer_base.h"
 
 namespace Emulation {
@@ -294,6 +295,7 @@ std::unique_ptr<EmuWindow_Flutter> g_secondary_window;
 AzaharTexture* g_primary_texture{};
 AzaharTexture* g_secondary_texture{};
 FlTextureRegistrar* g_texture_registrar{};
+FlEventChannel* g_shader_progress_channel{};
 
 std::atomic<bool> g_stop_run{true};
 std::atomic<bool> g_pause_emulation{false};
@@ -309,6 +311,47 @@ std::thread g_present_thread;
 
 EmuWindow_Flutter* GetTouchscreenWindow() {
     return g_secondary_window ? g_secondary_window.get() : g_window.get();
+}
+
+const char* ShaderProgressStageName(VideoCore::LoadCallbackStage stage) {
+    switch (stage) {
+    case VideoCore::LoadCallbackStage::Prepare:
+        return "prepare";
+    case VideoCore::LoadCallbackStage::Decompile:
+        return "decompile";
+    case VideoCore::LoadCallbackStage::Build:
+        return "build";
+    case VideoCore::LoadCallbackStage::Complete:
+        return "complete";
+    default:
+        return nullptr;
+    }
+}
+
+struct ShaderProgressEvent {
+    VideoCore::LoadCallbackStage stage;
+    std::size_t progress;
+    std::size_t max;
+};
+
+gboolean SendShaderProgressEvent(gpointer user_data) {
+    std::unique_ptr<ShaderProgressEvent> event(static_cast<ShaderProgressEvent*>(user_data));
+    const char* stage_name = ShaderProgressStageName(event->stage);
+    if (!g_shader_progress_channel || !stage_name) {
+        return G_SOURCE_REMOVE;
+    }
+    g_autoptr(FlValue) map = fl_value_new_map();
+    fl_value_set_string_take(map, "stage", fl_value_new_string(stage_name));
+    fl_value_set_string_take(map, "progress",
+                             fl_value_new_int(static_cast<int64_t>(event->progress)));
+    fl_value_set_string_take(map, "max", fl_value_new_int(static_cast<int64_t>(event->max)));
+    fl_event_channel_send(g_shader_progress_channel, map, nullptr, nullptr);
+    return G_SOURCE_REMOVE;
+}
+
+void ReportShaderProgress(VideoCore::LoadCallbackStage stage, std::size_t progress,
+                          std::size_t max) {
+    g_idle_add(SendShaderProgressEvent, new ShaderProgressEvent{stage, progress, max});
 }
 
 void EnsureLoggingInitialized() {
@@ -412,6 +455,8 @@ void RunEmulation(std::string path) {
     g_pause_emulation = false;
     g_present_frames = true;
 
+    system.GPU().Renderer().Rasterizer()->LoadDiskResources(g_stop_run, &ReportShaderProgress);
+
     SCOPE_EXIT({ ShutdownWindows(); });
 
     while (!g_stop_run) {
@@ -456,6 +501,10 @@ void PresentLoop() {
 }
 
 }  // namespace
+
+void SetShaderProgressChannel(FlEventChannel* channel) {
+    g_shader_progress_channel = channel;
+}
 
 int64_t CreateTexture(FlTextureRegistrar* registrar, int width, int height, bool secondary) {
     AzaharTexture* texture = AZAHAR_TEXTURE(g_object_new(AZAHAR_TYPE_TEXTURE, nullptr));
