@@ -14,6 +14,7 @@ add_executable(${BINARY_NAME}
   "native_bridge/system_save_game.cc"
   "native_bridge/emulator_config.cc"
   "native_bridge/cia_install.cc"
+  "native_bridge/emulation.cc"
   "native_bridge/system_files.cc"
   "native_bridge/game_actions.cc"
   "native_bridge/wifi.cc"
@@ -73,6 +74,7 @@ target_include_directories(${BINARY_NAME} PRIVATE
   "${AZAHAR_BUILD}/src"
   "${AZAHAR_ROOT}/externals/boost"
   "${AZAHAR_ROOT}/externals/lodepng/lodepng"
+  "${AZAHAR_ROOT}/externals/microprofile"
 )
 
 file(GLOB AZAHAR_EXTERNAL_INCLUDE_DIRS
@@ -97,6 +99,9 @@ target_link_libraries(${BINARY_NAME} PRIVATE Threads::Threads)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(DBUS REQUIRED IMPORTED_TARGET dbus-1)
 target_link_libraries(${BINARY_NAME} PRIVATE PkgConfig::DBUS)
+
+pkg_check_modules(EGL REQUIRED IMPORTED_TARGET egl)
+target_link_libraries(${BINARY_NAME} PRIVATE PkgConfig::EGL)
 
 target_link_options(${BINARY_NAME} PRIVATE -flto -flto-partition=one -O3 -g0)
 target_compile_options(${BINARY_NAME} PRIVATE

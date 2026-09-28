@@ -22,6 +22,7 @@
 #include "desktop_multi_window/desktop_multi_window_plugin.h"
 #include "flutter/generated_plugin_registrant.h"
 #include "native_bridge/cia_install.h"
+#include "native_bridge/emulation.h"
 #include "native_bridge/emulator_config.h"
 #include "native_bridge/game_actions.h"
 #include "native_bridge/game_scanner.h"
@@ -535,6 +536,95 @@ FlMethodResponse* HandleRequestPermission(GtkWindow* window, FlValue* args) {
   return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
 }
 
+FlTextureRegistrar* TextureRegistrarForWindow(GtkWindow* window) {
+  FlView* view = FL_VIEW(gtk_bin_get_child(GTK_BIN(window)));
+  return fl_engine_get_texture_registrar(fl_view_get_engine(view));
+}
+
+FlMethodResponse* HandleCreateEmulationTexture(GtkWindow* window, FlValue* args) {
+  FlValue* width_value = fl_value_lookup_string(args, "width");
+  FlValue* height_value = fl_value_lookup_string(args, "height");
+  FlValue* secondary_value = fl_value_lookup_string(args, "secondary");
+  const int width =
+      width_value != nullptr && fl_value_get_type(width_value) == FL_VALUE_TYPE_INT
+          ? static_cast<int>(fl_value_get_int(width_value))
+          : 1;
+  const int height =
+      height_value != nullptr && fl_value_get_type(height_value) == FL_VALUE_TYPE_INT
+          ? static_cast<int>(fl_value_get_int(height_value))
+          : 1;
+  const bool secondary = secondary_value != nullptr &&
+                         fl_value_get_type(secondary_value) == FL_VALUE_TYPE_BOOL &&
+                         fl_value_get_bool(secondary_value);
+  g_autoptr(FlValue) result = fl_value_new_int(
+      Emulation::CreateTexture(TextureRegistrarForWindow(window), width, height, secondary));
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
+}
+
+FlMethodResponse* HandleStartEmulation(GtkWindow* window, FlValue* args) {
+  Emulation::StartEmulation(StringArgument(args, "path"));
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+FlMethodResponse* HandlePauseEmulation(GtkWindow* window, FlValue* args) {
+  Emulation::PauseEmulation();
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+FlMethodResponse* HandleResumeEmulation(GtkWindow* window, FlValue* args) {
+  Emulation::ResumeEmulation();
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+FlMethodResponse* HandlePauseRendering(GtkWindow* window, FlValue* args) {
+  Emulation::PauseRendering();
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+FlMethodResponse* HandleResumeRendering(GtkWindow* window, FlValue* args) {
+  Emulation::ResumeRendering();
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+FlMethodResponse* HandleStopEmulation(GtkWindow* window, FlValue* args) {
+  Emulation::StopEmulation();
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+double DoubleArgument(FlValue* args, const char* key) {
+  FlValue* value = fl_value_lookup_string(args, key);
+  if (value == nullptr) {
+    return 0;
+  }
+  if (fl_value_get_type(value) == FL_VALUE_TYPE_FLOAT) {
+    return fl_value_get_float(value);
+  }
+  if (fl_value_get_type(value) == FL_VALUE_TYPE_INT) {
+    return static_cast<double>(fl_value_get_int(value));
+  }
+  return 0;
+}
+
+FlMethodResponse* HandleOnTouchEvent(GtkWindow* window, FlValue* args) {
+  FlValue* pressed_value = fl_value_lookup_string(args, "pressed");
+  const bool pressed = pressed_value != nullptr &&
+                       fl_value_get_type(pressed_value) == FL_VALUE_TYPE_BOOL &&
+                       fl_value_get_bool(pressed_value);
+  g_autoptr(FlValue) result = fl_value_new_bool(Emulation::OnTouchEvent(
+      DoubleArgument(args, "x"), DoubleArgument(args, "y"), pressed));
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
+}
+
+FlMethodResponse* HandleOnTouchMoved(GtkWindow* window, FlValue* args) {
+  Emulation::OnTouchMoved(DoubleArgument(args, "x"), DoubleArgument(args, "y"));
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+FlMethodResponse* HandleSwapScreens(GtkWindow* window, FlValue* args) {
+  g_autoptr(FlValue) result = fl_value_new_bool(Emulation::SwapScreens());
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
+}
+
 using BridgeMethodHandler = std::function<FlMethodResponse*(GtkWindow*, FlValue*)>;
 
 const std::unordered_map<std::string, BridgeMethodHandler>& BridgeMethodHandlers() {
@@ -574,6 +664,16 @@ const std::unordered_map<std::string, BridgeMethodHandler>& BridgeMethodHandlers
       {"shareLog", HandleShareLog},
       {"hasPermission", HandleHasPermission},
       {"requestPermission", HandleRequestPermission},
+      {"createEmulationTexture", HandleCreateEmulationTexture},
+      {"startEmulation", HandleStartEmulation},
+      {"pauseEmulation", HandlePauseEmulation},
+      {"resumeEmulation", HandleResumeEmulation},
+      {"pauseRendering", HandlePauseRendering},
+      {"resumeRendering", HandleResumeRendering},
+      {"stopEmulation", HandleStopEmulation},
+      {"onTouchEvent", HandleOnTouchEvent},
+      {"onTouchMoved", HandleOnTouchMoved},
+      {"swapScreens", HandleSwapScreens},
   };
   return handlers;
 }
