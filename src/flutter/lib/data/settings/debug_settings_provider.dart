@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app_services.dart';
@@ -26,6 +24,5 @@ class DebugSettingsNotifier extends AsyncNotifier<DebugSetting> {
 }
 
 Future<void> applyDebugSettings(DebugSetting settings) async {
-  if (!Platform.isLinux) return;
   await AppServices.nativeBridge.setConsoleLogEnabled(settings.logToConsole);
 }

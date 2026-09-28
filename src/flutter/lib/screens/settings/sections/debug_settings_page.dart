@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,7 +20,7 @@ class DebugSettingsPage extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          if (Platform.isLinux && debugSettings != null)
+          if (debugSettings != null)
             SettingsGroupCard(
               items: [
                 ToggleSettingsItem(
