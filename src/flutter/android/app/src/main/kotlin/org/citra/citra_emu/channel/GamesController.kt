@@ -38,8 +38,9 @@ class GamesController(private val activity: MainActivity, private val cacheDir: 
     private inner class GetGames : AzaharMethodHandler {
         override val name = "getGames"
         override fun execute(call: MethodCall, result: MethodChannel.Result) {
+            val gamesDirectory = call.argument<String>("gamesDirectory")
             Thread {
-                val games = GameHelper.getGames().map { it.toChannelMap() }
+                val games = GameHelper.getGames(gamesDirectory).map { it.toChannelMap() }
                 activity.runOnUiThread { result.success(games) }
             }.start()
         }

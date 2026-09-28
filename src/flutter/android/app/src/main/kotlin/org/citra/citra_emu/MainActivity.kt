@@ -27,23 +27,13 @@ import org.citra.citra_emu.utils.AppletBridge
 import org.citra.citra_emu.utils.DiskShaderCacheProgress
 
 class MainActivity : FlutterFragmentActivity() {
-    private val openUserDirectoryLauncher =
-        registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
-            directoryController.onUserDirectoryPicked(uri)
-        }
-
-    private val openGamesDirectoryLauncher =
-        registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
-            directoryController.onGamesDirectoryPicked(uri)
-        }
-
     private val pickImageLauncher =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             StillImageCameraHelper.OnFilePickerResult(uri?.toString())
         }
 
     private val directoryController: DirectoryController by lazy {
-        DirectoryController(this, contentResolver, openUserDirectoryLauncher, openGamesDirectoryLauncher)
+        DirectoryController(this, contentResolver)
     }
     private val gamesController: GamesController by lazy { GamesController(this, cacheDir) }
     private val gameActionsController: GameActionsController by lazy { GameActionsController(this) }

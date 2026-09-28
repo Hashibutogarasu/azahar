@@ -3,12 +3,14 @@ import 'package:drift/drift.dart';
 import '../../models/game.dart' as model;
 import '../../native/native_bridge.dart';
 import '../database.dart';
+import 'games_directory_repository.dart';
 
 class GameRepository {
-  GameRepository(this._db, this._nativeBridge);
+  GameRepository(this._db, this._nativeBridge, this._gamesDirectoryRepository);
 
   final AppDatabase _db;
   final NativeBridge _nativeBridge;
+  final GamesDirectoryRepository _gamesDirectoryRepository;
 
   Future<List<model.Game>> cachedGames() async {
     final rows = await _db.select(_db.games).get();
@@ -16,7 +18,8 @@ class GameRepository {
   }
 
   Future<List<model.Game>> rescan() async {
-    final scanned = await _nativeBridge.getGames();
+    final gamesDirectory = await _gamesDirectoryRepository.gamesDirectoryUri();
+    final scanned = await _nativeBridge.getGames(gamesDirectory);
     await _db.batch((batch) {
       batch.deleteAll(_db.games);
       for (final game in scanned) {

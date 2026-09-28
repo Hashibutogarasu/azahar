@@ -10,6 +10,7 @@ import '../models/game_uninstall_target.dart';
 import '../models/gpu_driver_info.dart';
 import '../models/shader_cache_backend.dart';
 import '../models/shader_cache_progress.dart';
+import '../models/wifi_channel.dart';
 
 class NativeBridge {
   NativeBridge()
@@ -60,10 +61,6 @@ class NativeBridge {
     });
   }
 
-  Future<String?> openUserDirectory() {
-    return _channel.invokeMethod<String>('openUserDirectory');
-  }
-
   Future<void> confirmUserDirectory({
     required String uri,
     String? previousUri,
@@ -79,10 +76,6 @@ class NativeBridge {
   Future<bool> hasUserDirectoryWriteAccess() async {
     final result = await _channel.invokeMethod<bool>('hasUserDirectoryWriteAccess');
     return result ?? false;
-  }
-
-  Future<String?> openGamesDirectory() {
-    return _channel.invokeMethod<String>('openGamesDirectory');
   }
 
   Future<bool> shareLog() async {
@@ -126,8 +119,10 @@ class NativeBridge {
     return _channel.invokeMethod<void>('setSystemSetupNeeded', {'needed': needed});
   }
 
-  Future<List<Game>> getGames() async {
-    final result = await _channel.invokeMethod<List<Object?>>('getGames');
+  Future<List<Game>> getGames(String? gamesDirectory) async {
+    final result = await _channel.invokeMethod<List<Object?>>('getGames', {
+      'gamesDirectory': gamesDirectory,
+    });
     if (result == null) return const [];
     return result
         .cast<Map<Object?, Object?>>()
@@ -149,6 +144,7 @@ class NativeBridge {
               'ssid': accessPoint.ssid,
               'bssid': accessPoint.bssid,
               'frequency': accessPoint.frequency,
+              'channel': wifiFrequencyToChannel(accessPoint.frequency),
               'level': accessPoint.level,
             },
           )
@@ -392,6 +388,20 @@ class NativeBridge {
       'iconFilePath': request.iconFilePath,
       'stretch': request.stretch,
     });
+  }
+
+  Future<bool> hasPermission(String permission) async {
+    final result = await _channel.invokeMethod<bool>('hasPermission', {
+      'permission': permission,
+    });
+    return result ?? false;
+  }
+
+  Future<bool> requestPermission(String permission) async {
+    final result = await _channel.invokeMethod<bool>('requestPermission', {
+      'permission': permission,
+    });
+    return result ?? false;
   }
 
   AccessPoint _accessPointFromMap(Map<Object?, Object?> map) {

@@ -30,6 +30,7 @@ class _SetupWizardPageState extends State<SetupWizardPage> {
     AppServices.gamesDirectoryRepository,
     UserDirectoriesService(),
     AppServices.gameRepository,
+    AppServices.permissionRepository,
   );
   final Set<int> _hasBeenWarned = {};
   int _currentPage = 0;

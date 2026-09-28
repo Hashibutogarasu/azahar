@@ -13,6 +13,7 @@ import 'data/repositories/language_code_repository.dart';
 import 'data/repositories/legacy_settings_ui_repository.dart';
 import 'data/repositories/loadable.dart';
 import 'data/repositories/media_settings_repository.dart';
+import 'data/repositories/permission_repository.dart';
 import 'data/repositories/theme_settings_repository.dart';
 import 'data/repositories/virtual_access_points_repository.dart';
 import 'data/settings/control_bindings_value_store.dart';
@@ -23,9 +24,12 @@ import 'native/native_bridge.dart';
 abstract final class AppServices {
   static final AppDatabase database = AppDatabase();
   static final NativeBridge nativeBridge = NativeBridge();
+  static final PermissionRepository permissionRepository =
+      PermissionRepository.forPlatform(nativeBridge);
   static final GameRepository gameRepository = GameRepository(
     database,
     nativeBridge,
+    gamesDirectoryRepository,
   );
   static final EmulatorSettingsRepository emulatorSettingsRepository =
       EmulatorSettingsRepository(nativeBridge);
