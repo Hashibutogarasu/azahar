@@ -10,8 +10,10 @@
 
 #include <array>
 #include <cstdint>
+#include <exception>
 #include <fstream>
 #include <functional>
+#include <memory>
 #include <optional>
 #include <set>
 #include <sstream>
@@ -687,10 +689,20 @@ void HandleBridgeMethodCall(FlMethodChannel* channel,
 
   const auto& handlers = BridgeMethodHandlers();
   const auto it = handlers.find(name);
-  g_autoptr(FlMethodResponse) response =
-      it != handlers.end()
-          ? it->second(window, args)
-          : FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
+  g_autoptr(FlMethodResponse) response = nullptr;
+  if (it == handlers.end()) {
+    response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
+  } else {
+    try {
+      response = it->second(window, args);
+    } catch (const std::exception& e) {
+      response = FL_METHOD_RESPONSE(
+          fl_method_error_response_new("native_exception", e.what(), nullptr));
+    } catch (...) {
+      response = FL_METHOD_RESPONSE(
+          fl_method_error_response_new("native_exception", "unknown exception", nullptr));
+    }
+  }
 
   fl_method_call_respond(method_call, response, nullptr);
 }
@@ -751,12 +763,38 @@ FlMethodErrorResponse* HandleShaderProgressCancel(FlEventChannel* channel, FlVal
   return nullptr;
 }
 
+gboolean HandleWindowDeleteEvent(GtkWidget* widget, GdkEvent* event, gpointer user_data) {
+  Emulation::StopAndWait();
+  return FALSE;
+}
+
 void RegisterShaderProgressChannel(FlBinaryMessenger* messenger) {
   g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
   FlEventChannel* channel = fl_event_channel_new(
       messenger, "org.citra.citra_emu/azahar_bridge/shader_progress", FL_METHOD_CODEC(codec));
   fl_event_channel_set_stream_handlers(channel, HandleShaderProgressListen,
                                        HandleShaderProgressCancel, nullptr, nullptr);
+}
+
+struct PendingWindowSetup {
+  GtkWindow* window;
+  FlBinaryMessenger* messenger;
+};
+
+gboolean FinishWindowSetup(gpointer user_data) {
+  std::unique_ptr<PendingWindowSetup> pending(static_cast<PendingWindowSetup*>(user_data));
+
+  g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
+  FlMethodChannel* channel =
+      fl_method_channel_new(pending->messenger, kBridgeChannel, FL_METHOD_CODEC(codec));
+  fl_method_channel_set_method_call_handler(channel, HandleBridgeMethodCall, pending->window,
+                                            nullptr);
+  RegisterShaderProgressChannel(pending->messenger);
+  g_signal_connect(pending->window, "delete-event", G_CALLBACK(HandleWindowDeleteEvent), nullptr);
+
+  g_object_unref(pending->window);
+  g_object_unref(pending->messenger);
+  return G_SOURCE_REMOVE;
 }
 
 }  // namespace
@@ -831,22 +869,18 @@ static void my_application_activate(GApplication* application) {
   fl_method_channel_set_method_call_handler(
       bridge_channel, HandleBridgeMethodCall, window, nullptr);
   RegisterShaderProgressChannel(messenger);
+  g_signal_connect(window, "delete-event", G_CALLBACK(HandleWindowDeleteEvent), nullptr);
 
   desktop_multi_window_plugin_set_window_created_callback(
       [](FlPluginRegistry* registry) {
         fl_register_plugins(registry);
 
         FlView* new_view = FL_VIEW(registry);
-        GtkWindow* new_window =
-            GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(new_view)));
-        FlBinaryMessenger* new_messenger =
-            fl_engine_get_binary_messenger(fl_view_get_engine(new_view));
-        g_autoptr(FlStandardMethodCodec) new_codec = fl_standard_method_codec_new();
-        FlMethodChannel* new_bridge_channel = fl_method_channel_new(
-            new_messenger, kBridgeChannel, FL_METHOD_CODEC(new_codec));
-        fl_method_channel_set_method_call_handler(
-            new_bridge_channel, HandleBridgeMethodCall, new_window, nullptr);
-        RegisterShaderProgressChannel(new_messenger);
+        auto* pending = new PendingWindowSetup{
+            GTK_WINDOW(g_object_ref(gtk_widget_get_toplevel(GTK_WIDGET(new_view)))),
+            FL_BINARY_MESSENGER(
+                g_object_ref(fl_engine_get_binary_messenger(fl_view_get_engine(new_view))))};
+        g_idle_add(FinishWindowSetup, pending);
       });
 
   gtk_widget_grab_focus(GTK_WIDGET(view));

@@ -16,6 +16,7 @@ void ResumeEmulation();
 void PauseRendering();
 void ResumeRendering();
 void StopEmulation();
+void StopAndWait();
 bool OnTouchEvent(double x, double y, bool pressed);
 void OnTouchMoved(double x, double y);
 bool SwapScreens();

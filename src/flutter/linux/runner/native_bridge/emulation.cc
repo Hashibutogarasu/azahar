@@ -33,29 +33,71 @@ namespace Emulation {
 namespace {
 
 constexpr std::array<EGLint, 11> kConfigAttribs{
-    EGL_SURFACE_TYPE,    EGL_PBUFFER_BIT, EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT, EGL_RED_SIZE, 8,
-    EGL_GREEN_SIZE,      8,               EGL_BLUE_SIZE,       8,             EGL_NONE,
+    EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,     EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT_KHR,
+    EGL_RED_SIZE,     8,                   EGL_GREEN_SIZE,      8,
+    EGL_BLUE_SIZE,    8,                   EGL_NONE,
 };
 constexpr std::array<EGLint, 5> kPbufferAttribs{EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};
-constexpr std::array<EGLint, 7> kContextAttribs{
-    EGL_CONTEXT_MAJOR_VERSION, 4, EGL_CONTEXT_MINOR_VERSION, 3, EGL_CONTEXT_OPENGL_PROFILE_MASK,
-    EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT, EGL_NONE,
-};
+constexpr std::array<EGLint, 3> kContextAttribs{EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE};
 
 // FlTextureGL::populate() only ever runs with Flutter's own EGL context current, and it is the
 // only place that context is ever observable from here. The emulation thread waits on this to
 // learn which context to create its share group against.
 struct FlutterGlContext {
     std::mutex mutex;
-    std::condition_variable cv;
     bool ready = false;
     EGLDisplay display = EGL_NO_DISPLAY;
     EGLContext context = EGL_NO_CONTEXT;
+    bool has_pending_start = false;
+    std::string pending_path;
 };
+
+struct PendingEmulationStart {
+    std::string path;
+    EGLDisplay display;
+    EGLContext context;
+};
+
+gboolean StartEmulationOnMainThread(gpointer user_data);
 
 FlutterGlContext& GetFlutterGlContext() {
     static FlutterGlContext instance;
     return instance;
+}
+
+std::recursive_mutex& GetGlOperationMutex() {
+    static std::recursive_mutex mutex;
+    return mutex;
+}
+
+void EnsureLoggingInitialized() {
+    static const bool initialized = [] {
+        Settings::values.instant_debug_log = true;
+        Common::Log::Initialize("azahar_log.txt");
+        Common::Log::SetColorConsoleBackendEnabled(true);
+        Common::Log::Start();
+        return true;
+    }();
+    (void)initialized;
+}
+
+const char* SafeGlString(GLenum name) {
+    const GLubyte* value = glGetString(name);
+    return value ? reinterpret_cast<const char*>(value) : "unknown";
+}
+
+bool EnsureGlFunctionsLoaded() {
+    static const bool loaded = [] {
+        const bool ok = gladLoadGLES2Loader((GLADloadproc)eglGetProcAddress);
+        if (!ok) {
+            LOG_CRITICAL(Frontend, "gladLoadGLES2Loader() failed");
+        } else {
+            LOG_INFO(Frontend, "GL_VENDOR: {}, GL_RENDERER: {}, GL_VERSION: {}",
+                    SafeGlString(GL_VENDOR), SafeGlString(GL_RENDERER), SafeGlString(GL_VERSION));
+        }
+        return ok;
+    }();
+    return loaded;
 }
 
 }  // namespace
@@ -64,6 +106,7 @@ struct AzaharTextureState {
     std::atomic<GLuint> texture_id{0};
     std::atomic<GLuint> width{1};
     std::atomic<GLuint> height{1};
+    GLuint placeholder_texture_id{0};
 };
 
 #define AZAHAR_TYPE_TEXTURE (azahar_texture_get_type())
@@ -78,26 +121,61 @@ G_DEFINE_TYPE(AzaharTexture, azahar_texture, fl_texture_gl_get_type())
 
 static gboolean azahar_texture_populate(FlTextureGL* texture, uint32_t* target, uint32_t* name,
                                         uint32_t* width, uint32_t* height, GError** error) {
-    AzaharTexture* self = AZAHAR_TEXTURE(texture);
+    try {
+        EnsureLoggingInitialized();
+        std::lock_guard<std::recursive_mutex> gl_lock(GetGlOperationMutex());
+        AzaharTexture* self = AZAHAR_TEXTURE(texture);
 
-    FlutterGlContext& ctx = GetFlutterGlContext();
-    if (!ctx.ready) {
-        std::lock_guard<std::mutex> lock(ctx.mutex);
+        FlutterGlContext& ctx = GetFlutterGlContext();
         if (!ctx.ready) {
-            ctx.display = eglGetCurrentDisplay();
-            ctx.context = eglGetCurrentContext();
-            if (ctx.display != EGL_NO_DISPLAY && ctx.context != EGL_NO_CONTEXT) {
-                ctx.ready = true;
-                ctx.cv.notify_all();
+            PendingEmulationStart* to_start = nullptr;
+            {
+                std::lock_guard<std::mutex> lock(ctx.mutex);
+                if (!ctx.ready) {
+                    ctx.display = eglGetCurrentDisplay();
+                    ctx.context = eglGetCurrentContext();
+                    if (ctx.display != EGL_NO_DISPLAY && ctx.context != EGL_NO_CONTEXT) {
+                        ctx.ready = true;
+                        if (ctx.has_pending_start) {
+                            to_start = new PendingEmulationStart{std::move(ctx.pending_path),
+                                                                 ctx.display, ctx.context};
+                            ctx.has_pending_start = false;
+                        }
+                    }
+                }
+            }
+            if (to_start) {
+                g_idle_add(StartEmulationOnMainThread, to_start);
             }
         }
-    }
 
-    *target = GL_TEXTURE_2D;
-    *name = self->state->texture_id.load();
-    *width = self->state->width.load();
-    *height = self->state->height.load();
-    return *name != 0;
+        uint32_t real_name = self->state->texture_id.load();
+        if (real_name == 0 && EnsureGlFunctionsLoaded()) {
+            if (self->state->placeholder_texture_id == 0) {
+                GLuint placeholder = 0;
+                glGenTextures(1, &placeholder);
+                glBindTexture(GL_TEXTURE_2D, placeholder);
+                const std::array<uint8_t, 4> black_pixel{0, 0, 0, 255};
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                            black_pixel.data());
+                glBindTexture(GL_TEXTURE_2D, 0);
+                self->state->placeholder_texture_id = placeholder;
+            }
+            real_name = self->state->placeholder_texture_id;
+        }
+
+        *target = GL_TEXTURE_2D;
+        *name = real_name;
+        *width = self->state->width.load();
+        *height = self->state->height.load();
+        return *name != 0;
+    } catch (...) {
+        *target = GL_TEXTURE_2D;
+        *name = 0;
+        *width = 1;
+        *height = 1;
+        return FALSE;
+    }
 }
 
 static void azahar_texture_dispose(GObject* object) {
@@ -123,9 +201,17 @@ public:
     SharedContext_Flutter(EGLDisplay display, EGLConfig config, EGLContext share_context)
         : display_{display},
           surface_{eglCreatePbufferSurface(display, config, kPbufferAttribs.data())},
-          context_{eglCreateContext(display, config, share_context, kContextAttribs.data())} {}
+          context_{eglCreateContext(display, config, share_context, kContextAttribs.data())} {
+        if (surface_ == EGL_NO_SURFACE) {
+            LOG_CRITICAL(Frontend, "eglCreatePbufferSurface() failed: {:#x}", eglGetError());
+        }
+        if (context_ == EGL_NO_CONTEXT) {
+            LOG_CRITICAL(Frontend, "eglCreateContext() failed: {:#x}", eglGetError());
+        }
+    }
 
     ~SharedContext_Flutter() override {
+        std::lock_guard<std::recursive_mutex> gl_lock(GetGlOperationMutex());
         eglDestroySurface(display_, surface_);
         eglDestroyContext(display_, context_);
     }
@@ -155,21 +241,49 @@ public:
                       EGLContext share_context)
         : Frontend::EmuWindow(is_secondary_window), system_{system}, texture_{texture},
           registrar_{registrar}, display_{display} {
+        std::lock_guard<std::recursive_mutex> gl_lock(GetGlOperationMutex());
+
         window_info.type = Frontend::WindowSystemType::Headless;
         window_width_ = width;
         window_height_ = height;
 
-        eglInitialize(display_, nullptr, nullptr);
+        if (!eglBindAPI(EGL_OPENGL_ES_API)) {
+            LOG_CRITICAL(Frontend, "eglBindAPI() failed: {:#x}", eglGetError());
+        }
+        if (eglInitialize(display_, nullptr, nullptr) != EGL_TRUE) {
+            LOG_CRITICAL(Frontend, "eglInitialize() failed: {:#x}", eglGetError());
+        }
         EGLint num_configs{};
-        eglChooseConfig(display_, kConfigAttribs.data(), &config_, 1, &num_configs);
-        surface_ = eglCreatePbufferSurface(display_, config_, kPbufferAttribs.data());
-        context_ = eglCreateContext(display_, config_, share_context, kContextAttribs.data());
+        if (eglChooseConfig(display_, kConfigAttribs.data(), &config_, 1, &num_configs) !=
+                EGL_TRUE ||
+            num_configs == 0) {
+            LOG_CRITICAL(Frontend, "eglChooseConfig() failed: {:#x}", eglGetError());
+        }
+        if (surface_ = eglCreatePbufferSurface(display_, config_, kPbufferAttribs.data());
+            surface_ == EGL_NO_SURFACE) {
+            LOG_CRITICAL(Frontend, "eglCreatePbufferSurface() failed: {:#x}", eglGetError());
+        }
+        if (context_ = eglCreateContext(display_, config_, share_context, kContextAttribs.data());
+            context_ == EGL_NO_CONTEXT) {
+            LOG_CRITICAL(Frontend, "eglCreateContext() failed: {:#x}", eglGetError());
+        }
+        if (eglMakeCurrent(display_, surface_, surface_, context_) != EGL_TRUE) {
+            LOG_CRITICAL(Frontend, "eglMakeCurrent() failed: {:#x}", eglGetError());
+        }
+
+        EnsureGlFunctionsLoaded();
+
         core_context_ = CreateSharedContext();
+
+        if (eglMakeCurrent(display_, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) != EGL_TRUE) {
+            LOG_CRITICAL(Frontend, "eglMakeCurrent(release) failed: {:#x}", eglGetError());
+        }
 
         OnFramebufferSizeChanged();
     }
 
     ~EmuWindow_Flutter() override {
+        std::lock_guard<std::recursive_mutex> gl_lock(GetGlOperationMutex());
         DestroyExportTexture();
         eglDestroySurface(display_, surface_);
         eglDestroyContext(display_, context_);
@@ -186,6 +300,7 @@ public:
     }
 
     std::unique_ptr<Frontend::GraphicsContext> CreateSharedContext() const override {
+        std::lock_guard<std::recursive_mutex> gl_lock(GetGlOperationMutex());
         return std::make_unique<SharedContext_Flutter>(display_, config_, context_);
     }
 
@@ -354,28 +469,18 @@ void ReportShaderProgress(VideoCore::LoadCallbackStage stage, std::size_t progre
     g_idle_add(SendShaderProgressEvent, new ShaderProgressEvent{stage, progress, max});
 }
 
-void EnsureLoggingInitialized() {
-    static const bool initialized = [] {
-        Common::Log::Initialize();
-        Common::Log::Start();
-        return true;
-    }();
-    (void)initialized;
-}
-
-// The texture id returned to Dart is only useful once Flutter has actually sampled it at least
-// once, which is when populate() observes Flutter's EGL context. Block the emulation thread on
-// that instead of guessing at Flutter's scheduling.
-bool WaitForFlutterGlContext(EGLDisplay& display, EGLContext& context) {
+bool ConsumeFlutterGlContextOrRegisterPendingStart(const std::string& path, EGLDisplay& display,
+                                                   EGLContext& context) {
     FlutterGlContext& ctx = GetFlutterGlContext();
-    std::unique_lock<std::mutex> lock(ctx.mutex);
-    if (!ctx.cv.wait_for(lock, std::chrono::seconds(5), [&] { return ctx.ready; })) {
-        LOG_CRITICAL(Frontend, "Timed out waiting for Flutter's GL context");
-        return false;
+    std::lock_guard<std::mutex> lock(ctx.mutex);
+    if (ctx.ready) {
+        display = ctx.display;
+        context = ctx.context;
+        return true;
     }
-    display = ctx.display;
-    context = ctx.context;
-    return true;
+    ctx.has_pending_start = true;
+    ctx.pending_path = path;
+    return false;
 }
 
 void ShutdownWindows() {
@@ -404,47 +509,24 @@ void RunEmulation(std::string path) {
     EnsureLoggingInitialized();
     MicroProfileOnThreadCreate("EmuThread");
 
-    EGLDisplay flutter_display{};
-    EGLContext flutter_context{};
-    if (!WaitForFlutterGlContext(flutter_display, flutter_context)) {
-        g_present_thread_stop = true;
-        if (g_present_thread.joinable()) {
-            g_present_thread.join();
-        }
-        return;
-    }
-
-    InputCommon::Init();
-    Network::Init();
-
     Core::System& system = Core::System::GetInstance();
-
-    g_window = std::make_unique<EmuWindow_Flutter>(
-        system, g_primary_texture, g_texture_registrar,
-        static_cast<int>(g_primary_texture->state->width.load()),
-        static_cast<int>(g_primary_texture->state->height.load()), false, flutter_display,
-        flutter_context);
-    if (g_secondary_texture) {
-        g_secondary_window = std::make_unique<EmuWindow_Flutter>(
-            system, g_secondary_texture, g_texture_registrar,
-            static_cast<int>(g_secondary_texture->state->width.load()),
-            static_cast<int>(g_secondary_texture->state->height.load()), true, flutter_display,
-            flutter_context);
-    }
 
     system.ApplySettings();
     Settings::LogSettings();
 
     Frontend::RegisterDefaultApplets(system);
 
+    LOG_INFO(Frontend, "Making windows current before Load()");
     g_window->MakeCurrent();
     if (g_secondary_window) {
         g_secondary_window->MakeCurrent();
         g_window->MakeCurrent();
     }
 
+    LOG_INFO(Frontend, "Calling system.Load({})", path);
     const Core::System::ResultStatus load_result =
         system.Load(*g_window, path, g_secondary_window.get());
+    LOG_INFO(Frontend, "system.Load() returned {}", static_cast<int>(load_result));
     if (load_result != Core::System::ResultStatus::Success) {
         LOG_CRITICAL(Frontend, "Failed to load {}: {}", path, static_cast<int>(load_result));
         ShutdownWindows();
@@ -500,6 +582,31 @@ void PresentLoop() {
     }
 }
 
+void CreateWindowsAndStartEmulation(const std::string& path, EGLDisplay display,
+                                    EGLContext context) {
+    Core::System& system = Core::System::GetInstance();
+    g_window = std::make_unique<EmuWindow_Flutter>(
+        system, g_primary_texture, g_texture_registrar,
+        static_cast<int>(g_primary_texture->state->width.load()),
+        static_cast<int>(g_primary_texture->state->height.load()), false, display, context);
+    if (g_secondary_texture) {
+        g_secondary_window = std::make_unique<EmuWindow_Flutter>(
+            system, g_secondary_texture, g_texture_registrar,
+            static_cast<int>(g_secondary_texture->state->width.load()),
+            static_cast<int>(g_secondary_texture->state->height.load()), true, display, context);
+    }
+
+    g_present_thread_stop = false;
+    g_emulation_thread = std::thread(RunEmulation, path);
+    g_present_thread = std::thread(PresentLoop);
+}
+
+gboolean StartEmulationOnMainThread(gpointer user_data) {
+    std::unique_ptr<PendingEmulationStart> pending(static_cast<PendingEmulationStart*>(user_data));
+    CreateWindowsAndStartEmulation(pending->path, pending->display, pending->context);
+    return G_SOURCE_REMOVE;
+}
+
 }  // namespace
 
 void SetShaderProgressChannel(FlEventChannel* channel) {
@@ -507,6 +614,7 @@ void SetShaderProgressChannel(FlEventChannel* channel) {
 }
 
 int64_t CreateTexture(FlTextureRegistrar* registrar, int width, int height, bool secondary) {
+    EnsureLoggingInitialized();
     AzaharTexture* texture = AZAHAR_TEXTURE(g_object_new(AZAHAR_TYPE_TEXTURE, nullptr));
     texture->state->width = static_cast<GLuint>(std::max(width, 1));
     texture->state->height = static_cast<GLuint>(std::max(height, 1));
@@ -526,6 +634,7 @@ int64_t CreateTexture(FlTextureRegistrar* registrar, int width, int height, bool
 }
 
 void StartEmulation(const std::string& path) {
+    EnsureLoggingInitialized();
     if (g_primary_texture == nullptr) {
         LOG_CRITICAL(Frontend, "StartEmulation called before CreateTexture");
         return;
@@ -538,10 +647,18 @@ void StartEmulation(const std::string& path) {
         return;
     }
 
-    g_present_thread_stop = false;
-    g_emulation_thread = std::thread(RunEmulation, path);
-    g_emulation_thread.detach();
-    g_present_thread = std::thread(PresentLoop);
+    static bool input_and_network_initialized = false;
+    if (!input_and_network_initialized) {
+        InputCommon::Init();
+        Network::Init();
+        input_and_network_initialized = true;
+    }
+
+    EGLDisplay flutter_display{};
+    EGLContext flutter_context{};
+    if (ConsumeFlutterGlContextOrRegisterPendingStart(path, flutter_display, flutter_context)) {
+        CreateWindowsAndStartEmulation(path, flutter_display, flutter_context);
+    }
 }
 
 void PauseEmulation() {
@@ -567,6 +684,13 @@ void StopEmulation() {
     g_present_frames = false;
     g_present_thread_stop = true;
     g_running_cv.notify_all();
+}
+
+void StopAndWait() {
+    StopEmulation();
+    if (g_emulation_thread.joinable()) {
+        g_emulation_thread.join();
+    }
 }
 
 bool OnTouchEvent(double x, double y, bool pressed) {
