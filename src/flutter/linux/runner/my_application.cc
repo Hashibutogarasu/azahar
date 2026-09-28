@@ -246,10 +246,29 @@ FlMethodResponse* HandleHasUserDirectoryWriteAccess(GtkWindow* window, FlValue* 
   return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
 }
 
+std::vector<GameScanner::InstalledTitlePath> InstalledTitlePathsArgument(FlValue* args) {
+  std::vector<GameScanner::InstalledTitlePath> paths;
+  FlValue* list_value = fl_value_lookup_string(args, "installedTitlePaths");
+  if (list_value == nullptr || fl_value_get_type(list_value) != FL_VALUE_TYPE_LIST) {
+    return paths;
+  }
+  for (std::size_t i = 0; i < fl_value_get_length(list_value); ++i) {
+    FlValue* entry = fl_value_get_list_value(list_value, i);
+    if (fl_value_get_type(entry) != FL_VALUE_TYPE_MAP) {
+      continue;
+    }
+    const std::string root = StringArgument(entry, "root");
+    paths.push_back({root == "nand" ? GameScanner::InstalledTitleRoot::NandDir
+                                     : GameScanner::InstalledTitleRoot::SdmcDir,
+                      StringArgument(entry, "path")});
+  }
+  return paths;
+}
+
 FlMethodResponse* HandleGetGames(GtkWindow* window, FlValue* args) {
   g_autoptr(FlValue) games = fl_value_new_list();
-  for (const GameScanner::GameEntry& game :
-       GameScanner::ScanGames(StringArgument(args, "gamesDirectory"))) {
+  for (const GameScanner::GameEntry& game : GameScanner::ScanGames(
+           StringArgument(args, "gamesDirectory"), InstalledTitlePathsArgument(args))) {
     fl_value_append_take(games, GameEntryToFlValue(game));
   }
   return FL_METHOD_RESPONSE(fl_method_success_response_new(games));

@@ -579,7 +579,7 @@ void Java_org_citra_citra_1emu_NativeLibrary_setUserDirectory(JNIEnv* env,
 }
 
 jobjectArray Java_org_citra_citra_1emu_NativeLibrary_getInstalledGamePaths(
-    JNIEnv* env, [[maybe_unused]] jclass clazz) {
+    JNIEnv* env, [[maybe_unused]] jclass clazz, jobjectArray j_roots, jobjectArray j_paths) {
     std::vector<std::string> games;
     const FileUtil::DirectoryEntryCallable ScanDir =
         [&games, &ScanDir](u64*, const std::string& directory, const std::string& virtual_name) {
@@ -601,14 +601,21 @@ jobjectArray Java_org_citra_citra_1emu_NativeLibrary_getInstalledGamePaths(
             }
             return true;
         };
-    ScanDir(nullptr, "",
-            FileUtil::GetUserPath(FileUtil::UserPath::SDMCDir) +
-                "Nintendo "
-                "3DS/00000000000000000000000000000000/"
-                "00000000000000000000000000000000/title/00040000");
-    ScanDir(nullptr, "",
-            FileUtil::GetUserPath(FileUtil::UserPath::NANDDir) +
-                "00000000000000000000000000000000/title/00040010");
+
+    const jsize entry_count = env->GetArrayLength(j_roots);
+    for (jsize i = 0; i < entry_count; ++i) {
+        auto* j_root = static_cast<jstring>(env->GetObjectArrayElement(j_roots, i));
+        auto* j_path = static_cast<jstring>(env->GetObjectArrayElement(j_paths, i));
+        const std::string root = GetJString(env, j_root);
+        const std::string path = GetJString(env, j_path);
+        env->DeleteLocalRef(j_root);
+        env->DeleteLocalRef(j_path);
+
+        const FileUtil::UserPath user_path =
+            root == "nand" ? FileUtil::UserPath::NANDDir : FileUtil::UserPath::SDMCDir;
+        ScanDir(nullptr, "", FileUtil::GetUserPath(user_path) + path);
+    }
+
     jobjectArray jgames = env->NewObjectArray(static_cast<jsize>(games.size()),
                                               env->FindClass("java/lang/String"), nullptr);
     for (jsize i = 0; i < games.size(); ++i)

@@ -9,6 +9,7 @@ import org.citra.citra_emu.EmulationActivity
 import org.citra.citra_emu.MainActivity
 import org.citra.citra_emu.model.Game
 import org.citra.citra_emu.utils.GameHelper
+import org.citra.citra_emu.utils.InstalledTitlePath
 import org.citra.citra_emu.utils.gameIconBitmap
 
 class GamesController(private val activity: MainActivity, private val cacheDir: File) {
@@ -39,8 +40,13 @@ class GamesController(private val activity: MainActivity, private val cacheDir: 
         override val name = "getGames"
         override fun execute(call: MethodCall, result: MethodChannel.Result) {
             val gamesDirectory = call.argument<String>("gamesDirectory")
+            @Suppress("UNCHECKED_CAST")
+            val installedTitlePaths = (call.argument<List<Map<String, String>>>(
+                "installedTitlePaths"
+            ) ?: emptyList()).map { InstalledTitlePath(it.getValue("root"), it.getValue("path")) }
             Thread {
-                val games = GameHelper.getGames(gamesDirectory).map { it.toChannelMap() }
+                val games = GameHelper.getGames(gamesDirectory, installedTitlePaths)
+                    .map { it.toChannelMap() }
                 activity.runOnUiThread { result.success(games) }
             }.start()
         }

@@ -8,6 +8,7 @@ import 'data/repositories/first_launch_repository.dart';
 import 'data/repositories/game_repository.dart';
 import 'data/repositories/games_directory_repository.dart';
 import 'data/repositories/input_layout_repository.dart';
+import 'data/repositories/installed_titles_repository.dart';
 import 'data/repositories/key_value_repository.dart';
 import 'data/repositories/language_code_repository.dart';
 import 'data/repositories/legacy_settings_ui_repository.dart';
@@ -26,10 +27,12 @@ abstract final class AppServices {
   static final NativeBridge nativeBridge = NativeBridge();
   static final PermissionRepository permissionRepository =
       PermissionRepository.forPlatform(nativeBridge);
+  static final InstalledTitlesRepository installedTitlesRepository =
+      InstalledTitlesRepository(nativeBridge);
   static final GameRepository gameRepository = GameRepository(
     database,
-    nativeBridge,
     gamesDirectoryRepository,
+    installedTitlesRepository,
   );
   static final EmulatorSettingsRepository emulatorSettingsRepository =
       EmulatorSettingsRepository(nativeBridge);

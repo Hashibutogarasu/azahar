@@ -9,6 +9,7 @@ import '../models/game_folder_kind.dart';
 import '../models/game_folder_status.dart';
 import '../models/game_uninstall_target.dart';
 import '../models/gpu_driver_info.dart';
+import '../models/installed_title_path.dart';
 import '../models/shader_cache_backend.dart';
 import '../models/shader_cache_progress.dart';
 import '../models/wifi_channel.dart';
@@ -136,9 +137,15 @@ class NativeBridge {
     return _channel.invokeMethod<void>('setSystemSetupNeeded', {'needed': needed});
   }
 
-  Future<List<Game>> getGames(String? gamesDirectory) async {
+  Future<List<Game>> getGames(
+    String? gamesDirectory, {
+    List<InstalledTitlePath> installedTitlePaths = const [],
+  }) async {
     final result = await _channel.invokeMethod<List<Object?>>('getGames', {
       'gamesDirectory': gamesDirectory,
+      'installedTitlePaths': installedTitlePaths
+          .map((entry) => {'root': entry.root.name, 'path': entry.path})
+          .toList(),
     });
     if (result == null) return const [];
     return result

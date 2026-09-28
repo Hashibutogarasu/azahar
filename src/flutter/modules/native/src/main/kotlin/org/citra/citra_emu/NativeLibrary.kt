@@ -139,7 +139,7 @@ object NativeLibrary {
      * If not set, it auto-detects a location
      */
     external fun setUserDirectory(directory: String)
-    external fun getInstalledGamePaths(): Array<String?>
+    external fun getInstalledGamePaths(roots: Array<String>, paths: Array<String>): Array<String?>
 
     // Create the config.ini file.
     external fun createConfigFile()

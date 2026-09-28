@@ -7,6 +7,7 @@
 #include <map>
 #include <memory>
 
+#include "common/file_util.h"
 #include "common/string_util.h"
 #include "core/loader/loader.h"
 #include "core/loader/smdh.h"
@@ -97,7 +98,7 @@ bool IsSystemTitle(u64 program_id) {
   return ((program_id >> 32) & 0xFFFFFFFF) == 0x00040010;
 }
 
-void ScanDirectory(const fs::path& directory, int depth_remaining,
+void ScanDirectory(const fs::path& directory, int depth_remaining, bool is_installed,
                     std::vector<GameEntry>& games) {
   if (depth_remaining <= 0) {
     return;
@@ -106,7 +107,7 @@ void ScanDirectory(const fs::path& directory, int depth_remaining,
   std::error_code error;
   for (const auto& entry : fs::directory_iterator(directory, error)) {
     if (entry.is_directory()) {
-      ScanDirectory(entry.path(), depth_remaining - 1, games);
+      ScanDirectory(entry.path(), depth_remaining - 1, is_installed, games);
       continue;
     }
     if (!HasSupportedExtension(entry.path())) {
@@ -135,6 +136,7 @@ void ScanDirectory(const fs::path& directory, int depth_remaining,
     game.path = path;
     game.filename = entry.path().filename().string();
     game.title_id = program_id;
+    game.is_installed = is_installed;
     game.is_system_title = IsSystemTitle(program_id);
 
     if (Loader::IsValidSMDH(smdh_data)) {
@@ -160,14 +162,30 @@ void ScanDirectory(const fs::path& directory, int depth_remaining,
   }
 }
 
+std::string ResolveRoot(InstalledTitleRoot root) {
+  switch (root) {
+  case InstalledTitleRoot::SdmcDir:
+    return FileUtil::GetUserPath(FileUtil::UserPath::SDMCDir);
+  case InstalledTitleRoot::NandDir:
+    return FileUtil::GetUserPath(FileUtil::UserPath::NANDDir);
+  }
+  return "";
+}
+
 }  // namespace
 
-std::vector<GameEntry> ScanGames(const std::string& games_directory) {
+std::vector<GameEntry> ScanGames(const std::string& games_directory,
+                                  const std::vector<InstalledTitlePath>& installed_title_paths) {
+  EnsureUserPathInitialized();
+
   std::vector<GameEntry> games;
-  if (games_directory.empty()) {
-    return games;
+  if (!games_directory.empty()) {
+    ScanDirectory(fs::path(games_directory), 3, false, games);
   }
-  ScanDirectory(fs::path(games_directory), 3, games);
+  for (const InstalledTitlePath& installed_title_path : installed_title_paths) {
+    ScanDirectory(fs::path(ResolveRoot(installed_title_path.root) + installed_title_path.path), 5,
+                  true, games);
+  }
   return games;
 }
 
