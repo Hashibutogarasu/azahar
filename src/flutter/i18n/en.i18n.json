@@ -676,6 +676,8 @@
     "debug": {
       "title": "Debug",
       "warning": "These settings are for debugging purposes only. Changing them may cause instability.",
+      "logToConsole": "Log to Standard Output",
+      "logToConsoleDescription": "Also prints the native log to the standard output of Flutter.",
       "cpuClockSpeed": "CPU Clock Speed",
       "cpuClockSpeedDescription": "Over/Underclocks the emulated CPU. Not recommended.",
       "cpuJit": "CPU JIT",

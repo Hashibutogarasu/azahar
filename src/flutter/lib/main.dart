@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'app_services.dart';
+import 'data/settings/debug_settings_provider.dart';
 import 'data/user_directory_bootstrap.dart';
 import 'emulation_main.dart';
 import 'errors/app_exception.dart';
@@ -35,6 +36,9 @@ void main(List<String> args) {
     () async {
       WidgetsFlutterBinding.ensureInitialized();
       await AppServices.migrateKeyValueRepositories();
+      await applyDebugSettings(
+        await AppServices.debugSettingsRepository.read(),
+      );
 
       final initialRoute =
           WidgetsBinding.instance.platformDispatcher.defaultRouteName;

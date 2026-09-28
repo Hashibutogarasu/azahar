@@ -305,6 +305,12 @@ class NativeBridge {
     return _channel.invokeMethod<void>('terminateProcess');
   }
 
+  Future<void> setConsoleLogEnabled(bool enabled) {
+    return _channel.invokeMethod<void>('setConsoleLogEnabled', {
+      'enabled': enabled,
+    });
+  }
+
   Future<bool> onTouchEvent({
     required double x,
     required double y,

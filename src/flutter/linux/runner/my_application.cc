@@ -90,6 +90,14 @@ std::string StringArgument(FlValue* args, const char* key) {
   return fl_value_get_string(value);
 }
 
+bool BoolArgument(FlValue* args, const char* key, bool default_value) {
+  FlValue* value = fl_value_lookup_string(args, key);
+  if (value == nullptr || fl_value_get_type(value) != FL_VALUE_TYPE_BOOL) {
+    return default_value;
+  }
+  return fl_value_get_bool(value);
+}
+
 FlValue* ConfigSectionsToFlValue(const EmulatorConfig::Sections& sections) {
   FlValue* map = fl_value_new_map();
   for (const auto& [section, keys] : sections) {
@@ -323,6 +331,11 @@ gboolean ExitProcessOnIdle(gpointer user_data) {
 FlMethodResponse* HandleTerminateProcess(GtkWindow* window, FlValue* args) {
   gtk_widget_hide(GTK_WIDGET(window));
   g_idle_add(ExitProcessOnIdle, nullptr);
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+FlMethodResponse* HandleSetConsoleLogEnabled(GtkWindow* window, FlValue* args) {
+  Emulation::SetConsoleLogEnabled(BoolArgument(args, "enabled", true));
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
 }
 
@@ -662,6 +675,7 @@ const std::unordered_map<std::string, BridgeMethodHandler>& BridgeMethodHandlers
       {"installCiaFiles", HandleInstallCiaFiles},
       {"showNotification", HandleShowNotification},
       {"terminateProcess", HandleTerminateProcess},
+      {"setConsoleLogEnabled", HandleSetConsoleLogEnabled},
       {"isFullConsoleLinked", HandleIsFullConsoleLinked},
       {"unlinkConsole", HandleUnlinkConsole},
       {"areSystemTitlesInstalled", HandleAreSystemTitlesInstalled},

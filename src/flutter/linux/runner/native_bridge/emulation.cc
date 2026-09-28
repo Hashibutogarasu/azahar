@@ -71,11 +71,19 @@ std::recursive_mutex& GetGlOperationMutex() {
     return mutex;
 }
 
+std::mutex g_console_log_mutex;
+bool g_console_log_enabled{true};
+bool g_logging_initialized{false};
+
 void EnsureLoggingInitialized() {
     static const bool initialized = [] {
         Settings::values.instant_debug_log = true;
         Common::Log::Initialize("azahar_log.txt");
-        Common::Log::SetColorConsoleBackendEnabled(true);
+        {
+            std::lock_guard<std::mutex> lock(g_console_log_mutex);
+            Common::Log::SetColorConsoleBackendEnabled(g_console_log_enabled);
+            g_logging_initialized = true;
+        }
         Common::Log::Start();
         return true;
     }();
@@ -711,6 +719,14 @@ gboolean StartEmulationOnMainThread(gpointer user_data) {
 
 void SetShaderProgressChannel(FlEventChannel* channel) {
     g_shader_progress_channel = channel;
+}
+
+void SetConsoleLogEnabled(bool enabled) {
+    std::lock_guard<std::mutex> lock(g_console_log_mutex);
+    g_console_log_enabled = enabled;
+    if (g_logging_initialized) {
+        Common::Log::SetColorConsoleBackendEnabled(enabled);
+    }
 }
 
 int64_t CreateTexture(FlTextureRegistrar* registrar, int width, int height, bool secondary) {

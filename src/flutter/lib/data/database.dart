@@ -16,6 +16,7 @@ part 'tables/theme_settings.dart';
 part 'tables/accessibility_settings.dart';
 part 'tables/advanced_settings.dart';
 part 'tables/media_settings.dart';
+part 'tables/debug_settings.dart';
 part 'tables/virtual_access_points.dart';
 part 'tables/control_bindings.dart';
 part 'tables/input_layout_elements.dart';
@@ -30,6 +31,7 @@ part 'tables/input_layout_elements.dart';
     AccessibilitySettings,
     AdvancedSettings,
     MediaSettings,
+    DebugSettings,
     VirtualAccessPoints,
   ],
 )
@@ -44,7 +46,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -68,6 +70,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 8) {
         await m.createTable(advancedSettings);
+      }
+      if (from < 9) {
+        await m.createTable(debugSettings);
       }
     },
   );

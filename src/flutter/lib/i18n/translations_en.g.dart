@@ -1987,6 +1987,13 @@ class Translations$settings$debug$en {
   String get warning =>
       'These settings are for debugging purposes only. Changing them may cause instability.';
 
+  /// en: 'Log to Standard Output'
+  String get logToConsole => 'Log to Standard Output';
+
+  /// en: 'Also prints the native log to the standard output of Flutter.'
+  String get logToConsoleDescription =>
+      'Also prints the native log to the standard output of Flutter.';
+
   /// en: 'CPU Clock Speed'
   String get cpuClockSpeed => 'CPU Clock Speed';
 
@@ -3365,6 +3372,9 @@ extension on Translations {
           'settings.debug.title' => 'Debug',
           'settings.debug.warning' =>
             'These settings are for debugging purposes only. Changing them may cause instability.',
+          'settings.debug.logToConsole' => 'Log to Standard Output',
+          'settings.debug.logToConsoleDescription' =>
+            'Also prints the native log to the standard output of Flutter.',
           'settings.debug.cpuClockSpeed' => 'CPU Clock Speed',
           'settings.debug.cpuClockSpeedDescription' =>
             'Over/Underclocks the emulated CPU. Not recommended.',

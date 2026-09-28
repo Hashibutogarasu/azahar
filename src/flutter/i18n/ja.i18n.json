@@ -674,6 +674,8 @@
     "debug": {
       "title": "デバッグ",
       "warning": "これらの設定はデバッグ用途のみです。変更すると動作が不安定になる場合があります。",
+      "logToConsole": "標準出力にログを出力",
+      "logToConsoleDescription": "ネイティブのログをFlutterの標準出力にも出力します。",
       "cpuClockSpeed": "CPUクロック速度",
       "cpuClockSpeedDescription": "エミュレートされたCPUをオーバークロック/アンダークロックします。推奨しません。",
       "cpuJit": "CPU JIT",

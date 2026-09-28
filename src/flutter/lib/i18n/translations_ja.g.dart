@@ -1600,6 +1600,10 @@ class _Translations$settings$debug$ja extends Translations$settings$debug$en {
   @override
   String get warning => 'これらの設定はデバッグ用途のみです。変更すると動作が不安定になる場合があります。';
   @override
+  String get logToConsole => '標準出力にログを出力';
+  @override
+  String get logToConsoleDescription => 'ネイティブのログをFlutterの標準出力にも出力します。';
+  @override
   String get cpuClockSpeed => 'CPUクロック速度';
   @override
   String get cpuClockSpeedDescription =>
@@ -2759,6 +2763,9 @@ extension on TranslationsJa {
           'settings.debug.title' => 'デバッグ',
           'settings.debug.warning' =>
             'これらの設定はデバッグ用途のみです。変更すると動作が不安定になる場合があります。',
+          'settings.debug.logToConsole' => '標準出力にログを出力',
+          'settings.debug.logToConsoleDescription' =>
+            'ネイティブのログをFlutterの標準出力にも出力します。',
           'settings.debug.cpuClockSpeed' => 'CPUクロック速度',
           'settings.debug.cpuClockSpeedDescription' =>
             'エミュレートされたCPUをオーバークロック/アンダークロックします。推奨しません。',
