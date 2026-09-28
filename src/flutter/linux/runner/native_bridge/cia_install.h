@@ -6,7 +6,12 @@
 
 namespace CiaInstall {
 
-void InstallFiles(const std::vector<std::string>& paths);
+struct Result {
+  std::string filename;
+  bool success = false;
+};
+
+std::vector<Result> InstallFiles(const std::vector<std::string>& paths);
 
 }  // namespace CiaInstall
 

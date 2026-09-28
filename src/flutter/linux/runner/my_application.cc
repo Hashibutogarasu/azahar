@@ -5,6 +5,7 @@
 #include <gdk/gdkx.h>
 #endif
 
+#include <gio/gio.h>
 #include <unistd.h>
 
 #include <array>
@@ -265,7 +266,29 @@ FlMethodResponse* HandleInstallCiaFiles(GtkWindow* window, FlValue* args) {
       }
     }
   }
-  CiaInstall::InstallFiles(paths);
+
+  g_autoptr(FlValue) results = fl_value_new_list();
+  for (const CiaInstall::Result& result : CiaInstall::InstallFiles(paths)) {
+    FlValue* entry = fl_value_new_map();
+    fl_value_set_string_take(entry, "filename", fl_value_new_string(result.filename.c_str()));
+    fl_value_set_string_take(entry, "success", fl_value_new_bool(result.success));
+    fl_value_append_take(results, entry);
+  }
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(results));
+}
+
+FlMethodResponse* HandleShowNotification(GtkWindow* window, FlValue* args) {
+  GApplication* application =
+      G_APPLICATION(gtk_window_get_application(GTK_WINDOW(window)));
+  const std::string title = StringArgument(args, "title");
+  const std::string body = StringArgument(args, "body");
+  if (application != nullptr && !title.empty()) {
+    g_autoptr(GNotification) notification = g_notification_new(title.c_str());
+    if (!body.empty()) {
+      g_notification_set_body(notification, body.c_str());
+    }
+    g_application_send_notification(application, nullptr, notification);
+  }
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
 }
 
@@ -502,6 +525,7 @@ const std::unordered_map<std::string, BridgeMethodHandler>& BridgeMethodHandlers
       {"regenerateMac", HandleRegenerateMac},
       {"getCountryCompatibility", HandleGetCountryCompatibility},
       {"installCiaFiles", HandleInstallCiaFiles},
+      {"showNotification", HandleShowNotification},
       {"isFullConsoleLinked", HandleIsFullConsoleLinked},
       {"unlinkConsole", HandleUnlinkConsole},
       {"areSystemTitlesInstalled", HandleAreSystemTitlesInstalled},

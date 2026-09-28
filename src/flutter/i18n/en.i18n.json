@@ -136,6 +136,8 @@
     "articBaseConnectDescription": "Connect to a real console that is running an Artic Base server",
     "installGameContent": "Install CIA file",
     "installGameContentDescription": "Install applications, updates or DLC",
+    "installGameContentSuccessTitle": "CIA install complete",
+    "installGameContentFailureTitle": "CIA install failed",
     "setupSystemFiles": "System Files",
     "setupSystemFilesDescription": "Perform system file operations such as installing system files or booting the Home Menu",
     "shareLog": "Share Log",

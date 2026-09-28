@@ -388,6 +388,12 @@ class Translations$options$en {
   String get installGameContentDescription =>
       'Install applications, updates or DLC';
 
+  /// en: 'CIA install complete'
+  String get installGameContentSuccessTitle => 'CIA install complete';
+
+  /// en: 'CIA install failed'
+  String get installGameContentFailureTitle => 'CIA install failed';
+
   /// en: 'System Files'
   String get setupSystemFiles => 'System Files';
 
@@ -2752,6 +2758,8 @@ extension on Translations {
           'options.installGameContent' => 'Install CIA file',
           'options.installGameContentDescription' =>
             'Install applications, updates or DLC',
+          'options.installGameContentSuccessTitle' => 'CIA install complete',
+          'options.installGameContentFailureTitle' => 'CIA install failed',
           'options.setupSystemFiles' => 'System Files',
           'options.setupSystemFilesDescription' =>
             'Perform system file operations such as installing system files or booting the Home Menu',
@@ -3240,11 +3248,11 @@ extension on Translations {
           'settings.camera.imageFlipNone' => 'None',
           'settings.camera.imageFlipHorizontal' => 'Horizontal',
           'settings.camera.imageFlipVertical' => 'Vertical',
-          'settings.camera.imageFlipReverse' => 'Reverse',
-          'settings.gamepad.title' => 'Gamepad',
           _ => null,
         } ??
         switch (path) {
+          'settings.camera.imageFlipReverse' => 'Reverse',
+          'settings.gamepad.title' => 'Gamepad',
           'settings.gamepad.controllerInputMode' => 'Controller Input Mode',
           'settings.gamepad.controllerInputModeDescription' =>
             'Choose how physical game controllers are mapped to 3DS input.',

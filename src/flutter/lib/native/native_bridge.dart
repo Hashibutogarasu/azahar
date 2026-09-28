@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 
 import '../models/access_point.dart';
+import '../models/cia_install_result.dart';
 import '../models/copy_dir_progress.dart';
 import '../models/create_shortcut_request.dart';
 import '../models/game.dart';
@@ -83,8 +84,24 @@ class NativeBridge {
     return result ?? false;
   }
 
-  Future<void> installCiaFiles(List<String> paths) {
-    return _channel.invokeMethod<void>('installCiaFiles', {'paths': paths});
+  Future<List<CiaInstallResult>> installCiaFiles(List<String> paths) async {
+    final result = await _channel.invokeMethod<List<Object?>>('installCiaFiles', {
+      'paths': paths,
+    });
+    if (result == null) return const [];
+    return result.cast<Map<Object?, Object?>>().map((entry) {
+      return CiaInstallResult(
+        filename: entry['filename'] as String? ?? '',
+        success: entry['success'] as bool? ?? false,
+      );
+    }).toList();
+  }
+
+  Future<void> showNotification({required String title, String body = ''}) {
+    return _channel.invokeMethod<void>('showNotification', {
+      'title': title,
+      'body': body,
+    });
   }
 
   Future<bool> isFullConsoleLinked() async {
