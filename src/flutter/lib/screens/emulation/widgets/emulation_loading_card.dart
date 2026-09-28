@@ -12,10 +12,12 @@ class EmulationLoadingCard extends StatelessWidget {
     super.key,
     required this.game,
     required this.progress,
+    this.isTerminating = false,
   });
 
   final Game? game;
   final ShaderCacheProgress? progress;
+  final bool isTerminating;
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +25,12 @@ class EmulationLoadingCard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final current = progress;
     final isFinished = current == null || current.progress == current.max;
-    final isCounting = !isFinished && current.progress > 0;
+    final isCounting = !isTerminating && !isFinished && current.progress > 0;
 
     final String message;
-    if (isFinished) {
+    if (isTerminating) {
+      message = t.emulation.terminating;
+    } else if (isFinished) {
       message = t.emulation.loading;
     } else if (current.stage == ShaderCacheStage.build) {
       message = t.emulation.buildingShaders;

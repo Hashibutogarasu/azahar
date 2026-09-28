@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/platform_provider.dart';
 import '../../models/game.dart';
 import 'emulation_screens_layout.dart';
 import 'emulation_session_provider.dart';
@@ -103,7 +104,11 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
   }
 
   Widget _screens(BoxConstraints constraints) {
-    final layout = EmulationScreensLayout.fit(constraints.biggest);
+    final isDesktop = ref.watch(isDesktopPlatformProvider);
+    final layout = EmulationScreensLayout.fit(
+      constraints.biggest,
+      isDesktop: isDesktop,
+    );
     _requestLaunch(layout);
     _requestMediaSessionActivation();
     final notifier = ref.read(emulationSessionProvider.notifier);
@@ -122,7 +127,7 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
       onPointerUp: (_) => notifier.touchReleased(),
     );
     return Align(
-      alignment: Alignment.topCenter,
+      alignment: Alignment.center,
       child: Flex(
         direction: layout.direction,
         mainAxisSize: MainAxisSize.min,
@@ -136,6 +141,9 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(emulationSessionProvider);
+    if (state.isClosingWindow) {
+      return const ColoredBox(color: Colors.black);
+    }
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -161,11 +169,12 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
               LayoutBuilder(
                 builder: (context, constraints) => _screens(constraints),
               ),
-              if (!state.emulationStarted)
+              if (!state.emulationStarted || state.isTerminating)
                 Center(
                   child: EmulationLoadingCard(
                     game: widget.game,
                     progress: state.shaderProgress,
+                    isTerminating: state.isTerminating,
                   ),
                 ),
             ],

@@ -309,8 +309,11 @@ class Translations$emulation$en {
 
   // Translations
 
-  /// en: 'Loading…'
-  String get loading => 'Loading…';
+  /// en: 'Loading'
+  String get loading => 'Loading';
+
+  /// en: 'Closing'
+  String get terminating => 'Closing';
 
   /// en: 'Preparing Shaders'
   String get preparingShaders => 'Preparing Shaders';
@@ -816,8 +819,8 @@ class Translations$setup$userDirectory$en {
   /// en: 'Move Data'
   String get moveData => 'Move Data';
 
-  /// en: 'Moving Data…'
-  String get movingData => 'Moving Data…';
+  /// en: 'Moving Data'
+  String get movingData => 'Moving Data';
 }
 
 // Path: setup.gamesDirectory
@@ -972,8 +975,8 @@ class Translations$settings$inputBindingDialog$en {
 
   // Translations
 
-  /// en: 'Press a button on your controller…'
-  String get waitingForInput => 'Press a button on your controller…';
+  /// en: 'Press a button on your controller'
+  String get waitingForInput => 'Press a button on your controller';
 }
 
 // Path: settings.general
@@ -2672,7 +2675,7 @@ extension on Translations {
           'setup.userDirectory.warningHelpUrl' =>
             'https://web.archive.org/web/20240304193549/https://github.com/citra-emu/citra/wiki/Citra-Android-user-data-and-storage',
           'setup.userDirectory.moveData' => 'Move Data',
-          'setup.userDirectory.movingData' => 'Moving Data…',
+          'setup.userDirectory.movingData' => 'Moving Data',
           'setup.gamesDirectory.title' => 'Applications',
           'setup.gamesDirectory.description' =>
             'Select your Applications folder with the button below.',
@@ -2733,7 +2736,8 @@ extension on Translations {
           'games.regionTaiwan' => 'Taiwan',
           'games.regionFree' => 'Region free',
           'games.invalidRegion' => 'Invalid region',
-          'emulation.loading' => 'Loading…',
+          'emulation.loading' => 'Loading',
+          'emulation.terminating' => 'Closing',
           'emulation.preparingShaders' => 'Preparing Shaders',
           'emulation.buildingShaders' => 'Building Shaders',
           'emulation.shaderProgress' =>
@@ -2859,7 +2863,7 @@ extension on Translations {
               required Object max,
             }) => '${title}: value must be between ${min} and ${max}.',
           'settings.inputBindingDialog.waitingForInput' =>
-            'Press a button on your controller…',
+            'Press a button on your controller',
           'settings.general.title' => 'Profile',
           'settings.general.frameLimitEnable' => 'Limit Speed',
           'settings.general.frameLimitEnableDescription' =>
@@ -3247,10 +3251,10 @@ extension on Translations {
           'settings.camera.imageFlip' => 'Flip',
           'settings.camera.imageFlipNone' => 'None',
           'settings.camera.imageFlipHorizontal' => 'Horizontal',
-          'settings.camera.imageFlipVertical' => 'Vertical',
           _ => null,
         } ??
         switch (path) {
+          'settings.camera.imageFlipVertical' => 'Vertical',
           'settings.camera.imageFlipReverse' => 'Reverse',
           'settings.gamepad.title' => 'Gamepad',
           'settings.gamepad.controllerInputMode' => 'Controller Input Mode',

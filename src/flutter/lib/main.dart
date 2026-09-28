@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,18 +48,17 @@ void main(List<String> args) {
         return;
       }
 
-      if (Platform.isLinux) {
-        final windowController = await WindowController.fromCurrentEngine();
-        if (windowController.arguments.isNotEmpty) {
-          runApp(
-            ProviderScope(
-              child: EmulationStandaloneApp(
-                gamePath: windowController.arguments,
-              ),
+      final emulationArgumentIndex = args.indexOf(emulationArgument);
+      if (emulationArgumentIndex != -1 &&
+          emulationArgumentIndex + 1 < args.length) {
+        runApp(
+          ProviderScope(
+            child: EmulationStandaloneApp(
+              gamePath: args[emulationArgumentIndex + 1],
             ),
-          );
-          return;
-        }
+          ),
+        );
+        return;
       }
 
       if (Platform.isLinux) {

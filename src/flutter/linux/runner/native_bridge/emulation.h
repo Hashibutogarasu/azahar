@@ -11,11 +11,14 @@ namespace Emulation {
 int64_t CreateTexture(FlTextureRegistrar* registrar, int width, int height, bool secondary);
 void SetShaderProgressChannel(FlEventChannel* channel);
 void StartEmulation(const std::string& path);
+bool IsRunning();
+bool IsSessionActive();
 void PauseEmulation();
 void ResumeEmulation();
 void PauseRendering();
 void ResumeRendering();
 void StopEmulation();
+void StopPresentingAndWait();
 void StopAndWait();
 bool OnTouchEvent(double x, double y, bool pressed);
 void OnTouchMoved(double x, double y);

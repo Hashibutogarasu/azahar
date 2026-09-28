@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 
 import '../models/access_point.dart';
@@ -31,7 +33,9 @@ class NativeBridge {
       ),
       _mediaNotificationPlayPauseChannel = const EventChannel(
         'org.citra.citra_emu/azahar_bridge/media_notification_play_pause',
-      );
+      ) {
+    _channel.setMethodCallHandler(_handleNativeCall);
+  }
 
   final MethodChannel _channel;
   final EventChannel _shaderProgressChannel;
@@ -39,6 +43,15 @@ class NativeBridge {
   final EventChannel _mediaNotificationStopChannel;
   final EventChannel _mediaNotificationPlayPauseChannel;
   final EventChannel _systemVolumeChannel;
+  final _closeRequestedController = StreamController<void>.broadcast();
+
+  Stream<void> get closeRequests => _closeRequestedController.stream;
+
+  Future<void> _handleNativeCall(MethodCall call) async {
+    if (call.method == 'requestClose') {
+      _closeRequestedController.add(null);
+    }
+  }
 
   Stream<CopyDirProgress> copyDirProgress() {
     return _copyProgressChannel.receiveBroadcastStream().map((event) {

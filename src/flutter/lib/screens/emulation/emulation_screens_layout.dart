@@ -15,10 +15,10 @@ class EmulationScreensLayout {
   });
 
   /// Builds the layout that fits the pair of screens into [available].
-  factory EmulationScreensLayout.fit(Size available) {
-    final direction = available.width > available.height
-        ? Axis.horizontal
-        : Axis.vertical;
+  factory EmulationScreensLayout.fit(Size available, {bool isDesktop = false}) {
+    final direction = isDesktop
+        ? Axis.vertical
+        : (available.width > available.height ? Axis.horizontal : Axis.vertical);
     final bottomAspect = _bottomScreenWidth / _bottomScreenHeight;
 
     final double zoom;

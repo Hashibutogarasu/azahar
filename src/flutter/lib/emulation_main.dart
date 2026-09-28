@@ -8,6 +8,7 @@ import 'theme/app_theme.dart';
 import 'theme/theme_style.dart';
 
 const String emulationRoutePrefix = '/__emulation__/';
+const String emulationArgument = '--emulation';
 
 class EmulationStandaloneApp extends StatefulWidget {
   const EmulationStandaloneApp({super.key, required this.gamePath});

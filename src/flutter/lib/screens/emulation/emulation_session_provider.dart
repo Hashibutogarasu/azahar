@@ -23,6 +23,7 @@ final emulationSessionProvider =
 class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
   NativeBridge get _bridge => AppServices.nativeBridge;
   StreamSubscription<ShaderCacheProgress>? _shaderProgressSubscription;
+  StreamSubscription<void>? _closeRequestSubscription;
   final _mediaSession = MediaSessionService();
   bool _mediaSessionActivated = false;
 
@@ -32,6 +33,10 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
   @override
   EmulationSessionState build() {
     ref.onDispose(_teardownNativeSession);
+    _closeRequestSubscription = _bridge.closeRequests.listen(
+      (_) => unawaited(terminate()),
+    );
+    ref.onDispose(() => _closeRequestSubscription?.cancel());
     return const EmulationSessionState();
   }
 
@@ -179,11 +184,20 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
   }
 
   Future<void> terminate() async {
-    await _teardownNativeSession();
-    state = const EmulationSessionState();
+    state = state.copyWith(isTerminating: true);
+    await _releaseNativeSession();
+    state = state.copyWith(isClosingWindow: true);
+    await WidgetsBinding.instance.endOfFrame;
+    await WidgetsBinding.instance.endOfFrame;
+    await _bridge.terminateProcess();
   }
 
   Future<void> _teardownNativeSession() async {
+    await _releaseNativeSession();
+    await _bridge.terminateProcess();
+  }
+
+  Future<void> _releaseNativeSession() async {
     await _shaderProgressSubscription?.cancel();
     _shaderProgressSubscription = null;
     _mediaSessionActivated = false;
@@ -192,6 +206,5 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
     if (state.isLaunched) {
       await _bridge.stopEmulation();
     }
-    await _bridge.terminateProcess();
   }
 }

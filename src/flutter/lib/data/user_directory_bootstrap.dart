@@ -18,6 +18,7 @@ abstract final class UserDirectoryBootstrap {
   }
 
   static Future<void> writeConfiguredDirectory(String path) async {
+    await Directory(path).create(recursive: true);
     final marker = await _markerFile();
     await marker.writeAsString(path);
   }

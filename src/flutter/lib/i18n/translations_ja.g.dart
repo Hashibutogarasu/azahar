@@ -278,7 +278,9 @@ class _Translations$emulation$ja extends Translations$emulation$en {
 
   // Translations
   @override
-  String get loading => '読み込み中…';
+  String get loading => '読み込み中';
+  @override
+  String get terminating => '終了しています';
   @override
   String get preparingShaders => 'シェーダーを準備中';
   @override
@@ -714,7 +716,7 @@ class _Translations$setup$userDirectory$ja
   @override
   String get moveData => 'データを移動';
   @override
-  String get movingData => 'データを移動中…';
+  String get movingData => 'データを移動中';
 }
 
 // Path: setup.gamesDirectory
@@ -857,7 +859,7 @@ class _Translations$settings$inputBindingDialog$ja
 
   // Translations
   @override
-  String get waitingForInput => 'コントローラーのボタンを押してください…';
+  String get waitingForInput => 'コントローラーのボタンを押してください';
 }
 
 // Path: settings.general
@@ -2110,7 +2112,7 @@ extension on TranslationsJa {
           'setup.userDirectory.warningHelpUrl' =>
             'https://web.archive.org/web/20240304193549/https://github.com/citra-emu/citra/wiki/Citra-Android-user-data-and-storage',
           'setup.userDirectory.moveData' => 'データを移動',
-          'setup.userDirectory.movingData' => 'データを移動中…',
+          'setup.userDirectory.movingData' => 'データを移動中',
           'setup.gamesDirectory.title' => 'アプリケーション',
           'setup.gamesDirectory.description' => '下のボタンでアプリケーションフォルダを選択してください。',
           'setup.gamesDirectory.select' => '選択',
@@ -2166,7 +2168,8 @@ extension on TranslationsJa {
           'games.regionTaiwan' => '台湾',
           'games.regionFree' => 'リージョンフリー',
           'games.invalidRegion' => '無効なリージョン',
-          'emulation.loading' => '読み込み中…',
+          'emulation.loading' => '読み込み中',
+          'emulation.terminating' => '終了しています',
           'emulation.preparingShaders' => 'シェーダーを準備中',
           'emulation.buildingShaders' => 'シェーダーをビルド中',
           'emulation.shaderProgress' =>
@@ -2279,7 +2282,7 @@ extension on TranslationsJa {
               required Object max,
             }) => '${title}: 値は${min}から${max}の間で指定してください。',
           'settings.inputBindingDialog.waitingForInput' =>
-            'コントローラーのボタンを押してください…',
+            'コントローラーのボタンを押してください',
           'settings.general.title' => 'プロフィール',
           'settings.general.frameLimitEnable' => '速度制限',
           'settings.general.frameLimitEnableDescription' =>
@@ -2649,10 +2652,10 @@ extension on TranslationsJa {
           'settings.camera.imageFlipHorizontal' => '水平',
           'settings.camera.imageFlipVertical' => '垂直',
           'settings.camera.imageFlipReverse' => '反転',
-          'settings.gamepad.title' => 'ゲームパッド',
           _ => null,
         } ??
         switch (path) {
+          'settings.gamepad.title' => 'ゲームパッド',
           'settings.gamepad.controllerInputMode' => 'コントローラー入力モード',
           'settings.gamepad.controllerInputModeDescription' =>
             '物理ゲームコントローラーを3DSの入力にどのようにマッピングするかを選択します。',

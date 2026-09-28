@@ -21,6 +21,7 @@
 #include "core/frontend/applets/default_applets.h"
 #include "core/frontend/emu_window.h"
 #include "core/frontend/framebuffer_layout.h"
+#include "core/hle/service/service.h"
 #include "input_common/main.h"
 #include "network/network.h"
 #include "user_directory.h"
@@ -98,6 +99,26 @@ bool EnsureGlFunctionsLoaded() {
         return ok;
     }();
     return loaded;
+}
+
+void EnsureLleModulesInitialized() {
+    static const bool initialized = [] {
+        for (const auto& service_module : Service::service_module_map) {
+            Settings::values.lle_modules.emplace(service_module.name, false);
+        }
+        return true;
+    }();
+    (void)initialized;
+}
+
+void EnsureInputProfileInitialized() {
+    static const bool initialized = [] {
+        if (Settings::values.current_input_profile.touch_device.empty()) {
+            Settings::values.current_input_profile.touch_device = "engine:emu_window";
+        }
+        return true;
+    }();
+    (void)initialized;
 }
 
 }  // namespace
@@ -243,6 +264,12 @@ public:
           registrar_{registrar}, display_{display} {
         std::lock_guard<std::recursive_mutex> gl_lock(GetGlOperationMutex());
 
+        const EGLenum previous_api = eglQueryAPI();
+        const EGLDisplay previous_display = eglGetCurrentDisplay();
+        const EGLContext previous_context = eglGetCurrentContext();
+        const EGLSurface previous_draw_surface = eglGetCurrentSurface(EGL_DRAW);
+        const EGLSurface previous_read_surface = eglGetCurrentSurface(EGL_READ);
+
         window_info.type = Frontend::WindowSystemType::Headless;
         window_width_ = width;
         window_height_ = height;
@@ -275,8 +302,16 @@ public:
 
         core_context_ = CreateSharedContext();
 
-        if (eglMakeCurrent(display_, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) != EGL_TRUE) {
-            LOG_CRITICAL(Frontend, "eglMakeCurrent(release) failed: {:#x}", eglGetError());
+        const EGLBoolean restored =
+            previous_context != EGL_NO_CONTEXT
+                ? eglMakeCurrent(previous_display, previous_draw_surface, previous_read_surface,
+                                 previous_context)
+                : eglMakeCurrent(display_, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        if (restored != EGL_TRUE) {
+            LOG_CRITICAL(Frontend, "eglMakeCurrent(restore) failed: {:#x}", eglGetError());
+        }
+        if (previous_api != EGL_NONE) {
+            eglBindAPI(previous_api);
         }
 
         OnFramebufferSizeChanged();
@@ -284,7 +319,10 @@ public:
 
     ~EmuWindow_Flutter() override {
         std::lock_guard<std::recursive_mutex> gl_lock(GetGlOperationMutex());
-        DestroyExportTexture();
+        if (eglMakeCurrent(display_, surface_, surface_, context_) == EGL_TRUE) {
+            DestroyExportTexture();
+            eglMakeCurrent(display_, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        }
         eglDestroySurface(display_, surface_);
         eglDestroyContext(display_, context_);
     }
@@ -323,6 +361,10 @@ public:
         TouchMoved(static_cast<unsigned>(std::max(x, 0)), static_cast<unsigned>(std::max(y, 0)));
     }
 
+    void ReleaseCurrent() {
+        eglMakeCurrent(display_, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    }
+
     void TryPresenting() {
         if (!system_.IsPoweredOn()) {
             return;
@@ -333,11 +375,17 @@ public:
         glViewport(0, 0, window_width_, window_height_);
         system_.GPU().Renderer().TryPresent(0, is_secondary);
         glFlush();
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, export_fbo_);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, flip_fbo_);
+        glBlitFramebuffer(0, 0, window_width_, window_height_, 0, window_height_, window_width_, 0,
+                          GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
         texture_->state->width = static_cast<GLuint>(window_width_);
         texture_->state->height = static_cast<GLuint>(window_height_);
-        texture_->state->texture_id = export_texture_;
+        texture_->state->texture_id = flip_texture_;
         fl_texture_registrar_mark_texture_frame_available(registrar_, FL_TEXTURE(texture_));
     }
 
@@ -371,11 +419,34 @@ private:
                                export_texture_, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+        glGenTextures(1, &flip_texture_);
+        glBindTexture(GL_TEXTURE_2D, flip_texture_);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, window_width_, window_height_, 0, GL_RGBA,
+                    GL_UNSIGNED_BYTE, nullptr);
+
+        glGenFramebuffers(1, &flip_fbo_);
+        glBindFramebuffer(GL_FRAMEBUFFER, flip_fbo_);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, flip_texture_,
+                               0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
         exported_width_ = window_width_;
         exported_height_ = window_height_;
     }
 
     void DestroyExportTexture() {
+        if (flip_fbo_ != 0) {
+            glDeleteFramebuffers(1, &flip_fbo_);
+            flip_fbo_ = 0;
+        }
+        if (flip_texture_ != 0) {
+            glDeleteTextures(1, &flip_texture_);
+            flip_texture_ = 0;
+        }
         if (export_fbo_ != 0) {
             glDeleteFramebuffers(1, &export_fbo_);
             export_fbo_ = 0;
@@ -401,6 +472,8 @@ private:
 
     GLuint export_fbo_{};
     GLuint export_texture_{};
+    GLuint flip_fbo_{};
+    GLuint flip_texture_{};
     int exported_width_{};
     int exported_height_{};
 };
@@ -413,6 +486,7 @@ FlTextureRegistrar* g_texture_registrar{};
 FlEventChannel* g_shader_progress_channel{};
 
 std::atomic<bool> g_stop_run{true};
+std::atomic<bool> g_session_active{false};
 std::atomic<bool> g_pause_emulation{false};
 std::atomic<bool> g_present_frames{false};
 std::atomic<bool> g_present_thread_stop{false};
@@ -483,6 +557,23 @@ bool ConsumeFlutterGlContextOrRegisterPendingStart(const std::string& path, EGLD
     return false;
 }
 
+gboolean ReleaseTexturesOnMainThread(gpointer user_data) {
+    AzaharTexture* textures[] = {g_primary_texture, g_secondary_texture};
+    g_primary_texture = nullptr;
+    g_secondary_texture = nullptr;
+    for (AzaharTexture* texture : textures) {
+        if (texture == nullptr) {
+            continue;
+        }
+        if (g_texture_registrar != nullptr) {
+            fl_texture_registrar_unregister_texture(g_texture_registrar, FL_TEXTURE(texture));
+        }
+        g_object_unref(texture);
+    }
+    g_texture_registrar = nullptr;
+    return G_SOURCE_REMOVE;
+}
+
 void ShutdownWindows() {
     g_present_thread_stop = true;
     if (g_present_thread.joinable()) {
@@ -500,6 +591,8 @@ void ShutdownWindows() {
     g_window.reset();
     InputCommon::Shutdown();
     MicroProfileShutdown();
+    g_idle_add(ReleaseTexturesOnMainThread, nullptr);
+    g_session_active = false;
 }
 
 void RunEmulation(std::string path) {
@@ -507,6 +600,8 @@ void RunEmulation(std::string path) {
 
     EnsureUserPathInitialized();
     EnsureLoggingInitialized();
+    EnsureLleModulesInitialized();
+    EnsureInputProfileInitialized();
     MicroProfileOnThreadCreate("EmuThread");
 
     Core::System& system = Core::System::GetInstance();
@@ -516,17 +611,14 @@ void RunEmulation(std::string path) {
 
     Frontend::RegisterDefaultApplets(system);
 
-    LOG_INFO(Frontend, "Making windows current before Load()");
     g_window->MakeCurrent();
     if (g_secondary_window) {
         g_secondary_window->MakeCurrent();
         g_window->MakeCurrent();
     }
 
-    LOG_INFO(Frontend, "Calling system.Load({})", path);
     const Core::System::ResultStatus load_result =
         system.Load(*g_window, path, g_secondary_window.get());
-    LOG_INFO(Frontend, "system.Load() returned {}", static_cast<int>(load_result));
     if (load_result != Core::System::ResultStatus::Success) {
         LOG_CRITICAL(Frontend, "Failed to load {}: {}", path, static_cast<int>(load_result));
         ShutdownWindows();
@@ -538,6 +630,7 @@ void RunEmulation(std::string path) {
     g_present_frames = true;
 
     system.GPU().Renderer().Rasterizer()->LoadDiskResources(g_stop_run, &ReportShaderProgress);
+    ReportShaderProgress(VideoCore::LoadCallbackStage::Complete, 0, 0);
 
     SCOPE_EXIT({ ShutdownWindows(); });
 
@@ -580,6 +673,12 @@ void PresentLoop() {
         next_frame += std::chrono::milliseconds(16);
         std::this_thread::sleep_until(next_frame);
     }
+    if (g_window) {
+        g_window->ReleaseCurrent();
+    }
+    if (g_secondary_window) {
+        g_secondary_window->ReleaseCurrent();
+    }
 }
 
 void CreateWindowsAndStartEmulation(const std::string& path, EGLDisplay display,
@@ -597,6 +696,7 @@ void CreateWindowsAndStartEmulation(const std::string& path, EGLDisplay display,
     }
 
     g_present_thread_stop = false;
+    g_session_active = true;
     g_emulation_thread = std::thread(RunEmulation, path);
     g_present_thread = std::thread(PresentLoop);
 }
@@ -631,6 +731,14 @@ int64_t CreateTexture(FlTextureRegistrar* registrar, int width, int height, bool
         g_primary_texture = texture;
     }
     return fl_texture_get_id(FL_TEXTURE(texture));
+}
+
+bool IsRunning() {
+    return !g_stop_run;
+}
+
+bool IsSessionActive() {
+    return g_session_active;
 }
 
 void StartEmulation(const std::string& path) {
@@ -684,6 +792,14 @@ void StopEmulation() {
     g_present_frames = false;
     g_present_thread_stop = true;
     g_running_cv.notify_all();
+}
+
+void StopPresentingAndWait() {
+    g_present_frames = false;
+    g_present_thread_stop = true;
+    if (g_present_thread.joinable()) {
+        g_present_thread.join();
+    }
 }
 
 void StopAndWait() {

@@ -18,10 +18,10 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <thread>
 #include <unordered_map>
 #include <vector>
 
-#include "desktop_multi_window/desktop_multi_window_plugin.h"
 #include "flutter/generated_plugin_registrant.h"
 #include "native_bridge/cia_install.h"
 #include "native_bridge/emulation.h"
@@ -315,8 +315,14 @@ FlMethodResponse* HandleShowNotification(GtkWindow* window, FlValue* args) {
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
 }
 
+gboolean ExitProcessOnIdle(gpointer user_data) {
+  _exit(0);
+  return G_SOURCE_REMOVE;
+}
+
 FlMethodResponse* HandleTerminateProcess(GtkWindow* window, FlValue* args) {
-  gtk_window_close(GTK_WINDOW(window));
+  gtk_widget_hide(GTK_WIDGET(window));
+  g_idle_add(ExitProcessOnIdle, nullptr);
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
 }
 
@@ -588,9 +594,21 @@ FlMethodResponse* HandleResumeRendering(GtkWindow* window, FlValue* args) {
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
 }
 
-FlMethodResponse* HandleStopEmulation(GtkWindow* window, FlValue* args) {
-  Emulation::StopEmulation();
-  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+gboolean RespondToStopEmulation(gpointer user_data) {
+  FlMethodCall* method_call = FL_METHOD_CALL(user_data);
+  g_autoptr(FlMethodResponse) response =
+      FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+  fl_method_call_respond(method_call, response, nullptr);
+  g_object_unref(method_call);
+  return G_SOURCE_REMOVE;
+}
+
+void HandleStopEmulationAsync(FlMethodCall* method_call) {
+  FlMethodCall* call_ref = FL_METHOD_CALL(g_object_ref(method_call));
+  std::thread([call_ref] {
+    Emulation::StopAndWait();
+    g_idle_add(RespondToStopEmulation, call_ref);
+  }).detach();
 }
 
 double DoubleArgument(FlValue* args, const char* key) {
@@ -672,7 +690,6 @@ const std::unordered_map<std::string, BridgeMethodHandler>& BridgeMethodHandlers
       {"resumeEmulation", HandleResumeEmulation},
       {"pauseRendering", HandlePauseRendering},
       {"resumeRendering", HandleResumeRendering},
-      {"stopEmulation", HandleStopEmulation},
       {"onTouchEvent", HandleOnTouchEvent},
       {"onTouchMoved", HandleOnTouchMoved},
       {"swapScreens", HandleSwapScreens},
@@ -686,6 +703,11 @@ void HandleBridgeMethodCall(FlMethodChannel* channel,
   GtkWindow* window = GTK_WINDOW(user_data);
   const std::string name = fl_method_call_get_name(method_call);
   FlValue* args = fl_method_call_get_args(method_call);
+
+  if (name == "stopEmulation") {
+    HandleStopEmulationAsync(method_call);
+    return;
+  }
 
   const auto& handlers = BridgeMethodHandlers();
   const auto it = handlers.find(name);
@@ -764,8 +786,15 @@ FlMethodErrorResponse* HandleShaderProgressCancel(FlEventChannel* channel, FlVal
 }
 
 gboolean HandleWindowDeleteEvent(GtkWidget* widget, GdkEvent* event, gpointer user_data) {
-  Emulation::StopAndWait();
-  return FALSE;
+  if (!Emulation::IsSessionActive()) {
+    return FALSE;
+  }
+  FlMethodChannel* channel =
+      FL_METHOD_CHANNEL(g_object_get_data(G_OBJECT(widget), "bridge_channel"));
+  if (channel) {
+    fl_method_channel_invoke_method(channel, "requestClose", nullptr, nullptr, nullptr, nullptr);
+  }
+  return TRUE;
 }
 
 void RegisterShaderProgressChannel(FlBinaryMessenger* messenger) {
@@ -774,27 +803,6 @@ void RegisterShaderProgressChannel(FlBinaryMessenger* messenger) {
       messenger, "org.citra.citra_emu/azahar_bridge/shader_progress", FL_METHOD_CODEC(codec));
   fl_event_channel_set_stream_handlers(channel, HandleShaderProgressListen,
                                        HandleShaderProgressCancel, nullptr, nullptr);
-}
-
-struct PendingWindowSetup {
-  GtkWindow* window;
-  FlBinaryMessenger* messenger;
-};
-
-gboolean FinishWindowSetup(gpointer user_data) {
-  std::unique_ptr<PendingWindowSetup> pending(static_cast<PendingWindowSetup*>(user_data));
-
-  g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
-  FlMethodChannel* channel =
-      fl_method_channel_new(pending->messenger, kBridgeChannel, FL_METHOD_CODEC(codec));
-  fl_method_channel_set_method_call_handler(channel, HandleBridgeMethodCall, pending->window,
-                                            nullptr);
-  RegisterShaderProgressChannel(pending->messenger);
-  g_signal_connect(pending->window, "delete-event", G_CALLBACK(HandleWindowDeleteEvent), nullptr);
-
-  g_object_unref(pending->window);
-  g_object_unref(pending->messenger);
-  return G_SOURCE_REMOVE;
 }
 
 }  // namespace
@@ -839,6 +847,7 @@ static void my_application_activate(GApplication* application) {
   }
 
   gtk_window_set_default_size(window, 1280, 720);
+  g_signal_connect(window, "delete-event", G_CALLBACK(HandleWindowDeleteEvent), nullptr);
 
   g_autoptr(FlDartProject) project = fl_dart_project_new();
   fl_dart_project_set_dart_entrypoint_arguments(
@@ -869,19 +878,7 @@ static void my_application_activate(GApplication* application) {
   fl_method_channel_set_method_call_handler(
       bridge_channel, HandleBridgeMethodCall, window, nullptr);
   RegisterShaderProgressChannel(messenger);
-  g_signal_connect(window, "delete-event", G_CALLBACK(HandleWindowDeleteEvent), nullptr);
-
-  desktop_multi_window_plugin_set_window_created_callback(
-      [](FlPluginRegistry* registry) {
-        fl_register_plugins(registry);
-
-        FlView* new_view = FL_VIEW(registry);
-        auto* pending = new PendingWindowSetup{
-            GTK_WINDOW(g_object_ref(gtk_widget_get_toplevel(GTK_WIDGET(new_view)))),
-            FL_BINARY_MESSENGER(
-                g_object_ref(fl_engine_get_binary_messenger(fl_view_get_engine(new_view))))};
-        g_idle_add(FinishWindowSetup, pending);
-      });
+  g_object_set_data(G_OBJECT(window), "bridge_channel", bridge_channel);
 
   gtk_widget_grab_focus(GTK_WIDGET(view));
 }

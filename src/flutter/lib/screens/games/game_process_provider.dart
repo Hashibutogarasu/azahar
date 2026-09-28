@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app_services.dart';
+import '../../emulation_main.dart';
 import '../../models/game.dart';
 
 final gameProcessProvider =
@@ -13,42 +13,36 @@ final gameProcessProvider =
     );
 
 /// Tracks whether a game is currently running, launching it as a separate
-/// window (via `desktop_multi_window`) on Linux, or as Android's separate
+/// process of this executable on Linux, or as Android's separate
 /// `EmulationActivity` process on other platforms.
 class GameProcessNotifier extends Notifier<bool> {
-  StreamSubscription<void>? _windowsChangedSubscription;
-  String? _windowId;
+  bool _disposed = false;
 
   @override
   bool build() {
-    if (Platform.isLinux) {
-      _windowsChangedSubscription = onWindowsChanged.listen(
-        (_) => _checkWindow(),
-      );
-      ref.onDispose(() => _windowsChangedSubscription?.cancel());
-    }
+    ref.onDispose(() => _disposed = true);
     return false;
-  }
-
-  Future<void> _checkWindow() async {
-    final windowId = _windowId;
-    if (windowId == null) return;
-    final windows = await WindowController.getAll();
-    if (windows.any((window) => window.windowId == windowId)) return;
-    _windowId = null;
-    state = false;
   }
 
   Future<void> launch(Game game) async {
     if (state) return;
     await AppServices.gameRepository.markLastPlayed(game.path);
     if (Platform.isLinux) {
-      final controller = await WindowController.create(
-        WindowConfiguration(arguments: game.path, hiddenAtLaunch: false),
+      final environment = Map<String, String>.of(Platform.environment)
+        ..removeWhere((key, _) => key.startsWith('FLUTTER_ENGINE_SWITCH'));
+      final process = await Process.start(
+        Platform.resolvedExecutable,
+        [emulationArgument, game.path],
+        environment: environment,
+        includeParentEnvironment: false,
+        mode: ProcessStartMode.inheritStdio,
       );
-      _windowId = controller.windowId;
       state = true;
-      await controller.show();
+      unawaited(
+        process.exitCode.then((_) {
+          if (!_disposed) state = false;
+        }),
+      );
       return;
     }
     await AppServices.nativeBridge.launchEmulationActivity(game.path);
