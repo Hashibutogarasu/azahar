@@ -9,105 +9,15 @@ import '../theme/theme_style.dart';
 import 'settings/animation_speed.dart';
 
 part 'database.g.dart';
-
-@DataClassName('GameRow')
-class Games extends Table {
-  TextColumn get path => text()();
-  TextColumn get filename => text()();
-  TextColumn get title => text()();
-  TextColumn get description => text()();
-  IntColumn get titleId => integer()();
-  TextColumn get company => text()();
-  TextColumn get regions => text()();
-  BoolColumn get isInstalled => boolean()();
-  BoolColumn get isSystemTitle => boolean()();
-  BoolColumn get isVisibleSystemTitle => boolean()();
-  TextColumn get iconPath => text().nullable()();
-  DateTimeColumn get addedToLibraryTime => dateTime().nullable()();
-  DateTimeColumn get lastPlayedTime => dateTime().nullable()();
-
-  @override
-  Set<Column> get primaryKey => {path};
-}
-
-class AppSettings extends Table {
-  TextColumn get key => text()();
-  TextColumn get value => text()();
-
-  @override
-  Set<Column> get primaryKey => {key};
-}
-
-class ThemeSettings extends Table {
-  IntColumn get id => integer().withDefault(const Constant(0))();
-  TextColumn get themeMode => text().withDefault(const Constant('system'))();
-  IntColumn get staticThemeColor => integer().withDefault(const Constant(0))();
-  BoolColumn get blackBackgrounds =>
-      boolean().withDefault(const Constant(false))();
-  BoolColumn get materialYou => boolean().withDefault(const Constant(false))();
-  IntColumn get themeStyle =>
-      intEnum<ThemeStyle>().withDefault(Constant(ThemeStyle.azahar.index))();
-
-  @override
-  Set<Column> get primaryKey => {id};
-}
-
-class AccessibilitySettings extends Table {
-  IntColumn get id => integer().withDefault(const Constant(0))();
-  BoolColumn get reduceMotion => boolean().withDefault(const Constant(false))();
-
-  @override
-  Set<Column> get primaryKey => {id};
-}
-
-class AdvancedSettings extends Table {
-  IntColumn get id => integer().withDefault(const Constant(0))();
-  IntColumn get animationSpeed => intEnum<AnimationSpeed>().withDefault(
-    Constant(AnimationSpeed.normal.index),
-  )();
-
-  @override
-  Set<Column> get primaryKey => {id};
-}
-
-class MediaSettings extends Table {
-  IntColumn get id => integer().withDefault(const Constant(0))();
-  RealColumn get masterVolume => real().withDefault(const Constant(100.0))();
-
-  @override
-  Set<Column> get primaryKey => {id};
-}
-
-class VirtualAccessPoints extends Table {
-  IntColumn get sortIndex => integer()();
-  TextColumn get ssid => text()();
-  TextColumn get bssid => text()();
-  IntColumn get frequency => integer()();
-  IntColumn get level => integer()();
-
-  @override
-  Set<Column> get primaryKey => {sortIndex};
-}
-
-class ControlBindings extends Table {
-  TextColumn get key => text()();
-  TextColumn get value => text()();
-
-  @override
-  Set<Column> get primaryKey => {key};
-}
-
-class InputLayoutElements extends Table {
-  TextColumn get orientation => text()();
-  TextColumn get elementId => text()();
-  IntColumn get x => integer()();
-  IntColumn get y => integer()();
-  IntColumn get width => integer()();
-  IntColumn get height => integer()();
-
-  @override
-  Set<Column> get primaryKey => {orientation, elementId};
-}
+part 'tables/games.dart';
+part 'tables/app_settings.dart';
+part 'tables/theme_settings.dart';
+part 'tables/accessibility_settings.dart';
+part 'tables/advanced_settings.dart';
+part 'tables/media_settings.dart';
+part 'tables/virtual_access_points.dart';
+part 'tables/control_bindings.dart';
+part 'tables/input_layout_elements.dart';
 
 @DriftDatabase(
   tables: [
