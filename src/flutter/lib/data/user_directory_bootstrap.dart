@@ -35,8 +35,17 @@ abstract final class UserDirectoryBootstrap {
     for (final suffix in const ['', '-wal', '-shm']) {
       final source = File('${from.path}$suffix');
       if (await source.exists()) {
-        await source.rename('${to.path}$suffix');
+        await _moveFile(source, File('${to.path}$suffix'));
       }
+    }
+  }
+
+  static Future<void> _moveFile(File source, File destination) async {
+    try {
+      await source.rename(destination.path);
+    } on FileSystemException {
+      await source.copy(destination.path);
+      await source.delete();
     }
   }
 
