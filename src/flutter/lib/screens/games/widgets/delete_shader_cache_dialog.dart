@@ -4,6 +4,7 @@ import '../../../app_services.dart';
 import '../../../i18n/translations.g.dart';
 import '../../../models/game.dart';
 import '../../../models/shader_cache_backend.dart';
+import '../../../widgets/dialog_cancel_button.dart';
 
 /// Mirrors the Compose client's `DeleteShaderCacheButton`: asks which graphics backend's disk
 /// shader cache to delete for [game], then removes it.
@@ -13,11 +14,15 @@ class DeleteShaderCacheDialog extends StatefulWidget {
   final Game game;
 
   static Future<void> show(BuildContext context, Game game) {
-    return showDialog<void>(context: context, builder: (_) => DeleteShaderCacheDialog(game: game));
+    return showDialog<void>(
+      context: context,
+      builder: (_) => DeleteShaderCacheDialog(game: game),
+    );
   }
 
   @override
-  State<DeleteShaderCacheDialog> createState() => _DeleteShaderCacheDialogState();
+  State<DeleteShaderCacheDialog> createState() =>
+      _DeleteShaderCacheDialogState();
 }
 
 class _DeleteShaderCacheDialogState extends State<DeleteShaderCacheDialog> {
@@ -47,10 +52,7 @@ class _DeleteShaderCacheDialogState extends State<DeleteShaderCacheDialog> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(localizations.cancelButtonLabel),
-        ),
+        const DialogCancelButton(),
         TextButton(
           onPressed: _selected == null
               ? null
@@ -58,8 +60,13 @@ class _DeleteShaderCacheDialogState extends State<DeleteShaderCacheDialog> {
                   final backend = _selected!;
                   final messenger = ScaffoldMessenger.of(context);
                   Navigator.of(context).pop();
-                  await AppServices.nativeBridge.deleteShaderCache(widget.game, backend);
-                  messenger.showSnackBar(SnackBar(content: Text(t.games.shaderCacheDeleted)));
+                  await AppServices.nativeBridge.deleteShaderCache(
+                    widget.game,
+                    backend,
+                  );
+                  messenger.showSnackBar(
+                    SnackBar(content: Text(t.games.shaderCacheDeleted)),
+                  );
                 },
           child: Text(localizations.okButtonLabel),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../routing/slide_transition_route.dart';
 import 'sections/audio_settings_page.dart';
 import 'sections/camera_settings_page.dart';
 import 'sections/controls_settings_page.dart';
@@ -19,9 +20,12 @@ part 'settings_routes.g.dart';
 /// `lib/main.dart`); kept only so the legacy Options UI (`useLegacySettingsUI`) can still reach
 /// it. The current UI uses the routes in `lib/screens/options/options_routes.dart` instead, which
 /// build the very same page widgets referenced below.
-@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@Deprecated(
+  'Not registered in the router. Kept for the legacy Options UI only.',
+)
 @TypedGoRoute<LegacySettingsMenuRoute>(path: '/settings')
-class LegacySettingsMenuRoute extends GoRouteData with $LegacySettingsMenuRoute {
+class LegacySettingsMenuRoute extends GoRouteData
+    with $LegacySettingsMenuRoute, SlideTransitionRoute {
   const LegacySettingsMenuRoute();
 
   @override
@@ -30,9 +34,12 @@ class LegacySettingsMenuRoute extends GoRouteData with $LegacySettingsMenuRoute 
   }
 }
 
-@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@Deprecated(
+  'Not registered in the router. Kept for the legacy Options UI only.',
+)
 @TypedGoRoute<LegacyGeneralSettingsRoute>(path: '/settings/general')
-class LegacyGeneralSettingsRoute extends GoRouteData with $LegacyGeneralSettingsRoute {
+class LegacyGeneralSettingsRoute extends GoRouteData
+    with $LegacyGeneralSettingsRoute, SlideTransitionRoute {
   const LegacyGeneralSettingsRoute();
 
   @override
@@ -41,9 +48,12 @@ class LegacyGeneralSettingsRoute extends GoRouteData with $LegacyGeneralSettings
   }
 }
 
-@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@Deprecated(
+  'Not registered in the router. Kept for the legacy Options UI only.',
+)
 @TypedGoRoute<LegacyGraphicsSettingsRoute>(path: '/settings/graphics')
-class LegacyGraphicsSettingsRoute extends GoRouteData with $LegacyGraphicsSettingsRoute {
+class LegacyGraphicsSettingsRoute extends GoRouteData
+    with $LegacyGraphicsSettingsRoute, SlideTransitionRoute {
   const LegacyGraphicsSettingsRoute();
 
   @override
@@ -52,20 +62,42 @@ class LegacyGraphicsSettingsRoute extends GoRouteData with $LegacyGraphicsSettin
   }
 }
 
-@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@Deprecated(
+  'Not registered in the router. Kept for the legacy Options UI only.',
+)
 @TypedGoRoute<LegacySystemSettingsRoute>(path: '/settings/system')
-class LegacySystemSettingsRoute extends GoRouteData with $LegacySystemSettingsRoute {
+class LegacySystemSettingsRoute extends GoRouteData
+    with $LegacySystemSettingsRoute, SlideTransitionRoute {
   const LegacySystemSettingsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const SystemSettingsPage();
+    // ignore: deprecated_member_use_from_same_package
+    return const LegacySystemSettingsPage();
   }
 }
 
-@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@Deprecated(
+  'Not registered in the router. Kept for the legacy Options UI only.',
+)
+@TypedGoRoute<LegacyAudioSettingsRoute>(path: '/settings/audio')
+class LegacyAudioSettingsRoute extends GoRouteData
+    with $LegacyAudioSettingsRoute, SlideTransitionRoute {
+  const LegacyAudioSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    // ignore: deprecated_member_use_from_same_package
+    return const LegacyAudioSettingsPage();
+  }
+}
+
+@Deprecated(
+  'Not registered in the router. Kept for the legacy Options UI only.',
+)
 @TypedGoRoute<LegacyCameraSettingsRoute>(path: '/settings/camera')
-class LegacyCameraSettingsRoute extends GoRouteData with $LegacyCameraSettingsRoute {
+class LegacyCameraSettingsRoute extends GoRouteData
+    with $LegacyCameraSettingsRoute, SlideTransitionRoute {
   const LegacyCameraSettingsRoute();
 
   @override
@@ -74,9 +106,12 @@ class LegacyCameraSettingsRoute extends GoRouteData with $LegacyCameraSettingsRo
   }
 }
 
-@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@Deprecated(
+  'Not registered in the router. Kept for the legacy Options UI only.',
+)
 @TypedGoRoute<LegacyControlsSettingsRoute>(path: '/settings/controls')
-class LegacyControlsSettingsRoute extends GoRouteData with $LegacyControlsSettingsRoute {
+class LegacyControlsSettingsRoute extends GoRouteData
+    with $LegacyControlsSettingsRoute, SlideTransitionRoute {
   const LegacyControlsSettingsRoute();
 
   @override
@@ -85,9 +120,12 @@ class LegacyControlsSettingsRoute extends GoRouteData with $LegacyControlsSettin
   }
 }
 
-@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@Deprecated(
+  'Not registered in the router. Kept for the legacy Options UI only.',
+)
 @TypedGoRoute<LegacyLayoutSettingsRoute>(path: '/settings/layout')
-class LegacyLayoutSettingsRoute extends GoRouteData with $LegacyLayoutSettingsRoute {
+class LegacyLayoutSettingsRoute extends GoRouteData
+    with $LegacyLayoutSettingsRoute, SlideTransitionRoute {
   const LegacyLayoutSettingsRoute();
 
   @override
@@ -96,12 +134,14 @@ class LegacyLayoutSettingsRoute extends GoRouteData with $LegacyLayoutSettingsRo
   }
 }
 
-@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@Deprecated(
+  'Not registered in the router. Kept for the legacy Options UI only.',
+)
 @TypedGoRoute<LegacyCustomLandscapeLayoutSettingsRoute>(
   path: '/settings/layout/custom-landscape',
 )
 class LegacyCustomLandscapeLayoutSettingsRoute extends GoRouteData
-    with $LegacyCustomLandscapeLayoutSettingsRoute {
+    with $LegacyCustomLandscapeLayoutSettingsRoute, SlideTransitionRoute {
   const LegacyCustomLandscapeLayoutSettingsRoute();
 
   @override
@@ -110,10 +150,14 @@ class LegacyCustomLandscapeLayoutSettingsRoute extends GoRouteData
   }
 }
 
-@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
-@TypedGoRoute<LegacyCustomPortraitLayoutSettingsRoute>(path: '/settings/layout/custom-portrait')
+@Deprecated(
+  'Not registered in the router. Kept for the legacy Options UI only.',
+)
+@TypedGoRoute<LegacyCustomPortraitLayoutSettingsRoute>(
+  path: '/settings/layout/custom-portrait',
+)
 class LegacyCustomPortraitLayoutSettingsRoute extends GoRouteData
-    with $LegacyCustomPortraitLayoutSettingsRoute {
+    with $LegacyCustomPortraitLayoutSettingsRoute, SlideTransitionRoute {
   const LegacyCustomPortraitLayoutSettingsRoute();
 
   @override
@@ -122,20 +166,12 @@ class LegacyCustomPortraitLayoutSettingsRoute extends GoRouteData
   }
 }
 
-@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
-@TypedGoRoute<LegacyAudioSettingsRoute>(path: '/settings/audio')
-class LegacyAudioSettingsRoute extends GoRouteData with $LegacyAudioSettingsRoute {
-  const LegacyAudioSettingsRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const AudioSettingsPage();
-  }
-}
-
-@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@Deprecated(
+  'Not registered in the router. Kept for the legacy Options UI only.',
+)
 @TypedGoRoute<LegacyDebugSettingsRoute>(path: '/settings/debug')
-class LegacyDebugSettingsRoute extends GoRouteData with $LegacyDebugSettingsRoute {
+class LegacyDebugSettingsRoute extends GoRouteData
+    with $LegacyDebugSettingsRoute, SlideTransitionRoute {
   const LegacyDebugSettingsRoute();
 
   @override
@@ -144,9 +180,12 @@ class LegacyDebugSettingsRoute extends GoRouteData with $LegacyDebugSettingsRout
   }
 }
 
-@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@Deprecated(
+  'Not registered in the router. Kept for the legacy Options UI only.',
+)
 @TypedGoRoute<LegacyThemeSettingsRoute>(path: '/settings/theme')
-class LegacyThemeSettingsRoute extends GoRouteData with $LegacyThemeSettingsRoute {
+class LegacyThemeSettingsRoute extends GoRouteData
+    with $LegacyThemeSettingsRoute, SlideTransitionRoute {
   const LegacyThemeSettingsRoute();
 
   @override
@@ -155,9 +194,12 @@ class LegacyThemeSettingsRoute extends GoRouteData with $LegacyThemeSettingsRout
   }
 }
 
-@Deprecated('Not registered in the router. Kept for the legacy Options UI only.')
+@Deprecated(
+  'Not registered in the router. Kept for the legacy Options UI only.',
+)
 @TypedGoRoute<LegacyLanguageSettingsRoute>(path: '/settings/language')
-class LegacyLanguageSettingsRoute extends GoRouteData with $LegacyLanguageSettingsRoute {
+class LegacyLanguageSettingsRoute extends GoRouteData
+    with $LegacyLanguageSettingsRoute, SlideTransitionRoute {
   const LegacyLanguageSettingsRoute();
 
   @override

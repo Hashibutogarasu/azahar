@@ -12,7 +12,9 @@ class GameIcon extends StatelessWidget {
 
   Widget _placeholder(BuildContext context) {
     return Image.asset(
-      Theme.of(context).brightness == Brightness.dark ? _placeholderAssetDark : _placeholderAsset,
+      Theme.of(context).brightness == Brightness.dark
+          ? _placeholderAssetDark
+          : _placeholderAsset,
       fit: BoxFit.cover,
     );
   }

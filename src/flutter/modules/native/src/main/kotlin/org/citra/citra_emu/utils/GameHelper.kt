@@ -17,21 +17,24 @@ import org.citra.citra_emu.model.Game
 import org.citra.citra_emu.model.GameInfo
 import java.io.IOException
 
+data class InstalledTitlePath(val root: String, val path: String)
+
 object GameHelper {
-    const val KEY_GAME_PATH = "game_path"
     const val KEY_GAMES = "Games"
 
     private lateinit var preferences: SharedPreferences
 
-    fun getGames(): List<Game> {
+    fun getGames(gamesDirectory: String?, installedTitlePaths: List<InstalledTitlePath>): List<Game> {
         val games = mutableListOf<Game>()
         val context = CitraApplication.appContext
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val gamesDir = preferences.getString(KEY_GAME_PATH, "")
-        val gamesUri = Uri.parse(gamesDir)
+        val gamesUri = Uri.parse(gamesDirectory ?: "")
 
         addGamesRecursive(games, FileUtil.listFiles(gamesUri), 3)
-        NativeLibrary.getInstalledGamePaths().forEach {
+        NativeLibrary.getInstalledGamePaths(
+            installedTitlePaths.map { it.root }.toTypedArray(),
+            installedTitlePaths.map { it.path }.toTypedArray()
+        ).forEach {
             games.add(getGame(Uri.parse(it), isInstalled = true, addedToLibrary = true))
         }
 

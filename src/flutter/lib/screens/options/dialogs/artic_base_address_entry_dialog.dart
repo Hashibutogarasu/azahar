@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../../i18n/translations.g.dart';
+import '../../../widgets/dialog_cancel_button.dart';
 
 class ArticBaseAddressEntryResult {
-  const ArticBaseAddressEntryResult({required this.address, required this.installO3ds});
+  const ArticBaseAddressEntryResult({
+    required this.address,
+    required this.installO3ds,
+  });
 
   final String address;
   final bool installO3ds;
@@ -34,10 +38,12 @@ class ArticBaseAddressEntryDialog extends StatefulWidget {
   }
 
   @override
-  State<ArticBaseAddressEntryDialog> createState() => _ArticBaseAddressEntryDialogState();
+  State<ArticBaseAddressEntryDialog> createState() =>
+      _ArticBaseAddressEntryDialogState();
 }
 
-class _ArticBaseAddressEntryDialogState extends State<ArticBaseAddressEntryDialog> {
+class _ArticBaseAddressEntryDialogState
+    extends State<ArticBaseAddressEntryDialog> {
   final _addressController = TextEditingController();
   String? _selected;
 
@@ -54,7 +60,8 @@ class _ArticBaseAddressEntryDialogState extends State<ArticBaseAddressEntryDialo
     final localizations = MaterialLocalizations.of(context);
     return StatefulBuilder(
       builder: (context, setDialogState) {
-        final canConfirm = _addressController.text.isNotEmpty && _selected != null;
+        final canConfirm =
+            _addressController.text.isNotEmpty && _selected != null;
         return AlertDialog(
           title: Text(s.enterAddress),
           content: SingleChildScrollView(
@@ -65,7 +72,9 @@ class _ArticBaseAddressEntryDialogState extends State<ArticBaseAddressEntryDialo
                 TextField(
                   controller: _addressController,
                   keyboardType: TextInputType.url,
-                  decoration: const InputDecoration(border: OutlineInputBorder()),
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                  ),
                   onChanged: (_) => setDialogState(() {}),
                 ),
                 RadioGroup<String>(
@@ -85,7 +94,9 @@ class _ArticBaseAddressEntryDialogState extends State<ArticBaseAddressEntryDialo
                       Padding(
                         padding: const EdgeInsets.only(left: 48),
                         child: Text(
-                          widget.o3dsInstalled ? s.statusCompleted : s.statusPossible,
+                          widget.o3dsInstalled
+                              ? s.statusCompleted
+                              : s.statusPossible,
                           style: Theme.of(context).textTheme.labelSmall,
                         ),
                       ),
@@ -100,7 +111,9 @@ class _ArticBaseAddressEntryDialogState extends State<ArticBaseAddressEntryDialo
                         child: Text(
                           !widget.o3dsInstalled
                               ? s.statusOld3dsNeeded
-                              : (widget.n3dsInstalled ? s.statusCompleted : s.statusPossible),
+                              : (widget.n3dsInstalled
+                                    ? s.statusCompleted
+                                    : s.statusPossible),
                           style: Theme.of(context).textTheme.labelSmall,
                         ),
                       ),
@@ -111,18 +124,15 @@ class _ArticBaseAddressEntryDialogState extends State<ArticBaseAddressEntryDialo
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(localizations.cancelButtonLabel),
-            ),
+            const DialogCancelButton(),
             TextButton(
               onPressed: canConfirm
                   ? () => Navigator.of(context).pop(
-                        ArticBaseAddressEntryResult(
-                          address: _addressController.text,
-                          installO3ds: _selected == 'o3ds',
-                        ),
-                      )
+                      ArticBaseAddressEntryResult(
+                        address: _addressController.text,
+                        installO3ds: _selected == 'o3ds',
+                      ),
+                    )
                   : null,
               child: Text(localizations.okButtonLabel),
             ),

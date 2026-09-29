@@ -2,10 +2,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app_services.dart';
 
-final systemFilesProvider = Provider<SystemFilesService>((ref) => SystemFilesService());
+final systemFilesProvider = Provider<SystemFilesService>(
+  (ref) => SystemFilesService(),
+);
 
 class SystemFilesService {
-  Future<bool> isFullConsoleLinked() => AppServices.nativeBridge.isFullConsoleLinked();
+  Future<bool> isFullConsoleLinked() =>
+      AppServices.nativeBridge.isFullConsoleLinked();
 
   Future<List<bool>> areSystemTitlesInstalled() {
     return AppServices.nativeBridge.areSystemTitlesInstalled();
@@ -17,17 +20,24 @@ class SystemFilesService {
 
   Future<void> unlinkConsole() => AppServices.nativeBridge.unlinkConsole();
 
-  Future<String> getHomeMenuPath(int region) => AppServices.nativeBridge.getHomeMenuPath(region);
+  Future<String> getHomeMenuPath(int region) =>
+      AppServices.nativeBridge.getHomeMenuPath(region);
 
-  Future<bool> isSystemSetupNeeded() => AppServices.nativeBridge.isSystemSetupNeeded();
+  Future<bool> isSystemSetupNeeded() =>
+      AppServices.nativeBridge.isSystemSetupNeeded();
 
   Future<void> setSystemSetupNeeded(bool needed) {
     return AppServices.nativeBridge.setSystemSetupNeeded(needed);
   }
 
-  Future<void> launchArticInstall({required String address, required bool installO3ds}) {
+  Future<void> launchArticInstall({
+    required String address,
+    required bool installO3ds,
+  }) {
     final scheme = installO3ds ? 'articinio' : 'articinin';
-    return AppServices.nativeBridge.launchEmulationActivity('$scheme://$address');
+    return AppServices.nativeBridge.launchEmulationActivity(
+      '$scheme://$address',
+    );
   }
 
   Future<void> launchHomeMenu(int region) async {

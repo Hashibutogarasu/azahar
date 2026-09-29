@@ -70,9 +70,6 @@
 #define ICONS_DIR "icons"
 
 // Filenames
-// Files in the directory returned by GetUserPath(UserPath::LogDir)
-#define LOG_FILE "azahar_log.txt"
-
 // Files in the directory returned by GetUserPath(UserPath::ConfigDir)
 #define EMU_CONFIG "emu.ini"
 #define DEBUGGER_CONFIG "debugger.ini"

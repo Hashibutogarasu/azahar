@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app_services.dart';
-import 'clearable.dart';
+import '../repositories/clearable.dart';
 
-final resetSettingsProvider = Provider<ResetSettingsService>((ref) => ResetSettingsService());
+final resetSettingsProvider = Provider<ResetSettingsService>(
+  (ref) => ResetSettingsService(),
+);
 
 class ResetSettingsService {
   static final List<Clearable> _clearables = [

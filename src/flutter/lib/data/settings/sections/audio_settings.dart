@@ -5,17 +5,29 @@ import '../system_save_value_store.dart';
 
 abstract final class AudioSettingKeys {
   static const volume = ScaledFloatKey('Audio', 'volume', 1.0, 100);
-  static const audioStretching = IntBoolKey('Audio', 'enable_audio_stretching', true);
-  static const realtimeAudio = IntBoolKey('Audio', 'enable_realtime_audio', false);
+  static const audioStretching = IntBoolKey(
+    'Audio',
+    'enable_audio_stretching',
+    true,
+  );
+  static const realtimeAudio = IntBoolKey(
+    'Audio',
+    'enable_realtime_audio',
+    false,
+  );
   static const audioInputType = IntKey('Audio', 'input_type', 0);
   static const soundOutputMode = IntKey('Audio', 'soundOutputMode', 1);
 }
 
-List<SettingsItem> buildAudioSettingsItems(Translations t, SystemSaveValueStore systemSaveStore) {
+List<SettingsItem> buildAudioSettingsItems(
+  Translations t,
+  SystemSaveValueStore systemSaveStore,
+) {
   final a = t.settings.audio;
   return [
     SettingsItem.floatSlider(
       title: a.volume,
+      description: a.volumeDescription,
       setting: AudioSettingKeys.volume,
       min: 0,
       max: 100,
@@ -46,7 +58,11 @@ List<SettingsItem> buildAudioSettingsItems(Translations t, SystemSaveValueStore 
     SettingsItem.singleChoice(
       title: a.soundOutputMode,
       setting: AudioSettingKeys.soundOutputMode,
-      choiceLabels: [a.soundOutputModeMono, a.soundOutputModeStereo, a.soundOutputModeSurround],
+      choiceLabels: [
+        a.soundOutputModeMono,
+        a.soundOutputModeStereo,
+        a.soundOutputModeSurround,
+      ],
       choiceValues: const [0, 1, 2],
       store: systemSaveStore,
     ),
