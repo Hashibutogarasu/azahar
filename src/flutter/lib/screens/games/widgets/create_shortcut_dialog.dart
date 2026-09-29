@@ -5,6 +5,7 @@ import '../../../app_services.dart';
 import '../../../i18n/translations.g.dart';
 import '../../../models/create_shortcut_request.dart';
 import '../../../models/game.dart';
+import '../../../widgets/dialog_cancel_button.dart';
 import 'game_icon.dart';
 
 /// Mirrors the Compose client's `CreateShortcutDialog`: lets the user rename the shortcut and
@@ -15,7 +16,10 @@ class CreateShortcutDialog extends StatefulWidget {
   final Game game;
 
   static Future<void> show(BuildContext context, Game game) {
-    return showDialog<void>(context: context, builder: (_) => CreateShortcutDialog(game: game));
+    return showDialog<void>(
+      context: context,
+      builder: (_) => CreateShortcutDialog(game: game),
+    );
   }
 
   @override
@@ -23,7 +27,9 @@ class CreateShortcutDialog extends StatefulWidget {
 }
 
 class _CreateShortcutDialogState extends State<CreateShortcutDialog> {
-  late final TextEditingController _nameController = TextEditingController(text: widget.game.title);
+  late final TextEditingController _nameController = TextEditingController(
+    text: widget.game.title,
+  );
   bool _nameError = false;
   String? _customImagePath;
   bool _stretch = false;
@@ -72,7 +78,9 @@ class _CreateShortcutDialogState extends State<CreateShortcutDialog> {
               child: SizedBox(
                 width: 96,
                 height: 96,
-                child: GameIcon(iconPath: _customImagePath ?? widget.game.iconPath),
+                child: GameIcon(
+                  iconPath: _customImagePath ?? widget.game.iconPath,
+                ),
               ),
             ),
           ),
@@ -107,11 +115,11 @@ class _CreateShortcutDialogState extends State<CreateShortcutDialog> {
         ],
       ),
       actions: [
+        const DialogCancelButton(),
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(localizations.cancelButtonLabel),
+          onPressed: _confirm,
+          child: Text(localizations.okButtonLabel),
         ),
-        TextButton(onPressed: _confirm, child: Text(localizations.okButtonLabel)),
       ],
     );
   }

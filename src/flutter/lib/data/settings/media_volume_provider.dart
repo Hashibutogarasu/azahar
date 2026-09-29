@@ -4,44 +4,51 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app_services.dart';
 import '../../native/native_bridge.dart';
-import 'emulator_setting_key.dart';
-import 'sections/audio_settings.dart';
-import 'settings_value_store.dart';
+import '../database.dart';
 
-final mediaVolumeProvider = NotifierProvider<MediaVolumeNotifier, double>(
-  MediaVolumeNotifier.new,
+final masterVolumeProvider = NotifierProvider<MasterVolumeNotifier, double>(
+  MasterVolumeNotifier.new,
 );
 
-class MediaVolumeNotifier extends Notifier<double> {
+class MasterVolumeNotifier extends Notifier<double> {
   NativeBridge get _bridge => AppServices.nativeBridge;
 
   StreamSubscription<double>? _nativeSubscription;
 
-  double get volume => state;
-
   @override
   double build() {
     ref.onDispose(stopNativeSync);
-    return AppServices.emulatorSettingsRepository.readFloat(AudioSettingKeys.volume);
+    unawaited(_loadPersisted());
+    return 100;
   }
 
-  Future<void> setVolume(double percentage) => _applyVolume(percentage, pushToNative: true);
+  Future<void> _loadPersisted() async {
+    final settings = await AppServices.mediaSettingsRepository.read();
+    state = settings.masterVolume;
+  }
 
-  Future<void> _applyVolume(double percentage, {required bool pushToNative}) async {
+  /// Applies [percentage] (0-100) to the system media stream immediately, without persisting it.
+  Future<void> setVolume(double percentage) async {
     state = percentage;
-    await AppServices.emulatorSettingsRepository.writeFloat(AudioSettingKeys.volume, percentage);
-    await AppServices.emulatorSettingsRepository.save();
-    if (pushToNative && _nativeSubscription != null) {
-      await _bridge.setSystemMediaVolume(percentage / 100);
-    }
+    await _bridge.setSystemMediaVolume(percentage / 100);
+  }
+
+  /// Persists the current volume. Callers should invoke this once a drag gesture ends, not on
+  /// every intermediate value, to avoid frequent database writes.
+  Future<void> persistVolume() {
+    return AppServices.mediaSettingsRepository.write(
+      MediaSetting(id: 0, masterVolume: state),
+    );
   }
 
   Future<void> startNativeSync() async {
     if (_nativeSubscription != null) return;
     final nativeVolume = await _bridge.getSystemMediaVolume();
-    await _applyVolume(nativeVolume * 100, pushToNative: false);
+    state = nativeVolume * 100;
+    await persistVolume();
     _nativeSubscription = _bridge.systemMediaVolumeChanges().listen((fraction) {
-      unawaited(_applyVolume(fraction * 100, pushToNative: false));
+      state = fraction * 100;
+      unawaited(persistVolume());
     });
   }
 
@@ -49,34 +56,4 @@ class MediaVolumeNotifier extends Notifier<double> {
     await _nativeSubscription?.cancel();
     _nativeSubscription = null;
   }
-}
-
-class MediaVolumeValueStore implements SettingsValueStore {
-  MediaVolumeValueStore(this._notifier);
-
-  final MediaVolumeNotifier _notifier;
-
-  @override
-  double readFloat(FloatKey setting) => _notifier.volume;
-
-  @override
-  Future<void> writeFloat(FloatKey setting, double value) => _notifier.setVolume(value);
-
-  @override
-  int readInt(IntKey setting) => setting.defaultValue;
-
-  @override
-  Future<void> writeInt(IntKey setting, int value) => Future.value();
-
-  @override
-  bool readBool(IntBoolKey setting) => setting.defaultValue != 0;
-
-  @override
-  Future<void> writeBool(IntBoolKey setting, bool value) => Future.value();
-
-  @override
-  String readString(StringKey setting) => setting.defaultValue;
-
-  @override
-  Future<void> writeString(StringKey setting, String value) => Future.value();
 }

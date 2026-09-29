@@ -22,15 +22,19 @@ class MediaSessionService {
     if (defaultTargetPlatform != TargetPlatform.android) return;
     _active = true;
     await _stopSubscription?.cancel();
-    _stopSubscription = _bridge.mediaNotificationStopRequests().listen((_) => onStop());
+    _stopSubscription = _bridge.mediaNotificationStopRequests().listen(
+      (_) => onStop(),
+    );
     await _playPauseSubscription?.cancel();
-    _playPauseSubscription = _bridge.mediaNotificationPlayPauseRequests().listen((isPlaying) {
-      if (isPlaying) {
-        onPlay();
-      } else {
-        onPause();
-      }
-    });
+    _playPauseSubscription = _bridge
+        .mediaNotificationPlayPauseRequests()
+        .listen((isPlaying) {
+          if (isPlaying) {
+            onPlay();
+          } else {
+            onPause();
+          }
+        });
     await _bridge.activateMediaNotification(
       title: metadata.title,
       artworkPath: metadata.artworkPath,

@@ -11,12 +11,12 @@ List<RouteBase> get $appRoutes => [
   $legacyGeneralSettingsRoute,
   $legacyGraphicsSettingsRoute,
   $legacySystemSettingsRoute,
+  $legacyAudioSettingsRoute,
   $legacyCameraSettingsRoute,
   $legacyControlsSettingsRoute,
   $legacyLayoutSettingsRoute,
   $legacyCustomLandscapeLayoutSettingsRoute,
   $legacyCustomPortraitLayoutSettingsRoute,
-  $legacyAudioSettingsRoute,
   $legacyDebugSettingsRoute,
   $legacyThemeSettingsRoute,
   $legacyLanguageSettingsRoute,
@@ -115,6 +115,33 @@ mixin $LegacySystemSettingsRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/settings/system');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $legacyAudioSettingsRoute => GoRouteData.$route(
+  path: '/settings/audio',
+  hasOverriddenOnExit: false,
+  factory: $LegacyAudioSettingsRoute._fromState,
+);
+
+mixin $LegacyAudioSettingsRoute on GoRouteData {
+  static LegacyAudioSettingsRoute _fromState(GoRouterState state) =>
+      const LegacyAudioSettingsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/settings/audio');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -254,33 +281,6 @@ mixin $LegacyCustomPortraitLayoutSettingsRoute on GoRouteData {
   @override
   String get location =>
       GoRouteData.$location('/settings/layout/custom-portrait');
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $legacyAudioSettingsRoute => GoRouteData.$route(
-  path: '/settings/audio',
-  hasOverriddenOnExit: false,
-  factory: $LegacyAudioSettingsRoute._fromState,
-);
-
-mixin $LegacyAudioSettingsRoute on GoRouteData {
-  static LegacyAudioSettingsRoute _fromState(GoRouterState state) =>
-      const LegacyAudioSettingsRoute();
-
-  @override
-  String get location => GoRouteData.$location('/settings/audio');
 
   @override
   void go(BuildContext context) => context.go(location);

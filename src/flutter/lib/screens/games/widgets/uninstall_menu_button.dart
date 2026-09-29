@@ -21,7 +21,10 @@ class UninstallMenuButton extends StatelessWidget {
   final VoidCallback onUninstalled;
 
   Future<void> _delete(GameUninstallTarget target) async {
-    final deleted = await AppServices.nativeBridge.deleteGameFolder(game, target);
+    final deleted = await AppServices.nativeBridge.deleteGameFolder(
+      game,
+      target,
+    );
     if (deleted) {
       onUninstalled();
     }
@@ -41,12 +44,22 @@ class UninstallMenuButton extends StatelessWidget {
       onSelected: _delete,
       itemBuilder: (context) => [
         for (final (target, label, enabled) in entries)
-          PopupMenuItem<GameUninstallTarget>(value: target, enabled: enabled, child: Text(label)),
+          PopupMenuItem<GameUninstallTarget>(
+            value: target,
+            enabled: enabled,
+            child: Text(label),
+          ),
       ],
       child: Container(
         padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(color: colorScheme.secondaryContainer, shape: BoxShape.circle),
-        child: Icon(Icons.delete_outline, color: colorScheme.onSecondaryContainer),
+        decoration: BoxDecoration(
+          color: colorScheme.secondaryContainer,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          Icons.delete_outline,
+          color: colorScheme.onSecondaryContainer,
+        ),
       ),
     );
   }

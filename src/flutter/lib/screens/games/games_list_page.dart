@@ -1,24 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app_services.dart';
-import '../../data/game_repository.dart';
+import '../../data/repositories/game_repository.dart';
 import '../../i18n/translations.g.dart';
 import '../../models/game.dart';
+import '../../theme/extensions/game_card_theme.dart';
+import '../../widgets/app_search_bar.dart';
+import 'game_process_provider.dart';
 import 'widgets/about_game_bottom_sheet.dart';
 import 'widgets/game_card.dart';
 
-class GamesListPage extends StatefulWidget {
+class GamesListPage extends ConsumerStatefulWidget {
   const GamesListPage({super.key});
 
   @override
-  State<GamesListPage> createState() => _GamesListPageState();
+  ConsumerState<GamesListPage> createState() => _GamesListPageState();
 }
 
-class _GamesListPageState extends State<GamesListPage> with WidgetsBindingObserver {
+class _GamesListPageState extends ConsumerState<GamesListPage>
+    with WidgetsBindingObserver {
   final GameRepository _gameRepository = AppServices.gameRepository;
   final _queryController = TextEditingController();
   List<Game> _games = const [];
   String _query = '';
+  bool _wasRunning = false;
 
   @override
   void initState() {
@@ -57,12 +63,9 @@ class _GamesListPageState extends State<GamesListPage> with WidgetsBindingObserv
   List<Game> get _filteredGames {
     if (_query.isEmpty) return _games;
     final lowerQuery = _query.toLowerCase();
-    return _games.where((game) => game.title.toLowerCase().contains(lowerQuery)).toList();
-  }
-
-  Future<void> _launchGame(Game game) async {
-    await _gameRepository.markLastPlayed(game.path);
-    await AppServices.nativeBridge.launchEmulationActivity(game.path);
+    return _games
+        .where((game) => game.title.toLowerCase().contains(lowerQuery))
+        .toList();
   }
 
   void _onGameLongPress(Game game) {
@@ -86,7 +89,7 @@ class _GamesListPageState extends State<GamesListPage> with WidgetsBindingObserv
     AboutGameBottomSheet.show(
       context,
       game: game,
-      onPlay: () => _launchGame(game),
+      onPlay: () => ref.read(gameProcessProvider.notifier).launch(game),
       onUninstalled: _rescan,
     );
   }
@@ -95,82 +98,71 @@ class _GamesListPageState extends State<GamesListPage> with WidgetsBindingObserv
   Widget build(BuildContext context) {
     final t = context.t;
     final games = _filteredGames;
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Card(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Row(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        child: Icon(Icons.search, size: 28),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: _queryController,
-                          decoration: InputDecoration(
-                            hintText: t.games.searchHint,
-                            border: InputBorder.none,
-                          ),
-                          onChanged: (value) => setState(() => _query = value),
-                        ),
-                      ),
-                      if (_query.isNotEmpty)
-                        IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            _queryController.clear();
-                            setState(() => _query = '');
+    final cardTheme = Theme.of(context).extension<GameCardTheme>()!;
+    final isRunning = ref.watch(gameProcessProvider);
+    if (_wasRunning && !isRunning) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _rescan());
+    }
+    _wasRunning = isRunning;
+
+    return SafeArea(
+      child: Column(
+        children: [
+          AppSearchBar(
+            controller: _queryController,
+            hintText: t.games.searchHint,
+            onChanged: (value) => setState(() => _query = value),
+            onClear: () {
+              _queryController.clear();
+              setState(() => _query = '');
+            },
+          ),
+          Expanded(
+            child: IgnorePointer(
+              ignoring: isRunning,
+              child: AnimatedOpacity(
+                opacity: isRunning ? 0.5 : 1,
+                duration: const Duration(milliseconds: 200),
+                child: RefreshIndicator(
+                  onRefresh: _rescan,
+                  child: games.isEmpty
+                      ? ListView(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Text(
+                                t.games.emptyGamelist,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        )
+                      : GridView.builder(
+                          padding: const EdgeInsets.all(8),
+                          gridDelegate:
+                              SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: GameCard.maxWidth(
+                                  cardTheme,
+                                ),
+                                mainAxisExtent: GameCard.height(cardTheme),
+                              ),
+                          itemCount: games.length,
+                          itemBuilder: (context, index) {
+                            final game = games[index];
+                            return GameCard(
+                              game: game,
+                              onTap: () => ref
+                                  .read(gameProcessProvider.notifier)
+                                  .launch(game),
+                              onLongPress: () => _onGameLongPress(game),
+                            );
                           },
                         ),
-                    ],
-                  ),
                 ),
               ),
             ),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: _rescan,
-                child: games.isEmpty
-                    ? ListView(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(24),
-                            child: Text(t.games.emptyGamelist, textAlign: TextAlign.center),
-                          ),
-                        ],
-                      )
-                    : LayoutBuilder(
-                        builder: (context, constraints) {
-                          final columns = constraints.maxWidth >= 600 ? 2 : 1;
-                          return GridView.builder(
-                            padding: const EdgeInsets.all(8),
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: columns,
-                              mainAxisExtent: 107,
-                            ),
-                            itemCount: games.length,
-                            itemBuilder: (context, index) {
-                              final game = games[index];
-                              return GameCard(
-                                game: game,
-                                onTap: () => _launchGame(game),
-                                onLongPress: () => _onGameLongPress(game),
-                              );
-                            },
-                          );
-                        },
-                      ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

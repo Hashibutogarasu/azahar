@@ -1,22 +1,30 @@
-import 'package:flutter/foundation.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'dart:io';
 
-import '../../data/game_repository.dart';
+import 'package:flutter/foundation.dart';
+
+import '../../data/repositories/first_launch_repository.dart';
+import '../../data/repositories/game_repository.dart';
+import '../../data/repositories/games_directory_repository.dart';
+import '../../data/repositories/permission_repository.dart';
 import '../../data/settings/user_directories_provider.dart';
-import '../../data/settings_repository.dart';
+import '../../data/user_directory_bootstrap.dart';
 import '../../models/copy_dir_progress.dart';
 import '../../native/native_bridge.dart';
 
 class SetupWizardViewModel extends ChangeNotifier {
   SetupWizardViewModel(
     this._nativeBridge,
-    this._settingsRepository,
+    this._firstLaunchRepository,
+    this._gamesDirectoryRepository,
     this._userDirectories,
     this._gameRepository,
+    this._permissionRepository,
   );
 
   final NativeBridge _nativeBridge;
-  final SettingsRepository _settingsRepository;
+  final PermissionRepository _permissionRepository;
+  final FirstLaunchRepository _firstLaunchRepository;
+  final GamesDirectoryRepository _gamesDirectoryRepository;
   final UserDirectoriesService _userDirectories;
   final GameRepository _gameRepository;
 
@@ -28,42 +36,51 @@ class SetupWizardViewModel extends ChangeNotifier {
   bool gamesDirectoryCompleted = false;
 
   Future<void> refreshCompletionState() async {
-    notificationsCompleted = (await Permission.notification.status).isGranted;
-    microphoneCompleted = (await Permission.microphone.status).isGranted;
-    cameraCompleted = (await Permission.camera.status).isGranted;
-    userDirectoryCompleted = await _nativeBridge.hasUserDirectoryWriteAccess();
-    final gamesUri = await _settingsRepository.gamesDirectoryUri();
+    notificationsCompleted = await _permissionRepository.isGranted(
+      AppPermission.notification,
+    );
+    microphoneCompleted = await _permissionRepository.isGranted(
+      AppPermission.microphone,
+    );
+    cameraCompleted = await _permissionRepository.isGranted(
+      AppPermission.camera,
+    );
+    userDirectoryCompleted = await _isUserDirectoryConfigured();
+    final gamesUri = await _gamesDirectoryRepository.gamesDirectoryUri();
     gamesDirectoryCompleted = gamesUri != null && gamesUri.isNotEmpty;
     isLoaded = true;
     notifyListeners();
   }
 
   Future<bool> requestNotificationPermission() async {
-    final status = await Permission.notification.request();
-    notificationsCompleted = status.isGranted;
+    notificationsCompleted = await _permissionRepository.request(
+      AppPermission.notification,
+    );
     notifyListeners();
     return notificationsCompleted;
   }
 
   Future<bool> requestMicrophonePermission() async {
-    final status = await Permission.microphone.request();
-    microphoneCompleted = status.isGranted;
+    microphoneCompleted = await _permissionRepository.request(
+      AppPermission.microphone,
+    );
     notifyListeners();
     return microphoneCompleted;
   }
 
   Future<bool> requestCameraPermission() async {
-    final status = await Permission.camera.request();
-    cameraCompleted = status.isGranted;
+    cameraCompleted = await _permissionRepository.request(AppPermission.camera);
     notifyListeners();
     return cameraCompleted;
   }
 
-  Future<String?> previousUserDirectory() => _userDirectories.previousUserDirectory();
+  Future<String?> previousUserDirectory() =>
+      _userDirectories.previousUserDirectory();
 
   Future<String?> pickUserDirectory() => _userDirectories.pickUserDirectory();
 
-  Stream<CopyDirProgress> copyDirProgress() => _userDirectories.copyDirProgress();
+  Stream<CopyDirProgress> copyDirProgress() =>
+      _userDirectories.copyDirProgress();
 
   Future<bool> confirmUserDirectory({
     required String uri,
@@ -75,9 +92,16 @@ class SetupWizardViewModel extends ChangeNotifier {
       previousUri: previousUri,
       moveData: moveData,
     );
-    userDirectoryCompleted = await _nativeBridge.hasUserDirectoryWriteAccess();
+    userDirectoryCompleted = await _isUserDirectoryConfigured();
     notifyListeners();
     return userDirectoryCompleted;
+  }
+
+  Future<bool> _isUserDirectoryConfigured() async {
+    if (Platform.isLinux) {
+      return (await UserDirectoryBootstrap.readConfiguredDirectory()) != null;
+    }
+    return _nativeBridge.hasUserDirectoryWriteAccess();
   }
 
   Future<String?> pickGamesDirectory() => _userDirectories.pickGamesDirectory();
@@ -90,7 +114,7 @@ class SetupWizardViewModel extends ChangeNotifier {
   }
 
   Future<void> completeSetup() async {
-    await _settingsRepository.setFirstApplicationLaunchComplete();
+    await _firstLaunchRepository.setFirstApplicationLaunchComplete();
     await _gameRepository.rescan();
   }
 }

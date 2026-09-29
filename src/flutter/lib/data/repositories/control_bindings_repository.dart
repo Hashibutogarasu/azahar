@@ -16,7 +16,9 @@ class ControlBindingsRepository implements Clearable {
   Future<void> write(String key, String value) {
     return _db
         .into(_db.controlBindings)
-        .insertOnConflictUpdate(ControlBindingsCompanion.insert(key: key, value: value));
+        .insertOnConflictUpdate(
+          ControlBindingsCompanion.insert(key: key, value: value),
+        );
   }
 
   Future<Map<String, String>> readAll() async {
