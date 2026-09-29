@@ -16,39 +16,26 @@ class GameCard extends StatelessWidget {
     required this.game,
     required this.onTap,
     this.onLongPress,
+    this.isValidExtension = true,
+    this.outerPadding = 8,
+    this.innerPadding = 8,
   });
 
   final Game game;
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
-
-  static const double _outerPadding = 8;
-  static const double _innerPadding = 8;
-
-  /// The card's fixed row height for a grid, derived from the icon box size
-  /// (which varies per [GameCardTheme]) plus the padding this widget applies
-  /// around it.
-  static double height(GameCardTheme cardTheme) =>
-      cardTheme.iconBoxSize + (_outerPadding + _innerPadding) * 2;
-
-  /// The width at which a grid of these cards should wrap to another column,
-  /// wide enough for the icon box plus a comfortably readable title/subtitle
-  /// column.
-  static double maxWidth(GameCardTheme cardTheme) => cardTheme.iconBoxSize * 6;
-
-  bool get _isValidExtension {
-    final extension = game.filename.split('.').last.toLowerCase();
-    return !GameExtensions.badExtensions.contains(extension);
-  }
+  final bool isValidExtension;
+  final double outerPadding;
+  final double innerPadding;
 
   @override
   Widget build(BuildContext context) {
     final surfaceTheme = Theme.of(context).extension<GlassSurfaceTheme>()!;
     final cardTheme = Theme.of(context).extension<GameCardTheme>()!;
     return Padding(
-      padding: const EdgeInsets.all(_outerPadding),
+      padding: EdgeInsets.all(outerPadding),
       child: Material(
-        color: _isValidExtension
+        color: isValidExtension
             ? surfaceTheme.fillColor
             : cardTheme.invalidExtensionColor,
         borderRadius: surfaceTheme.borderRadius,
@@ -64,7 +51,7 @@ class GameCard extends StatelessWidget {
                 width: surfaceTheme.borderWidth,
               ),
             ),
-            padding: const EdgeInsets.all(_innerPadding),
+            padding: EdgeInsets.all(innerPadding),
             child: Row(
               children: [
                 Container(
