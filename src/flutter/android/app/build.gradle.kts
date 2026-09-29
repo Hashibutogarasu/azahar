@@ -8,6 +8,10 @@ android {
     compileSdkVersion = "android-37"
     ndkVersion = "28.2.13676358"
 
+    buildFeatures {
+        resValues = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -31,6 +35,7 @@ android {
         }
         debug {
             applicationIdSuffix = ".debug"
+            resValue("color", "ic_launcher_background", "#000000")
         }
     }
 }

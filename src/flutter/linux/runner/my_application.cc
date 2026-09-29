@@ -770,7 +770,7 @@ void EnsureDesktopEntryInstalled() {
   }
 
   const std::string icon_path =
-      bundle_dir + "/data/flutter_assets/assets/images/azahar_logo.png";
+      bundle_dir + "/data/flutter_assets/assets/icons/linux.png";
   ReplaceAll(entry, "@AZAHAR_EXEC@", executable);
   ReplaceAll(entry, "@AZAHAR_ICON@", icon_path);
 
