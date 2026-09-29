@@ -27,10 +27,9 @@ private:
 };
 
 /**
- * Sets the gyroscope's per-axis output multiplier (1.0 = unchanged), applied to whichever source
- * (device or physical controller, see GameControllerManager::SetGyroPreferExternalController())
- * is currently providing gyroscope data. vertical_scale scales the pitch axis, horizontal_scale
- * the yaw axis; see NDKMotion::GetStatus() for the exact axis mapping used.
+ * Sets the gyroscope's per-axis output multiplier (1.0 = unchanged). vertical_scale scales the
+ * pitch axis, horizontal_scale the yaw axis; see NDKMotion::GetStatus() for the exact axis
+ * mapping used.
  */
 void SetGyroSensitivity(float vertical_scale, float horizontal_scale);
 

@@ -60,7 +60,6 @@
 #ifdef ENABLE_VULKAN
 #include "jni/emu_window/emu_window_vk.h"
 #endif
-#include "jni/game_controller_manager.h"
 #include "jni/id_cache.h"
 #include "jni/input_manager.h"
 #include "jni/ndk_motion.h"
@@ -146,7 +145,6 @@ static void TryShutdown() {
     secondary_window.reset();
     window.reset();
     InputManager::Shutdown();
-    GameControllerManager::Shutdown(IDCache::GetEnvForThread());
     MicroProfileShutdown();
 }
 
@@ -510,56 +508,6 @@ void Java_org_citra_citra_1emu_NativeLibrary_doFrameSecondary([[maybe_unused]] J
     }
 }
 
-void Java_org_citra_citra_1emu_NativeLibrary_initGameControllerManager(JNIEnv* env,
-                                                                        [[maybe_unused]] jobject obj,
-                                                                        jobject context) {
-    GameControllerManager::Init(env, context);
-}
-
-void Java_org_citra_citra_1emu_NativeLibrary_shutdownGameControllerManager(JNIEnv* env,
-                                                                            [[maybe_unused]] jobject
-                                                                                obj) {
-    GameControllerManager::Shutdown(env);
-}
-
-void Java_org_citra_citra_1emu_NativeLibrary_updateGameControllers(
-    JNIEnv* env, [[maybe_unused]] jobject obj, jboolean invert_left_stick_y,
-    jboolean read_physical_controllers) {
-    GameControllerManager::Update(env, invert_left_stick_y != JNI_FALSE,
-                                  read_physical_controllers != JNI_FALSE);
-}
-
-void Java_org_citra_citra_1emu_NativeLibrary_setVirtualButton(
-    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jint button, jboolean pressed) {
-    GameControllerManager::SetVirtualButton(button, pressed == JNI_TRUE);
-}
-
-/** Forwards virtual stick input to GameControllerManager, normalized like onGamePadMoveEvent(). */
-void Java_org_citra_citra_1emu_NativeLibrary_setVirtualStick(
-    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jint axis, jfloat x, jfloat y) {
-    x = std::clamp(x, -1.f, 1.f);
-    y = std::clamp(-y, -1.f, 1.f);
-
-    float r = x * x + y * y;
-    if (r > 1.0f) {
-        r = std::sqrt(r);
-        x /= r;
-        y /= r;
-    }
-    GameControllerManager::SetVirtualStick(axis, x, y);
-}
-
-/** Releases every virtual button/stick tracked by GameControllerManager. */
-void Java_org_citra_citra_1emu_NativeLibrary_clearVirtualControllerInputs(
-    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj) {
-    GameControllerManager::ClearVirtualInputs();
-}
-
-void Java_org_citra_citra_1emu_NativeLibrary_setGyroPreferExternalController(
-    [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jboolean prefer) {
-    GameControllerManager::SetGyroPreferExternalController(prefer == JNI_TRUE);
-}
-
 void Java_org_citra_citra_1emu_NativeLibrary_setGyroSensitivity(
     [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jfloat vertical_scale,
     jfloat horizontal_scale) {
@@ -570,16 +518,6 @@ void Java_org_citra_citra_1emu_NativeLibrary_setGyroInvert(
     [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj, jboolean invert_vertical,
     jboolean invert_horizontal) {
     InputManager::SetGyroInvert(invert_vertical == JNI_TRUE, invert_horizontal == JNI_TRUE);
-}
-
-jboolean Java_org_citra_citra_1emu_NativeLibrary_onGameControllerKeyEvent(
-    JNIEnv* env, [[maybe_unused]] jobject obj, jobject key_event) {
-    return static_cast<jboolean>(GameControllerManager::ProcessKeyEvent(env, key_event));
-}
-
-jboolean Java_org_citra_citra_1emu_NativeLibrary_onGameControllerMotionEvent(
-    JNIEnv* env, [[maybe_unused]] jobject obj, jobject motion_event) {
-    return static_cast<jboolean>(GameControllerManager::ProcessMotionEvent(env, motion_event));
 }
 
 void JNICALL Java_org_citra_citra_1emu_NativeLibrary_initializeGpuDriver(
@@ -641,7 +579,7 @@ void Java_org_citra_citra_1emu_NativeLibrary_setUserDirectory(JNIEnv* env,
 }
 
 jobjectArray Java_org_citra_citra_1emu_NativeLibrary_getInstalledGamePaths(
-    JNIEnv* env, [[maybe_unused]] jclass clazz) {
+    JNIEnv* env, [[maybe_unused]] jclass clazz, jobjectArray j_roots, jobjectArray j_paths) {
     std::vector<std::string> games;
     const FileUtil::DirectoryEntryCallable ScanDir =
         [&games, &ScanDir](u64*, const std::string& directory, const std::string& virtual_name) {
@@ -663,14 +601,21 @@ jobjectArray Java_org_citra_citra_1emu_NativeLibrary_getInstalledGamePaths(
             }
             return true;
         };
-    ScanDir(nullptr, "",
-            FileUtil::GetUserPath(FileUtil::UserPath::SDMCDir) +
-                "Nintendo "
-                "3DS/00000000000000000000000000000000/"
-                "00000000000000000000000000000000/title/00040000");
-    ScanDir(nullptr, "",
-            FileUtil::GetUserPath(FileUtil::UserPath::NANDDir) +
-                "00000000000000000000000000000000/title/00040010");
+
+    const jsize entry_count = env->GetArrayLength(j_roots);
+    for (jsize i = 0; i < entry_count; ++i) {
+        auto* j_root = static_cast<jstring>(env->GetObjectArrayElement(j_roots, i));
+        auto* j_path = static_cast<jstring>(env->GetObjectArrayElement(j_paths, i));
+        const std::string root = GetJString(env, j_root);
+        const std::string path = GetJString(env, j_path);
+        env->DeleteLocalRef(j_root);
+        env->DeleteLocalRef(j_path);
+
+        const FileUtil::UserPath user_path =
+            root == "nand" ? FileUtil::UserPath::NANDDir : FileUtil::UserPath::SDMCDir;
+        ScanDir(nullptr, "", FileUtil::GetUserPath(user_path) + path);
+    }
+
     jobjectArray jgames = env->NewObjectArray(static_cast<jsize>(games.size()),
                                               env->FindClass("java/lang/String"), nullptr);
     for (jsize i = 0; i < games.size(); ++i)
@@ -868,9 +813,35 @@ void Java_org_citra_citra_1emu_NativeLibrary_createConfigFile([[maybe_unused]] J
     Config{};
 }
 
-void Java_org_citra_citra_1emu_NativeLibrary_createLogFile([[maybe_unused]] JNIEnv* env,
-                                                           [[maybe_unused]] jobject obj) {
+void Java_org_citra_citra_1emu_NativeLibrary_startLogging(JNIEnv* env,
+                                                          [[maybe_unused]] jobject obj) {
+    const jclass native_library = IDCache::GetNativeLibraryClass();
+    const jmethodID on_log_line = env->GetStaticMethodID(native_library, "onLogLine", "([B)V");
+    const jmethodID flush_log = env->GetStaticMethodID(native_library, "flushLog", "()V");
+
     Common::Log::Initialize();
+    Common::Log::SetSink(Common::Log::Sink{
+        .write =
+            [native_library, on_log_line](std::string_view line) {
+                JNIEnv* thread_env = IDCache::GetEnvForThread();
+                jbyteArray bytes = thread_env->NewByteArray(static_cast<jsize>(line.size()));
+                thread_env->SetByteArrayRegion(bytes, 0, static_cast<jsize>(line.size()),
+                                               reinterpret_cast<const jbyte*>(line.data()));
+                thread_env->CallStaticVoidMethod(native_library, on_log_line, bytes);
+                thread_env->DeleteLocalRef(bytes);
+                if (thread_env->ExceptionCheck()) {
+                    thread_env->ExceptionClear();
+                }
+            },
+        .flush =
+            [native_library, flush_log] {
+                JNIEnv* thread_env = IDCache::GetEnvForThread();
+                thread_env->CallStaticVoidMethod(native_library, flush_log);
+                if (thread_env->ExceptionCheck()) {
+                    thread_env->ExceptionClear();
+                }
+            },
+    });
     Common::Log::Start();
     LOG_INFO(Frontend, "Logging backend initialised");
 }

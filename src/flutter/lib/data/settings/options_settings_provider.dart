@@ -13,25 +13,26 @@ final optionsSettingsProvider = Provider<OptionsSettingsService>(
 /// The single entry point the redesigned Options UI uses to read and write settings.
 ///
 /// Internally this delegates to the existing repositories
-/// ([AppServices.settingsRepository], [AppServices.emulatorSettingsRepository],
-/// [AppServices.themeSettingsRepository], ...) so their storage isn't rewritten, but every
-/// Options-side widget goes through this service instead of reaching into those repositories
-/// directly.
+/// ([AppServices.legacySettingsUiRepository], [AppServices.languageCodeRepository],
+/// [AppServices.emulatorSettingsRepository], [AppServices.themeSettingsRepository], ...) so their
+/// storage isn't rewritten, but every Options-side widget goes through this service instead of
+/// reaching into those repositories directly.
 class OptionsSettingsService {
   OptionsSettingsService(this._ref);
 
   final Ref _ref;
 
-  bool get useLegacySettingsUI => AppServices.settingsRepository.useLegacySettingsUI;
+  bool get useLegacySettingsUI =>
+      AppServices.legacySettingsUiRepository.useLegacySettingsUI;
 
   Future<void> setUseLegacySettingsUI(bool value) {
-    return AppServices.settingsRepository.setUseLegacySettingsUI(value);
+    return AppServices.legacySettingsUiRepository.setUseLegacySettingsUI(value);
   }
 
-  String? get languageCode => AppServices.settingsRepository.languageCode;
+  String? get languageCode => AppServices.languageCodeRepository.languageCode;
 
   Future<void> setLanguageCode(String? languageCode) async {
-    await AppServices.settingsRepository.setLanguageCode(languageCode);
+    await AppServices.languageCodeRepository.setLanguageCode(languageCode);
     if (languageCode == null) {
       await LocaleSettings.useDeviceLocale();
     } else {
@@ -41,7 +42,8 @@ class OptionsSettingsService {
 
   ThemeSetting get themeSettings => _ref.read(themeSettingsProvider);
 
-  ThemeSettingsNotifier get themeSettingsNotifier => _ref.read(themeSettingsProvider.notifier);
+  ThemeSettingsNotifier get themeSettingsNotifier =>
+      _ref.read(themeSettingsProvider.notifier);
 
   Future<void> resetAll() {
     return _ref.read(resetSettingsProvider).resetAll();

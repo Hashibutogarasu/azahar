@@ -28,6 +28,7 @@
 #include "common/detached_tasks.h"
 #include "common/file_util.h"
 #include "common/logging/backend.h"
+#include "common/logging/file_sink.h"
 #include "common/logging/log.h"
 #include "common/scm_rev.h"
 #include "common/scope_exit.h"
@@ -170,9 +171,13 @@ static void OnStatusMessageReceived(const Network::StatusMessageEntry& msg) {
         std::cout << std::endl << "* " << message << std::endl << std::endl;
 }
 
+constexpr char log_file_name[] = "azahar_log.txt";
+
 /// Application entry point
 void LaunchSdlFrontend(int argc, char** argv) {
     Common::Log::Initialize();
+    Common::Log::SetSink(Common::Log::MakeFileSink(
+        FileUtil::GetUserPath(FileUtil::UserPath::LogDir) + log_file_name));
     Common::Log::SetColorConsoleBackendEnabled(true);
     Common::Log::Start();
     Common::DetachedTasks detached_tasks;

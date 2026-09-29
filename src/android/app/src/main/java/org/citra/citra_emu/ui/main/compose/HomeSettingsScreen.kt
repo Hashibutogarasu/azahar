@@ -45,7 +45,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.preference.PreferenceManager
 import androidx.work.Data
@@ -74,7 +73,7 @@ import org.citra.citra_emu.utils.FileBrowserHelper
 import org.citra.citra_emu.utils.GameHelper
 import org.citra.citra_emu.utils.GpuDriverHelper
 import org.citra.citra_emu.utils.Log
-import org.citra.citra_emu.utils.PermissionsHandler
+import org.citra.citra_emu.utils.LogFileWriter
 import org.citra.citra_emu.viewmodel.DriverViewModel
 import org.citra.citra_emu.viewmodel.HomeViewModel
 
@@ -337,30 +336,20 @@ private fun ArticBaseConnectDialog(onConfirm: (String) -> Unit, onDismiss: () ->
 }
 
 private fun shareLog(context: Context) {
-    val logDirectory = DocumentFile.fromTreeUri(context, PermissionsHandler.citraDirectory)
-        ?.findFile("log")
-    val currentLog = logDirectory?.findFile("azahar_log.txt")
-    val oldLog = logDirectory?.findFile("azahar_log.old.txt")
+    val logUri = LogFileWriter.findShareableLog(Log.gameLaunched)
+    if (logUri == null) {
+        Toast.makeText(
+            context,
+            context.getText(R.string.share_log_not_found),
+            Toast.LENGTH_SHORT
+        ).show()
+        return
+    }
 
     val intent = Intent().apply {
         action = Intent.ACTION_SEND
         type = "text/plain"
+        putExtra(Intent.EXTRA_STREAM, logUri)
     }
-    when {
-        !Log.gameLaunched && oldLog?.exists() == true -> {
-            intent.putExtra(Intent.EXTRA_STREAM, oldLog.uri)
-            context.startActivity(Intent.createChooser(intent, context.getText(R.string.share_log)))
-        }
-        currentLog?.exists() == true -> {
-            intent.putExtra(Intent.EXTRA_STREAM, currentLog.uri)
-            context.startActivity(Intent.createChooser(intent, context.getText(R.string.share_log)))
-        }
-        else -> {
-            Toast.makeText(
-                context,
-                context.getText(R.string.share_log_not_found),
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
+    context.startActivity(Intent.createChooser(intent, context.getText(R.string.share_log)))
 }

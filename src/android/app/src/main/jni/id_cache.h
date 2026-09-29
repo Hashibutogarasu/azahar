@@ -33,7 +33,6 @@ jmethodID GetRequestCameraPermission();
 jmethodID GetRequestMicPermission();
 jmethodID GetRequestWifiPermission();
 jmethodID GetScanWifiAccessPoints();
-jmethodID GetOnControllerConnectionChanged();
 
 jclass GetCheatClass();
 jfieldID GetCheatPointer();

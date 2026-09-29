@@ -748,39 +748,7 @@ class SettingsSectionViewModel(
     private fun addControlsSettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.preferences_controls))
         sl.apply {
-            add(
-                SingleChoiceSetting(
-                    IntSetting.CONTROLLER_INPUT_MODE,
-                    R.string.controller_input_mode,
-                    R.string.controller_input_mode_description,
-                    R.array.controllerInputModes,
-                    R.array.controllerInputModeValues,
-                    IntSetting.CONTROLLER_INPUT_MODE.key,
-                    IntSetting.CONTROLLER_INPUT_MODE.defaultValue
-                )
-            )
-            add(
-                SwitchSetting(
-                    BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS,
-                    R.string.invert_controller_left_stick_y_axis,
-                    R.string.invert_controller_left_stick_y_axis_description,
-                    BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS.key,
-                    BooleanSetting.INVERT_CONTROLLER_LEFT_STICK_Y_AXIS.defaultValue
-                )
-            )
-
             add(HeaderSetting(R.string.gyro_settings))
-            add(
-                SingleChoiceSetting(
-                    IntSetting.GYRO_INPUT_SOURCE,
-                    R.string.gyro_input_source,
-                    R.string.gyro_input_source_description,
-                    R.array.gyroInputSources,
-                    R.array.gyroInputSourceValues,
-                    IntSetting.GYRO_INPUT_SOURCE.key,
-                    IntSetting.GYRO_INPUT_SOURCE.defaultValue
-                )
-            )
             add(
                 SliderSetting(
                     ScaledFloatSetting.GYRO_SENSITIVITY_VERTICAL,

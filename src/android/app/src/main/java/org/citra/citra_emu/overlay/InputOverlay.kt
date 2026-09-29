@@ -118,17 +118,29 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                 swapScreen()
             }
 
-            NativeLibrary.setVirtualButton(button.id, button.status == NativeLibrary.ButtonState.PRESSED)
+            NativeLibrary.onGamePadEvent(NativeLibrary.TouchScreenDevice, button.id, button.status)
             shouldUpdateView = true
         }
         for (dpad in overlayDpads) {
             if (!dpad.updateStatus(event, EmulationMenuSettings.dpadSlide, this)) {
                 continue
             }
-            NativeLibrary.setVirtualButton(dpad.upId, dpad.upStatus == NativeLibrary.ButtonState.PRESSED)
-            NativeLibrary.setVirtualButton(dpad.downId, dpad.downStatus == NativeLibrary.ButtonState.PRESSED)
-            NativeLibrary.setVirtualButton(dpad.leftId, dpad.leftStatus == NativeLibrary.ButtonState.PRESSED)
-            NativeLibrary.setVirtualButton(dpad.rightId, dpad.rightStatus == NativeLibrary.ButtonState.PRESSED)
+            NativeLibrary.onGamePadEvent(NativeLibrary.TouchScreenDevice, dpad.upId, dpad.upStatus)
+            NativeLibrary.onGamePadEvent(
+                NativeLibrary.TouchScreenDevice,
+                dpad.downId,
+                dpad.downStatus
+            )
+            NativeLibrary.onGamePadEvent(
+                NativeLibrary.TouchScreenDevice,
+                dpad.leftId,
+                dpad.leftStatus
+            )
+            NativeLibrary.onGamePadEvent(
+                NativeLibrary.TouchScreenDevice,
+                dpad.rightId,
+                dpad.rightStatus
+            )
             shouldUpdateView = true
         }
         for (joystick in overlayJoysticks) {
@@ -136,7 +148,12 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                 continue
             }
             val axisID = joystick.joystickId
-            NativeLibrary.setVirtualStick(axisID, joystick.xAxis, joystick.yAxis)
+            NativeLibrary.onGamePadMoveEvent(
+                NativeLibrary.TouchScreenDevice,
+                axisID,
+                joystick.xAxis,
+                joystick.yAxis
+            )
             shouldUpdateView = true
         }
 
@@ -190,32 +207,6 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
         val localX = x + locationInWindow[0] - bounds.left
         val localY = y + locationInWindow[1] - bounds.top
         return Pair(localX, localY)
-    }
-
-    /**
-     * Releases any overlay button, d-pad direction, or joystick that is currently being tracked
-     * (i.e. mid-touch), so a control being actively held when the overlay is rebuilt doesn't
-     * leave a stale "pressed" entry behind in GameControllerManager's virtual input state.
-     */
-    private fun releasePressedVirtualInputs() {
-        overlayButtons.forEach {
-            if (it.trackId != -1) {
-                NativeLibrary.setVirtualButton(it.id, false)
-            }
-        }
-        overlayDpads.forEach {
-            if (it.trackId != -1) {
-                NativeLibrary.setVirtualButton(it.upId, false)
-                NativeLibrary.setVirtualButton(it.downId, false)
-                NativeLibrary.setVirtualButton(it.leftId, false)
-                NativeLibrary.setVirtualButton(it.rightId, false)
-            }
-        }
-        overlayJoysticks.forEach {
-            if (it.trackId != -1) {
-                NativeLibrary.setVirtualStick(it.joystickId, 0f, 0f)
-            }
-        }
     }
 
     private fun isTouchInputConsumed(trackId: Int): Boolean {
@@ -510,7 +501,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
     }
 
     fun refreshControls() {
-        releasePressedVirtualInputs()
+        // Remove all the overlay buttons from the HashSet.
         overlayButtons.clear()
         overlayDpads.clear()
         overlayJoysticks.clear()

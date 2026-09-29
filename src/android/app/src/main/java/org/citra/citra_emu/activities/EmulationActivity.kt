@@ -150,7 +150,6 @@ class EmulationActivity : AppCompatActivity() {
         EmulationLifecycleUtil.clear()
         isEmulationRunning = false
         instance = null
-        NativeLibrary.shutdownGameControllerManager()
         super.onDestroy()
     }
 
@@ -269,12 +268,6 @@ class EmulationActivity : AppCompatActivity() {
             setOverlayAutoHiddenOnControllerInput()
         }
 
-        if (IntSetting.CONTROLLER_INPUT_MODE.int != 0 && isGameControllerSource(event.source) &&
-            NativeLibrary.onGameControllerKeyEvent(event)
-        ) {
-            return true
-        }
-
         val button =
             preferences.getInt(InputBindingSetting.getInputButtonKey(event.keyCode), event.keyCode)
         val action: Int = when (event.action) {
@@ -326,12 +319,6 @@ class EmulationActivity : AppCompatActivity() {
 
         if (hasSignificantJoystickInput(event)) {
             setOverlayAutoHiddenOnControllerInput()
-        }
-
-        if (IntSetting.CONTROLLER_INPUT_MODE.int != 0 &&
-            NativeLibrary.onGameControllerMotionEvent(event)
-        ) {
-            return true
         }
 
         val input = event.device

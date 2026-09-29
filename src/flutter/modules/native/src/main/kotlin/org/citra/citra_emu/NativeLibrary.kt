@@ -30,6 +30,7 @@ import org.citra.citra_emu.emucore.R
 import org.citra.citra_emu.utils.EmulationMenuSettings
 import org.citra.citra_emu.utils.FileUtil
 import org.citra.citra_emu.utils.Log
+import org.citra.citra_emu.utils.LogLineRelay
 import java.lang.ref.WeakReference
 import java.util.Date
 
@@ -139,12 +140,25 @@ object NativeLibrary {
      * If not set, it auto-detects a location
      */
     external fun setUserDirectory(directory: String)
-    external fun getInstalledGamePaths(): Array<String?>
+    external fun getInstalledGamePaths(roots: Array<String>, paths: Array<String>): Array<String?>
 
     // Create the config.ini file.
     external fun createConfigFile()
-    external fun createLogFile()
+    external fun startLogging()
     external fun logUserDirectory(directory: String)
+
+    /**
+     * Receives one UTF-8 encoded log line from the native logging backend.
+     */
+    @JvmStatic
+    fun onLogLine(line: ByteArray) = LogLineRelay.push(line)
+
+    /**
+     * Called by the native logging backend when the log should be persisted. Lines are
+     * forwarded in batches, so there is nothing to flush here.
+     */
+    @JvmStatic
+    fun flushLog() = Unit
 
     /**
      * Begins emulation.
@@ -681,22 +695,41 @@ object NativeLibrary {
         }
     }
 
+    private var virtualAccessPoints: Array<String>? = null
+
+    /**
+     * Overrides the access points returned by [scanWifiAccessPoints] with [entries], formatted the
+     * same way ("bssid|rssi|channel|security|ssid" per entry). Pass null to go back to reporting
+     * the device's real Wi-Fi scan results.
+     */
+    fun setVirtualAccessPoints(entries: Array<String>?) {
+        virtualAccessPoints = entries
+    }
+
     /**
      * Returns the Wi-Fi access points of the 2.4 GHz band seen by the device, including the hidden
-     * networks.
+     * networks, or the entries set via [setVirtualAccessPoints] when an override is active.
      *
      * Every entry has the form "bssid|rssi|channel|security|ssid", where the security is 0 for an
-     * open network, 1 for a secured one and 2 when TKIP is allowed. A new scan is requested at
-     * most once every 30 seconds to stay within the scan throttling of Android, the cached results
-     * are returned in between.
+     * open network, 1 for a secured one and 2 when TKIP is allowed.
      *
      * @return The access points, an empty array when the scan found none, and null when the scan
      * is unavailable because the permission is missing.
      */
     @Keep
     @JvmStatic
-    @Suppress("DEPRECATION")
     fun scanWifiAccessPoints(): Array<String>? {
+        return virtualAccessPoints ?: scanRealWifiAccessPoints()
+    }
+
+    /**
+     * Performs the actual device Wi-Fi scan, ignoring any override set via [setVirtualAccessPoints].
+     * A new scan is requested at most once every 30 seconds to stay within the scan throttling of
+     * Android, the cached results are returned in between. See [scanWifiAccessPoints] for the
+     * entry format and return value semantics.
+     */
+    @Suppress("DEPRECATION")
+    fun scanRealWifiAccessPoints(): Array<String>? {
         val context = sEmulationActivity.get() ?: return null
         if (ContextCompat.checkSelfPermission(context, permission.ACCESS_FINE_LOCATION) !=
             PackageManager.PERMISSION_GRANTED
