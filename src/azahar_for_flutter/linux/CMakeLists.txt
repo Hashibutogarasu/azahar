@@ -44,7 +44,7 @@ pkg_check_modules(GTK REQUIRED IMPORTED_TARGET gtk+-3.0)
 target_link_libraries(${PLUGIN_NAME} PUBLIC PkgConfig::GTK)
 
 get_filename_component(PLUGIN_LINUX_DIR "${CMAKE_CURRENT_SOURCE_DIR}" REALPATH)
-get_filename_component(AZAHAR_ROOT "${PLUGIN_LINUX_DIR}/../../../../.." REALPATH)
+get_filename_component(AZAHAR_ROOT "${PLUGIN_LINUX_DIR}/../../.." REALPATH)
 set(AZAHAR_BUILD "${AZAHAR_ROOT}/build")
 
 find_program(NINJA_EXECUTABLE ninja REQUIRED)
