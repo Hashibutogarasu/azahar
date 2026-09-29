@@ -15,8 +15,22 @@ class SettingsController {
         WriteSystemSaveGame(),
         RegenerateConsoleId(),
         RegenerateMac(),
-        GetCountryCompatibility()
+        GetCountryCompatibility(),
+        SetConsoleLogEnabled()
     )
+
+    private inner class SetConsoleLogEnabled : AzaharMethodHandler {
+        override val name = "setConsoleLogEnabled"
+        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+            val enabled = call.argument<Boolean>("enabled")
+            if (enabled == null) {
+                result.error("invalid_argument", "enabled is required", null)
+                return
+            }
+            NativeLibrary.setConsoleLogEnabled(enabled)
+            result.success(null)
+        }
+    }
 
     private inner class ReadConfig : AzaharMethodHandler {
         override val name = "readEmulatorConfig"
