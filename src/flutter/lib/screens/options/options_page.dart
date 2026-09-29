@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/settings/settings_load_provider.dart';
+import 'groups/accessibility_options_group.dart';
 import 'groups/clock_options_group.dart';
 import 'groups/controls_options_group.dart';
 import 'groups/emulation_options_group.dart';
@@ -20,22 +21,21 @@ class OptionsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(settingsLoadProvider);
-    return Scaffold(
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: const [
-            GeneralOptionsGroup(),
-            EmulationOptionsGroup(),
-            ClockOptionsGroup(),
-            GraphicsOptionsGroup(),
-            NetworkingOptionsGroup(),
-            ControlsOptionsGroup(),
-            ToolsOptionsGroup(),
-            FolderSettingsOptionsGroup(),
-            OtherOptionsGroup(),
-          ],
-        ),
+    return SafeArea(
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: const [
+          GeneralOptionsGroup(),
+          EmulationOptionsGroup(),
+          ClockOptionsGroup(),
+          GraphicsOptionsGroup(),
+          NetworkingOptionsGroup(),
+          ControlsOptionsGroup(),
+          ToolsOptionsGroup(),
+          FolderSettingsOptionsGroup(),
+          AccessibilityOptionsGroup(),
+          OtherOptionsGroup(),
+        ],
       ),
     );
   }

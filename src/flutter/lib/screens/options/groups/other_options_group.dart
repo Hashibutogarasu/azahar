@@ -1,4 +1,5 @@
-import 'package:babstrap_settings_screen/babstrap_settings_screen.dart' as babstrap;
+import 'package:babstrap_settings_screen/babstrap_settings_screen.dart'
+    as babstrap;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,6 +9,7 @@ import '../../../i18n/translations.g.dart';
 import '../../../routing/app_routes.dart';
 import '../../../widgets/confirmation_dialog.dart';
 import '../../settings/widgets/settings_group_card.dart';
+import '../../settings/widgets/toggle_settings_item.dart';
 
 class OtherOptionsGroup extends ConsumerWidget {
   const OtherOptionsGroup({super.key});
@@ -19,19 +21,23 @@ class OtherOptionsGroup extends ConsumerWidget {
     return SettingsGroupCard(
       settingsGroupTitle: t.options.groups.other,
       items: [
-        babstrap.SettingsItem(
-          icons: Icons.history_toggle_off,
+        ToggleSettingsItem(
+          icon: Icons.history_toggle_off,
           title: t.options.useLegacySettingsUI,
           subtitle: t.options.useLegacySettingsUIDescription,
-          trailing: Switch(
-            value: settings.useLegacySettingsUI,
-            onChanged: (value) => _confirmLegacyToggle(context, ref, t, value),
-          ),
+          value: settings.useLegacySettingsUI,
+          onChanged: (value) => _confirmLegacyToggle(context, ref, t, value),
         ),
         babstrap.SettingsItem(
           icons: Icons.code,
           title: t.settings.debug.title,
           onTap: () => const OptionsDebugSettingsRoute().push(context),
+        ),
+        babstrap.SettingsItem(
+          icons: Icons.tune,
+          title: t.options.advanced,
+          subtitle: t.options.advancedDescription,
+          onTap: () => const OptionsAdvancedSettingsRoute().push(context),
         ),
         babstrap.SettingsItem(
           icons: Icons.info_outline,
@@ -42,7 +48,10 @@ class OtherOptionsGroup extends ConsumerWidget {
         babstrap.SettingsItem(
           icons: Icons.restore,
           title: t.settings.resetToDefault,
-          titleStyle: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.error),
+          titleStyle: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.error,
+          ),
           iconStyle: babstrap.IconStyle(
             iconsColor: Theme.of(context).colorScheme.error,
             withBackground: false,
@@ -74,7 +83,11 @@ class OtherOptionsGroup extends ConsumerWidget {
     }
   }
 
-  Future<void> _confirmReset(BuildContext context, WidgetRef ref, Translations t) async {
+  Future<void> _confirmReset(
+    BuildContext context,
+    WidgetRef ref,
+    Translations t,
+  ) async {
     final confirmed = await ConfirmationDialog.show(
       context,
       title: t.settings.resetToDefaultDialog.title,

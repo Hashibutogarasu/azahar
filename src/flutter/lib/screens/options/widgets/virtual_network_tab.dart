@@ -34,7 +34,9 @@ class VirtualNetworkTab extends ConsumerWidget {
             for (final accessPoint in state.accessPoints)
               ListTile(
                 leading: WifiSignalIcon(level: accessPoint.level),
-                title: Text(accessPoint.ssid.isEmpty ? n.hiddenNetwork : accessPoint.ssid),
+                title: Text(
+                  accessPoint.ssid.isEmpty ? n.hiddenNetwork : accessPoint.ssid,
+                ),
                 subtitle: Text(
                   '${n.bssid}: ${accessPoint.bssid}  ${n.frequency}: ${accessPoint.frequency} MHz',
                 ),
@@ -63,7 +65,10 @@ class VirtualNetworkTab extends ConsumerWidget {
     VirtualAccessPointsNotifier notifier,
     AccessPoint accessPoint,
   ) async {
-    final updated = await AccessPointFormDialog.show(context, initial: accessPoint);
+    final updated = await AccessPointFormDialog.show(
+      context,
+      initial: accessPoint,
+    );
     if (updated != null) {
       await notifier.updateAccessPoint(accessPoint, updated);
     }

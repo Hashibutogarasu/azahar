@@ -1,14 +1,20 @@
 import 'package:drift/drift.dart';
 
 import '../../models/game.dart' as model;
-import '../../native/native_bridge.dart';
 import '../database.dart';
+import 'games_directory_repository.dart';
+import 'installed_titles_repository.dart';
 
 class GameRepository {
-  GameRepository(this._db, this._nativeBridge);
+  GameRepository(
+    this._db,
+    this._gamesDirectoryRepository,
+    this._installedTitlesRepository,
+  );
 
   final AppDatabase _db;
-  final NativeBridge _nativeBridge;
+  final GamesDirectoryRepository _gamesDirectoryRepository;
+  final InstalledTitlesRepository _installedTitlesRepository;
 
   Future<List<model.Game>> cachedGames() async {
     final rows = await _db.select(_db.games).get();
@@ -16,19 +22,25 @@ class GameRepository {
   }
 
   Future<List<model.Game>> rescan() async {
-    final scanned = await _nativeBridge.getGames();
+    final gamesDirectory = await _gamesDirectoryRepository.gamesDirectoryUri();
+    final scanned = await _installedTitlesRepository.scan(gamesDirectory);
     await _db.batch((batch) {
       batch.deleteAll(_db.games);
       for (final game in scanned) {
-        batch.insert(_db.games, _toCompanion(game), mode: InsertMode.insertOrReplace);
+        batch.insert(
+          _db.games,
+          _toCompanion(game),
+          mode: InsertMode.insertOrReplace,
+        );
       }
     });
     return scanned;
   }
 
   Future<model.Game?> gameByPath(String path) async {
-    final row =
-        await (_db.select(_db.games)..where((tbl) => tbl.path.equals(path))).getSingleOrNull();
+    final row = await (_db.select(
+      _db.games,
+    )..where((tbl) => tbl.path.equals(path))).getSingleOrNull();
     return row == null ? null : _fromRow(row);
   }
 

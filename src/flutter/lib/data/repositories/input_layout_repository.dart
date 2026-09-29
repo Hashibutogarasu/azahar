@@ -21,25 +21,42 @@ class InputLayoutRepository {
 
   final AppDatabase _db;
 
-  Future<InputLayoutElementPosition?> read(String orientation, String elementId) async {
-    final row = await (_db.select(_db.inputLayoutElements)..where(
-          (tbl) => tbl.orientation.equals(orientation) & tbl.elementId.equals(elementId),
-        ))
-        .getSingleOrNull();
+  Future<InputLayoutElementPosition?> read(
+    String orientation,
+    String elementId,
+  ) async {
+    final row =
+        await (_db.select(_db.inputLayoutElements)..where(
+              (tbl) =>
+                  tbl.orientation.equals(orientation) &
+                  tbl.elementId.equals(elementId),
+            ))
+            .getSingleOrNull();
     if (row == null) return null;
-    return InputLayoutElementPosition(x: row.x, y: row.y, width: row.width, height: row.height);
+    return InputLayoutElementPosition(
+      x: row.x,
+      y: row.y,
+      width: row.width,
+      height: row.height,
+    );
   }
 
-  Future<void> write(String orientation, String elementId, InputLayoutElementPosition position) {
-    return _db.into(_db.inputLayoutElements).insertOnConflictUpdate(
-      InputLayoutElementsCompanion.insert(
-        orientation: orientation,
-        elementId: elementId,
-        x: position.x,
-        y: position.y,
-        width: position.width,
-        height: position.height,
-      ),
-    );
+  Future<void> write(
+    String orientation,
+    String elementId,
+    InputLayoutElementPosition position,
+  ) {
+    return _db
+        .into(_db.inputLayoutElements)
+        .insertOnConflictUpdate(
+          InputLayoutElementsCompanion.insert(
+            orientation: orientation,
+            elementId: elementId,
+            x: position.x,
+            y: position.y,
+            width: position.width,
+            height: position.height,
+          ),
+        );
   }
 }

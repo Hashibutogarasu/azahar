@@ -10,7 +10,10 @@ class AccessPointFormDialog extends StatefulWidget {
 
   final AccessPoint? initial;
 
-  static Future<AccessPoint?> show(BuildContext context, {AccessPoint? initial}) {
+  static Future<AccessPoint?> show(
+    BuildContext context, {
+    AccessPoint? initial,
+  }) {
     return showDialog<AccessPoint>(
       context: context,
       builder: (_) => AccessPointFormDialog(initial: initial),
@@ -22,8 +25,12 @@ class AccessPointFormDialog extends StatefulWidget {
 }
 
 class _AccessPointFormDialogState extends State<AccessPointFormDialog> {
-  late final _ssidController = TextEditingController(text: widget.initial?.ssid ?? '');
-  late final _bssidController = TextEditingController(text: widget.initial?.bssid ?? '');
+  late final _ssidController = TextEditingController(
+    text: widget.initial?.ssid ?? '',
+  );
+  late final _bssidController = TextEditingController(
+    text: widget.initial?.bssid ?? '',
+  );
   late final _frequencyController = TextEditingController(
     text: (widget.initial?.frequency ?? 2437).toString(),
   );
@@ -63,16 +70,25 @@ class _AccessPointFormDialogState extends State<AccessPointFormDialog> {
         children: [
           TextField(
             controller: _ssidController,
-            decoration: InputDecoration(labelText: n.ssid, hintText: n.ssidHint),
+            decoration: InputDecoration(
+              labelText: n.ssid,
+              hintText: n.ssidHint,
+            ),
           ),
           TextField(
             controller: _bssidController,
-            decoration: InputDecoration(labelText: n.bssid, hintText: n.bssidHint),
+            decoration: InputDecoration(
+              labelText: n.bssid,
+              hintText: n.bssidHint,
+            ),
           ),
           TextField(
             controller: _frequencyController,
             keyboardType: TextInputType.number,
-            decoration: InputDecoration(labelText: n.frequency, hintText: n.frequencyHint),
+            decoration: InputDecoration(
+              labelText: n.frequency,
+              hintText: n.frequencyHint,
+            ),
           ),
           TextField(
             controller: _levelController,
@@ -83,7 +99,10 @@ class _AccessPointFormDialogState extends State<AccessPointFormDialog> {
       ),
       actions: [
         const DialogCancelButton(),
-        TextButton(onPressed: _submit, child: Text(isEditing ? t.common.save : n.addAccessPoint)),
+        TextButton(
+          onPressed: _submit,
+          child: Text(isEditing ? t.common.save : n.addAccessPoint),
+        ),
       ],
     );
   }

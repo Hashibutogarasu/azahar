@@ -9,7 +9,11 @@ import '../../../models/game_folder_status.dart';
 /// Mirrors the Compose client's `OpenFolderMenuButton`: a tonal folder icon button that opens a
 /// dropdown of [game]'s well-known folders, each opened in an external file manager when tapped.
 class OpenFolderMenuButton extends StatelessWidget {
-  const OpenFolderMenuButton({super.key, required this.game, required this.status});
+  const OpenFolderMenuButton({
+    super.key,
+    required this.game,
+    required this.status,
+  });
 
   final Game game;
   final GameFolderStatus status;
@@ -36,11 +40,18 @@ class OpenFolderMenuButton extends StatelessWidget {
       onSelected: _open,
       itemBuilder: (context) => [
         for (final (folder, label, enabled) in entries)
-          PopupMenuItem<GameFolderKind>(value: folder, enabled: enabled, child: Text(label)),
+          PopupMenuItem<GameFolderKind>(
+            value: folder,
+            enabled: enabled,
+            child: Text(label),
+          ),
       ],
       child: Container(
         padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(color: colorScheme.secondaryContainer, shape: BoxShape.circle),
+        decoration: BoxDecoration(
+          color: colorScheme.secondaryContainer,
+          shape: BoxShape.circle,
+        ),
         child: Icon(Icons.folder_open, color: colorScheme.onSecondaryContainer),
       ),
     );

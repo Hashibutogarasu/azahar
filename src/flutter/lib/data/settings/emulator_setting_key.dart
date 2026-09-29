@@ -32,7 +32,12 @@ class FloatKey {
 /// A [FloatKey] whose ini value is stored divided by [scale] (e.g. volume stored as `0.0`-`1.0`
 /// but presented as a `0`-`100` percentage), mirroring the original app's `ScaledFloatSetting`.
 class ScaledFloatKey extends FloatKey {
-  const ScaledFloatKey(super.section, super.key, super.defaultValue, this.scale);
+  const ScaledFloatKey(
+    super.section,
+    super.key,
+    super.defaultValue,
+    this.scale,
+  );
 
   final int scale;
 }

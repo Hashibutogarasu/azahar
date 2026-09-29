@@ -11,7 +11,8 @@ class EmulatedNetworkPage extends ConsumerStatefulWidget {
   const EmulatedNetworkPage({super.key});
 
   @override
-  ConsumerState<EmulatedNetworkPage> createState() => _EmulatedNetworkPageState();
+  ConsumerState<EmulatedNetworkPage> createState() =>
+      _EmulatedNetworkPageState();
 }
 
 class _EmulatedNetworkPageState extends ConsumerState<EmulatedNetworkPage>
@@ -40,7 +41,9 @@ class _EmulatedNetworkPageState extends ConsumerState<EmulatedNetworkPage>
             IconButton(
               icon: const Icon(Icons.copy),
               tooltip: n.copySelected,
-              onPressed: selected.isEmpty ? null : () => _copySelected(selected),
+              onPressed: selected.isEmpty
+                  ? null
+                  : () => _copySelected(selected),
             )
           else
             IconButton(
@@ -51,7 +54,10 @@ class _EmulatedNetworkPageState extends ConsumerState<EmulatedNetworkPage>
         ],
         bottom: TabBar(
           controller: _tabController,
-          tabs: [Tab(text: n.realNetworkTab), Tab(text: n.virtualNetworkTab)],
+          tabs: [
+            Tab(text: n.realNetworkTab),
+            Tab(text: n.virtualNetworkTab),
+          ],
         ),
       ),
       body: TabBarView(

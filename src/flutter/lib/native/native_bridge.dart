@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 
 import '../models/access_point.dart';
+import '../models/cia_install_result.dart';
 import '../models/copy_dir_progress.dart';
 import '../models/create_shortcut_request.dart';
 import '../models/game.dart';
@@ -8,23 +11,34 @@ import '../models/game_folder_kind.dart';
 import '../models/game_folder_status.dart';
 import '../models/game_uninstall_target.dart';
 import '../models/gpu_driver_info.dart';
+import '../models/installed_title_path.dart';
 import '../models/shader_cache_backend.dart';
 import '../models/shader_cache_progress.dart';
+import '../models/wifi_channel.dart';
 
 class NativeBridge {
   NativeBridge()
-      : _channel = const MethodChannel('org.citra.citra_emu/azahar_bridge'),
-        _shaderProgressChannel =
-            const EventChannel('org.citra.citra_emu/azahar_bridge/shader_progress'),
-        _copyProgressChannel =
-            const EventChannel('org.citra.citra_emu/azahar_bridge/copy_progress'),
-        _systemVolumeChannel =
-            const EventChannel('org.citra.citra_emu/azahar_bridge/system_volume'),
-        _mediaNotificationStopChannel =
-            const EventChannel('org.citra.citra_emu/azahar_bridge/media_notification_stop'),
-        _mediaNotificationPlayPauseChannel = const EventChannel(
-          'org.citra.citra_emu/azahar_bridge/media_notification_play_pause',
-        );
+    : _channel = const MethodChannel('org.citra.citra_emu/azahar_bridge'),
+      _shaderProgressChannel = const EventChannel(
+        'org.citra.citra_emu/azahar_bridge/shader_progress',
+      ),
+      _copyProgressChannel = const EventChannel(
+        'org.citra.citra_emu/azahar_bridge/copy_progress',
+      ),
+      _systemVolumeChannel = const EventChannel(
+        'org.citra.citra_emu/azahar_bridge/system_volume',
+      ),
+      _mediaNotificationStopChannel = const EventChannel(
+        'org.citra.citra_emu/azahar_bridge/media_notification_stop',
+      ),
+      _mediaNotificationPlayPauseChannel = const EventChannel(
+        'org.citra.citra_emu/azahar_bridge/media_notification_play_pause',
+      ),
+      _logLinesChannel = const EventChannel(
+        'org.citra.citra_emu/azahar_bridge/log_lines',
+      ) {
+    _channel.setMethodCallHandler(_handleNativeCall);
+  }
 
   final MethodChannel _channel;
   final EventChannel _shaderProgressChannel;
@@ -32,6 +46,16 @@ class NativeBridge {
   final EventChannel _mediaNotificationStopChannel;
   final EventChannel _mediaNotificationPlayPauseChannel;
   final EventChannel _systemVolumeChannel;
+  final EventChannel _logLinesChannel;
+  final _closeRequestedController = StreamController<void>.broadcast();
+
+  Stream<void> get closeRequests => _closeRequestedController.stream;
+
+  Future<void> _handleNativeCall(MethodCall call) async {
+    if (call.method == 'requestClose') {
+      _closeRequestedController.add(null);
+    }
+  }
 
   Stream<CopyDirProgress> copyDirProgress() {
     return _copyProgressChannel.receiveBroadcastStream().map((event) {
@@ -60,10 +84,6 @@ class NativeBridge {
     });
   }
 
-  Future<String?> openUserDirectory() {
-    return _channel.invokeMethod<String>('openUserDirectory');
-  }
-
   Future<void> confirmUserDirectory({
     required String uri,
     String? previousUri,
@@ -77,21 +97,67 @@ class NativeBridge {
   }
 
   Future<bool> hasUserDirectoryWriteAccess() async {
-    final result = await _channel.invokeMethod<bool>('hasUserDirectoryWriteAccess');
+    final result = await _channel.invokeMethod<bool>(
+      'hasUserDirectoryWriteAccess',
+    );
     return result ?? false;
   }
 
-  Future<String?> openGamesDirectory() {
-    return _channel.invokeMethod<String>('openGamesDirectory');
+  Stream<List<String>> logLines() {
+    return _logLinesChannel.receiveBroadcastStream().map(
+      (event) => (event as List<Object?>).cast<String>(),
+    );
   }
 
-  Future<bool> shareLog() async {
-    final result = await _channel.invokeMethod<bool>('shareLog');
+  Future<bool> appendUserFile(String path, String text) async {
+    final result = await _channel.invokeMethod<bool>('appendUserFile', {
+      'path': path,
+      'text': text,
+    });
     return result ?? false;
   }
 
-  Future<void> installCiaFiles(List<String> paths) {
-    return _channel.invokeMethod<void>('installCiaFiles', {'paths': paths});
+  Future<bool> rotateUserFile(String path, String previousPath) async {
+    final result = await _channel.invokeMethod<bool>('rotateUserFile', {
+      'path': path,
+      'previousPath': previousPath,
+    });
+    return result ?? false;
+  }
+
+  Future<bool> userFileExists(String path) async {
+    final result = await _channel.invokeMethod<bool>('userFileExists', {
+      'path': path,
+    });
+    return result ?? false;
+  }
+
+  Future<bool> shareUserFile(String path) async {
+    final result = await _channel.invokeMethod<bool>('shareUserFile', {
+      'path': path,
+    });
+    return result ?? false;
+  }
+
+  Future<List<CiaInstallResult>> installCiaFiles(List<String> paths) async {
+    final result = await _channel.invokeMethod<List<Object?>>(
+      'installCiaFiles',
+      {'paths': paths},
+    );
+    if (result == null) return const [];
+    return result.cast<Map<Object?, Object?>>().map((entry) {
+      return CiaInstallResult(
+        filename: entry['filename'] as String? ?? '',
+        success: entry['success'] as bool? ?? false,
+      );
+    }).toList();
+  }
+
+  Future<void> showNotification({required String title, String body = ''}) {
+    return _channel.invokeMethod<void>('showNotification', {
+      'title': title,
+      'body': body,
+    });
   }
 
   Future<bool> isFullConsoleLinked() async {
@@ -100,12 +166,16 @@ class NativeBridge {
   }
 
   Future<List<bool>> areSystemTitlesInstalled() async {
-    final result = await _channel.invokeMethod<List<Object?>>('areSystemTitlesInstalled');
+    final result = await _channel.invokeMethod<List<Object?>>(
+      'areSystemTitlesInstalled',
+    );
     return result?.cast<bool>() ?? const [false, false];
   }
 
   Future<void> installSystemFiles(bool old3ds) {
-    return _channel.invokeMethod<void>('installSystemFiles', {'old3ds': old3ds});
+    return _channel.invokeMethod<void>('installSystemFiles', {
+      'old3ds': old3ds,
+    });
   }
 
   Future<void> unlinkConsole() {
@@ -113,7 +183,9 @@ class NativeBridge {
   }
 
   Future<String> getHomeMenuPath(int region) async {
-    final result = await _channel.invokeMethod<String>('getHomeMenuPath', {'region': region});
+    final result = await _channel.invokeMethod<String>('getHomeMenuPath', {
+      'region': region,
+    });
     return result ?? '';
   }
 
@@ -123,11 +195,21 @@ class NativeBridge {
   }
 
   Future<void> setSystemSetupNeeded(bool needed) {
-    return _channel.invokeMethod<void>('setSystemSetupNeeded', {'needed': needed});
+    return _channel.invokeMethod<void>('setSystemSetupNeeded', {
+      'needed': needed,
+    });
   }
 
-  Future<List<Game>> getGames() async {
-    final result = await _channel.invokeMethod<List<Object?>>('getGames');
+  Future<List<Game>> getGames(
+    String? gamesDirectory, {
+    List<InstalledTitlePath> installedTitlePaths = const [],
+  }) async {
+    final result = await _channel.invokeMethod<List<Object?>>('getGames', {
+      'gamesDirectory': gamesDirectory,
+      'installedTitlePaths': installedTitlePaths
+          .map((entry) => {'root': entry.root.name, 'path': entry.path})
+          .toList(),
+    });
     if (result == null) return const [];
     return result
         .cast<Map<Object?, Object?>>()
@@ -136,9 +218,14 @@ class NativeBridge {
   }
 
   Future<List<AccessPoint>> scanRealWifiAccessPoints() async {
-    final result = await _channel.invokeMethod<List<Object?>>('scanRealWifiAccessPoints');
+    final result = await _channel.invokeMethod<List<Object?>>(
+      'scanRealWifiAccessPoints',
+    );
     if (result == null) return const [];
-    return result.cast<Map<Object?, Object?>>().map((entry) => _accessPointFromMap(entry)).toList();
+    return result
+        .cast<Map<Object?, Object?>>()
+        .map((entry) => _accessPointFromMap(entry))
+        .toList();
   }
 
   Future<void> setVirtualAccessPoints(List<AccessPoint>? accessPoints) {
@@ -149,6 +236,7 @@ class NativeBridge {
               'ssid': accessPoint.ssid,
               'bssid': accessPoint.bssid,
               'frequency': accessPoint.frequency,
+              'channel': wifiFrequencyToChannel(accessPoint.frequency),
               'level': accessPoint.level,
             },
           )
@@ -199,11 +287,15 @@ class NativeBridge {
   }
 
   Future<void> setSystemMediaVolume(double volume) {
-    return _channel.invokeMethod<void>('setSystemMediaVolume', {'volume': volume});
+    return _channel.invokeMethod<void>('setSystemMediaVolume', {
+      'volume': volume,
+    });
   }
 
   Stream<double> systemMediaVolumeChanges() {
-    return _systemVolumeChannel.receiveBroadcastStream().map((event) => (event as num).toDouble());
+    return _systemVolumeChannel.receiveBroadcastStream().map(
+      (event) => (event as num).toDouble(),
+    );
   }
 
   Future<void> activateMediaNotification({
@@ -234,19 +326,31 @@ class NativeBridge {
 
   Stream<bool> mediaNotificationPlayPauseRequests() {
     return _mediaNotificationPlayPauseChannel.receiveBroadcastStream().map(
-          (event) => event as bool,
-        );
+      (event) => event as bool,
+    );
   }
 
   Future<void> launchEmulationActivity(String gamePath) {
-    return _channel.invokeMethod<void>('launchEmulationActivity', {'path': gamePath});
+    return _channel.invokeMethod<void>('launchEmulationActivity', {
+      'path': gamePath,
+    });
   }
 
   Future<void> terminateProcess() {
     return _channel.invokeMethod<void>('terminateProcess');
   }
 
-  Future<bool> onTouchEvent({required double x, required double y, required bool pressed}) async {
+  Future<void> setConsoleLogEnabled(bool enabled) {
+    return _channel.invokeMethod<void>('setConsoleLogEnabled', {
+      'enabled': enabled,
+    });
+  }
+
+  Future<bool> onTouchEvent({
+    required double x,
+    required double y,
+    required bool pressed,
+  }) async {
     final result = await _channel.invokeMethod<bool>('onTouchEvent', {
       'x': x,
       'y': y,
@@ -265,7 +369,9 @@ class NativeBridge {
   }
 
   Future<Map<String, Map<String, String>>> readEmulatorConfig() async {
-    final result = await _channel.invokeMethod<Map<Object?, Object?>>('readEmulatorConfig');
+    final result = await _channel.invokeMethod<Map<Object?, Object?>>(
+      'readEmulatorConfig',
+    );
     if (result == null) return const {};
     return result.map(
       (section, keys) => MapEntry(
@@ -284,7 +390,9 @@ class NativeBridge {
   }
 
   Future<Map<String, Object?>> readSystemSaveGame() async {
-    final result = await _channel.invokeMethod<Map<Object?, Object?>>('readSystemSaveGame');
+    final result = await _channel.invokeMethod<Map<Object?, Object?>>(
+      'readSystemSaveGame',
+    );
     if (result == null) return const {};
     return result.cast<String, Object?>();
   }
@@ -304,12 +412,17 @@ class NativeBridge {
   }
 
   Future<int> getCountryCompatibility(int region) async {
-    final result = await _channel.invokeMethod<int>('getCountryCompatibility', region);
+    final result = await _channel.invokeMethod<int>(
+      'getCountryCompatibility',
+      region,
+    );
     return result ?? 0;
   }
 
   Future<bool> supportsCustomDriverLoading() async {
-    final result = await _channel.invokeMethod<bool>('supportsCustomDriverLoading');
+    final result = await _channel.invokeMethod<bool>(
+      'supportsCustomDriverLoading',
+    );
     return result ?? false;
   }
 
@@ -333,21 +446,27 @@ class NativeBridge {
   }
 
   Future<bool> installGpuDriver(String path) async {
-    final result = await _channel.invokeMethod<bool>('installGpuDriver', {'path': path});
+    final result = await _channel.invokeMethod<bool>('installGpuDriver', {
+      'path': path,
+    });
     return result ?? false;
   }
 
   Future<bool> selectGpuDriver(String? uri) async {
-    final result = await _channel.invokeMethod<bool>('selectGpuDriver', {'uri': uri});
+    final result = await _channel.invokeMethod<bool>('selectGpuDriver', {
+      'uri': uri,
+    });
     return result ?? false;
   }
 
   Future<GameFolderStatus> getGameFolderStatus(Game game) async {
-    final result = await _channel.invokeMethod<List<Object?>>('getGameFolderStatus', {
-      'titleId': game.titleId,
-      'path': game.path,
-    });
-    final flags = result?.cast<bool>() ?? List<bool>.filled(GameFolderKind.values.length, false);
+    final result = await _channel.invokeMethod<List<Object?>>(
+      'getGameFolderStatus',
+      {'titleId': game.titleId, 'path': game.path},
+    );
+    final flags =
+        result?.cast<bool>() ??
+        List<bool>.filled(GameFolderKind.values.length, false);
     return GameFolderStatus(
       app: flags[GameFolderKind.app.index],
       save: flags[GameFolderKind.save.index],
@@ -392,6 +511,20 @@ class NativeBridge {
       'iconFilePath': request.iconFilePath,
       'stretch': request.stretch,
     });
+  }
+
+  Future<bool> hasPermission(String permission) async {
+    final result = await _channel.invokeMethod<bool>('hasPermission', {
+      'permission': permission,
+    });
+    return result ?? false;
+  }
+
+  Future<bool> requestPermission(String permission) async {
+    final result = await _channel.invokeMethod<bool>('requestPermission', {
+      'permission': permission,
+    });
+    return result ?? false;
   }
 
   AccessPoint _accessPointFromMap(Map<Object?, Object?> map) {

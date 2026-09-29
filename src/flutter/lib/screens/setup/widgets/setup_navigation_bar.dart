@@ -23,9 +23,11 @@ class SetupNavigationBar extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       child: Row(
         children: [
-          if (showBack) TextButton(onPressed: onBack, child: Text(t.setup.back)),
+          if (showBack)
+            TextButton(onPressed: onBack, child: Text(t.setup.back)),
           const Spacer(),
-          if (showNext) TextButton(onPressed: onNext, child: Text(t.setup.next)),
+          if (showNext)
+            TextButton(onPressed: onNext, child: Text(t.setup.next)),
         ],
       ),
     );

@@ -22,7 +22,8 @@ class OptionsSettingsService {
 
   final Ref _ref;
 
-  bool get useLegacySettingsUI => AppServices.legacySettingsUiRepository.useLegacySettingsUI;
+  bool get useLegacySettingsUI =>
+      AppServices.legacySettingsUiRepository.useLegacySettingsUI;
 
   Future<void> setUseLegacySettingsUI(bool value) {
     return AppServices.legacySettingsUiRepository.setUseLegacySettingsUI(value);
@@ -41,7 +42,8 @@ class OptionsSettingsService {
 
   ThemeSetting get themeSettings => _ref.read(themeSettingsProvider);
 
-  ThemeSettingsNotifier get themeSettingsNotifier => _ref.read(themeSettingsProvider.notifier);
+  ThemeSettingsNotifier get themeSettingsNotifier =>
+      _ref.read(themeSettingsProvider.notifier);
 
   Future<void> resetAll() {
     return _ref.read(resetSettingsProvider).resetAll();

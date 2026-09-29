@@ -10,16 +10,22 @@ import '../widgets/settings_list.dart';
 /// The pre-redesign Audio settings page. The current UI merges these items into
 /// [MediaSettingsPage]'s Emulator section instead; kept only for the legacy Options UI
 /// (`useLegacySettingsUI`).
-@Deprecated('Only used by the legacy Options UI. See MediaSettingsPage for the current UI.')
+@Deprecated(
+  'Only used by the legacy Options UI. See MediaSettingsPage for the current UI.',
+)
 class LegacyAudioSettingsPage extends ConsumerStatefulWidget {
   const LegacyAudioSettingsPage({super.key});
 
   @override
-  ConsumerState<LegacyAudioSettingsPage> createState() => _LegacyAudioSettingsPageState();
+  ConsumerState<LegacyAudioSettingsPage> createState() =>
+      _LegacyAudioSettingsPageState();
 }
 
-class _LegacyAudioSettingsPageState extends ConsumerState<LegacyAudioSettingsPage> {
-  late final _systemSaveStore = SystemSaveValueStore(AppServices.systemSaveRepository);
+class _LegacyAudioSettingsPageState
+    extends ConsumerState<LegacyAudioSettingsPage> {
+  late final _systemSaveStore = SystemSaveValueStore(
+    AppServices.systemSaveRepository,
+  );
 
   @override
   Widget build(BuildContext context) {

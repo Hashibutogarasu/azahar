@@ -14,11 +14,15 @@ class DeleteShaderCacheDialog extends StatefulWidget {
   final Game game;
 
   static Future<void> show(BuildContext context, Game game) {
-    return showDialog<void>(context: context, builder: (_) => DeleteShaderCacheDialog(game: game));
+    return showDialog<void>(
+      context: context,
+      builder: (_) => DeleteShaderCacheDialog(game: game),
+    );
   }
 
   @override
-  State<DeleteShaderCacheDialog> createState() => _DeleteShaderCacheDialogState();
+  State<DeleteShaderCacheDialog> createState() =>
+      _DeleteShaderCacheDialogState();
 }
 
 class _DeleteShaderCacheDialogState extends State<DeleteShaderCacheDialog> {
@@ -56,8 +60,13 @@ class _DeleteShaderCacheDialogState extends State<DeleteShaderCacheDialog> {
                   final backend = _selected!;
                   final messenger = ScaffoldMessenger.of(context);
                   Navigator.of(context).pop();
-                  await AppServices.nativeBridge.deleteShaderCache(widget.game, backend);
-                  messenger.showSnackBar(SnackBar(content: Text(t.games.shaderCacheDeleted)));
+                  await AppServices.nativeBridge.deleteShaderCache(
+                    widget.game,
+                    backend,
+                  );
+                  messenger.showSnackBar(
+                    SnackBar(content: Text(t.games.shaderCacheDeleted)),
+                  );
                 },
           child: Text(localizations.okButtonLabel),
         ),

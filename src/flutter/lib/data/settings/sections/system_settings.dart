@@ -17,7 +17,11 @@ abstract final class SystemSettingKeys {
   static const username = StringKey('System', 'username', 'AZAHAR');
   static const playCoins = IntKey('System', 'playCoins', 42);
   static const stepsPerHour = IntKey('System', 'steps_per_hour', 0);
-  static const scanRealWifiNetworks = IntBoolKey('System', 'scan_real_wifi_networks', true);
+  static const scanRealWifiNetworks = IntBoolKey(
+    'System',
+    'scan_real_wifi_networks',
+    true,
+  );
   static const consoleId = StringKey('System', 'consoleId', '');
   static const mac = StringKey('System', 'mac', '');
   static const birthdayMonth = IntKey('System', 'birthdayMonth', 11);
@@ -25,7 +29,11 @@ abstract final class SystemSettingKeys {
   static const initClock = IntKey('System', 'init_clock', 0);
   static const initTime = StringKey('System', 'init_time', '946731601');
   static const pluginLoader = IntBoolKey('System', 'plugin_loader', false);
-  static const allowPluginLoader = IntBoolKey('System', 'allow_plugin_loader', true);
+  static const allowPluginLoader = IntBoolKey(
+    'System',
+    'allow_plugin_loader',
+    true,
+  );
 }
 
 /// The System category's items in the current Options UI: just the console clock, since New 3DS
@@ -40,7 +48,10 @@ List<SettingsItem> buildClockSettingsItems(Translations t) {
       choiceLabels: [s.initClockDeviceClock, s.initClockSimulatedClock],
       choiceValues: const [0, 1],
     ),
-    SettingsItem.dateTime(title: s.simulatedClock, setting: SystemSettingKeys.initTime),
+    SettingsItem.dateTime(
+      title: s.simulatedClock,
+      setting: SystemSettingKeys.initTime,
+    ),
   ];
 }
 

@@ -4,7 +4,12 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../i18n/translations.g.dart';
 
 class MessageDialog extends StatelessWidget {
-  const MessageDialog({super.key, required this.title, this.description, this.helpUrl});
+  const MessageDialog({
+    super.key,
+    required this.title,
+    this.description,
+    this.helpUrl,
+  });
 
   final String title;
   final String? description;
@@ -18,7 +23,11 @@ class MessageDialog extends StatelessWidget {
   }) {
     return showDialog<void>(
       context: context,
-      builder: (_) => MessageDialog(title: title, description: description, helpUrl: helpUrl),
+      builder: (_) => MessageDialog(
+        title: title,
+        description: description,
+        helpUrl: helpUrl,
+      ),
     );
   }
 
@@ -31,7 +40,10 @@ class MessageDialog extends StatelessWidget {
       actions: [
         if (helpUrl != null)
           TextButton(
-            onPressed: () => launchUrl(Uri.parse(helpUrl!), mode: LaunchMode.externalApplication),
+            onPressed: () => launchUrl(
+              Uri.parse(helpUrl!),
+              mode: LaunchMode.externalApplication,
+            ),
             child: Text(t.setup.warningHelp),
           ),
         TextButton(

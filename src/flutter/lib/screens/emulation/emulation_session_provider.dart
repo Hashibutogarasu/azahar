@@ -15,22 +15,28 @@ import 'media_session_metadata.dart';
 import 'media_session_service.dart';
 
 final emulationSessionProvider =
-    NotifierProvider.autoDispose<EmulationSessionNotifier, EmulationSessionState>(
-  EmulationSessionNotifier.new,
-);
+    NotifierProvider.autoDispose<
+      EmulationSessionNotifier,
+      EmulationSessionState
+    >(EmulationSessionNotifier.new);
 
 class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
   NativeBridge get _bridge => AppServices.nativeBridge;
   StreamSubscription<ShaderCacheProgress>? _shaderProgressSubscription;
+  StreamSubscription<void>? _closeRequestSubscription;
   final _mediaSession = MediaSessionService();
   bool _mediaSessionActivated = false;
 
-  bool get _treatAsMediaSession =>
-      AppServices.emulatorSettingsRepository.readBool(MediaSettingKeys.treatAudioAsMediaSession);
+  bool get _treatAsMediaSession => AppServices.emulatorSettingsRepository
+      .readBool(MediaSettingKeys.treatAudioAsMediaSession);
 
   @override
   EmulationSessionState build() {
     ref.onDispose(_teardownNativeSession);
+    _closeRequestSubscription = _bridge.closeRequests.listen(
+      (_) => unawaited(terminate()),
+    );
+    ref.onDispose(() => _closeRequestSubscription?.cancel());
     return const EmulationSessionState();
   }
 
@@ -44,7 +50,9 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
     await AppServices.emulatorSettingsRepository.load();
     await _syncVirtualAccessPoints();
 
-    _shaderProgressSubscription = _bridge.shaderCacheProgress().listen((progress) {
+    _shaderProgressSubscription = _bridge.shaderCacheProgress().listen((
+      progress,
+    ) {
       switch (progress.stage) {
         case ShaderCacheStage.prepare:
           return;
@@ -61,7 +69,8 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
       height: (layout.topScreen.height * devicePixelRatio).round(),
     );
     final bottomWidth = (layout.bottomScreen.width * devicePixelRatio).round();
-    final bottomHeight = (layout.bottomScreen.height * devicePixelRatio).round();
+    final bottomHeight = (layout.bottomScreen.height * devicePixelRatio)
+        .round();
     final bottomTextureId = await _bridge.createEmulationTexture(
       width: bottomWidth,
       height: bottomHeight,
@@ -83,7 +92,8 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
   Future<void> _syncVirtualAccessPoints() async {
     final enabled = await AppServices.virtualAccessPointsRepository.isEnabled();
     if (!enabled) return;
-    final accessPoints = await AppServices.virtualAccessPointsRepository.readAll();
+    final accessPoints = await AppServices.virtualAccessPointsRepository
+        .readAll();
     await _bridge.setVirtualAccessPoints(accessPoints);
   }
 
@@ -151,7 +161,11 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
   void touchPressed(Offset position, Size screenSize) {
     final surfacePosition = _toSurfacePosition(position, screenSize);
     if (surfacePosition == null) return;
-    _bridge.onTouchEvent(x: surfacePosition.dx, y: surfacePosition.dy, pressed: true);
+    _bridge.onTouchEvent(
+      x: surfacePosition.dx,
+      y: surfacePosition.dy,
+      pressed: true,
+    );
   }
 
   void touchMoved(Offset position, Size screenSize) {
@@ -170,11 +184,20 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
   }
 
   Future<void> terminate() async {
-    await _teardownNativeSession();
-    state = const EmulationSessionState();
+    state = state.copyWith(isTerminating: true);
+    await _releaseNativeSession();
+    state = state.copyWith(isClosingWindow: true);
+    await WidgetsBinding.instance.endOfFrame;
+    await WidgetsBinding.instance.endOfFrame;
+    await _bridge.terminateProcess();
   }
 
   Future<void> _teardownNativeSession() async {
+    await _releaseNativeSession();
+    await _bridge.terminateProcess();
+  }
+
+  Future<void> _releaseNativeSession() async {
     await _shaderProgressSubscription?.cancel();
     _shaderProgressSubscription = null;
     _mediaSessionActivated = false;
@@ -183,6 +206,5 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
     if (state.isLaunched) {
       await _bridge.stopEmulation();
     }
-    await _bridge.terminateProcess();
   }
 }

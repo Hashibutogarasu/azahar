@@ -12,15 +12,20 @@ import org.citra.citra_emu.NativeLibrary
 private data class WifiAccessPointEntry(
     val ssid: String,
     val bssid: String,
-    val frequency: Int,
+    val channel: Int,
     val level: Int
 ) {
     fun toChannelMap(): Map<String, Any?> {
-        return mapOf("ssid" to ssid, "bssid" to bssid, "frequency" to frequency, "level" to level)
+        return mapOf(
+            "ssid" to ssid,
+            "bssid" to bssid,
+            "frequency" to WifiController.channelToFrequency(channel),
+            "level" to level
+        )
     }
 
     fun toWireEntry(): String {
-        return "$bssid|$level|${WifiController.frequencyToChannel(frequency)}|0|$ssid"
+        return "$bssid|$level|$channel|0|$ssid"
     }
 
     companion object {
@@ -32,16 +37,20 @@ private data class WifiAccessPointEntry(
             return WifiAccessPointEntry(
                 ssid = parts[4],
                 bssid = parts[0],
-                frequency = WifiController.channelToFrequency(channel),
+                channel = channel,
                 level = level
             )
         }
 
+        /**
+         * [map]'s "channel" comes pre-computed from the frequency by the Dart side
+         * (`wifiFrequencyToChannel`), so this stays the only place that formula is implemented.
+         */
         fun fromChannelMap(map: Map<String, Any?>): WifiAccessPointEntry {
             return WifiAccessPointEntry(
                 ssid = map["ssid"] as? String ?: "",
                 bssid = map["bssid"] as? String ?: "",
-                frequency = (map["frequency"] as? Number)?.toInt() ?: 0,
+                channel = (map["channel"] as? Number)?.toInt() ?: 0,
                 level = (map["level"] as? Number)?.toInt() ?: 0
             )
         }
@@ -56,14 +65,6 @@ class WifiController {
 
         fun channelToFrequency(channel: Int): Int {
             return if (channel == 14) CHANNEL_14_FREQUENCY else CHANNEL_0_FREQUENCY + channel * CHANNEL_WIDTH
-        }
-
-        fun frequencyToChannel(frequency: Int): Int {
-            return if (frequency == CHANNEL_14_FREQUENCY) {
-                14
-            } else {
-                (frequency - CHANNEL_0_FREQUENCY) / CHANNEL_WIDTH
-            }
         }
     }
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:babstrap_settings_screen/babstrap_settings_screen.dart' as babstrap;
+import 'package:babstrap_settings_screen/babstrap_settings_screen.dart'
+    as babstrap;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,19 +24,24 @@ class FolderSettingsOptionsGroup extends ConsumerWidget {
           icons: Icons.folder_outlined,
           title: t.options.selectUserFolder,
           subtitle: t.options.selectUserFolderDescription,
-          onTap: () => _selectUserFolder(context, ref.read(userDirectoriesProvider)),
+          onTap: () =>
+              _selectUserFolder(context, ref.read(userDirectoriesProvider)),
         ),
         babstrap.SettingsItem(
           icons: Icons.videogame_asset_outlined,
           title: t.options.selectGamesFolder,
           subtitle: t.options.selectGamesFolderDescription,
-          onTap: () => _selectGamesFolder(context, ref.read(userDirectoriesProvider)),
+          onTap: () =>
+              _selectGamesFolder(context, ref.read(userDirectoriesProvider)),
         ),
       ],
     );
   }
 
-  Future<void> _selectUserFolder(BuildContext context, UserDirectoriesService service) async {
+  Future<void> _selectUserFolder(
+    BuildContext context,
+    UserDirectoriesService service,
+  ) async {
     final previousUri = await service.previousUserDirectory();
     final pickedUri = await service.pickUserDirectory();
     if (pickedUri == null || !context.mounted) return;
@@ -59,7 +65,10 @@ class FolderSettingsOptionsGroup extends ConsumerWidget {
 
     if (!context.mounted) return;
     unawaited(
-      CopyDirProgressDialog.show(context, progressStream: service.copyDirProgress()),
+      CopyDirProgressDialog.show(
+        context,
+        progressStream: service.copyDirProgress(),
+      ),
     );
     await confirmed;
     if (context.mounted) {
@@ -67,7 +76,10 @@ class FolderSettingsOptionsGroup extends ConsumerWidget {
     }
   }
 
-  Future<void> _selectGamesFolder(BuildContext context, UserDirectoriesService service) async {
+  Future<void> _selectGamesFolder(
+    BuildContext context,
+    UserDirectoriesService service,
+  ) async {
     final pickedUri = await service.pickGamesDirectory();
     if (pickedUri == null) return;
     await service.confirmGamesDirectory(pickedUri);

@@ -22,6 +22,7 @@
 #include "common/detached_tasks.h"
 #include "common/file_util.h"
 #include "common/logging/backend.h"
+#include "common/logging/file_sink.h"
 #include "common/logging/log.h"
 #include "common/scm_rev.h"
 #include "common/string_util.h"
@@ -155,7 +156,9 @@ static void SaveBanList(const Network::Room::BanList& ban_list, const std::strin
 }
 
 static void InitializeLogging(const std::string& log_file) {
-    Common::Log::Initialize(log_file);
+    Common::Log::Initialize();
+    Common::Log::SetSink(Common::Log::MakeFileSink(
+        FileUtil::GetUserPath(FileUtil::UserPath::LogDir) + log_file));
     Common::Log::SetColorConsoleBackendEnabled(true);
     Common::Log::Start();
 }
