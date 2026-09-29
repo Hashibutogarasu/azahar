@@ -99,6 +99,9 @@ class Translations$common$en {
 
   /// en: 'Cancel'
   String get cancel => 'Cancel';
+
+  /// en: 'Save'
+  String get save => 'Save';
 }
 
 // Path: setup
@@ -306,8 +309,11 @@ class Translations$emulation$en {
 
   // Translations
 
-  /// en: 'Loading…'
-  String get loading => 'Loading…';
+  /// en: 'Loading'
+  String get loading => 'Loading';
+
+  /// en: 'Closing'
+  String get terminating => 'Closing';
 
   /// en: 'Preparing Shaders'
   String get preparingShaders => 'Preparing Shaders';
@@ -385,6 +391,12 @@ class Translations$options$en {
   String get installGameContentDescription =>
       'Install applications, updates or DLC';
 
+  /// en: 'CIA install complete'
+  String get installGameContentSuccessTitle => 'CIA install complete';
+
+  /// en: 'CIA install failed'
+  String get installGameContentFailureTitle => 'CIA install failed';
+
   /// en: 'System Files'
   String get setupSystemFiles => 'System Files';
 
@@ -434,6 +446,19 @@ class Translations$options$en {
   /// en: 'Background playback and media session settings'
   String get mediaDescription =>
       'Background playback and media session settings';
+
+  /// en: 'Accessibility'
+  String get accessibility => 'Accessibility';
+
+  /// en: 'Motion and other accessibility settings'
+  String get accessibilityDescription =>
+      'Motion and other accessibility settings';
+
+  /// en: 'Advanced Settings'
+  String get advanced => 'Advanced Settings';
+
+  /// en: 'Configure more advanced options'
+  String get advancedDescription => 'Configure more advanced options';
 
   /// en: 'About'
   String get about => 'About';
@@ -638,6 +663,12 @@ class Translations$settings$en {
       Translations$settings$debug$en.internal(_root);
   late final Translations$settings$theme$en theme =
       Translations$settings$theme$en.internal(_root);
+  late final Translations$settings$themes$en themes =
+      Translations$settings$themes$en.internal(_root);
+  late final Translations$settings$accessibility$en accessibility =
+      Translations$settings$accessibility$en.internal(_root);
+  late final Translations$settings$advanced$en advanced =
+      Translations$settings$advanced$en.internal(_root);
   late final Translations$settings$language$en language =
       Translations$settings$language$en.internal(_root);
 }
@@ -788,8 +819,8 @@ class Translations$setup$userDirectory$en {
   /// en: 'Move Data'
   String get moveData => 'Move Data';
 
-  /// en: 'Moving Data…'
-  String get movingData => 'Moving Data…';
+  /// en: 'Moving Data'
+  String get movingData => 'Moving Data';
 }
 
 // Path: setup.gamesDirectory
@@ -893,6 +924,9 @@ class Translations$options$groups$en {
 
   /// en: 'Other'
   String get other => 'Other';
+
+  /// en: 'Accessibility'
+  String get accessibility => 'Accessibility';
 }
 
 // Path: settings.resetToDefaultDialog
@@ -941,8 +975,8 @@ class Translations$settings$inputBindingDialog$en {
 
   // Translations
 
-  /// en: 'Press a button on your controller…'
-  String get waitingForInput => 'Press a button on your controller…';
+  /// en: 'Press a button on your controller'
+  String get waitingForInput => 'Press a button on your controller';
 }
 
 // Path: settings.general
@@ -1014,6 +1048,65 @@ class Translations$settings$networking$en {
   /// en: 'Reports real nearby Wi-Fi networks as 3DS StreetPass/SpotPass-compatible networks, instead of fake ones.'
   String get useWirelessDescription =>
       'Reports real nearby Wi-Fi networks as 3DS StreetPass/SpotPass-compatible networks, instead of fake ones.';
+
+  /// en: 'Emulated Network'
+  String get emulatedNetwork => 'Emulated Network';
+
+  /// en: 'Inspect the Wi-Fi access points the emulated console can see, and optionally replace them with virtual ones.'
+  String get emulatedNetworkDescription =>
+      'Inspect the Wi-Fi access points the emulated console can see, and optionally replace them with virtual ones.';
+
+  /// en: 'Real Network'
+  String get realNetworkTab => 'Real Network';
+
+  /// en: 'Virtual Network'
+  String get virtualNetworkTab => 'Virtual Network';
+
+  /// en: '(Hidden Network)'
+  String get hiddenNetwork => '(Hidden Network)';
+
+  /// en: 'SSID'
+  String get ssid => 'SSID';
+
+  /// en: 'BSSID'
+  String get bssid => 'BSSID';
+
+  /// en: 'Frequency'
+  String get frequency => 'Frequency';
+
+  /// en: 'No access points found.'
+  String get noAccessPointsFound => 'No access points found.';
+
+  /// en: 'Use Virtual Network'
+  String get useVirtualNetwork => 'Use Virtual Network';
+
+  /// en: 'Reports the access points below to the emulated console instead of the real ones.'
+  String get useVirtualNetworkDescription =>
+      'Reports the access points below to the emulated console instead of the real ones.';
+
+  /// en: 'Add Access Point'
+  String get addAccessPoint => 'Add Access Point';
+
+  /// en: 'Edit Access Point'
+  String get editAccessPoint => 'Edit Access Point';
+
+  /// en: 'Leave blank for a hidden network'
+  String get ssidHint => 'Leave blank for a hidden network';
+
+  /// en: '00:00:00:00:00:00'
+  String get bssidHint => '00:00:00:00:00:00';
+
+  /// en: 'MHz, e.g. 2437'
+  String get frequencyHint => 'MHz, e.g. 2437';
+
+  /// en: 'Signal level in dBm, e.g. -50'
+  String get levelHint => 'Signal level in dBm, e.g. -50';
+
+  /// en: 'Copy selected'
+  String get copySelected => 'Copy selected';
+
+  /// en: 'Paste'
+  String get pasteAccessPoints => 'Paste';
 }
 
 // Path: settings.media
@@ -1894,6 +1987,13 @@ class Translations$settings$debug$en {
   String get warning =>
       'These settings are for debugging purposes only. Changing them may cause instability.';
 
+  /// en: 'Log to Standard Output'
+  String get logToConsole => 'Log to Standard Output';
+
+  /// en: 'Also prints the native log to the standard output of Flutter.'
+  String get logToConsoleDescription =>
+      'Also prints the native log to the standard output of Flutter.';
+
   /// en: 'CPU Clock Speed'
   String get cpuClockSpeed => 'CPU Clock Speed';
 
@@ -1962,6 +2062,9 @@ class Translations$settings$theme$en {
   /// en: 'Theme and Color'
   String get title => 'Theme and Color';
 
+  /// en: 'Theme Style'
+  String get themeStyle => 'Theme Style';
+
   /// en: 'Material You'
   String get materialYou => 'Material You';
 
@@ -1972,8 +2075,11 @@ class Translations$settings$theme$en {
   /// en: 'Static Theme Color'
   String get staticThemeColor => 'Static Theme Color';
 
-  /// en: 'Blue (Default)'
-  String get staticThemeColorBlue => 'Blue (Default)';
+  /// en: 'Default'
+  String get staticThemeColorDefault => 'Default';
+
+  /// en: 'Blue'
+  String get staticThemeColorBlue => 'Blue';
 
   /// en: 'Cyan'
   String get staticThemeColorCyan => 'Cyan';
@@ -2017,6 +2123,62 @@ class Translations$settings$theme$en {
   /// en: 'Uses black backgrounds when dark mode is enabled, instead of dark gray.'
   String get useBlackBackgroundsDescription =>
       'Uses black backgrounds when dark mode is enabled, instead of dark gray.';
+}
+
+// Path: settings.themes
+class Translations$settings$themes$en {
+  Translations$settings$themes$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Azahar'
+  String get azahar => 'Azahar';
+
+  /// en: 'Legacy'
+  String get legacy => 'Legacy';
+}
+
+// Path: settings.accessibility
+class Translations$settings$accessibility$en {
+  Translations$settings$accessibility$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Accessibility'
+  String get title => 'Accessibility';
+
+  /// en: 'Reduce Motion'
+  String get reduceMotion => 'Reduce Motion';
+
+  /// en: 'Reduces animations and motion effects throughout the app.'
+  String get reduceMotionDescription =>
+      'Reduces animations and motion effects throughout the app.';
+}
+
+// Path: settings.advanced
+class Translations$settings$advanced$en {
+  Translations$settings$advanced$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Advanced Settings'
+  String get title => 'Advanced Settings';
+
+  /// en: 'Animation Speed'
+  String get animationSpeedLabel => 'Animation Speed';
+
+  /// en: 'Controls how fast UI transitions play.'
+  String get animationSpeedDescription =>
+      'Controls how fast UI transitions play.';
+
+  late final Translations$settings$advanced$animationSpeed$en animationSpeed =
+      Translations$settings$advanced$animationSpeed$en.internal(_root);
 }
 
 // Path: settings.language
@@ -2448,6 +2610,24 @@ class Translations$settings$system$countries$en {
   String get bermuda => 'Bermuda';
 }
 
+// Path: settings.advanced.animationSpeed
+class Translations$settings$advanced$animationSpeed$en {
+  Translations$settings$advanced$animationSpeed$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Fast'
+  String get fast => 'Fast';
+
+  /// en: 'Normal'
+  String get normal => 'Normal';
+
+  /// en: 'Slow'
+  String get slow => 'Slow';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -2458,6 +2638,7 @@ extension on Translations {
     return switch (path) {
           'appName' => 'Azahar',
           'common.cancel' => 'Cancel',
+          'common.save' => 'Save',
           'setup.next' => 'Next',
           'setup.back' => 'Back',
           'setup.stepComplete' => 'Complete!',
@@ -2501,7 +2682,7 @@ extension on Translations {
           'setup.userDirectory.warningHelpUrl' =>
             'https://web.archive.org/web/20240304193549/https://github.com/citra-emu/citra/wiki/Citra-Android-user-data-and-storage',
           'setup.userDirectory.moveData' => 'Move Data',
-          'setup.userDirectory.movingData' => 'Moving Data…',
+          'setup.userDirectory.movingData' => 'Moving Data',
           'setup.gamesDirectory.title' => 'Applications',
           'setup.gamesDirectory.description' =>
             'Select your Applications folder with the button below.',
@@ -2562,7 +2743,8 @@ extension on Translations {
           'games.regionTaiwan' => 'Taiwan',
           'games.regionFree' => 'Region free',
           'games.invalidRegion' => 'Invalid region',
-          'emulation.loading' => 'Loading…',
+          'emulation.loading' => 'Loading',
+          'emulation.terminating' => 'Closing',
           'emulation.preparingShaders' => 'Preparing Shaders',
           'emulation.buildingShaders' => 'Building Shaders',
           'emulation.shaderProgress' =>
@@ -2587,6 +2769,8 @@ extension on Translations {
           'options.installGameContent' => 'Install CIA file',
           'options.installGameContentDescription' =>
             'Install applications, updates or DLC',
+          'options.installGameContentSuccessTitle' => 'CIA install complete',
+          'options.installGameContentFailureTitle' => 'CIA install failed',
           'options.setupSystemFiles' => 'System Files',
           'options.setupSystemFilesDescription' =>
             'Perform system file operations such as installing system files or booting the Home Menu',
@@ -2608,6 +2792,11 @@ extension on Translations {
           'options.media' => 'Media',
           'options.mediaDescription' =>
             'Background playback and media session settings',
+          'options.accessibility' => 'Accessibility',
+          'options.accessibilityDescription' =>
+            'Motion and other accessibility settings',
+          'options.advanced' => 'Advanced Settings',
+          'options.advancedDescription' => 'Configure more advanced options',
           'options.about' => 'About',
           'options.aboutDescription' => 'Build version, credits, and more',
           'options.general' => 'Profile',
@@ -2628,6 +2817,7 @@ extension on Translations {
           'options.groups.tools' => 'Tools',
           'options.groups.folderSettings' => 'Folder Settings',
           'options.groups.other' => 'Other',
+          'options.groups.accessibility' => 'Accessibility',
           'systemFiles.title' => 'System Files',
           'systemFiles.preamble' =>
             'Azahar needs console unique data and firmware files from a real console to be able to use some of its features. Such files and data can be set up with the Azahar Artic Setup Tool.\n\nNotes:\n• This operation will install console unique data to Azahar, do not share your user or nand folders after performing the setup process!\n• While doing the setup process, Azahar will link to the console running the setup tool. You can unlink the console later from the System Files tab in the emulator options menu.\n• Do not go online with both Azahar and your 3DS console at the same time after setting up system files, as this could cause issues.\n• Old 3DS setup is needed for the New 3DS setup to work (setting up both is recommended).\n• Both setup modes will work regardless of the model of the console running the setup tool.',
@@ -2680,7 +2870,7 @@ extension on Translations {
               required Object max,
             }) => '${title}: value must be between ${min} and ${max}.',
           'settings.inputBindingDialog.waitingForInput' =>
-            'Press a button on your controller…',
+            'Press a button on your controller',
           'settings.general.title' => 'Profile',
           'settings.general.frameLimitEnable' => 'Limit Speed',
           'settings.general.frameLimitEnableDescription' =>
@@ -2700,6 +2890,28 @@ extension on Translations {
           'settings.networking.useWireless' => 'Use Wireless',
           'settings.networking.useWirelessDescription' =>
             'Reports real nearby Wi-Fi networks as 3DS StreetPass/SpotPass-compatible networks, instead of fake ones.',
+          'settings.networking.emulatedNetwork' => 'Emulated Network',
+          'settings.networking.emulatedNetworkDescription' =>
+            'Inspect the Wi-Fi access points the emulated console can see, and optionally replace them with virtual ones.',
+          'settings.networking.realNetworkTab' => 'Real Network',
+          'settings.networking.virtualNetworkTab' => 'Virtual Network',
+          'settings.networking.hiddenNetwork' => '(Hidden Network)',
+          'settings.networking.ssid' => 'SSID',
+          'settings.networking.bssid' => 'BSSID',
+          'settings.networking.frequency' => 'Frequency',
+          'settings.networking.noAccessPointsFound' =>
+            'No access points found.',
+          'settings.networking.useVirtualNetwork' => 'Use Virtual Network',
+          'settings.networking.useVirtualNetworkDescription' =>
+            'Reports the access points below to the emulated console instead of the real ones.',
+          'settings.networking.addAccessPoint' => 'Add Access Point',
+          'settings.networking.editAccessPoint' => 'Edit Access Point',
+          'settings.networking.ssidHint' => 'Leave blank for a hidden network',
+          'settings.networking.bssidHint' => '00:00:00:00:00:00',
+          'settings.networking.frequencyHint' => 'MHz, e.g. 2437',
+          'settings.networking.levelHint' => 'Signal level in dBm, e.g. -50',
+          'settings.networking.copySelected' => 'Copy selected',
+          'settings.networking.pasteAccessPoints' => 'Paste',
           'settings.media.title' => 'Media',
           'settings.media.groupApp' => 'App',
           'settings.media.groupEmulator' => 'Emulator',
@@ -3046,6 +3258,9 @@ extension on Translations {
           'settings.camera.imageFlip' => 'Flip',
           'settings.camera.imageFlipNone' => 'None',
           'settings.camera.imageFlipHorizontal' => 'Horizontal',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.camera.imageFlipVertical' => 'Vertical',
           'settings.camera.imageFlipReverse' => 'Reverse',
           'settings.gamepad.title' => 'Gamepad',
@@ -3084,9 +3299,6 @@ extension on Translations {
           'settings.gamepad.buttonX' => 'X',
           'settings.gamepad.buttonY' => 'Y',
           'settings.gamepad.buttonSelect' => 'SELECT',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.gamepad.buttonStart' => 'START',
           'settings.gamepad.buttonHome' => 'HOME',
           'settings.gamepad.circlePad' => 'Circle Pad',
@@ -3160,6 +3372,9 @@ extension on Translations {
           'settings.debug.title' => 'Debug',
           'settings.debug.warning' =>
             'These settings are for debugging purposes only. Changing them may cause instability.',
+          'settings.debug.logToConsole' => 'Log to Standard Output',
+          'settings.debug.logToConsoleDescription' =>
+            'Also prints the native log to the standard output of Flutter.',
           'settings.debug.cpuClockSpeed' => 'CPU Clock Speed',
           'settings.debug.cpuClockSpeedDescription' =>
             'Over/Underclocks the emulated CPU. Not recommended.',
@@ -3187,11 +3402,13 @@ extension on Translations {
           'settings.debug.deterministicAsyncOperationsDescription' =>
             'Forces asynchronous operations to run in a deterministic order. Reduces performance.',
           'settings.theme.title' => 'Theme and Color',
+          'settings.theme.themeStyle' => 'Theme Style',
           'settings.theme.materialYou' => 'Material You',
           'settings.theme.materialYouDescription' =>
             'Uses colors extracted from your device\'s wallpaper.',
           'settings.theme.staticThemeColor' => 'Static Theme Color',
-          'settings.theme.staticThemeColorBlue' => 'Blue (Default)',
+          'settings.theme.staticThemeColorDefault' => 'Default',
+          'settings.theme.staticThemeColorBlue' => 'Blue',
           'settings.theme.staticThemeColorCyan' => 'Cyan',
           'settings.theme.staticThemeColorRed' => 'Red',
           'settings.theme.staticThemeColorGreen' => 'Green',
@@ -3207,6 +3424,19 @@ extension on Translations {
           'settings.theme.useBlackBackgrounds' => 'Use Black Backgrounds',
           'settings.theme.useBlackBackgroundsDescription' =>
             'Uses black backgrounds when dark mode is enabled, instead of dark gray.',
+          'settings.themes.azahar' => 'Azahar',
+          'settings.themes.legacy' => 'Legacy',
+          'settings.accessibility.title' => 'Accessibility',
+          'settings.accessibility.reduceMotion' => 'Reduce Motion',
+          'settings.accessibility.reduceMotionDescription' =>
+            'Reduces animations and motion effects throughout the app.',
+          'settings.advanced.title' => 'Advanced Settings',
+          'settings.advanced.animationSpeedLabel' => 'Animation Speed',
+          'settings.advanced.animationSpeedDescription' =>
+            'Controls how fast UI transitions play.',
+          'settings.advanced.animationSpeed.fast' => 'Fast',
+          'settings.advanced.animationSpeed.normal' => 'Normal',
+          'settings.advanced.animationSpeed.slow' => 'Slow',
           'settings.language.title' => 'Language',
           'settings.language.systemDefault' => 'System default',
           'settings.language.english' => 'English',

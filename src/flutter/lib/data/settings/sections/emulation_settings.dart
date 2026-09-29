@@ -14,7 +14,8 @@ class HighLevelEmulationValueStore implements SettingsValueStore {
   final EmulatorSettingsRepository _repository;
 
   @override
-  bool readBool(IntBoolKey setting) => !_repository.readBool(SystemSettingKeys.lleApplets);
+  bool readBool(IntBoolKey setting) =>
+      !_repository.readBool(SystemSettingKeys.lleApplets);
 
   @override
   Future<void> writeBool(IntBoolKey setting, bool value) async {

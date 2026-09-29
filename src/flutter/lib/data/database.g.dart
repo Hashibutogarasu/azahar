@@ -1704,12 +1704,23 @@ class $ThemeSettingsTable extends ThemeSettings
     defaultValue: const Constant(false),
   );
   @override
+  late final GeneratedColumnWithTypeConverter<ThemeStyle, int> themeStyle =
+      GeneratedColumn<int>(
+        'theme_style',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+        defaultValue: Constant(ThemeStyle.azahar.index),
+      ).withConverter<ThemeStyle>($ThemeSettingsTable.$converterthemeStyle);
+  @override
   List<GeneratedColumn> get $columns => [
     id,
     themeMode,
     staticThemeColor,
     blackBackgrounds,
     materialYou,
+    themeStyle,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1788,6 +1799,12 @@ class $ThemeSettingsTable extends ThemeSettings
         DriftSqlType.bool,
         data['${effectivePrefix}material_you'],
       )!,
+      themeStyle: $ThemeSettingsTable.$converterthemeStyle.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}theme_style'],
+        )!,
+      ),
     );
   }
 
@@ -1795,6 +1812,9 @@ class $ThemeSettingsTable extends ThemeSettings
   $ThemeSettingsTable createAlias(String alias) {
     return $ThemeSettingsTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<ThemeStyle, int, int> $converterthemeStyle =
+      const EnumIndexConverter<ThemeStyle>(ThemeStyle.values);
 }
 
 class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
@@ -1803,12 +1823,14 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
   final int staticThemeColor;
   final bool blackBackgrounds;
   final bool materialYou;
+  final ThemeStyle themeStyle;
   const ThemeSetting({
     required this.id,
     required this.themeMode,
     required this.staticThemeColor,
     required this.blackBackgrounds,
     required this.materialYou,
+    required this.themeStyle,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1818,6 +1840,11 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
     map['static_theme_color'] = Variable<int>(staticThemeColor);
     map['black_backgrounds'] = Variable<bool>(blackBackgrounds);
     map['material_you'] = Variable<bool>(materialYou);
+    {
+      map['theme_style'] = Variable<int>(
+        $ThemeSettingsTable.$converterthemeStyle.toSql(themeStyle),
+      );
+    }
     return map;
   }
 
@@ -1828,6 +1855,7 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
       staticThemeColor: Value(staticThemeColor),
       blackBackgrounds: Value(blackBackgrounds),
       materialYou: Value(materialYou),
+      themeStyle: Value(themeStyle),
     );
   }
 
@@ -1842,6 +1870,9 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
       staticThemeColor: serializer.fromJson<int>(json['staticThemeColor']),
       blackBackgrounds: serializer.fromJson<bool>(json['blackBackgrounds']),
       materialYou: serializer.fromJson<bool>(json['materialYou']),
+      themeStyle: $ThemeSettingsTable.$converterthemeStyle.fromJson(
+        serializer.fromJson<int>(json['themeStyle']),
+      ),
     );
   }
   @override
@@ -1853,6 +1884,9 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
       'staticThemeColor': serializer.toJson<int>(staticThemeColor),
       'blackBackgrounds': serializer.toJson<bool>(blackBackgrounds),
       'materialYou': serializer.toJson<bool>(materialYou),
+      'themeStyle': serializer.toJson<int>(
+        $ThemeSettingsTable.$converterthemeStyle.toJson(themeStyle),
+      ),
     };
   }
 
@@ -1862,12 +1896,14 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
     int? staticThemeColor,
     bool? blackBackgrounds,
     bool? materialYou,
+    ThemeStyle? themeStyle,
   }) => ThemeSetting(
     id: id ?? this.id,
     themeMode: themeMode ?? this.themeMode,
     staticThemeColor: staticThemeColor ?? this.staticThemeColor,
     blackBackgrounds: blackBackgrounds ?? this.blackBackgrounds,
     materialYou: materialYou ?? this.materialYou,
+    themeStyle: themeStyle ?? this.themeStyle,
   );
   ThemeSetting copyWithCompanion(ThemeSettingsCompanion data) {
     return ThemeSetting(
@@ -1882,6 +1918,9 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
       materialYou: data.materialYou.present
           ? data.materialYou.value
           : this.materialYou,
+      themeStyle: data.themeStyle.present
+          ? data.themeStyle.value
+          : this.themeStyle,
     );
   }
 
@@ -1892,7 +1931,8 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
           ..write('themeMode: $themeMode, ')
           ..write('staticThemeColor: $staticThemeColor, ')
           ..write('blackBackgrounds: $blackBackgrounds, ')
-          ..write('materialYou: $materialYou')
+          ..write('materialYou: $materialYou, ')
+          ..write('themeStyle: $themeStyle')
           ..write(')'))
         .toString();
   }
@@ -1904,6 +1944,7 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
     staticThemeColor,
     blackBackgrounds,
     materialYou,
+    themeStyle,
   );
   @override
   bool operator ==(Object other) =>
@@ -1913,7 +1954,8 @@ class ThemeSetting extends DataClass implements Insertable<ThemeSetting> {
           other.themeMode == this.themeMode &&
           other.staticThemeColor == this.staticThemeColor &&
           other.blackBackgrounds == this.blackBackgrounds &&
-          other.materialYou == this.materialYou);
+          other.materialYou == this.materialYou &&
+          other.themeStyle == this.themeStyle);
 }
 
 class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
@@ -1922,12 +1964,14 @@ class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
   final Value<int> staticThemeColor;
   final Value<bool> blackBackgrounds;
   final Value<bool> materialYou;
+  final Value<ThemeStyle> themeStyle;
   const ThemeSettingsCompanion({
     this.id = const Value.absent(),
     this.themeMode = const Value.absent(),
     this.staticThemeColor = const Value.absent(),
     this.blackBackgrounds = const Value.absent(),
     this.materialYou = const Value.absent(),
+    this.themeStyle = const Value.absent(),
   });
   ThemeSettingsCompanion.insert({
     this.id = const Value.absent(),
@@ -1935,6 +1979,7 @@ class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
     this.staticThemeColor = const Value.absent(),
     this.blackBackgrounds = const Value.absent(),
     this.materialYou = const Value.absent(),
+    this.themeStyle = const Value.absent(),
   });
   static Insertable<ThemeSetting> custom({
     Expression<int>? id,
@@ -1942,6 +1987,7 @@ class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
     Expression<int>? staticThemeColor,
     Expression<bool>? blackBackgrounds,
     Expression<bool>? materialYou,
+    Expression<int>? themeStyle,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1949,6 +1995,7 @@ class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
       if (staticThemeColor != null) 'static_theme_color': staticThemeColor,
       if (blackBackgrounds != null) 'black_backgrounds': blackBackgrounds,
       if (materialYou != null) 'material_you': materialYou,
+      if (themeStyle != null) 'theme_style': themeStyle,
     });
   }
 
@@ -1958,6 +2005,7 @@ class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
     Value<int>? staticThemeColor,
     Value<bool>? blackBackgrounds,
     Value<bool>? materialYou,
+    Value<ThemeStyle>? themeStyle,
   }) {
     return ThemeSettingsCompanion(
       id: id ?? this.id,
@@ -1965,6 +2013,7 @@ class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
       staticThemeColor: staticThemeColor ?? this.staticThemeColor,
       blackBackgrounds: blackBackgrounds ?? this.blackBackgrounds,
       materialYou: materialYou ?? this.materialYou,
+      themeStyle: themeStyle ?? this.themeStyle,
     );
   }
 
@@ -1986,6 +2035,11 @@ class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
     if (materialYou.present) {
       map['material_you'] = Variable<bool>(materialYou.value);
     }
+    if (themeStyle.present) {
+      map['theme_style'] = Variable<int>(
+        $ThemeSettingsTable.$converterthemeStyle.toSql(themeStyle.value),
+      );
+    }
     return map;
   }
 
@@ -1996,7 +2050,430 @@ class ThemeSettingsCompanion extends UpdateCompanion<ThemeSetting> {
           ..write('themeMode: $themeMode, ')
           ..write('staticThemeColor: $staticThemeColor, ')
           ..write('blackBackgrounds: $blackBackgrounds, ')
-          ..write('materialYou: $materialYou')
+          ..write('materialYou: $materialYou, ')
+          ..write('themeStyle: $themeStyle')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AccessibilitySettingsTable extends AccessibilitySettings
+    with TableInfo<$AccessibilitySettingsTable, AccessibilitySetting> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AccessibilitySettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _reduceMotionMeta = const VerificationMeta(
+    'reduceMotion',
+  );
+  @override
+  late final GeneratedColumn<bool> reduceMotion = GeneratedColumn<bool>(
+    'reduce_motion',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("reduce_motion" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, reduceMotion];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'accessibility_settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AccessibilitySetting> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('reduce_motion')) {
+      context.handle(
+        _reduceMotionMeta,
+        reduceMotion.isAcceptableOrUnknown(
+          data['reduce_motion']!,
+          _reduceMotionMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AccessibilitySetting map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AccessibilitySetting(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      reduceMotion: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}reduce_motion'],
+      )!,
+    );
+  }
+
+  @override
+  $AccessibilitySettingsTable createAlias(String alias) {
+    return $AccessibilitySettingsTable(attachedDatabase, alias);
+  }
+}
+
+class AccessibilitySetting extends DataClass
+    implements Insertable<AccessibilitySetting> {
+  final int id;
+  final bool reduceMotion;
+  const AccessibilitySetting({required this.id, required this.reduceMotion});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['reduce_motion'] = Variable<bool>(reduceMotion);
+    return map;
+  }
+
+  AccessibilitySettingsCompanion toCompanion(bool nullToAbsent) {
+    return AccessibilitySettingsCompanion(
+      id: Value(id),
+      reduceMotion: Value(reduceMotion),
+    );
+  }
+
+  factory AccessibilitySetting.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AccessibilitySetting(
+      id: serializer.fromJson<int>(json['id']),
+      reduceMotion: serializer.fromJson<bool>(json['reduceMotion']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'reduceMotion': serializer.toJson<bool>(reduceMotion),
+    };
+  }
+
+  AccessibilitySetting copyWith({int? id, bool? reduceMotion}) =>
+      AccessibilitySetting(
+        id: id ?? this.id,
+        reduceMotion: reduceMotion ?? this.reduceMotion,
+      );
+  AccessibilitySetting copyWithCompanion(AccessibilitySettingsCompanion data) {
+    return AccessibilitySetting(
+      id: data.id.present ? data.id.value : this.id,
+      reduceMotion: data.reduceMotion.present
+          ? data.reduceMotion.value
+          : this.reduceMotion,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AccessibilitySetting(')
+          ..write('id: $id, ')
+          ..write('reduceMotion: $reduceMotion')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, reduceMotion);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AccessibilitySetting &&
+          other.id == this.id &&
+          other.reduceMotion == this.reduceMotion);
+}
+
+class AccessibilitySettingsCompanion
+    extends UpdateCompanion<AccessibilitySetting> {
+  final Value<int> id;
+  final Value<bool> reduceMotion;
+  const AccessibilitySettingsCompanion({
+    this.id = const Value.absent(),
+    this.reduceMotion = const Value.absent(),
+  });
+  AccessibilitySettingsCompanion.insert({
+    this.id = const Value.absent(),
+    this.reduceMotion = const Value.absent(),
+  });
+  static Insertable<AccessibilitySetting> custom({
+    Expression<int>? id,
+    Expression<bool>? reduceMotion,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (reduceMotion != null) 'reduce_motion': reduceMotion,
+    });
+  }
+
+  AccessibilitySettingsCompanion copyWith({
+    Value<int>? id,
+    Value<bool>? reduceMotion,
+  }) {
+    return AccessibilitySettingsCompanion(
+      id: id ?? this.id,
+      reduceMotion: reduceMotion ?? this.reduceMotion,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (reduceMotion.present) {
+      map['reduce_motion'] = Variable<bool>(reduceMotion.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AccessibilitySettingsCompanion(')
+          ..write('id: $id, ')
+          ..write('reduceMotion: $reduceMotion')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AdvancedSettingsTable extends AdvancedSettings
+    with TableInfo<$AdvancedSettingsTable, AdvancedSetting> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AdvancedSettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<AnimationSpeed, int>
+  animationSpeed =
+      GeneratedColumn<int>(
+        'animation_speed',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+        defaultValue: Constant(AnimationSpeed.normal.index),
+      ).withConverter<AnimationSpeed>(
+        $AdvancedSettingsTable.$converteranimationSpeed,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [id, animationSpeed];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'advanced_settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AdvancedSetting> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AdvancedSetting map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AdvancedSetting(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      animationSpeed: $AdvancedSettingsTable.$converteranimationSpeed.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}animation_speed'],
+        )!,
+      ),
+    );
+  }
+
+  @override
+  $AdvancedSettingsTable createAlias(String alias) {
+    return $AdvancedSettingsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<AnimationSpeed, int, int> $converteranimationSpeed =
+      const EnumIndexConverter<AnimationSpeed>(AnimationSpeed.values);
+}
+
+class AdvancedSetting extends DataClass implements Insertable<AdvancedSetting> {
+  final int id;
+  final AnimationSpeed animationSpeed;
+  const AdvancedSetting({required this.id, required this.animationSpeed});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    {
+      map['animation_speed'] = Variable<int>(
+        $AdvancedSettingsTable.$converteranimationSpeed.toSql(animationSpeed),
+      );
+    }
+    return map;
+  }
+
+  AdvancedSettingsCompanion toCompanion(bool nullToAbsent) {
+    return AdvancedSettingsCompanion(
+      id: Value(id),
+      animationSpeed: Value(animationSpeed),
+    );
+  }
+
+  factory AdvancedSetting.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AdvancedSetting(
+      id: serializer.fromJson<int>(json['id']),
+      animationSpeed: $AdvancedSettingsTable.$converteranimationSpeed.fromJson(
+        serializer.fromJson<int>(json['animationSpeed']),
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'animationSpeed': serializer.toJson<int>(
+        $AdvancedSettingsTable.$converteranimationSpeed.toJson(animationSpeed),
+      ),
+    };
+  }
+
+  AdvancedSetting copyWith({int? id, AnimationSpeed? animationSpeed}) =>
+      AdvancedSetting(
+        id: id ?? this.id,
+        animationSpeed: animationSpeed ?? this.animationSpeed,
+      );
+  AdvancedSetting copyWithCompanion(AdvancedSettingsCompanion data) {
+    return AdvancedSetting(
+      id: data.id.present ? data.id.value : this.id,
+      animationSpeed: data.animationSpeed.present
+          ? data.animationSpeed.value
+          : this.animationSpeed,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AdvancedSetting(')
+          ..write('id: $id, ')
+          ..write('animationSpeed: $animationSpeed')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, animationSpeed);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AdvancedSetting &&
+          other.id == this.id &&
+          other.animationSpeed == this.animationSpeed);
+}
+
+class AdvancedSettingsCompanion extends UpdateCompanion<AdvancedSetting> {
+  final Value<int> id;
+  final Value<AnimationSpeed> animationSpeed;
+  const AdvancedSettingsCompanion({
+    this.id = const Value.absent(),
+    this.animationSpeed = const Value.absent(),
+  });
+  AdvancedSettingsCompanion.insert({
+    this.id = const Value.absent(),
+    this.animationSpeed = const Value.absent(),
+  });
+  static Insertable<AdvancedSetting> custom({
+    Expression<int>? id,
+    Expression<int>? animationSpeed,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (animationSpeed != null) 'animation_speed': animationSpeed,
+    });
+  }
+
+  AdvancedSettingsCompanion copyWith({
+    Value<int>? id,
+    Value<AnimationSpeed>? animationSpeed,
+  }) {
+    return AdvancedSettingsCompanion(
+      id: id ?? this.id,
+      animationSpeed: animationSpeed ?? this.animationSpeed,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (animationSpeed.present) {
+      map['animation_speed'] = Variable<int>(
+        $AdvancedSettingsTable.$converteranimationSpeed.toSql(
+          animationSpeed.value,
+        ),
+      );
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AdvancedSettingsCompanion(')
+          ..write('id: $id, ')
+          ..write('animationSpeed: $animationSpeed')
           ..write(')'))
         .toString();
   }
@@ -2205,6 +2682,557 @@ class MediaSettingsCompanion extends UpdateCompanion<MediaSetting> {
   }
 }
 
+class $DebugSettingsTable extends DebugSettings
+    with TableInfo<$DebugSettingsTable, DebugSetting> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DebugSettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _logToConsoleMeta = const VerificationMeta(
+    'logToConsole',
+  );
+  @override
+  late final GeneratedColumn<bool> logToConsole = GeneratedColumn<bool>(
+    'log_to_console',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("log_to_console" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, logToConsole];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'debug_settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DebugSetting> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('log_to_console')) {
+      context.handle(
+        _logToConsoleMeta,
+        logToConsole.isAcceptableOrUnknown(
+          data['log_to_console']!,
+          _logToConsoleMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DebugSetting map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DebugSetting(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      logToConsole: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}log_to_console'],
+      )!,
+    );
+  }
+
+  @override
+  $DebugSettingsTable createAlias(String alias) {
+    return $DebugSettingsTable(attachedDatabase, alias);
+  }
+}
+
+class DebugSetting extends DataClass implements Insertable<DebugSetting> {
+  final int id;
+  final bool logToConsole;
+  const DebugSetting({required this.id, required this.logToConsole});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['log_to_console'] = Variable<bool>(logToConsole);
+    return map;
+  }
+
+  DebugSettingsCompanion toCompanion(bool nullToAbsent) {
+    return DebugSettingsCompanion(
+      id: Value(id),
+      logToConsole: Value(logToConsole),
+    );
+  }
+
+  factory DebugSetting.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DebugSetting(
+      id: serializer.fromJson<int>(json['id']),
+      logToConsole: serializer.fromJson<bool>(json['logToConsole']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'logToConsole': serializer.toJson<bool>(logToConsole),
+    };
+  }
+
+  DebugSetting copyWith({int? id, bool? logToConsole}) => DebugSetting(
+    id: id ?? this.id,
+    logToConsole: logToConsole ?? this.logToConsole,
+  );
+  DebugSetting copyWithCompanion(DebugSettingsCompanion data) {
+    return DebugSetting(
+      id: data.id.present ? data.id.value : this.id,
+      logToConsole: data.logToConsole.present
+          ? data.logToConsole.value
+          : this.logToConsole,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DebugSetting(')
+          ..write('id: $id, ')
+          ..write('logToConsole: $logToConsole')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, logToConsole);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DebugSetting &&
+          other.id == this.id &&
+          other.logToConsole == this.logToConsole);
+}
+
+class DebugSettingsCompanion extends UpdateCompanion<DebugSetting> {
+  final Value<int> id;
+  final Value<bool> logToConsole;
+  const DebugSettingsCompanion({
+    this.id = const Value.absent(),
+    this.logToConsole = const Value.absent(),
+  });
+  DebugSettingsCompanion.insert({
+    this.id = const Value.absent(),
+    this.logToConsole = const Value.absent(),
+  });
+  static Insertable<DebugSetting> custom({
+    Expression<int>? id,
+    Expression<bool>? logToConsole,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (logToConsole != null) 'log_to_console': logToConsole,
+    });
+  }
+
+  DebugSettingsCompanion copyWith({Value<int>? id, Value<bool>? logToConsole}) {
+    return DebugSettingsCompanion(
+      id: id ?? this.id,
+      logToConsole: logToConsole ?? this.logToConsole,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (logToConsole.present) {
+      map['log_to_console'] = Variable<bool>(logToConsole.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DebugSettingsCompanion(')
+          ..write('id: $id, ')
+          ..write('logToConsole: $logToConsole')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $VirtualAccessPointsTable extends VirtualAccessPoints
+    with TableInfo<$VirtualAccessPointsTable, VirtualAccessPoint> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $VirtualAccessPointsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _sortIndexMeta = const VerificationMeta(
+    'sortIndex',
+  );
+  @override
+  late final GeneratedColumn<int> sortIndex = GeneratedColumn<int>(
+    'sort_index',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ssidMeta = const VerificationMeta('ssid');
+  @override
+  late final GeneratedColumn<String> ssid = GeneratedColumn<String>(
+    'ssid',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bssidMeta = const VerificationMeta('bssid');
+  @override
+  late final GeneratedColumn<String> bssid = GeneratedColumn<String>(
+    'bssid',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _frequencyMeta = const VerificationMeta(
+    'frequency',
+  );
+  @override
+  late final GeneratedColumn<int> frequency = GeneratedColumn<int>(
+    'frequency',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _levelMeta = const VerificationMeta('level');
+  @override
+  late final GeneratedColumn<int> level = GeneratedColumn<int>(
+    'level',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    sortIndex,
+    ssid,
+    bssid,
+    frequency,
+    level,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'virtual_access_points';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<VirtualAccessPoint> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('sort_index')) {
+      context.handle(
+        _sortIndexMeta,
+        sortIndex.isAcceptableOrUnknown(data['sort_index']!, _sortIndexMeta),
+      );
+    }
+    if (data.containsKey('ssid')) {
+      context.handle(
+        _ssidMeta,
+        ssid.isAcceptableOrUnknown(data['ssid']!, _ssidMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ssidMeta);
+    }
+    if (data.containsKey('bssid')) {
+      context.handle(
+        _bssidMeta,
+        bssid.isAcceptableOrUnknown(data['bssid']!, _bssidMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bssidMeta);
+    }
+    if (data.containsKey('frequency')) {
+      context.handle(
+        _frequencyMeta,
+        frequency.isAcceptableOrUnknown(data['frequency']!, _frequencyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_frequencyMeta);
+    }
+    if (data.containsKey('level')) {
+      context.handle(
+        _levelMeta,
+        level.isAcceptableOrUnknown(data['level']!, _levelMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_levelMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {sortIndex};
+  @override
+  VirtualAccessPoint map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return VirtualAccessPoint(
+      sortIndex: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_index'],
+      )!,
+      ssid: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ssid'],
+      )!,
+      bssid: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bssid'],
+      )!,
+      frequency: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}frequency'],
+      )!,
+      level: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}level'],
+      )!,
+    );
+  }
+
+  @override
+  $VirtualAccessPointsTable createAlias(String alias) {
+    return $VirtualAccessPointsTable(attachedDatabase, alias);
+  }
+}
+
+class VirtualAccessPoint extends DataClass
+    implements Insertable<VirtualAccessPoint> {
+  final int sortIndex;
+  final String ssid;
+  final String bssid;
+  final int frequency;
+  final int level;
+  const VirtualAccessPoint({
+    required this.sortIndex,
+    required this.ssid,
+    required this.bssid,
+    required this.frequency,
+    required this.level,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['sort_index'] = Variable<int>(sortIndex);
+    map['ssid'] = Variable<String>(ssid);
+    map['bssid'] = Variable<String>(bssid);
+    map['frequency'] = Variable<int>(frequency);
+    map['level'] = Variable<int>(level);
+    return map;
+  }
+
+  VirtualAccessPointsCompanion toCompanion(bool nullToAbsent) {
+    return VirtualAccessPointsCompanion(
+      sortIndex: Value(sortIndex),
+      ssid: Value(ssid),
+      bssid: Value(bssid),
+      frequency: Value(frequency),
+      level: Value(level),
+    );
+  }
+
+  factory VirtualAccessPoint.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return VirtualAccessPoint(
+      sortIndex: serializer.fromJson<int>(json['sortIndex']),
+      ssid: serializer.fromJson<String>(json['ssid']),
+      bssid: serializer.fromJson<String>(json['bssid']),
+      frequency: serializer.fromJson<int>(json['frequency']),
+      level: serializer.fromJson<int>(json['level']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'sortIndex': serializer.toJson<int>(sortIndex),
+      'ssid': serializer.toJson<String>(ssid),
+      'bssid': serializer.toJson<String>(bssid),
+      'frequency': serializer.toJson<int>(frequency),
+      'level': serializer.toJson<int>(level),
+    };
+  }
+
+  VirtualAccessPoint copyWith({
+    int? sortIndex,
+    String? ssid,
+    String? bssid,
+    int? frequency,
+    int? level,
+  }) => VirtualAccessPoint(
+    sortIndex: sortIndex ?? this.sortIndex,
+    ssid: ssid ?? this.ssid,
+    bssid: bssid ?? this.bssid,
+    frequency: frequency ?? this.frequency,
+    level: level ?? this.level,
+  );
+  VirtualAccessPoint copyWithCompanion(VirtualAccessPointsCompanion data) {
+    return VirtualAccessPoint(
+      sortIndex: data.sortIndex.present ? data.sortIndex.value : this.sortIndex,
+      ssid: data.ssid.present ? data.ssid.value : this.ssid,
+      bssid: data.bssid.present ? data.bssid.value : this.bssid,
+      frequency: data.frequency.present ? data.frequency.value : this.frequency,
+      level: data.level.present ? data.level.value : this.level,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VirtualAccessPoint(')
+          ..write('sortIndex: $sortIndex, ')
+          ..write('ssid: $ssid, ')
+          ..write('bssid: $bssid, ')
+          ..write('frequency: $frequency, ')
+          ..write('level: $level')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(sortIndex, ssid, bssid, frequency, level);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is VirtualAccessPoint &&
+          other.sortIndex == this.sortIndex &&
+          other.ssid == this.ssid &&
+          other.bssid == this.bssid &&
+          other.frequency == this.frequency &&
+          other.level == this.level);
+}
+
+class VirtualAccessPointsCompanion extends UpdateCompanion<VirtualAccessPoint> {
+  final Value<int> sortIndex;
+  final Value<String> ssid;
+  final Value<String> bssid;
+  final Value<int> frequency;
+  final Value<int> level;
+  const VirtualAccessPointsCompanion({
+    this.sortIndex = const Value.absent(),
+    this.ssid = const Value.absent(),
+    this.bssid = const Value.absent(),
+    this.frequency = const Value.absent(),
+    this.level = const Value.absent(),
+  });
+  VirtualAccessPointsCompanion.insert({
+    this.sortIndex = const Value.absent(),
+    required String ssid,
+    required String bssid,
+    required int frequency,
+    required int level,
+  }) : ssid = Value(ssid),
+       bssid = Value(bssid),
+       frequency = Value(frequency),
+       level = Value(level);
+  static Insertable<VirtualAccessPoint> custom({
+    Expression<int>? sortIndex,
+    Expression<String>? ssid,
+    Expression<String>? bssid,
+    Expression<int>? frequency,
+    Expression<int>? level,
+  }) {
+    return RawValuesInsertable({
+      if (sortIndex != null) 'sort_index': sortIndex,
+      if (ssid != null) 'ssid': ssid,
+      if (bssid != null) 'bssid': bssid,
+      if (frequency != null) 'frequency': frequency,
+      if (level != null) 'level': level,
+    });
+  }
+
+  VirtualAccessPointsCompanion copyWith({
+    Value<int>? sortIndex,
+    Value<String>? ssid,
+    Value<String>? bssid,
+    Value<int>? frequency,
+    Value<int>? level,
+  }) {
+    return VirtualAccessPointsCompanion(
+      sortIndex: sortIndex ?? this.sortIndex,
+      ssid: ssid ?? this.ssid,
+      bssid: bssid ?? this.bssid,
+      frequency: frequency ?? this.frequency,
+      level: level ?? this.level,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (sortIndex.present) {
+      map['sort_index'] = Variable<int>(sortIndex.value);
+    }
+    if (ssid.present) {
+      map['ssid'] = Variable<String>(ssid.value);
+    }
+    if (bssid.present) {
+      map['bssid'] = Variable<String>(bssid.value);
+    }
+    if (frequency.present) {
+      map['frequency'] = Variable<int>(frequency.value);
+    }
+    if (level.present) {
+      map['level'] = Variable<int>(level.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VirtualAccessPointsCompanion(')
+          ..write('sortIndex: $sortIndex, ')
+          ..write('ssid: $ssid, ')
+          ..write('bssid: $bssid, ')
+          ..write('frequency: $frequency, ')
+          ..write('level: $level')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2216,7 +3244,15 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $InputLayoutElementsTable inputLayoutElements =
       $InputLayoutElementsTable(this);
   late final $ThemeSettingsTable themeSettings = $ThemeSettingsTable(this);
+  late final $AccessibilitySettingsTable accessibilitySettings =
+      $AccessibilitySettingsTable(this);
+  late final $AdvancedSettingsTable advancedSettings = $AdvancedSettingsTable(
+    this,
+  );
   late final $MediaSettingsTable mediaSettings = $MediaSettingsTable(this);
+  late final $DebugSettingsTable debugSettings = $DebugSettingsTable(this);
+  late final $VirtualAccessPointsTable virtualAccessPoints =
+      $VirtualAccessPointsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2227,7 +3263,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     controlBindings,
     inputLayoutElements,
     themeSettings,
+    accessibilitySettings,
+    advancedSettings,
     mediaSettings,
+    debugSettings,
+    virtualAccessPoints,
   ];
 }
 
@@ -3158,6 +4198,7 @@ typedef $$ThemeSettingsTableCreateCompanionBuilder =
       Value<int> staticThemeColor,
       Value<bool> blackBackgrounds,
       Value<bool> materialYou,
+      Value<ThemeStyle> themeStyle,
     });
 typedef $$ThemeSettingsTableUpdateCompanionBuilder =
     ThemeSettingsCompanion Function({
@@ -3166,6 +4207,7 @@ typedef $$ThemeSettingsTableUpdateCompanionBuilder =
       Value<int> staticThemeColor,
       Value<bool> blackBackgrounds,
       Value<bool> materialYou,
+      Value<ThemeStyle> themeStyle,
     });
 
 class $$ThemeSettingsTableFilterComposer
@@ -3201,6 +4243,12 @@ class $$ThemeSettingsTableFilterComposer
     column: $table.materialYou,
     builder: (column) => ColumnFilters(column),
   );
+
+  ColumnWithTypeConverterFilters<ThemeStyle, ThemeStyle, int> get themeStyle =>
+      $composableBuilder(
+        column: $table.themeStyle,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
 }
 
 class $$ThemeSettingsTableOrderingComposer
@@ -3236,6 +4284,11 @@ class $$ThemeSettingsTableOrderingComposer
     column: $table.materialYou,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get themeStyle => $composableBuilder(
+    column: $table.themeStyle,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ThemeSettingsTableAnnotationComposer
@@ -3267,6 +4320,12 @@ class $$ThemeSettingsTableAnnotationComposer
     column: $table.materialYou,
     builder: (column) => column,
   );
+
+  GeneratedColumnWithTypeConverter<ThemeStyle, int> get themeStyle =>
+      $composableBuilder(
+        column: $table.themeStyle,
+        builder: (column) => column,
+      );
 }
 
 class $$ThemeSettingsTableTableManager
@@ -3305,12 +4364,14 @@ class $$ThemeSettingsTableTableManager
                 Value<int> staticThemeColor = const Value.absent(),
                 Value<bool> blackBackgrounds = const Value.absent(),
                 Value<bool> materialYou = const Value.absent(),
+                Value<ThemeStyle> themeStyle = const Value.absent(),
               }) => ThemeSettingsCompanion(
                 id: id,
                 themeMode: themeMode,
                 staticThemeColor: staticThemeColor,
                 blackBackgrounds: blackBackgrounds,
                 materialYou: materialYou,
+                themeStyle: themeStyle,
               ),
           createCompanionCallback:
               ({
@@ -3319,12 +4380,14 @@ class $$ThemeSettingsTableTableManager
                 Value<int> staticThemeColor = const Value.absent(),
                 Value<bool> blackBackgrounds = const Value.absent(),
                 Value<bool> materialYou = const Value.absent(),
+                Value<ThemeStyle> themeStyle = const Value.absent(),
               }) => ThemeSettingsCompanion.insert(
                 id: id,
                 themeMode: themeMode,
                 staticThemeColor: staticThemeColor,
                 blackBackgrounds: blackBackgrounds,
                 materialYou: materialYou,
+                themeStyle: themeStyle,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -3358,6 +4421,332 @@ typedef $$ThemeSettingsTableProcessedTableManager =
         BaseReferences<_$AppDatabase, $ThemeSettingsTable, ThemeSetting>,
       ),
       ThemeSetting,
+      PrefetchHooks Function()
+    >;
+typedef $$AccessibilitySettingsTableCreateCompanionBuilder =
+    AccessibilitySettingsCompanion Function({
+      Value<int> id,
+      Value<bool> reduceMotion,
+    });
+typedef $$AccessibilitySettingsTableUpdateCompanionBuilder =
+    AccessibilitySettingsCompanion Function({
+      Value<int> id,
+      Value<bool> reduceMotion,
+    });
+
+class $$AccessibilitySettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $AccessibilitySettingsTable> {
+  $$AccessibilitySettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get reduceMotion => $composableBuilder(
+    column: $table.reduceMotion,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$AccessibilitySettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $AccessibilitySettingsTable> {
+  $$AccessibilitySettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get reduceMotion => $composableBuilder(
+    column: $table.reduceMotion,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AccessibilitySettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AccessibilitySettingsTable> {
+  $$AccessibilitySettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<bool> get reduceMotion => $composableBuilder(
+    column: $table.reduceMotion,
+    builder: (column) => column,
+  );
+}
+
+class $$AccessibilitySettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AccessibilitySettingsTable,
+          AccessibilitySetting,
+          $$AccessibilitySettingsTableFilterComposer,
+          $$AccessibilitySettingsTableOrderingComposer,
+          $$AccessibilitySettingsTableAnnotationComposer,
+          $$AccessibilitySettingsTableCreateCompanionBuilder,
+          $$AccessibilitySettingsTableUpdateCompanionBuilder,
+          (
+            AccessibilitySetting,
+            BaseReferences<
+              _$AppDatabase,
+              $AccessibilitySettingsTable,
+              AccessibilitySetting
+            >,
+          ),
+          AccessibilitySetting,
+          PrefetchHooks Function()
+        > {
+  $$AccessibilitySettingsTableTableManager(
+    _$AppDatabase db,
+    $AccessibilitySettingsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AccessibilitySettingsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$AccessibilitySettingsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$AccessibilitySettingsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<bool> reduceMotion = const Value.absent(),
+              }) => AccessibilitySettingsCompanion(
+                id: id,
+                reduceMotion: reduceMotion,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<bool> reduceMotion = const Value.absent(),
+              }) => AccessibilitySettingsCompanion.insert(
+                id: id,
+                reduceMotion: reduceMotion,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<
+                    $AccessibilitySettingsTable,
+                    AccessibilitySetting
+                  >(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $AccessibilitySettingsTable,
+                    AccessibilitySetting
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$AccessibilitySettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AccessibilitySettingsTable,
+      AccessibilitySetting,
+      $$AccessibilitySettingsTableFilterComposer,
+      $$AccessibilitySettingsTableOrderingComposer,
+      $$AccessibilitySettingsTableAnnotationComposer,
+      $$AccessibilitySettingsTableCreateCompanionBuilder,
+      $$AccessibilitySettingsTableUpdateCompanionBuilder,
+      (
+        AccessibilitySetting,
+        BaseReferences<
+          _$AppDatabase,
+          $AccessibilitySettingsTable,
+          AccessibilitySetting
+        >,
+      ),
+      AccessibilitySetting,
+      PrefetchHooks Function()
+    >;
+typedef $$AdvancedSettingsTableCreateCompanionBuilder =
+    AdvancedSettingsCompanion Function({
+      Value<int> id,
+      Value<AnimationSpeed> animationSpeed,
+    });
+typedef $$AdvancedSettingsTableUpdateCompanionBuilder =
+    AdvancedSettingsCompanion Function({
+      Value<int> id,
+      Value<AnimationSpeed> animationSpeed,
+    });
+
+class $$AdvancedSettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $AdvancedSettingsTable> {
+  $$AdvancedSettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<AnimationSpeed, AnimationSpeed, int>
+  get animationSpeed => $composableBuilder(
+    column: $table.animationSpeed,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+}
+
+class $$AdvancedSettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $AdvancedSettingsTable> {
+  $$AdvancedSettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get animationSpeed => $composableBuilder(
+    column: $table.animationSpeed,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AdvancedSettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AdvancedSettingsTable> {
+  $$AdvancedSettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<AnimationSpeed, int> get animationSpeed =>
+      $composableBuilder(
+        column: $table.animationSpeed,
+        builder: (column) => column,
+      );
+}
+
+class $$AdvancedSettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AdvancedSettingsTable,
+          AdvancedSetting,
+          $$AdvancedSettingsTableFilterComposer,
+          $$AdvancedSettingsTableOrderingComposer,
+          $$AdvancedSettingsTableAnnotationComposer,
+          $$AdvancedSettingsTableCreateCompanionBuilder,
+          $$AdvancedSettingsTableUpdateCompanionBuilder,
+          (
+            AdvancedSetting,
+            BaseReferences<
+              _$AppDatabase,
+              $AdvancedSettingsTable,
+              AdvancedSetting
+            >,
+          ),
+          AdvancedSetting,
+          PrefetchHooks Function()
+        > {
+  $$AdvancedSettingsTableTableManager(
+    _$AppDatabase db,
+    $AdvancedSettingsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AdvancedSettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AdvancedSettingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AdvancedSettingsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<AnimationSpeed> animationSpeed = const Value.absent(),
+              }) => AdvancedSettingsCompanion(
+                id: id,
+                animationSpeed: animationSpeed,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<AnimationSpeed> animationSpeed = const Value.absent(),
+              }) => AdvancedSettingsCompanion.insert(
+                id: id,
+                animationSpeed: animationSpeed,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$AdvancedSettingsTable, AdvancedSetting>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $AdvancedSettingsTable,
+                    AdvancedSetting
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$AdvancedSettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AdvancedSettingsTable,
+      AdvancedSetting,
+      $$AdvancedSettingsTableFilterComposer,
+      $$AdvancedSettingsTableOrderingComposer,
+      $$AdvancedSettingsTableAnnotationComposer,
+      $$AdvancedSettingsTableCreateCompanionBuilder,
+      $$AdvancedSettingsTableUpdateCompanionBuilder,
+      (
+        AdvancedSetting,
+        BaseReferences<_$AppDatabase, $AdvancedSettingsTable, AdvancedSetting>,
+      ),
+      AdvancedSetting,
       PrefetchHooks Function()
     >;
 typedef $$MediaSettingsTableCreateCompanionBuilder =
@@ -3505,6 +4894,366 @@ typedef $$MediaSettingsTableProcessedTableManager =
       MediaSetting,
       PrefetchHooks Function()
     >;
+typedef $$DebugSettingsTableCreateCompanionBuilder =
+    DebugSettingsCompanion Function({Value<int> id, Value<bool> logToConsole});
+typedef $$DebugSettingsTableUpdateCompanionBuilder =
+    DebugSettingsCompanion Function({Value<int> id, Value<bool> logToConsole});
+
+class $$DebugSettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $DebugSettingsTable> {
+  $$DebugSettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get logToConsole => $composableBuilder(
+    column: $table.logToConsole,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$DebugSettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $DebugSettingsTable> {
+  $$DebugSettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get logToConsole => $composableBuilder(
+    column: $table.logToConsole,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$DebugSettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DebugSettingsTable> {
+  $$DebugSettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<bool> get logToConsole => $composableBuilder(
+    column: $table.logToConsole,
+    builder: (column) => column,
+  );
+}
+
+class $$DebugSettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DebugSettingsTable,
+          DebugSetting,
+          $$DebugSettingsTableFilterComposer,
+          $$DebugSettingsTableOrderingComposer,
+          $$DebugSettingsTableAnnotationComposer,
+          $$DebugSettingsTableCreateCompanionBuilder,
+          $$DebugSettingsTableUpdateCompanionBuilder,
+          (
+            DebugSetting,
+            BaseReferences<_$AppDatabase, $DebugSettingsTable, DebugSetting>,
+          ),
+          DebugSetting,
+          PrefetchHooks Function()
+        > {
+  $$DebugSettingsTableTableManager(_$AppDatabase db, $DebugSettingsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DebugSettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$DebugSettingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$DebugSettingsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<bool> logToConsole = const Value.absent(),
+              }) => DebugSettingsCompanion(id: id, logToConsole: logToConsole),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<bool> logToConsole = const Value.absent(),
+              }) => DebugSettingsCompanion.insert(
+                id: id,
+                logToConsole: logToConsole,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$DebugSettingsTable, DebugSetting>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $DebugSettingsTable,
+                    DebugSetting
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$DebugSettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DebugSettingsTable,
+      DebugSetting,
+      $$DebugSettingsTableFilterComposer,
+      $$DebugSettingsTableOrderingComposer,
+      $$DebugSettingsTableAnnotationComposer,
+      $$DebugSettingsTableCreateCompanionBuilder,
+      $$DebugSettingsTableUpdateCompanionBuilder,
+      (
+        DebugSetting,
+        BaseReferences<_$AppDatabase, $DebugSettingsTable, DebugSetting>,
+      ),
+      DebugSetting,
+      PrefetchHooks Function()
+    >;
+typedef $$VirtualAccessPointsTableCreateCompanionBuilder =
+    VirtualAccessPointsCompanion Function({
+      Value<int> sortIndex,
+      required String ssid,
+      required String bssid,
+      required int frequency,
+      required int level,
+    });
+typedef $$VirtualAccessPointsTableUpdateCompanionBuilder =
+    VirtualAccessPointsCompanion Function({
+      Value<int> sortIndex,
+      Value<String> ssid,
+      Value<String> bssid,
+      Value<int> frequency,
+      Value<int> level,
+    });
+
+class $$VirtualAccessPointsTableFilterComposer
+    extends Composer<_$AppDatabase, $VirtualAccessPointsTable> {
+  $$VirtualAccessPointsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get sortIndex => $composableBuilder(
+    column: $table.sortIndex,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ssid => $composableBuilder(
+    column: $table.ssid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bssid => $composableBuilder(
+    column: $table.bssid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get frequency => $composableBuilder(
+    column: $table.frequency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get level => $composableBuilder(
+    column: $table.level,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$VirtualAccessPointsTableOrderingComposer
+    extends Composer<_$AppDatabase, $VirtualAccessPointsTable> {
+  $$VirtualAccessPointsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get sortIndex => $composableBuilder(
+    column: $table.sortIndex,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ssid => $composableBuilder(
+    column: $table.ssid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bssid => $composableBuilder(
+    column: $table.bssid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get frequency => $composableBuilder(
+    column: $table.frequency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get level => $composableBuilder(
+    column: $table.level,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$VirtualAccessPointsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $VirtualAccessPointsTable> {
+  $$VirtualAccessPointsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get sortIndex =>
+      $composableBuilder(column: $table.sortIndex, builder: (column) => column);
+
+  GeneratedColumn<String> get ssid =>
+      $composableBuilder(column: $table.ssid, builder: (column) => column);
+
+  GeneratedColumn<String> get bssid =>
+      $composableBuilder(column: $table.bssid, builder: (column) => column);
+
+  GeneratedColumn<int> get frequency =>
+      $composableBuilder(column: $table.frequency, builder: (column) => column);
+
+  GeneratedColumn<int> get level =>
+      $composableBuilder(column: $table.level, builder: (column) => column);
+}
+
+class $$VirtualAccessPointsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $VirtualAccessPointsTable,
+          VirtualAccessPoint,
+          $$VirtualAccessPointsTableFilterComposer,
+          $$VirtualAccessPointsTableOrderingComposer,
+          $$VirtualAccessPointsTableAnnotationComposer,
+          $$VirtualAccessPointsTableCreateCompanionBuilder,
+          $$VirtualAccessPointsTableUpdateCompanionBuilder,
+          (
+            VirtualAccessPoint,
+            BaseReferences<
+              _$AppDatabase,
+              $VirtualAccessPointsTable,
+              VirtualAccessPoint
+            >,
+          ),
+          VirtualAccessPoint,
+          PrefetchHooks Function()
+        > {
+  $$VirtualAccessPointsTableTableManager(
+    _$AppDatabase db,
+    $VirtualAccessPointsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$VirtualAccessPointsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$VirtualAccessPointsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$VirtualAccessPointsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> sortIndex = const Value.absent(),
+                Value<String> ssid = const Value.absent(),
+                Value<String> bssid = const Value.absent(),
+                Value<int> frequency = const Value.absent(),
+                Value<int> level = const Value.absent(),
+              }) => VirtualAccessPointsCompanion(
+                sortIndex: sortIndex,
+                ssid: ssid,
+                bssid: bssid,
+                frequency: frequency,
+                level: level,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> sortIndex = const Value.absent(),
+                required String ssid,
+                required String bssid,
+                required int frequency,
+                required int level,
+              }) => VirtualAccessPointsCompanion.insert(
+                sortIndex: sortIndex,
+                ssid: ssid,
+                bssid: bssid,
+                frequency: frequency,
+                level: level,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$VirtualAccessPointsTable, VirtualAccessPoint>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $VirtualAccessPointsTable,
+                    VirtualAccessPoint
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$VirtualAccessPointsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $VirtualAccessPointsTable,
+      VirtualAccessPoint,
+      $$VirtualAccessPointsTableFilterComposer,
+      $$VirtualAccessPointsTableOrderingComposer,
+      $$VirtualAccessPointsTableAnnotationComposer,
+      $$VirtualAccessPointsTableCreateCompanionBuilder,
+      $$VirtualAccessPointsTableUpdateCompanionBuilder,
+      (
+        VirtualAccessPoint,
+        BaseReferences<
+          _$AppDatabase,
+          $VirtualAccessPointsTable,
+          VirtualAccessPoint
+        >,
+      ),
+      VirtualAccessPoint,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3519,6 +5268,14 @@ class $AppDatabaseManager {
       $$InputLayoutElementsTableTableManager(_db, _db.inputLayoutElements);
   $$ThemeSettingsTableTableManager get themeSettings =>
       $$ThemeSettingsTableTableManager(_db, _db.themeSettings);
+  $$AccessibilitySettingsTableTableManager get accessibilitySettings =>
+      $$AccessibilitySettingsTableTableManager(_db, _db.accessibilitySettings);
+  $$AdvancedSettingsTableTableManager get advancedSettings =>
+      $$AdvancedSettingsTableTableManager(_db, _db.advancedSettings);
   $$MediaSettingsTableTableManager get mediaSettings =>
       $$MediaSettingsTableTableManager(_db, _db.mediaSettings);
+  $$DebugSettingsTableTableManager get debugSettings =>
+      $$DebugSettingsTableTableManager(_db, _db.debugSettings);
+  $$VirtualAccessPointsTableTableManager get virtualAccessPoints =>
+      $$VirtualAccessPointsTableTableManager(_db, _db.virtualAccessPoints);
 }

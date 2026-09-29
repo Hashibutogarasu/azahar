@@ -14,6 +14,7 @@ List<RouteBase> get $appRoutes => [
   $appShellRouteData,
   $optionsGeneralSettingsRoute,
   $optionsMediaSettingsRoute,
+  $optionsEmulatedNetworkSettingsRoute,
   $optionsCameraSettingsRoute,
   $optionsControlsSettingsRoute,
   $optionsGraphicsSettingsRoute,
@@ -23,6 +24,8 @@ List<RouteBase> get $appRoutes => [
   $optionsDebugSettingsRoute,
   $optionsLanguageSettingsRoute,
   $optionsThemeSettingsRoute,
+  $optionsAccessibilitySettingsRoute,
+  $optionsAdvancedSettingsRoute,
 ];
 
 RouteBase get $setupRoute => GoRouteData.$route(
@@ -132,6 +135,7 @@ mixin $SystemFilesRoute on GoRouteData {
 }
 
 RouteBase get $appShellRouteData => StatefulShellRouteData.$route(
+  navigatorContainerBuilder: AppShellRouteData.$navigatorContainerBuilder,
   factory: $AppShellRouteDataExtension._fromState,
   branches: [
     StatefulShellBranchData.$branch(
@@ -273,6 +277,34 @@ mixin $OptionsMediaSettingsRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/options/media');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $optionsEmulatedNetworkSettingsRoute => GoRouteData.$route(
+  path: '/options/networking/emulated-network',
+  hasOverriddenOnExit: false,
+  factory: $OptionsEmulatedNetworkSettingsRoute._fromState,
+);
+
+mixin $OptionsEmulatedNetworkSettingsRoute on GoRouteData {
+  static OptionsEmulatedNetworkSettingsRoute _fromState(GoRouterState state) =>
+      const OptionsEmulatedNetworkSettingsRoute();
+
+  @override
+  String get location =>
+      GoRouteData.$location('/options/networking/emulated-network');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -520,6 +552,60 @@ mixin $OptionsThemeSettingsRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/options/theme');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $optionsAccessibilitySettingsRoute => GoRouteData.$route(
+  path: '/options/accessibility',
+  hasOverriddenOnExit: false,
+  factory: $OptionsAccessibilitySettingsRoute._fromState,
+);
+
+mixin $OptionsAccessibilitySettingsRoute on GoRouteData {
+  static OptionsAccessibilitySettingsRoute _fromState(GoRouterState state) =>
+      const OptionsAccessibilitySettingsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/options/accessibility');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $optionsAdvancedSettingsRoute => GoRouteData.$route(
+  path: '/options/advanced',
+  hasOverriddenOnExit: false,
+  factory: $OptionsAdvancedSettingsRoute._fromState,
+);
+
+mixin $OptionsAdvancedSettingsRoute on GoRouteData {
+  static OptionsAdvancedSettingsRoute _fromState(GoRouterState state) =>
+      const OptionsAdvancedSettingsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/options/advanced');
 
   @override
   void go(BuildContext context) => context.go(location);

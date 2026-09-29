@@ -5,98 +5,48 @@ import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import '../theme/theme_style.dart';
+import 'settings/animation_speed.dart';
+import 'user_directory_bootstrap.dart';
+
 part 'database.g.dart';
-
-@DataClassName('GameRow')
-class Games extends Table {
-  TextColumn get path => text()();
-  TextColumn get filename => text()();
-  TextColumn get title => text()();
-  TextColumn get description => text()();
-  IntColumn get titleId => integer()();
-  TextColumn get company => text()();
-  TextColumn get regions => text()();
-  BoolColumn get isInstalled => boolean()();
-  BoolColumn get isSystemTitle => boolean()();
-  BoolColumn get isVisibleSystemTitle => boolean()();
-  TextColumn get iconPath => text().nullable()();
-  DateTimeColumn get addedToLibraryTime => dateTime().nullable()();
-  DateTimeColumn get lastPlayedTime => dateTime().nullable()();
-
-  @override
-  Set<Column> get primaryKey => {path};
-}
-
-class AppSettings extends Table {
-  TextColumn get key => text()();
-  TextColumn get value => text()();
-
-  @override
-  Set<Column> get primaryKey => {key};
-}
-
-abstract final class SettingsKeys {
-  static const String firstApplicationLaunch = 'FirstApplicationLaunch';
-  static const String citraDirectory = 'CITRA_DIRECTORY';
-  static const String gamePath = 'game_path';
-  static const String languageCode = 'AppLanguage';
-  static const String articBaseAddress = 'last_artic_base_addr';
-  static const String useLegacySettingsUI = 'use_legacy_settings_ui';
-}
-
-class ThemeSettings extends Table {
-  IntColumn get id => integer().withDefault(const Constant(0))();
-  TextColumn get themeMode => text().withDefault(const Constant('system'))();
-  IntColumn get staticThemeColor => integer().withDefault(const Constant(0))();
-  BoolColumn get blackBackgrounds => boolean().withDefault(const Constant(false))();
-  BoolColumn get materialYou => boolean().withDefault(const Constant(false))();
-
-  @override
-  Set<Column> get primaryKey => {id};
-}
-
-class MediaSettings extends Table {
-  IntColumn get id => integer().withDefault(const Constant(0))();
-  RealColumn get masterVolume => real().withDefault(const Constant(100.0))();
-
-  @override
-  Set<Column> get primaryKey => {id};
-}
-
-class ControlBindings extends Table {
-  TextColumn get key => text()();
-  TextColumn get value => text()();
-
-  @override
-  Set<Column> get primaryKey => {key};
-}
-
-class InputLayoutElements extends Table {
-  TextColumn get orientation => text()();
-  TextColumn get elementId => text()();
-  IntColumn get x => integer()();
-  IntColumn get y => integer()();
-  IntColumn get width => integer()();
-  IntColumn get height => integer()();
-
-  @override
-  Set<Column> get primaryKey => {orientation, elementId};
-}
+part 'tables/games.dart';
+part 'tables/app_settings.dart';
+part 'tables/theme_settings.dart';
+part 'tables/accessibility_settings.dart';
+part 'tables/advanced_settings.dart';
+part 'tables/media_settings.dart';
+part 'tables/debug_settings.dart';
+part 'tables/virtual_access_points.dart';
+part 'tables/control_bindings.dart';
+part 'tables/input_layout_elements.dart';
 
 @DriftDatabase(
-  tables: [Games, AppSettings, ControlBindings, InputLayoutElements, ThemeSettings, MediaSettings],
+  tables: [
+    Games,
+    AppSettings,
+    ControlBindings,
+    InputLayoutElements,
+    ThemeSettings,
+    AccessibilitySettings,
+    AdvancedSettings,
+    MediaSettings,
+    DebugSettings,
+    VirtualAccessPoints,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase._(super.e);
 
   static AppDatabase? _instance;
+  static bool isUsingTemporaryStorage = false;
 
   factory AppDatabase() {
     return _instance ??= AppDatabase._(_openConnection());
   }
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -109,14 +59,57 @@ class AppDatabase extends _$AppDatabase {
       if (from < 3) {
         await m.createTable(mediaSettings);
       }
+      if (from < 4) {
+        await m.createTable(virtualAccessPoints);
+      }
+      if (from < 5) {
+        await m.addColumn(themeSettings, themeSettings.themeStyle);
+      }
+      if (from < 7) {
+        await m.createTable(accessibilitySettings);
+      }
+      if (from < 8) {
+        await m.createTable(advancedSettings);
+      }
+      if (from < 9) {
+        await m.createTable(debugSettings);
+      }
     },
   );
 
   static QueryExecutor _openConnection() {
     return LazyDatabase(() async {
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File(p.join(directory.path, 'azahar.sqlite'));
-      return NativeDatabase.createInBackground(file);
+      if (!Platform.isLinux) {
+        final directory = await getApplicationDocumentsDirectory();
+        final file = File(
+          p.join(directory.path, UserDirectoryBootstrap.databaseFileName),
+        );
+        return NativeDatabase.createInBackground(file);
+      }
+
+      final configuredDirectory =
+          await UserDirectoryBootstrap.readConfiguredDirectory();
+      if (configuredDirectory == null) {
+        isUsingTemporaryStorage = true;
+        return NativeDatabase.createInBackground(
+          await UserDirectoryBootstrap.pendingDatabaseFile(),
+        );
+      }
+
+      await Directory(configuredDirectory).create(recursive: true);
+      final targetFile = File(
+        p.join(configuredDirectory, UserDirectoryBootstrap.databaseFileName),
+      );
+      if (!await targetFile.exists()) {
+        final pendingFile = await UserDirectoryBootstrap.pendingDatabaseFile();
+        if (await pendingFile.exists()) {
+          await UserDirectoryBootstrap.moveDatabaseFiles(
+            pendingFile,
+            targetFile,
+          );
+        }
+      }
+      return NativeDatabase.createInBackground(targetFile);
     });
   }
 }

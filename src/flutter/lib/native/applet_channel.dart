@@ -5,7 +5,9 @@ import '../i18n/translations.g.dart';
 
 class AppletChannel {
   AppletChannel(this._navigatorKey)
-      : _channel = const MethodChannel('org.citra.citra_emu/azahar_bridge/applet') {
+    : _channel = const MethodChannel(
+        'org.citra.citra_emu/azahar_bridge/applet',
+      ) {
     _channel.setMethodCallHandler(_handle);
   }
 
@@ -26,11 +28,20 @@ class AppletChannel {
 
     switch (call.method) {
       case 'showKeyboard':
-        return _showKeyboard(context, (call.arguments as Map).cast<String, Object?>());
+        return _showKeyboard(
+          context,
+          (call.arguments as Map).cast<String, Object?>(),
+        );
       case 'showMiiSelector':
-        return _showMiiSelector(context, (call.arguments as Map).cast<String, Object?>());
+        return _showMiiSelector(
+          context,
+          (call.arguments as Map).cast<String, Object?>(),
+        );
       case 'showKeyboardError':
-        _showKeyboardError(context, (call.arguments as Map).cast<String, Object?>());
+        _showKeyboardError(
+          context,
+          (call.arguments as Map).cast<String, Object?>(),
+        );
         return null;
       default:
         return null;
@@ -59,7 +70,13 @@ class AppletChannel {
           maxLines: multilineMode ? null : 1,
           decoration: InputDecoration(hintText: hintText),
         ),
-        actions: _keyboardActions(dialogContext, localizations, t, buttonConfig, buttonText),
+        actions: _keyboardActions(
+          dialogContext,
+          localizations,
+          t,
+          buttonConfig,
+          buttonText,
+        ),
       ),
     );
 
@@ -82,7 +99,10 @@ class AppletChannel {
 
     switch (buttonConfig) {
       case 1:
-        return [button(0, t.common.cancel), button(1, localizations.okButtonLabel)];
+        return [
+          button(0, t.common.cancel),
+          button(1, localizations.okButtonLabel),
+        ];
       case 2:
         return [
           button(0, t.common.cancel),

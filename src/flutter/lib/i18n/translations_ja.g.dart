@@ -104,6 +104,8 @@ class _Translations$common$ja extends Translations$common$en {
   // Translations
   @override
   String get cancel => 'キャンセル';
+  @override
+  String get save => '保存';
 }
 
 // Path: setup
@@ -276,7 +278,9 @@ class _Translations$emulation$ja extends Translations$emulation$en {
 
   // Translations
   @override
-  String get loading => '読み込み中…';
+  String get loading => '読み込み中';
+  @override
+  String get terminating => '終了しています';
   @override
   String get preparingShaders => 'シェーダーを準備中';
   @override
@@ -369,6 +373,14 @@ class _Translations$options$ja extends Translations$options$en {
   String get media => 'メディア';
   @override
   String get mediaDescription => 'バックグラウンド再生とメディアセッションの設定';
+  @override
+  String get accessibility => 'アクセシビリティ';
+  @override
+  String get accessibilityDescription => 'モーションなどのアクセシビリティ設定';
+  @override
+  String get advanced => '詳細設定';
+  @override
+  String get advancedDescription => 'より詳細なオプションを設定します';
   @override
   String get about => 'このアプリについて';
   @override
@@ -559,6 +571,15 @@ class _Translations$settings$ja extends Translations$settings$en {
   late final _Translations$settings$theme$ja theme =
       _Translations$settings$theme$ja._(_root);
   @override
+  late final _Translations$settings$themes$ja themes =
+      _Translations$settings$themes$ja._(_root);
+  @override
+  late final _Translations$settings$accessibility$ja accessibility =
+      _Translations$settings$accessibility$ja._(_root);
+  @override
+  late final _Translations$settings$advanced$ja advanced =
+      _Translations$settings$advanced$ja._(_root);
+  @override
   late final _Translations$settings$language$ja language =
       _Translations$settings$language$ja._(_root);
 }
@@ -695,7 +716,7 @@ class _Translations$setup$userDirectory$ja
   @override
   String get moveData => 'データを移動';
   @override
-  String get movingData => 'データを移動中…';
+  String get movingData => 'データを移動中';
 }
 
 // Path: setup.gamesDirectory
@@ -785,6 +806,8 @@ class _Translations$options$groups$ja extends Translations$options$groups$en {
   String get folderSettings => 'フォルダ設定';
   @override
   String get other => 'その他';
+  @override
+  String get accessibility => 'アクセシビリティ';
 }
 
 // Path: settings.resetToDefaultDialog
@@ -836,7 +859,7 @@ class _Translations$settings$inputBindingDialog$ja
 
   // Translations
   @override
-  String get waitingForInput => 'コントローラーのボタンを押してください…';
+  String get waitingForInput => 'コントローラーのボタンを押してください';
 }
 
 // Path: settings.general
@@ -904,6 +927,46 @@ class _Translations$settings$networking$ja
   @override
   String get useWirelessDescription =>
       '近くにある実際のWi-Fiネットワークを、偽のものではなく3DSのすれちがい通信/SpotPass対応ネットワークとして報告します。';
+  @override
+  String get emulatedNetwork => 'エミュレーションされたネットワーク';
+  @override
+  String get emulatedNetworkDescription =>
+      'エミュレートされたコンソールから見えるWi-Fiアクセスポイントを確認し、必要に応じて仮想のものに置き換えます。';
+  @override
+  String get realNetworkTab => '実際のネットワーク';
+  @override
+  String get virtualNetworkTab => '仮想のネットワーク';
+  @override
+  String get hiddenNetwork => '（非公開ネットワーク）';
+  @override
+  String get ssid => 'SSID';
+  @override
+  String get bssid => 'BSSID';
+  @override
+  String get frequency => '周波数';
+  @override
+  String get noAccessPointsFound => 'アクセスポイントが見つかりませんでした。';
+  @override
+  String get useVirtualNetwork => '仮想ネットワークを使用する';
+  @override
+  String get useVirtualNetworkDescription =>
+      '実際のアクセスポイントの代わりに、以下のアクセスポイントをエミュレートされたコンソールに報告します。';
+  @override
+  String get addAccessPoint => 'アクセスポイントを追加';
+  @override
+  String get editAccessPoint => 'アクセスポイントを編集';
+  @override
+  String get ssidHint => '空欄で非公開ネットワークになります';
+  @override
+  String get bssidHint => '00:00:00:00:00:00';
+  @override
+  String get frequencyHint => 'MHz、例: 2437';
+  @override
+  String get levelHint => '信号レベル（dBm）、例: -50';
+  @override
+  String get copySelected => '選択したものをコピー';
+  @override
+  String get pasteAccessPoints => '貼り付け';
 }
 
 // Path: settings.media
@@ -1537,6 +1600,10 @@ class _Translations$settings$debug$ja extends Translations$settings$debug$en {
   @override
   String get warning => 'これらの設定はデバッグ用途のみです。変更すると動作が不安定になる場合があります。';
   @override
+  String get logToConsole => '標準出力にログを出力';
+  @override
+  String get logToConsoleDescription => 'ネイティブのログをFlutterの標準出力にも出力します。';
+  @override
   String get cpuClockSpeed => 'CPUクロック速度';
   @override
   String get cpuClockSpeedDescription =>
@@ -1588,13 +1655,17 @@ class _Translations$settings$theme$ja extends Translations$settings$theme$en {
   @override
   String get title => 'テーマと色';
   @override
+  String get themeStyle => 'テーマスタイル';
+  @override
   String get materialYou => 'Material You';
   @override
   String get materialYouDescription => '端末の壁紙から抽出した色を使用します。';
   @override
   String get staticThemeColor => '固定テーマカラー';
   @override
-  String get staticThemeColorBlue => '青（デフォルト）';
+  String get staticThemeColorDefault => 'デフォルト';
+  @override
+  String get staticThemeColorBlue => '青';
   @override
   String get staticThemeColorCyan => 'シアン';
   @override
@@ -1624,6 +1695,60 @@ class _Translations$settings$theme$ja extends Translations$settings$theme$en {
   @override
   String get useBlackBackgroundsDescription =>
       'ダークモード有効時に、ダークグレーの代わりに黒背景を使用します。';
+}
+
+// Path: settings.themes
+class _Translations$settings$themes$ja extends Translations$settings$themes$en {
+  _Translations$settings$themes$ja._(TranslationsJa root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsJa _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get azahar => 'Azahar';
+  @override
+  String get legacy => 'Legacy';
+}
+
+// Path: settings.accessibility
+class _Translations$settings$accessibility$ja
+    extends Translations$settings$accessibility$en {
+  _Translations$settings$accessibility$ja._(TranslationsJa root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsJa _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => 'アクセシビリティ';
+  @override
+  String get reduceMotion => '視差効果を減らす';
+  @override
+  String get reduceMotionDescription => 'アプリ内のアニメーションや動きの効果を減らします。';
+}
+
+// Path: settings.advanced
+class _Translations$settings$advanced$ja
+    extends Translations$settings$advanced$en {
+  _Translations$settings$advanced$ja._(TranslationsJa root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsJa _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => '詳細設定';
+  @override
+  String get animationSpeedLabel => 'アニメーション速度';
+  @override
+  String get animationSpeedDescription => '画面遷移などのアニメーションの速さを調整します。';
+  @override
+  late final _Translations$settings$advanced$animationSpeed$ja animationSpeed =
+      _Translations$settings$advanced$animationSpeed$ja._(_root);
 }
 
 // Path: settings.language
@@ -1924,6 +2049,24 @@ class _Translations$settings$system$countries$ja
   String get bermuda => 'バミューダ';
 }
 
+// Path: settings.advanced.animationSpeed
+class _Translations$settings$advanced$animationSpeed$ja
+    extends Translations$settings$advanced$animationSpeed$en {
+  _Translations$settings$advanced$animationSpeed$ja._(TranslationsJa root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsJa _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get fast => '速い';
+  @override
+  String get normal => '普通';
+  @override
+  String get slow => '遅い';
+}
+
 /// The flat map containing all translations for locale <ja>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -1934,6 +2077,7 @@ extension on TranslationsJa {
     return switch (path) {
           'appName' => 'Azahar',
           'common.cancel' => 'キャンセル',
+          'common.save' => '保存',
           'setup.next' => '次へ',
           'setup.back' => '戻る',
           'setup.stepComplete' => '完了！',
@@ -1972,7 +2116,7 @@ extension on TranslationsJa {
           'setup.userDirectory.warningHelpUrl' =>
             'https://web.archive.org/web/20240304193549/https://github.com/citra-emu/citra/wiki/Citra-Android-user-data-and-storage',
           'setup.userDirectory.moveData' => 'データを移動',
-          'setup.userDirectory.movingData' => 'データを移動中…',
+          'setup.userDirectory.movingData' => 'データを移動中',
           'setup.gamesDirectory.title' => 'アプリケーション',
           'setup.gamesDirectory.description' => '下のボタンでアプリケーションフォルダを選択してください。',
           'setup.gamesDirectory.select' => '選択',
@@ -2028,7 +2172,8 @@ extension on TranslationsJa {
           'games.regionTaiwan' => '台湾',
           'games.regionFree' => 'リージョンフリー',
           'games.invalidRegion' => '無効なリージョン',
-          'emulation.loading' => '読み込み中…',
+          'emulation.loading' => '読み込み中',
+          'emulation.terminating' => '終了しています',
           'emulation.preparingShaders' => 'シェーダーを準備中',
           'emulation.buildingShaders' => 'シェーダーをビルド中',
           'emulation.shaderProgress' =>
@@ -2070,6 +2215,10 @@ extension on TranslationsJa {
           'options.themeAndColorDescription' => 'アプリの見た目を変更します',
           'options.media' => 'メディア',
           'options.mediaDescription' => 'バックグラウンド再生とメディアセッションの設定',
+          'options.accessibility' => 'アクセシビリティ',
+          'options.accessibilityDescription' => 'モーションなどのアクセシビリティ設定',
+          'options.advanced' => '詳細設定',
+          'options.advancedDescription' => 'より詳細なオプションを設定します',
           'options.about' => 'このアプリについて',
           'options.aboutDescription' => 'ビルドバージョン、クレジットなど',
           'options.general' => 'プロフィール',
@@ -2089,6 +2238,7 @@ extension on TranslationsJa {
           'options.groups.tools' => 'ツール',
           'options.groups.folderSettings' => 'フォルダ設定',
           'options.groups.other' => 'その他',
+          'options.groups.accessibility' => 'アクセシビリティ',
           'systemFiles.title' => 'システムファイル',
           'systemFiles.preamble' =>
             'Azaharが一部の機能を利用するには、実機由来のコンソール固有データとファームウェアファイルが必要です。これらのファイルとデータは、Azahar Artic Setup Toolを使ってセットアップできます。\n\n注意事項:\n• この操作はコンソール固有データをAzaharにインストールします。セットアップ完了後は、userフォルダやnandフォルダを共有しないでください！\n• セットアップ中、Azaharはセットアップツールを実行しているコンソールにリンクされます。後でエミュレータのオプションメニューのシステムファイルタブからリンクを解除できます。\n• システムファイルをセットアップした後は、Azaharと実機の3DSを同時にオンラインにしないでください。問題が発生する可能性があります。\n• New 3DSのセットアップにはOld 3DSのセットアップが必要です（両方のセットアップを推奨します）。\n• どちらのセットアップモードも、セットアップツールを実行しているコンソールの機種に関わらず動作します。',
@@ -2136,7 +2286,7 @@ extension on TranslationsJa {
               required Object max,
             }) => '${title}: 値は${min}から${max}の間で指定してください。',
           'settings.inputBindingDialog.waitingForInput' =>
-            'コントローラーのボタンを押してください…',
+            'コントローラーのボタンを押してください',
           'settings.general.title' => 'プロフィール',
           'settings.general.frameLimitEnable' => '速度制限',
           'settings.general.frameLimitEnableDescription' =>
@@ -2155,6 +2305,27 @@ extension on TranslationsJa {
           'settings.networking.useWireless' => '無線を使用する',
           'settings.networking.useWirelessDescription' =>
             '近くにある実際のWi-Fiネットワークを、偽のものではなく3DSのすれちがい通信/SpotPass対応ネットワークとして報告します。',
+          'settings.networking.emulatedNetwork' => 'エミュレーションされたネットワーク',
+          'settings.networking.emulatedNetworkDescription' =>
+            'エミュレートされたコンソールから見えるWi-Fiアクセスポイントを確認し、必要に応じて仮想のものに置き換えます。',
+          'settings.networking.realNetworkTab' => '実際のネットワーク',
+          'settings.networking.virtualNetworkTab' => '仮想のネットワーク',
+          'settings.networking.hiddenNetwork' => '（非公開ネットワーク）',
+          'settings.networking.ssid' => 'SSID',
+          'settings.networking.bssid' => 'BSSID',
+          'settings.networking.frequency' => '周波数',
+          'settings.networking.noAccessPointsFound' => 'アクセスポイントが見つかりませんでした。',
+          'settings.networking.useVirtualNetwork' => '仮想ネットワークを使用する',
+          'settings.networking.useVirtualNetworkDescription' =>
+            '実際のアクセスポイントの代わりに、以下のアクセスポイントをエミュレートされたコンソールに報告します。',
+          'settings.networking.addAccessPoint' => 'アクセスポイントを追加',
+          'settings.networking.editAccessPoint' => 'アクセスポイントを編集',
+          'settings.networking.ssidHint' => '空欄で非公開ネットワークになります',
+          'settings.networking.bssidHint' => '00:00:00:00:00:00',
+          'settings.networking.frequencyHint' => 'MHz、例: 2437',
+          'settings.networking.levelHint' => '信号レベル（dBm）、例: -50',
+          'settings.networking.copySelected' => '選択したものをコピー',
+          'settings.networking.pasteAccessPoints' => '貼り付け',
           'settings.media.title' => 'メディア',
           'settings.media.groupApp' => 'アプリ',
           'settings.media.groupEmulator' => 'エミュレータ',
@@ -2485,6 +2656,9 @@ extension on TranslationsJa {
           'settings.camera.imageFlipHorizontal' => '水平',
           'settings.camera.imageFlipVertical' => '垂直',
           'settings.camera.imageFlipReverse' => '反転',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.gamepad.title' => 'ゲームパッド',
           'settings.gamepad.controllerInputMode' => 'コントローラー入力モード',
           'settings.gamepad.controllerInputModeDescription' =>
@@ -2518,9 +2692,6 @@ extension on TranslationsJa {
           'settings.gamepad.buttonX' => 'X',
           'settings.gamepad.buttonY' => 'Y',
           'settings.gamepad.buttonSelect' => 'SELECT',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.gamepad.buttonStart' => 'START',
           'settings.gamepad.buttonHome' => 'HOME',
           'settings.gamepad.circlePad' => 'サークルパッド',
@@ -2592,6 +2763,9 @@ extension on TranslationsJa {
           'settings.debug.title' => 'デバッグ',
           'settings.debug.warning' =>
             'これらの設定はデバッグ用途のみです。変更すると動作が不安定になる場合があります。',
+          'settings.debug.logToConsole' => '標準出力にログを出力',
+          'settings.debug.logToConsoleDescription' =>
+            'ネイティブのログをFlutterの標準出力にも出力します。',
           'settings.debug.cpuClockSpeed' => 'CPUクロック速度',
           'settings.debug.cpuClockSpeedDescription' =>
             'エミュレートされたCPUをオーバークロック/アンダークロックします。推奨しません。',
@@ -2617,10 +2791,12 @@ extension on TranslationsJa {
           'settings.debug.deterministicAsyncOperationsDescription' =>
             '非同期処理を決定論的な順序で実行するように強制します。パフォーマンスが低下します。',
           'settings.theme.title' => 'テーマと色',
+          'settings.theme.themeStyle' => 'テーマスタイル',
           'settings.theme.materialYou' => 'Material You',
           'settings.theme.materialYouDescription' => '端末の壁紙から抽出した色を使用します。',
           'settings.theme.staticThemeColor' => '固定テーマカラー',
-          'settings.theme.staticThemeColorBlue' => '青（デフォルト）',
+          'settings.theme.staticThemeColorDefault' => 'デフォルト',
+          'settings.theme.staticThemeColorBlue' => '青',
           'settings.theme.staticThemeColorCyan' => 'シアン',
           'settings.theme.staticThemeColorRed' => '赤',
           'settings.theme.staticThemeColorGreen' => '緑',
@@ -2636,6 +2812,19 @@ extension on TranslationsJa {
           'settings.theme.useBlackBackgrounds' => '黒背景を使用',
           'settings.theme.useBlackBackgroundsDescription' =>
             'ダークモード有効時に、ダークグレーの代わりに黒背景を使用します。',
+          'settings.themes.azahar' => 'Azahar',
+          'settings.themes.legacy' => 'Legacy',
+          'settings.accessibility.title' => 'アクセシビリティ',
+          'settings.accessibility.reduceMotion' => '視差効果を減らす',
+          'settings.accessibility.reduceMotionDescription' =>
+            'アプリ内のアニメーションや動きの効果を減らします。',
+          'settings.advanced.title' => '詳細設定',
+          'settings.advanced.animationSpeedLabel' => 'アニメーション速度',
+          'settings.advanced.animationSpeedDescription' =>
+            '画面遷移などのアニメーションの速さを調整します。',
+          'settings.advanced.animationSpeed.fast' => '速い',
+          'settings.advanced.animationSpeed.normal' => '普通',
+          'settings.advanced.animationSpeed.slow' => '遅い',
           'settings.language.title' => '言語',
           'settings.language.systemDefault' => 'システムのデフォルト',
           'settings.language.english' => '英語 (English)',

@@ -6,11 +6,15 @@ import '../app_services.dart';
 import '../data/settings/settings_load_provider.dart';
 import '../screens/games/games_list_page.dart';
 import '../screens/home/app_shell.dart';
+import '../screens/home/slide_branch_container.dart';
 import '../screens/options/about_page.dart';
+import '../screens/options/emulated_network_page.dart';
 import '../screens/options/gpu_driver_manager_page.dart';
 import '../screens/options/legacy_options_page.dart';
 import '../screens/options/options_page.dart';
 import '../screens/options/system_files_page.dart';
+import '../screens/settings/sections/accessibility_settings_page.dart';
+import '../screens/settings/sections/advanced_settings_page.dart';
 import '../screens/settings/sections/camera_settings_page.dart';
 import '../screens/settings/sections/controls_settings_page.dart';
 import '../screens/settings/sections/debug_settings_page.dart';
@@ -21,12 +25,13 @@ import '../screens/settings/sections/layout_settings_page.dart';
 import '../screens/settings/sections/media_settings_page.dart';
 import '../screens/settings/sections/theme_settings_page.dart';
 import '../screens/setup/setup_wizard_page.dart';
+import 'slide_transition_route.dart';
 
 part 'app_routes.g.dart';
 part 'options_page_routes.dart';
 
 @TypedGoRoute<SetupRoute>(path: '/setup')
-class SetupRoute extends GoRouteData with $SetupRoute {
+class SetupRoute extends GoRouteData with $SetupRoute, SlideTransitionRoute {
   const SetupRoute();
 
   @override
@@ -36,7 +41,7 @@ class SetupRoute extends GoRouteData with $SetupRoute {
 }
 
 @TypedGoRoute<AboutRoute>(path: '/about')
-class AboutRoute extends GoRouteData with $AboutRoute {
+class AboutRoute extends GoRouteData with $AboutRoute, SlideTransitionRoute {
   const AboutRoute();
 
   @override
@@ -46,7 +51,8 @@ class AboutRoute extends GoRouteData with $AboutRoute {
 }
 
 @TypedGoRoute<GpuDriverManagerRoute>(path: '/gpu-driver-manager')
-class GpuDriverManagerRoute extends GoRouteData with $GpuDriverManagerRoute {
+class GpuDriverManagerRoute extends GoRouteData
+    with $GpuDriverManagerRoute, SlideTransitionRoute {
   const GpuDriverManagerRoute();
 
   @override
@@ -56,7 +62,8 @@ class GpuDriverManagerRoute extends GoRouteData with $GpuDriverManagerRoute {
 }
 
 @TypedGoRoute<SystemFilesRoute>(path: '/system-files')
-class SystemFilesRoute extends GoRouteData with $SystemFilesRoute {
+class SystemFilesRoute extends GoRouteData
+    with $SystemFilesRoute, SlideTransitionRoute {
   const SystemFilesRoute();
 
   @override
@@ -67,7 +74,9 @@ class SystemFilesRoute extends GoRouteData with $SystemFilesRoute {
 
 @TypedStatefulShellRoute<AppShellRouteData>(
   branches: [
-    TypedStatefulShellBranch<GamesBranchData>(routes: [TypedGoRoute<GamesListRoute>(path: '/')]),
+    TypedStatefulShellBranch<GamesBranchData>(
+      routes: [TypedGoRoute<GamesListRoute>(path: '/')],
+    ),
     TypedStatefulShellBranch<OptionsBranchData>(
       routes: [TypedGoRoute<OptionsRoute>(path: '/options')],
     ),
@@ -75,6 +84,9 @@ class SystemFilesRoute extends GoRouteData with $SystemFilesRoute {
 )
 class AppShellRouteData extends StatefulShellRouteData {
   const AppShellRouteData();
+
+  static const ShellNavigationContainerBuilder $navigatorContainerBuilder =
+      slideBranchContainerBuilder;
 
   @override
   Widget builder(
@@ -107,7 +119,7 @@ class OptionsRoute extends GoRouteData with $OptionsRoute {
   const OptionsRoute({this.isLegacy});
 
   /// Overrides which Options UI to show. When omitted, falls back to
-  /// [AppServices.settingsRepository]'s `useLegacySettingsUI` setting.
+  /// [AppServices.legacySettingsUiRepository]'s `useLegacySettingsUI` setting.
   final bool? isLegacy;
 
   @override
@@ -119,7 +131,8 @@ class OptionsRoute extends GoRouteData with $OptionsRoute {
     return Consumer(
       builder: (context, ref, _) {
         ref.watch(settingsLoadProvider);
-        final useLegacy = AppServices.settingsRepository.useLegacySettingsUI;
+        final useLegacy =
+            AppServices.legacySettingsUiRepository.useLegacySettingsUI;
         // ignore: deprecated_member_use_from_same_package
         return useLegacy ? const LegacyOptionsPage() : const OptionsPage();
       },

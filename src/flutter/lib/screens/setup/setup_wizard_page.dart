@@ -26,9 +26,11 @@ class _SetupWizardPageState extends State<SetupWizardPage> {
   final _pageController = PageController();
   final SetupWizardViewModel _viewModel = SetupWizardViewModel(
     AppServices.nativeBridge,
-    AppServices.settingsRepository,
+    AppServices.firstLaunchRepository,
+    AppServices.gamesDirectoryRepository,
     UserDirectoriesService(),
     AppServices.gameRepository,
+    AppServices.permissionRepository,
   );
   final Set<int> _hasBeenWarned = {};
   int _currentPage = 0;
@@ -156,7 +158,10 @@ class _SetupWizardPageState extends State<SetupWizardPage> {
     );
   }
 
-  Future<void> _onActionPressed(SetupAction action, BuildContext context) async {
+  Future<void> _onActionPressed(
+    SetupAction action,
+    BuildContext context,
+  ) async {
     await action.performAction(context);
   }
 
@@ -219,7 +224,10 @@ class _SetupWizardPageState extends State<SetupWizardPage> {
 
     if (!context.mounted) return false;
     unawaited(
-      CopyDirProgressDialog.show(context, progressStream: _viewModel.copyDirProgress()),
+      CopyDirProgressDialog.show(
+        context,
+        progressStream: _viewModel.copyDirProgress(),
+      ),
     );
     final completed = await confirmFuture;
     if (context.mounted) {

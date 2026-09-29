@@ -1,7 +1,8 @@
 part of 'app_routes.dart';
 
 @TypedGoRoute<OptionsGeneralSettingsRoute>(path: '/options/general')
-class OptionsGeneralSettingsRoute extends GoRouteData with $OptionsGeneralSettingsRoute {
+class OptionsGeneralSettingsRoute extends GoRouteData
+    with $OptionsGeneralSettingsRoute, SlideTransitionRoute {
   const OptionsGeneralSettingsRoute();
 
   @override
@@ -11,7 +12,8 @@ class OptionsGeneralSettingsRoute extends GoRouteData with $OptionsGeneralSettin
 }
 
 @TypedGoRoute<OptionsMediaSettingsRoute>(path: '/options/media')
-class OptionsMediaSettingsRoute extends GoRouteData with $OptionsMediaSettingsRoute {
+class OptionsMediaSettingsRoute extends GoRouteData
+    with $OptionsMediaSettingsRoute, SlideTransitionRoute {
   const OptionsMediaSettingsRoute();
 
   @override
@@ -20,8 +22,22 @@ class OptionsMediaSettingsRoute extends GoRouteData with $OptionsMediaSettingsRo
   }
 }
 
+@TypedGoRoute<OptionsEmulatedNetworkSettingsRoute>(
+  path: '/options/networking/emulated-network',
+)
+class OptionsEmulatedNetworkSettingsRoute extends GoRouteData
+    with $OptionsEmulatedNetworkSettingsRoute, SlideTransitionRoute {
+  const OptionsEmulatedNetworkSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const EmulatedNetworkPage();
+  }
+}
+
 @TypedGoRoute<OptionsCameraSettingsRoute>(path: '/options/camera')
-class OptionsCameraSettingsRoute extends GoRouteData with $OptionsCameraSettingsRoute {
+class OptionsCameraSettingsRoute extends GoRouteData
+    with $OptionsCameraSettingsRoute, SlideTransitionRoute {
   const OptionsCameraSettingsRoute();
 
   @override
@@ -31,7 +47,8 @@ class OptionsCameraSettingsRoute extends GoRouteData with $OptionsCameraSettings
 }
 
 @TypedGoRoute<OptionsControlsSettingsRoute>(path: '/options/controls')
-class OptionsControlsSettingsRoute extends GoRouteData with $OptionsControlsSettingsRoute {
+class OptionsControlsSettingsRoute extends GoRouteData
+    with $OptionsControlsSettingsRoute, SlideTransitionRoute {
   const OptionsControlsSettingsRoute();
 
   @override
@@ -41,7 +58,8 @@ class OptionsControlsSettingsRoute extends GoRouteData with $OptionsControlsSett
 }
 
 @TypedGoRoute<OptionsGraphicsSettingsRoute>(path: '/options/graphics')
-class OptionsGraphicsSettingsRoute extends GoRouteData with $OptionsGraphicsSettingsRoute {
+class OptionsGraphicsSettingsRoute extends GoRouteData
+    with $OptionsGraphicsSettingsRoute, SlideTransitionRoute {
   const OptionsGraphicsSettingsRoute();
 
   @override
@@ -51,7 +69,8 @@ class OptionsGraphicsSettingsRoute extends GoRouteData with $OptionsGraphicsSett
 }
 
 @TypedGoRoute<OptionsLayoutSettingsRoute>(path: '/options/graphics/layout')
-class OptionsLayoutSettingsRoute extends GoRouteData with $OptionsLayoutSettingsRoute {
+class OptionsLayoutSettingsRoute extends GoRouteData
+    with $OptionsLayoutSettingsRoute, SlideTransitionRoute {
   const OptionsLayoutSettingsRoute();
 
   @override
@@ -64,7 +83,7 @@ class OptionsLayoutSettingsRoute extends GoRouteData with $OptionsLayoutSettings
   path: '/options/graphics/layout/custom-landscape',
 )
 class OptionsCustomLandscapeLayoutSettingsRoute extends GoRouteData
-    with $OptionsCustomLandscapeLayoutSettingsRoute {
+    with $OptionsCustomLandscapeLayoutSettingsRoute, SlideTransitionRoute {
   const OptionsCustomLandscapeLayoutSettingsRoute();
 
   @override
@@ -77,7 +96,7 @@ class OptionsCustomLandscapeLayoutSettingsRoute extends GoRouteData
   path: '/options/graphics/layout/custom-portrait',
 )
 class OptionsCustomPortraitLayoutSettingsRoute extends GoRouteData
-    with $OptionsCustomPortraitLayoutSettingsRoute {
+    with $OptionsCustomPortraitLayoutSettingsRoute, SlideTransitionRoute {
   const OptionsCustomPortraitLayoutSettingsRoute();
 
   @override
@@ -87,7 +106,8 @@ class OptionsCustomPortraitLayoutSettingsRoute extends GoRouteData
 }
 
 @TypedGoRoute<OptionsDebugSettingsRoute>(path: '/options/debug')
-class OptionsDebugSettingsRoute extends GoRouteData with $OptionsDebugSettingsRoute {
+class OptionsDebugSettingsRoute extends GoRouteData
+    with $OptionsDebugSettingsRoute, SlideTransitionRoute {
   const OptionsDebugSettingsRoute();
 
   @override
@@ -97,7 +117,8 @@ class OptionsDebugSettingsRoute extends GoRouteData with $OptionsDebugSettingsRo
 }
 
 @TypedGoRoute<OptionsLanguageSettingsRoute>(path: '/options/language')
-class OptionsLanguageSettingsRoute extends GoRouteData with $OptionsLanguageSettingsRoute {
+class OptionsLanguageSettingsRoute extends GoRouteData
+    with $OptionsLanguageSettingsRoute, SlideTransitionRoute {
   const OptionsLanguageSettingsRoute();
 
   @override
@@ -107,11 +128,34 @@ class OptionsLanguageSettingsRoute extends GoRouteData with $OptionsLanguageSett
 }
 
 @TypedGoRoute<OptionsThemeSettingsRoute>(path: '/options/theme')
-class OptionsThemeSettingsRoute extends GoRouteData with $OptionsThemeSettingsRoute {
+class OptionsThemeSettingsRoute extends GoRouteData
+    with $OptionsThemeSettingsRoute, SlideTransitionRoute {
   const OptionsThemeSettingsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const ThemeSettingsPage();
+  }
+}
+
+@TypedGoRoute<OptionsAccessibilitySettingsRoute>(path: '/options/accessibility')
+class OptionsAccessibilitySettingsRoute extends GoRouteData
+    with $OptionsAccessibilitySettingsRoute, SlideTransitionRoute {
+  const OptionsAccessibilitySettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const AccessibilitySettingsPage();
+  }
+}
+
+@TypedGoRoute<OptionsAdvancedSettingsRoute>(path: '/options/advanced')
+class OptionsAdvancedSettingsRoute extends GoRouteData
+    with $OptionsAdvancedSettingsRoute, SlideTransitionRoute {
+  const OptionsAdvancedSettingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const AdvancedSettingsPage();
   }
 }

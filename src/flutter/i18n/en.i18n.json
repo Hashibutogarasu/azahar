@@ -1,7 +1,8 @@
 {
   "appName": "Azahar",
   "common": {
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "save": "Save"
   },
   "setup": {
     "next": "Next",
@@ -49,7 +50,7 @@
       "warningDescription": "This step is required to allow Azahar to work. Please select a directory and then you can continue.",
       "warningHelpUrl": "https://web.archive.org/web/20240304193549/https://github.com/citra-emu/citra/wiki/Citra-Android-user-data-and-storage",
       "moveData": "Move Data",
-      "movingData": "Moving Data…"
+      "movingData": "Moving Data"
     },
     "gamesDirectory": {
       "title": "Applications",
@@ -112,7 +113,8 @@
     "invalidRegion": "Invalid region"
   },
   "emulation": {
-    "loading": "Loading…",
+    "loading": "Loading",
+    "terminating": "Closing",
     "preparingShaders": "Preparing Shaders",
     "buildingShaders": "Building Shaders",
     "shaderProgress": "${progress}/${max}",
@@ -135,6 +137,8 @@
     "articBaseConnectDescription": "Connect to a real console that is running an Artic Base server",
     "installGameContent": "Install CIA file",
     "installGameContentDescription": "Install applications, updates or DLC",
+    "installGameContentSuccessTitle": "CIA install complete",
+    "installGameContentFailureTitle": "CIA install failed",
     "setupSystemFiles": "System Files",
     "setupSystemFilesDescription": "Perform system file operations such as installing system files or booting the Home Menu",
     "shareLog": "Share Log",
@@ -150,6 +154,10 @@
     "themeAndColorDescription": "Modify the look of the app",
     "media": "Media",
     "mediaDescription": "Background playback and media session settings",
+    "accessibility": "Accessibility",
+    "accessibilityDescription": "Motion and other accessibility settings",
+    "advanced": "Advanced Settings",
+    "advancedDescription": "Configure more advanced options",
     "about": "About",
     "aboutDescription": "Build version, credits, and more",
     "general": "Profile",
@@ -170,7 +178,8 @@
       "controls": "Controls",
       "tools": "Tools",
       "folderSettings": "Folder Settings",
-      "other": "Other"
+      "other": "Other",
+      "accessibility": "Accessibility"
     }
   },
   "systemFiles": {
@@ -224,7 +233,7 @@
       "invalidValue": "${title}: value must be between ${min} and ${max}."
     },
     "inputBindingDialog": {
-      "waitingForInput": "Press a button on your controller…"
+      "waitingForInput": "Press a button on your controller"
     },
     "general": {
       "title": "Profile",
@@ -243,7 +252,26 @@
       "accessNetwork": "Access Network",
       "accessNetworkDescription": "Allows the emulated console to access online features by using low level emulation for the system applets and the modules required for them.",
       "useWireless": "Use Wireless",
-      "useWirelessDescription": "Reports real nearby Wi-Fi networks as 3DS StreetPass/SpotPass-compatible networks, instead of fake ones."
+      "useWirelessDescription": "Reports real nearby Wi-Fi networks as 3DS StreetPass/SpotPass-compatible networks, instead of fake ones.",
+      "emulatedNetwork": "Emulated Network",
+      "emulatedNetworkDescription": "Inspect the Wi-Fi access points the emulated console can see, and optionally replace them with virtual ones.",
+      "realNetworkTab": "Real Network",
+      "virtualNetworkTab": "Virtual Network",
+      "hiddenNetwork": "(Hidden Network)",
+      "ssid": "SSID",
+      "bssid": "BSSID",
+      "frequency": "Frequency",
+      "noAccessPointsFound": "No access points found.",
+      "useVirtualNetwork": "Use Virtual Network",
+      "useVirtualNetworkDescription": "Reports the access points below to the emulated console instead of the real ones.",
+      "addAccessPoint": "Add Access Point",
+      "editAccessPoint": "Edit Access Point",
+      "ssidHint": "Leave blank for a hidden network",
+      "bssidHint": "00:00:00:00:00:00",
+      "frequencyHint": "MHz, e.g. 2437",
+      "levelHint": "Signal level in dBm, e.g. -50",
+      "copySelected": "Copy selected",
+      "pasteAccessPoints": "Paste"
     },
     "media": {
       "title": "Media",
@@ -648,6 +676,8 @@
     "debug": {
       "title": "Debug",
       "warning": "These settings are for debugging purposes only. Changing them may cause instability.",
+      "logToConsole": "Log to Standard Output",
+      "logToConsoleDescription": "Also prints the native log to the standard output of Flutter.",
       "cpuClockSpeed": "CPU Clock Speed",
       "cpuClockSpeedDescription": "Over/Underclocks the emulated CPU. Not recommended.",
       "cpuJit": "CPU JIT",
@@ -667,10 +697,12 @@
     },
     "theme": {
       "title": "Theme and Color",
+      "themeStyle": "Theme Style",
       "materialYou": "Material You",
       "materialYouDescription": "Uses colors extracted from your device's wallpaper.",
       "staticThemeColor": "Static Theme Color",
-      "staticThemeColorBlue": "Blue (Default)",
+      "staticThemeColorDefault": "Default",
+      "staticThemeColorBlue": "Blue",
       "staticThemeColorCyan": "Cyan",
       "staticThemeColorRed": "Red",
       "staticThemeColorGreen": "Green",
@@ -685,6 +717,25 @@
       "themeModeDark": "Dark",
       "useBlackBackgrounds": "Use Black Backgrounds",
       "useBlackBackgroundsDescription": "Uses black backgrounds when dark mode is enabled, instead of dark gray."
+    },
+    "themes": {
+      "azahar": "Azahar",
+      "legacy": "Legacy"
+    },
+    "accessibility": {
+      "title": "Accessibility",
+      "reduceMotion": "Reduce Motion",
+      "reduceMotionDescription": "Reduces animations and motion effects throughout the app."
+    },
+    "advanced": {
+      "title": "Advanced Settings",
+      "animationSpeedLabel": "Animation Speed",
+      "animationSpeedDescription": "Controls how fast UI transitions play.",
+      "animationSpeed": {
+        "fast": "Fast",
+        "normal": "Normal",
+        "slow": "Slow"
+      }
     },
     "language": {
       "title": "Language",
