@@ -309,8 +309,11 @@ class Translations$emulation$en {
 
   // Translations
 
-  /// en: 'Loading…'
-  String get loading => 'Loading…';
+  /// en: 'Loading'
+  String get loading => 'Loading';
+
+  /// en: 'Closing'
+  String get terminating => 'Closing';
 
   /// en: 'Preparing Shaders'
   String get preparingShaders => 'Preparing Shaders';
@@ -387,6 +390,12 @@ class Translations$options$en {
   /// en: 'Install applications, updates or DLC'
   String get installGameContentDescription =>
       'Install applications, updates or DLC';
+
+  /// en: 'CIA install complete'
+  String get installGameContentSuccessTitle => 'CIA install complete';
+
+  /// en: 'CIA install failed'
+  String get installGameContentFailureTitle => 'CIA install failed';
 
   /// en: 'System Files'
   String get setupSystemFiles => 'System Files';
@@ -810,8 +819,8 @@ class Translations$setup$userDirectory$en {
   /// en: 'Move Data'
   String get moveData => 'Move Data';
 
-  /// en: 'Moving Data…'
-  String get movingData => 'Moving Data…';
+  /// en: 'Moving Data'
+  String get movingData => 'Moving Data';
 }
 
 // Path: setup.gamesDirectory
@@ -966,8 +975,8 @@ class Translations$settings$inputBindingDialog$en {
 
   // Translations
 
-  /// en: 'Press a button on your controller…'
-  String get waitingForInput => 'Press a button on your controller…';
+  /// en: 'Press a button on your controller'
+  String get waitingForInput => 'Press a button on your controller';
 }
 
 // Path: settings.general
@@ -1978,6 +1987,13 @@ class Translations$settings$debug$en {
   String get warning =>
       'These settings are for debugging purposes only. Changing them may cause instability.';
 
+  /// en: 'Log to Standard Output'
+  String get logToConsole => 'Log to Standard Output';
+
+  /// en: 'Also prints the native log to the standard output of Flutter.'
+  String get logToConsoleDescription =>
+      'Also prints the native log to the standard output of Flutter.';
+
   /// en: 'CPU Clock Speed'
   String get cpuClockSpeed => 'CPU Clock Speed';
 
@@ -2666,7 +2682,7 @@ extension on Translations {
           'setup.userDirectory.warningHelpUrl' =>
             'https://web.archive.org/web/20240304193549/https://github.com/citra-emu/citra/wiki/Citra-Android-user-data-and-storage',
           'setup.userDirectory.moveData' => 'Move Data',
-          'setup.userDirectory.movingData' => 'Moving Data…',
+          'setup.userDirectory.movingData' => 'Moving Data',
           'setup.gamesDirectory.title' => 'Applications',
           'setup.gamesDirectory.description' =>
             'Select your Applications folder with the button below.',
@@ -2727,7 +2743,8 @@ extension on Translations {
           'games.regionTaiwan' => 'Taiwan',
           'games.regionFree' => 'Region free',
           'games.invalidRegion' => 'Invalid region',
-          'emulation.loading' => 'Loading…',
+          'emulation.loading' => 'Loading',
+          'emulation.terminating' => 'Closing',
           'emulation.preparingShaders' => 'Preparing Shaders',
           'emulation.buildingShaders' => 'Building Shaders',
           'emulation.shaderProgress' =>
@@ -2752,6 +2769,8 @@ extension on Translations {
           'options.installGameContent' => 'Install CIA file',
           'options.installGameContentDescription' =>
             'Install applications, updates or DLC',
+          'options.installGameContentSuccessTitle' => 'CIA install complete',
+          'options.installGameContentFailureTitle' => 'CIA install failed',
           'options.setupSystemFiles' => 'System Files',
           'options.setupSystemFilesDescription' =>
             'Perform system file operations such as installing system files or booting the Home Menu',
@@ -2851,7 +2870,7 @@ extension on Translations {
               required Object max,
             }) => '${title}: value must be between ${min} and ${max}.',
           'settings.inputBindingDialog.waitingForInput' =>
-            'Press a button on your controller…',
+            'Press a button on your controller',
           'settings.general.title' => 'Profile',
           'settings.general.frameLimitEnable' => 'Limit Speed',
           'settings.general.frameLimitEnableDescription' =>
@@ -3239,12 +3258,12 @@ extension on Translations {
           'settings.camera.imageFlip' => 'Flip',
           'settings.camera.imageFlipNone' => 'None',
           'settings.camera.imageFlipHorizontal' => 'Horizontal',
-          'settings.camera.imageFlipVertical' => 'Vertical',
-          'settings.camera.imageFlipReverse' => 'Reverse',
-          'settings.gamepad.title' => 'Gamepad',
           _ => null,
         } ??
         switch (path) {
+          'settings.camera.imageFlipVertical' => 'Vertical',
+          'settings.camera.imageFlipReverse' => 'Reverse',
+          'settings.gamepad.title' => 'Gamepad',
           'settings.gamepad.controllerInputMode' => 'Controller Input Mode',
           'settings.gamepad.controllerInputModeDescription' =>
             'Choose how physical game controllers are mapped to 3DS input.',
@@ -3353,6 +3372,9 @@ extension on Translations {
           'settings.debug.title' => 'Debug',
           'settings.debug.warning' =>
             'These settings are for debugging purposes only. Changing them may cause instability.',
+          'settings.debug.logToConsole' => 'Log to Standard Output',
+          'settings.debug.logToConsoleDescription' =>
+            'Also prints the native log to the standard output of Flutter.',
           'settings.debug.cpuClockSpeed' => 'CPU Clock Speed',
           'settings.debug.cpuClockSpeedDescription' =>
             'Over/Underclocks the emulated CPU. Not recommended.',

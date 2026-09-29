@@ -50,7 +50,7 @@
       "warningDescription": "This step is required to allow Azahar to work. Please select a directory and then you can continue.",
       "warningHelpUrl": "https://web.archive.org/web/20240304193549/https://github.com/citra-emu/citra/wiki/Citra-Android-user-data-and-storage",
       "moveData": "Move Data",
-      "movingData": "Moving Data…"
+      "movingData": "Moving Data"
     },
     "gamesDirectory": {
       "title": "Applications",
@@ -113,7 +113,8 @@
     "invalidRegion": "Invalid region"
   },
   "emulation": {
-    "loading": "Loading…",
+    "loading": "Loading",
+    "terminating": "Closing",
     "preparingShaders": "Preparing Shaders",
     "buildingShaders": "Building Shaders",
     "shaderProgress": "${progress}/${max}",
@@ -136,6 +137,8 @@
     "articBaseConnectDescription": "Connect to a real console that is running an Artic Base server",
     "installGameContent": "Install CIA file",
     "installGameContentDescription": "Install applications, updates or DLC",
+    "installGameContentSuccessTitle": "CIA install complete",
+    "installGameContentFailureTitle": "CIA install failed",
     "setupSystemFiles": "System Files",
     "setupSystemFilesDescription": "Perform system file operations such as installing system files or booting the Home Menu",
     "shareLog": "Share Log",
@@ -230,7 +233,7 @@
       "invalidValue": "${title}: value must be between ${min} and ${max}."
     },
     "inputBindingDialog": {
-      "waitingForInput": "Press a button on your controller…"
+      "waitingForInput": "Press a button on your controller"
     },
     "general": {
       "title": "Profile",
@@ -673,6 +676,8 @@
     "debug": {
       "title": "Debug",
       "warning": "These settings are for debugging purposes only. Changing them may cause instability.",
+      "logToConsole": "Log to Standard Output",
+      "logToConsoleDescription": "Also prints the native log to the standard output of Flutter.",
       "cpuClockSpeed": "CPU Clock Speed",
       "cpuClockSpeedDescription": "Over/Underclocks the emulated CPU. Not recommended.",
       "cpuJit": "CPU JIT",

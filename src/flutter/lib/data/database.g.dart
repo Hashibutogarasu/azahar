@@ -2682,6 +2682,209 @@ class MediaSettingsCompanion extends UpdateCompanion<MediaSetting> {
   }
 }
 
+class $DebugSettingsTable extends DebugSettings
+    with TableInfo<$DebugSettingsTable, DebugSetting> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DebugSettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _logToConsoleMeta = const VerificationMeta(
+    'logToConsole',
+  );
+  @override
+  late final GeneratedColumn<bool> logToConsole = GeneratedColumn<bool>(
+    'log_to_console',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("log_to_console" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, logToConsole];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'debug_settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DebugSetting> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('log_to_console')) {
+      context.handle(
+        _logToConsoleMeta,
+        logToConsole.isAcceptableOrUnknown(
+          data['log_to_console']!,
+          _logToConsoleMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DebugSetting map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DebugSetting(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      logToConsole: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}log_to_console'],
+      )!,
+    );
+  }
+
+  @override
+  $DebugSettingsTable createAlias(String alias) {
+    return $DebugSettingsTable(attachedDatabase, alias);
+  }
+}
+
+class DebugSetting extends DataClass implements Insertable<DebugSetting> {
+  final int id;
+  final bool logToConsole;
+  const DebugSetting({required this.id, required this.logToConsole});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['log_to_console'] = Variable<bool>(logToConsole);
+    return map;
+  }
+
+  DebugSettingsCompanion toCompanion(bool nullToAbsent) {
+    return DebugSettingsCompanion(
+      id: Value(id),
+      logToConsole: Value(logToConsole),
+    );
+  }
+
+  factory DebugSetting.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DebugSetting(
+      id: serializer.fromJson<int>(json['id']),
+      logToConsole: serializer.fromJson<bool>(json['logToConsole']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'logToConsole': serializer.toJson<bool>(logToConsole),
+    };
+  }
+
+  DebugSetting copyWith({int? id, bool? logToConsole}) => DebugSetting(
+    id: id ?? this.id,
+    logToConsole: logToConsole ?? this.logToConsole,
+  );
+  DebugSetting copyWithCompanion(DebugSettingsCompanion data) {
+    return DebugSetting(
+      id: data.id.present ? data.id.value : this.id,
+      logToConsole: data.logToConsole.present
+          ? data.logToConsole.value
+          : this.logToConsole,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DebugSetting(')
+          ..write('id: $id, ')
+          ..write('logToConsole: $logToConsole')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, logToConsole);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DebugSetting &&
+          other.id == this.id &&
+          other.logToConsole == this.logToConsole);
+}
+
+class DebugSettingsCompanion extends UpdateCompanion<DebugSetting> {
+  final Value<int> id;
+  final Value<bool> logToConsole;
+  const DebugSettingsCompanion({
+    this.id = const Value.absent(),
+    this.logToConsole = const Value.absent(),
+  });
+  DebugSettingsCompanion.insert({
+    this.id = const Value.absent(),
+    this.logToConsole = const Value.absent(),
+  });
+  static Insertable<DebugSetting> custom({
+    Expression<int>? id,
+    Expression<bool>? logToConsole,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (logToConsole != null) 'log_to_console': logToConsole,
+    });
+  }
+
+  DebugSettingsCompanion copyWith({Value<int>? id, Value<bool>? logToConsole}) {
+    return DebugSettingsCompanion(
+      id: id ?? this.id,
+      logToConsole: logToConsole ?? this.logToConsole,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (logToConsole.present) {
+      map['log_to_console'] = Variable<bool>(logToConsole.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DebugSettingsCompanion(')
+          ..write('id: $id, ')
+          ..write('logToConsole: $logToConsole')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $VirtualAccessPointsTable extends VirtualAccessPoints
     with TableInfo<$VirtualAccessPointsTable, VirtualAccessPoint> {
   @override
@@ -3047,6 +3250,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this,
   );
   late final $MediaSettingsTable mediaSettings = $MediaSettingsTable(this);
+  late final $DebugSettingsTable debugSettings = $DebugSettingsTable(this);
   late final $VirtualAccessPointsTable virtualAccessPoints =
       $VirtualAccessPointsTable(this);
   @override
@@ -3062,6 +3266,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     accessibilitySettings,
     advancedSettings,
     mediaSettings,
+    debugSettings,
     virtualAccessPoints,
   ];
 }
@@ -4689,6 +4894,145 @@ typedef $$MediaSettingsTableProcessedTableManager =
       MediaSetting,
       PrefetchHooks Function()
     >;
+typedef $$DebugSettingsTableCreateCompanionBuilder =
+    DebugSettingsCompanion Function({Value<int> id, Value<bool> logToConsole});
+typedef $$DebugSettingsTableUpdateCompanionBuilder =
+    DebugSettingsCompanion Function({Value<int> id, Value<bool> logToConsole});
+
+class $$DebugSettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $DebugSettingsTable> {
+  $$DebugSettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get logToConsole => $composableBuilder(
+    column: $table.logToConsole,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$DebugSettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $DebugSettingsTable> {
+  $$DebugSettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get logToConsole => $composableBuilder(
+    column: $table.logToConsole,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$DebugSettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DebugSettingsTable> {
+  $$DebugSettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<bool> get logToConsole => $composableBuilder(
+    column: $table.logToConsole,
+    builder: (column) => column,
+  );
+}
+
+class $$DebugSettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DebugSettingsTable,
+          DebugSetting,
+          $$DebugSettingsTableFilterComposer,
+          $$DebugSettingsTableOrderingComposer,
+          $$DebugSettingsTableAnnotationComposer,
+          $$DebugSettingsTableCreateCompanionBuilder,
+          $$DebugSettingsTableUpdateCompanionBuilder,
+          (
+            DebugSetting,
+            BaseReferences<_$AppDatabase, $DebugSettingsTable, DebugSetting>,
+          ),
+          DebugSetting,
+          PrefetchHooks Function()
+        > {
+  $$DebugSettingsTableTableManager(_$AppDatabase db, $DebugSettingsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DebugSettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$DebugSettingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$DebugSettingsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<bool> logToConsole = const Value.absent(),
+              }) => DebugSettingsCompanion(id: id, logToConsole: logToConsole),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<bool> logToConsole = const Value.absent(),
+              }) => DebugSettingsCompanion.insert(
+                id: id,
+                logToConsole: logToConsole,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$DebugSettingsTable, DebugSetting>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $DebugSettingsTable,
+                    DebugSetting
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$DebugSettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DebugSettingsTable,
+      DebugSetting,
+      $$DebugSettingsTableFilterComposer,
+      $$DebugSettingsTableOrderingComposer,
+      $$DebugSettingsTableAnnotationComposer,
+      $$DebugSettingsTableCreateCompanionBuilder,
+      $$DebugSettingsTableUpdateCompanionBuilder,
+      (
+        DebugSetting,
+        BaseReferences<_$AppDatabase, $DebugSettingsTable, DebugSetting>,
+      ),
+      DebugSetting,
+      PrefetchHooks Function()
+    >;
 typedef $$VirtualAccessPointsTableCreateCompanionBuilder =
     VirtualAccessPointsCompanion Function({
       Value<int> sortIndex,
@@ -4930,6 +5274,8 @@ class $AppDatabaseManager {
       $$AdvancedSettingsTableTableManager(_db, _db.advancedSettings);
   $$MediaSettingsTableTableManager get mediaSettings =>
       $$MediaSettingsTableTableManager(_db, _db.mediaSettings);
+  $$DebugSettingsTableTableManager get debugSettings =>
+      $$DebugSettingsTableTableManager(_db, _db.debugSettings);
   $$VirtualAccessPointsTableTableManager get virtualAccessPoints =>
       $$VirtualAccessPointsTableTableManager(_db, _db.virtualAccessPoints);
 }

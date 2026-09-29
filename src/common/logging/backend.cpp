@@ -3,16 +3,15 @@
 // Refer to the license.txt file included.
 
 #include <chrono>
-#include <boost/algorithm/string/replace.hpp>
+#include <deque>
+#include <mutex>
+#include <string>
 #include <boost/regex.hpp>
 
 #include <fmt/format.h>
 
 #ifdef _WIN32
-#include <share.h>   // For _SH_DENYWR
 #include <windows.h> // For OutputDebugStringW
-#else
-#define _SH_DENYWR 0
 #endif
 
 #ifdef CITRA_LINUX_GCC_BACKTRACE
@@ -23,9 +22,6 @@
 #endif
 
 #include "common/bounded_threadsafe_queue.h"
-#include "common/common_paths.h"
-#include "common/file_util.h"
-#include "common/literals.h"
 #include "common/logging/backend.h"
 #include "common/logging/log.h"
 #include "common/logging/log_entry.h"
@@ -85,60 +81,57 @@ private:
 };
 
 /**
- * Backend that writes to a file passed into the constructor
+ * Backend that hands formatted lines to the sink installed by the host application.
  */
-class FileBackend final : public Backend {
+class SinkBackend final : public Backend {
 public:
-    explicit FileBackend(const std::string& filename) {
-        auto old_filename = filename;
-        boost::replace_all(old_filename, ".txt", ".old.txt");
+    explicit SinkBackend() = default;
 
-        // Existence checks are done within the functions themselves.
-        // We don't particularly care if these succeed or not.
-        static_cast<void>(FileUtil::Delete(old_filename));
-        static_cast<void>(FileUtil::Rename(filename, old_filename));
+    ~SinkBackend() override = default;
 
-        // _SH_DENYWR allows read only access to the file for other programs.
-        // It is #defined to 0 on other platforms
-        file = std::make_unique<FileUtil::IOFile>(filename, "w", _SH_DENYWR);
-    }
-
-    ~FileBackend() override = default;
-
-    void Write(const Entry& entry) override {
-        if (!enabled) {
+    void SetSink(Sink new_sink) {
+        std::scoped_lock lock{mutex};
+        sink = std::move(new_sink);
+        if (!sink.write) {
             return;
         }
+        for (const auto& line : pending_lines) {
+            sink.write(line);
+        }
+        pending_lines.clear();
+    }
 
-        bytes_written += file->WriteString(FormatLogMessage(entry).append(1, '\n'));
-
-        using namespace Common::Literals;
-        // Prevent logs from exceeding a set maximum size in the event that log entries are spammed.
-        const auto write_limit = 100_MiB;
-        const bool write_limit_exceeded = bytes_written > write_limit;
-        if (entry.log_level >= Level::Error || write_limit_exceeded) {
-            if (write_limit_exceeded) {
-                // Stop writing after the write limit is exceeded.
-                // Don't close the file so we can print a stacktrace if necessary
-                enabled = false;
+    void Write(const Entry& entry) override {
+        const std::string line = FormatLogMessage(entry);
+        std::scoped_lock lock{mutex};
+        if (sink.write) {
+            sink.write(line);
+        } else {
+            if (pending_lines.size() >= MAX_PENDING_LINES) {
+                pending_lines.pop_front();
             }
-            file->Flush();
+            pending_lines.push_back(line);
+        }
+        if (entry.log_level >= Level::Error && sink.flush) {
+            sink.flush();
         }
     }
 
     void Flush() override {
-        file->Flush();
+        std::scoped_lock lock{mutex};
+        if (sink.flush) {
+            sink.flush();
+        }
     }
 
-    void EnableForStacktrace() override {
-        enabled = true;
-        bytes_written = 0;
-    }
+    void EnableForStacktrace() override {}
 
 private:
-    std::unique_ptr<FileUtil::IOFile> file;
-    bool enabled = true;
-    std::size_t bytes_written = 0;
+    static constexpr std::size_t MAX_PENDING_LINES = 10000;
+
+    std::mutex mutex;
+    Sink sink;
+    std::deque<std::string> pending_lines;
 };
 
 /**
@@ -203,18 +196,15 @@ public:
         return *instance;
     }
 
-    static void Initialize(std::string_view log_file) {
+    static void Initialize() {
         if (instance) {
             LOG_WARNING(Log, "Reinitializing logging backend");
             return;
         }
         initialization_in_progress_suppress_logging = true;
-        const auto& log_dir = FileUtil::GetUserPath(FileUtil::UserPath::LogDir);
-        void(FileUtil::CreateFullPath(log_dir));
         Filter filter;
         filter.ParseFilterString(Settings::values.log_filter.GetValue());
-        instance = std::unique_ptr<Impl, decltype(&Deleter)>(
-            new Impl(fmt::format("{}{}", log_dir, log_file), filter), Deleter);
+        instance = std::unique_ptr<Impl, decltype(&Deleter)>(new Impl(filter), Deleter);
         initialization_in_progress_suppress_logging = false;
     }
 
@@ -253,6 +243,10 @@ public:
         color_console_backend.SetEnabled(enabled);
     }
 
+    void SetSink(Sink sink) {
+        sink_backend.SetSink(std::move(sink));
+    }
+
     void PushEntry(Class log_class, Level log_level, const char* filename, unsigned int line_num,
                    const char* function, std::string message) {
         if (!filter.CheckMessage(log_class, log_level)) {
@@ -275,8 +269,7 @@ public:
     }
 
 private:
-    Impl(const std::string& file_backend_filename, const Filter& filter_)
-        : filter{filter_}, file_backend{file_backend_filename} {
+    explicit Impl(const Filter& filter_) : filter{filter_} {
 #ifdef CITRA_LINUX_GCC_BACKTRACE
         int waker_pipefd[2];
         int done_printing_pipefd[2];
@@ -390,7 +383,7 @@ private:
     void ForEachBackend(auto lambda) {
         lambda(static_cast<Backend&>(debugger_backend));
         lambda(static_cast<Backend&>(color_console_backend));
-        lambda(static_cast<Backend&>(file_backend));
+        lambda(static_cast<Backend&>(sink_backend));
 #ifdef ANDROID
         lambda(static_cast<Backend&>(lc_backend));
 #endif
@@ -436,7 +429,7 @@ private:
     boost::regex regex_filter;
     DebuggerBackend debugger_backend{};
     ColorConsoleBackend color_console_backend{};
-    FileBackend file_backend;
+    SinkBackend sink_backend{};
 #ifdef ANDROID
     LogcatBackend lc_backend{};
 #endif
@@ -454,8 +447,12 @@ private:
 };
 } // namespace
 
-void Initialize(std::string_view log_file) {
-    Impl::Initialize(log_file.empty() ? LOG_FILE : log_file);
+void Initialize() {
+    Impl::Initialize();
+}
+
+void SetSink(Sink sink) {
+    Impl::Instance().SetSink(std::move(sink));
 }
 
 void Start() {

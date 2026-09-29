@@ -34,7 +34,11 @@ abstract final class LegacyTheme {
             seedColor: staticThemeColors[staticThemeColor],
             brightness: Brightness.light,
           );
-    return ThemeData(useMaterial3: true, colorScheme: colorScheme, extensions: _extensions(colorScheme));
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: colorScheme,
+      extensions: _extensions(colorScheme),
+    );
   }
 
   static ThemeData dark({

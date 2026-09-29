@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../theme/theme_style.dart';
 import 'settings/animation_speed.dart';
+import 'user_directory_bootstrap.dart';
 
 part 'database.g.dart';
 part 'tables/games.dart';
@@ -15,6 +16,7 @@ part 'tables/theme_settings.dart';
 part 'tables/accessibility_settings.dart';
 part 'tables/advanced_settings.dart';
 part 'tables/media_settings.dart';
+part 'tables/debug_settings.dart';
 part 'tables/virtual_access_points.dart';
 part 'tables/control_bindings.dart';
 part 'tables/input_layout_elements.dart';
@@ -29,6 +31,7 @@ part 'tables/input_layout_elements.dart';
     AccessibilitySettings,
     AdvancedSettings,
     MediaSettings,
+    DebugSettings,
     VirtualAccessPoints,
   ],
 )
@@ -36,13 +39,14 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase._(super.e);
 
   static AppDatabase? _instance;
+  static bool isUsingTemporaryStorage = false;
 
   factory AppDatabase() {
     return _instance ??= AppDatabase._(_openConnection());
   }
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -67,14 +71,45 @@ class AppDatabase extends _$AppDatabase {
       if (from < 8) {
         await m.createTable(advancedSettings);
       }
+      if (from < 9) {
+        await m.createTable(debugSettings);
+      }
     },
   );
 
   static QueryExecutor _openConnection() {
     return LazyDatabase(() async {
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File(p.join(directory.path, 'azahar.sqlite'));
-      return NativeDatabase.createInBackground(file);
+      if (!Platform.isLinux) {
+        final directory = await getApplicationDocumentsDirectory();
+        final file = File(
+          p.join(directory.path, UserDirectoryBootstrap.databaseFileName),
+        );
+        return NativeDatabase.createInBackground(file);
+      }
+
+      final configuredDirectory =
+          await UserDirectoryBootstrap.readConfiguredDirectory();
+      if (configuredDirectory == null) {
+        isUsingTemporaryStorage = true;
+        return NativeDatabase.createInBackground(
+          await UserDirectoryBootstrap.pendingDatabaseFile(),
+        );
+      }
+
+      await Directory(configuredDirectory).create(recursive: true);
+      final targetFile = File(
+        p.join(configuredDirectory, UserDirectoryBootstrap.databaseFileName),
+      );
+      if (!await targetFile.exists()) {
+        final pendingFile = await UserDirectoryBootstrap.pendingDatabaseFile();
+        if (await pendingFile.exists()) {
+          await UserDirectoryBootstrap.moveDatabaseFiles(
+            pendingFile,
+            targetFile,
+          );
+        }
+      }
+      return NativeDatabase.createInBackground(targetFile);
     });
   }
 }

@@ -28,7 +28,12 @@ class GlassSurfaceTheme extends ThemeExtension<GlassSurfaceTheme> {
       borderColor: colorScheme.onSurface.withValues(alpha: 0.12),
       borderWidth: 1,
       borderRadius: BorderRadius.circular(16),
-      shadow: [BoxShadow(color: colorScheme.shadow.withValues(alpha: 0.2), blurRadius: 16)],
+      shadow: [
+        BoxShadow(
+          color: colorScheme.shadow.withValues(alpha: 0.2),
+          blurRadius: 16,
+        ),
+      ],
       focusedBorderColor: colorScheme.primaryContainer.withValues(alpha: 0.6),
     );
   }
@@ -40,7 +45,12 @@ class GlassSurfaceTheme extends ThemeExtension<GlassSurfaceTheme> {
       borderColor: Colors.transparent,
       borderWidth: 0,
       borderRadius: BorderRadius.circular(12),
-      shadow: [BoxShadow(color: colorScheme.shadow.withValues(alpha: 0.08), blurRadius: 4)],
+      shadow: [
+        BoxShadow(
+          color: colorScheme.shadow.withValues(alpha: 0.08),
+          blurRadius: 4,
+        ),
+      ],
       focusedBorderColor: colorScheme.primary,
     );
   }
@@ -76,7 +86,11 @@ class GlassSurfaceTheme extends ThemeExtension<GlassSurfaceTheme> {
       borderWidth: borderWidth + (other.borderWidth - borderWidth) * t,
       borderRadius: BorderRadius.lerp(borderRadius, other.borderRadius, t)!,
       shadow: BoxShadow.lerpList(shadow, other.shadow, t) ?? shadow,
-      focusedBorderColor: Color.lerp(focusedBorderColor, other.focusedBorderColor, t),
+      focusedBorderColor: Color.lerp(
+        focusedBorderColor,
+        other.focusedBorderColor,
+        t,
+      ),
     );
   }
 }

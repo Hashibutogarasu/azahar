@@ -16,7 +16,10 @@ class CreateShortcutDialog extends StatefulWidget {
   final Game game;
 
   static Future<void> show(BuildContext context, Game game) {
-    return showDialog<void>(context: context, builder: (_) => CreateShortcutDialog(game: game));
+    return showDialog<void>(
+      context: context,
+      builder: (_) => CreateShortcutDialog(game: game),
+    );
   }
 
   @override
@@ -24,7 +27,9 @@ class CreateShortcutDialog extends StatefulWidget {
 }
 
 class _CreateShortcutDialogState extends State<CreateShortcutDialog> {
-  late final TextEditingController _nameController = TextEditingController(text: widget.game.title);
+  late final TextEditingController _nameController = TextEditingController(
+    text: widget.game.title,
+  );
   bool _nameError = false;
   String? _customImagePath;
   bool _stretch = false;
@@ -73,7 +78,9 @@ class _CreateShortcutDialogState extends State<CreateShortcutDialog> {
               child: SizedBox(
                 width: 96,
                 height: 96,
-                child: GameIcon(iconPath: _customImagePath ?? widget.game.iconPath),
+                child: GameIcon(
+                  iconPath: _customImagePath ?? widget.game.iconPath,
+                ),
               ),
             ),
           ),
@@ -109,7 +116,10 @@ class _CreateShortcutDialogState extends State<CreateShortcutDialog> {
       ),
       actions: [
         const DialogCancelButton(),
-        TextButton(onPressed: _confirm, child: Text(localizations.okButtonLabel)),
+        TextButton(
+          onPressed: _confirm,
+          child: Text(localizations.okButtonLabel),
+        ),
       ],
     );
   }

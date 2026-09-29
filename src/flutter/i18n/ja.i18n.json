@@ -50,7 +50,7 @@
       "warningDescription": "この手順はAzaharの動作に必要です。ディレクトリを選択してから続行してください。",
       "warningHelpUrl": "https://web.archive.org/web/20240304193549/https://github.com/citra-emu/citra/wiki/Citra-Android-user-data-and-storage",
       "moveData": "データを移動",
-      "movingData": "データを移動中…"
+      "movingData": "データを移動中"
     },
     "gamesDirectory": {
       "title": "アプリケーション",
@@ -113,7 +113,8 @@
     "invalidRegion": "無効なリージョン"
   },
   "emulation": {
-    "loading": "読み込み中…",
+    "loading": "読み込み中",
+    "terminating": "終了しています",
     "preparingShaders": "シェーダーを準備中",
     "buildingShaders": "シェーダーをビルド中",
     "shaderProgress": "${progress}/${max}",
@@ -230,7 +231,7 @@
       "invalidValue": "${title}: 値は${min}から${max}の間で指定してください。"
     },
     "inputBindingDialog": {
-      "waitingForInput": "コントローラーのボタンを押してください…"
+      "waitingForInput": "コントローラーのボタンを押してください"
     },
     "general": {
       "title": "プロフィール",
@@ -673,6 +674,8 @@
     "debug": {
       "title": "デバッグ",
       "warning": "これらの設定はデバッグ用途のみです。変更すると動作が不安定になる場合があります。",
+      "logToConsole": "標準出力にログを出力",
+      "logToConsoleDescription": "ネイティブのログをFlutterの標準出力にも出力します。",
       "cpuClockSpeed": "CPUクロック速度",
       "cpuClockSpeedDescription": "エミュレートされたCPUをオーバークロック/アンダークロックします。推奨しません。",
       "cpuJit": "CPU JIT",

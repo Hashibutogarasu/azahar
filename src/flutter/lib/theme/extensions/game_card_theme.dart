@@ -41,7 +41,10 @@ class GameCardTheme extends ThemeExtension<GameCardTheme> {
         fontWeight: FontWeight.w600,
       ),
       subtitleColor: colorScheme.onSurface.withValues(alpha: 0.6),
-      subtitleStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 12),
+      subtitleStyle: TextStyle(
+        color: colorScheme.onSurface.withValues(alpha: 0.6),
+        fontSize: 12,
+      ),
       invalidExtensionColor: colorScheme.errorContainer,
     );
   }
@@ -56,7 +59,10 @@ class GameCardTheme extends ThemeExtension<GameCardTheme> {
       titleColor: colorScheme.onSurface,
       titleStyle: TextStyle(color: colorScheme.onSurface, fontSize: 14),
       subtitleColor: colorScheme.onSurfaceVariant,
-      subtitleStyle: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
+      subtitleStyle: TextStyle(
+        color: colorScheme.onSurfaceVariant,
+        fontSize: 12,
+      ),
       invalidExtensionColor: colorScheme.errorContainer,
     );
   }
@@ -84,7 +90,8 @@ class GameCardTheme extends ThemeExtension<GameCardTheme> {
       titleStyle: titleStyle ?? this.titleStyle,
       subtitleColor: subtitleColor ?? this.subtitleColor,
       subtitleStyle: subtitleStyle ?? this.subtitleStyle,
-      invalidExtensionColor: invalidExtensionColor ?? this.invalidExtensionColor,
+      invalidExtensionColor:
+          invalidExtensionColor ?? this.invalidExtensionColor,
     );
   }
 
@@ -92,8 +99,16 @@ class GameCardTheme extends ThemeExtension<GameCardTheme> {
   GameCardTheme lerp(ThemeExtension<GameCardTheme>? other, double t) {
     if (other is! GameCardTheme) return this;
     return GameCardTheme(
-      iconBoxFillColor: Color.lerp(iconBoxFillColor, other.iconBoxFillColor, t)!,
-      iconBoxBorderColor: Color.lerp(iconBoxBorderColor, other.iconBoxBorderColor, t)!,
+      iconBoxFillColor: Color.lerp(
+        iconBoxFillColor,
+        other.iconBoxFillColor,
+        t,
+      )!,
+      iconBoxBorderColor: Color.lerp(
+        iconBoxBorderColor,
+        other.iconBoxBorderColor,
+        t,
+      )!,
       iconBoxRadius: BorderRadius.lerp(iconBoxRadius, other.iconBoxRadius, t)!,
       iconBoxSize: iconBoxSize + (other.iconBoxSize - iconBoxSize) * t,
       iconColor: Color.lerp(iconColor, other.iconColor, t)!,
@@ -101,7 +116,11 @@ class GameCardTheme extends ThemeExtension<GameCardTheme> {
       titleStyle: TextStyle.lerp(titleStyle, other.titleStyle, t)!,
       subtitleColor: Color.lerp(subtitleColor, other.subtitleColor, t)!,
       subtitleStyle: TextStyle.lerp(subtitleStyle, other.subtitleStyle, t)!,
-      invalidExtensionColor: Color.lerp(invalidExtensionColor, other.invalidExtensionColor, t)!,
+      invalidExtensionColor: Color.lerp(
+        invalidExtensionColor,
+        other.invalidExtensionColor,
+        t,
+      )!,
     );
   }
 }

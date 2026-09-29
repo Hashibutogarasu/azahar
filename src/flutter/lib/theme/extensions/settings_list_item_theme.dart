@@ -51,10 +51,16 @@ class SettingsListItemTheme extends ThemeExtension<SettingsListItemTheme> {
       titleColor: colorScheme.onSurface,
       titleStyle: TextStyle(color: colorScheme.onSurface, fontSize: 16),
       subtitleColor: colorScheme.onSurfaceVariant,
-      subtitleStyle: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 14),
+      subtitleStyle: TextStyle(
+        color: colorScheme.onSurfaceVariant,
+        fontSize: 14,
+      ),
       chevronColor: colorScheme.onSurfaceVariant,
       valueTextColor: colorScheme.onSurfaceVariant,
-      valueTextStyle: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 14),
+      valueTextStyle: TextStyle(
+        color: colorScheme.onSurfaceVariant,
+        fontSize: 14,
+      ),
       hoverColor: colorScheme.onSurface.withValues(alpha: 0.08),
       activeColor: colorScheme.onSurface.withValues(alpha: 0.12),
       rowRadius: BorderRadius.zero,
@@ -91,7 +97,10 @@ class SettingsListItemTheme extends ThemeExtension<SettingsListItemTheme> {
   }
 
   @override
-  SettingsListItemTheme lerp(ThemeExtension<SettingsListItemTheme>? other, double t) {
+  SettingsListItemTheme lerp(
+    ThemeExtension<SettingsListItemTheme>? other,
+    double t,
+  ) {
     if (other is! SettingsListItemTheme) return this;
     return SettingsListItemTheme(
       iconColor: Color.lerp(iconColor, other.iconColor, t)!,

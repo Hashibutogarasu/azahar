@@ -5,7 +5,11 @@ import '../theme/extensions/app_toggle_switch_theme.dart';
 /// A pill-shaped toggle switch. Its colors and size come entirely from [AppToggleSwitchTheme],
 /// so this single widget renders both the Azahar and Legacy looks.
 class AppToggleSwitch extends StatelessWidget {
-  const AppToggleSwitch({super.key, required this.value, required this.onChanged});
+  const AppToggleSwitch({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   final bool value;
   final ValueChanged<bool> onChanged;

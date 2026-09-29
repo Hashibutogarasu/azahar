@@ -22,10 +22,12 @@ import org.citra.citra_emu.applets.SoftwareKeyboard
 import org.citra.citra_emu.camera.StillImageCameraHelper
 import org.citra.citra_emu.channel.AzaharMethodHandler
 import org.citra.citra_emu.channel.EmulationController
+import org.citra.citra_emu.channel.LogStreamHandler
 import org.citra.citra_emu.channel.MediaNotificationController
 import org.citra.citra_emu.channel.SettingsController
 import org.citra.citra_emu.channel.ShowMiiSelector
 import org.citra.citra_emu.channel.SystemVolumeController
+import org.citra.citra_emu.channel.UserFilesController
 import org.citra.citra_emu.channel.WifiController
 import org.citra.citra_emu.utils.AppletBridge
 import org.citra.citra_emu.utils.DiskShaderCacheProgress
@@ -108,10 +110,11 @@ class EmulationActivity : FlutterFragmentActivity() {
         val settingsController = SettingsController()
         val mediaNotificationController = MediaNotificationController(this)
         val wifiController = WifiController()
+        val userFilesController = UserFilesController(this)
         val handlers: Map<String, AzaharMethodHandler> =
             (emulationController.handlers + systemVolumeController.handlers +
                 settingsController.handlers + mediaNotificationController.handlers +
-                wifiController.handlers + TerminateProcess())
+                wifiController.handlers + userFilesController.handlers + TerminateProcess())
                 .associateBy { it.name }
 
         val appletChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, APPLET_CHANNEL)
@@ -188,6 +191,9 @@ class EmulationActivity : FlutterFragmentActivity() {
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, MEDIA_NOTIFICATION_PLAY_PAUSE_CHANNEL)
             .setStreamHandler(mediaNotificationController.createPlayPauseEventStreamHandler())
 
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, LOG_LINES_CHANNEL)
+            .setStreamHandler(LogStreamHandler())
+
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
                 handlers[call.method]?.execute(call, result) ?: result.notImplemented()
@@ -210,6 +216,7 @@ class EmulationActivity : FlutterFragmentActivity() {
         private const val CHANNEL = "org.citra.citra_emu/azahar_bridge"
         private const val SHADER_PROGRESS_CHANNEL = "org.citra.citra_emu/azahar_bridge/shader_progress"
         private const val APPLET_CHANNEL = "org.citra.citra_emu/azahar_bridge/applet"
+        private const val LOG_LINES_CHANNEL = "org.citra.citra_emu/azahar_bridge/log_lines"
         private const val SYSTEM_VOLUME_CHANNEL = "org.citra.citra_emu/azahar_bridge/system_volume"
         private const val MEDIA_NOTIFICATION_STOP_CHANNEL =
             "org.citra.citra_emu/azahar_bridge/media_notification_stop"

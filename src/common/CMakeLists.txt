@@ -96,6 +96,8 @@ add_library(citra_common STATIC
     logging/backend.cpp
     logging/backend.h
     logging/filter.cpp
+    logging/file_sink.cpp
+    logging/file_sink.h
     logging/filter.h
     logging/formatter.h
     logging/log.h

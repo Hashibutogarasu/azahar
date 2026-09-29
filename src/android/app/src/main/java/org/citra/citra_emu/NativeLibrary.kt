@@ -26,6 +26,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.citra.citra_emu.activities.EmulationActivity
 import org.citra.citra_emu.utils.FileUtil
 import org.citra.citra_emu.utils.Log
+import org.citra.citra_emu.utils.LogFileWriter
 import java.lang.ref.WeakReference
 import java.util.Date
 
@@ -122,8 +123,20 @@ object NativeLibrary {
 
     // Create the config.ini file.
     external fun createConfigFile()
-    external fun createLogFile()
+    external fun startLogging()
     external fun logUserDirectory(directory: String)
+
+    /**
+     * Receives one UTF-8 encoded log line from the native logging backend.
+     */
+    @JvmStatic
+    fun onLogLine(line: ByteArray) = LogFileWriter.write(line)
+
+    /**
+     * Called by the native logging backend when the log should be persisted.
+     */
+    @JvmStatic
+    fun flushLog() = LogFileWriter.flush()
 
     /**
      * Begins emulation.
