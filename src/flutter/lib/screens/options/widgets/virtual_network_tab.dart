@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../../data/settings/wifi_access_points_provider.dart';
 import '../../../i18n/translations.g.dart';
-import '../../../models/access_point.dart';
 import '../dialogs/access_point_form_dialog.dart';
 import 'wifi_signal_icon.dart';
 

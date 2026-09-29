@@ -1,4 +1,5 @@
-import '../../native/native_bridge.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
+
 import '../repositories/clearable.dart';
 import '../repositories/loadable.dart';
 

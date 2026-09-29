@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../../app_services.dart';
 import '../../../i18n/translations.g.dart';
-import '../../../models/game.dart';
-import '../../../models/game_folder_kind.dart';
-import '../../../models/game_folder_status.dart';
 
 /// Mirrors the Compose client's `OpenFolderMenuButton`: a tonal folder icon button that opens a
 /// dropdown of [game]'s well-known folders, each opened in an external file manager when tapped.

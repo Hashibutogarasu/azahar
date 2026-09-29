@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../data/repositories/first_launch_repository.dart';
 import '../../data/repositories/game_repository.dart';
@@ -8,8 +9,6 @@ import '../../data/repositories/games_directory_repository.dart';
 import '../../data/repositories/permission_repository.dart';
 import '../../data/settings/user_directories_provider.dart';
 import '../../data/user_directory_bootstrap.dart';
-import '../../models/copy_dir_progress.dart';
-import '../../native/native_bridge.dart';
 
 class SetupWizardViewModel extends ChangeNotifier {
   SetupWizardViewModel(

@@ -1,4 +1,5 @@
-import '../../native/native_bridge.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
+
 import 'permission_repository.dart';
 
 /// Requests permissions natively via GTK, since `permission_handler` has no

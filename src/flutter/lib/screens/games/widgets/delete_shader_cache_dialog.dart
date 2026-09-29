@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../../app_services.dart';
 import '../../../i18n/translations.g.dart';
-import '../../../models/game.dart';
-import '../../../models/shader_cache_backend.dart';
 import '../../../widgets/dialog_cancel_button.dart';
 
 /// Mirrors the Compose client's `DeleteShaderCacheButton`: asks which graphics backend's disk

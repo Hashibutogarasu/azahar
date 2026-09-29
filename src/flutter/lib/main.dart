@@ -6,6 +6,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import 'app_services.dart';
 import 'data/settings/debug_settings_provider.dart';
@@ -13,7 +14,6 @@ import 'data/user_directory_bootstrap.dart';
 import 'emulation_main.dart';
 import 'errors/app_exception.dart';
 import 'i18n/translations.g.dart';
-import 'native/applet_channel.dart';
 import 'routing/app_routes.dart';
 import 'screens/settings/settings_routes.dart' as legacy_settings;
 import 'theme/app_theme.dart';
@@ -77,7 +77,15 @@ void main(List<String> args) {
         );
       }
 
-      AppletChannel(_navigatorKey);
+      AppletChannel(
+        _navigatorKey,
+        stringsOf: (context) => AppletStrings(
+          cancel: context.t.common.cancel,
+          iForgot: context.t.applets.iForgot,
+          standardMii: context.t.applets.standardMii,
+          softwareKeyboard: context.t.applets.softwareKeyboard,
+        ),
+      );
 
       final defaultOnError = FlutterError.onError;
       FlutterError.onError = (details) {

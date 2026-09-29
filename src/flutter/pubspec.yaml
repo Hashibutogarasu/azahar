@@ -8,6 +8,8 @@ environment:
   sdk: ^3.12.2
 
 dependencies:
+  azahar_for_flutter:
+    path: packages/azahar_for_flutter
   babstrap_settings_screen:
     path: packages/babstrap_settings_screen
   desktop_multi_window: ^0.3.1

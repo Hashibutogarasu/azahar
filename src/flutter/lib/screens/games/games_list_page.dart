@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../app_services.dart';
 import '../../data/repositories/game_repository.dart';
 import '../../i18n/translations.g.dart';
-import '../../models/game.dart';
 import '../../widgets/app_search_bar.dart';
 import 'game_process_provider.dart';
 import 'widgets/about_game_bottom_sheet.dart';

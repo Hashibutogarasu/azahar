@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../../i18n/translations.g.dart';
-import '../../../models/copy_dir_progress.dart';
 
 class CopyDirProgressDialog extends StatelessWidget {
   const CopyDirProgressDialog({super.key, required this.progressStream});

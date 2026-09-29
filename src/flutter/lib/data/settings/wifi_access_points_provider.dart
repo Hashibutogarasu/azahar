@@ -1,10 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../app_services.dart';
-import '../../models/access_point.dart';
-import '../../native/native_bridge.dart';
 
 final realAccessPointsProvider =
     AsyncNotifierProvider<RealAccessPointsNotifier, List<AccessPoint>>(

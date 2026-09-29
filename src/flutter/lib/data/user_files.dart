@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
-import '../native/native_bridge.dart';
 import 'user_directory_bootstrap.dart';
 
 /// Reads and writes files inside the user directory using paths relative to it.

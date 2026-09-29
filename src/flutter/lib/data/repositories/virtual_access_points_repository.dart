@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
-import '../../models/access_point.dart';
 import '../database.dart';
 import 'key_value_repository.dart';
 

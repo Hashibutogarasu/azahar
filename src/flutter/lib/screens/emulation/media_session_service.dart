@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../app_services.dart';
-import '../../native/native_bridge.dart';
 import 'media_session_metadata.dart';
 
 class MediaSessionService {
