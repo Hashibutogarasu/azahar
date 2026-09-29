@@ -813,6 +813,18 @@ void Java_org_citra_citra_1emu_NativeLibrary_createConfigFile([[maybe_unused]] J
     Config{};
 }
 
+static std::atomic<bool> console_log_enabled{true};
+static std::atomic<bool> logging_started{false};
+
+void Java_org_citra_citra_1emu_NativeLibrary_setConsoleLogEnabled([[maybe_unused]] JNIEnv* env,
+                                                                  [[maybe_unused]] jobject obj,
+                                                                  jboolean enabled) {
+    console_log_enabled = enabled;
+    if (logging_started) {
+        Common::Log::SetColorConsoleBackendEnabled(enabled);
+    }
+}
+
 void Java_org_citra_citra_1emu_NativeLibrary_startLogging(JNIEnv* env,
                                                           [[maybe_unused]] jobject obj) {
     const jclass native_library = IDCache::GetNativeLibraryClass();
@@ -842,6 +854,8 @@ void Java_org_citra_citra_1emu_NativeLibrary_startLogging(JNIEnv* env,
                 }
             },
     });
+    Common::Log::SetColorConsoleBackendEnabled(console_log_enabled);
+    logging_started = true;
     Common::Log::Start();
     LOG_INFO(Frontend, "Logging backend initialised");
 }

@@ -147,6 +147,9 @@ object NativeLibrary {
     external fun startLogging()
     external fun logUserDirectory(directory: String)
 
+    /** Enables or disables the native console log backend. */
+    external fun setConsoleLogEnabled(enabled: Boolean)
+
     /**
      * Receives one UTF-8 encoded log line from the native logging backend.
      */
