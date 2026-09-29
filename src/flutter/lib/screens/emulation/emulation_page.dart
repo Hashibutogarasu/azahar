@@ -127,7 +127,7 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
       onPointerUp: (_) => notifier.touchReleased(),
     );
     return Align(
-      alignment: Alignment.center,
+      alignment: Alignment.topCenter,
       child: Flex(
         direction: layout.direction,
         mainAxisSize: MainAxisSize.min,
