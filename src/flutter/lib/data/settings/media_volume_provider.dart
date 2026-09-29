@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../app_services.dart';
-import '../../native/native_bridge.dart';
 import '../database.dart';
 
 final masterVolumeProvider = NotifierProvider<MasterVolumeNotifier, double>(

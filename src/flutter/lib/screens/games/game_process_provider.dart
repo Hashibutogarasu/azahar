@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../app_services.dart';
 import '../../emulation_main.dart';
-import '../../models/game.dart';
 
 final gameProcessProvider =
     NotifierProvider.autoDispose<GameProcessNotifier, bool>(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../../i18n/translations.g.dart';
-import '../../../models/access_point.dart';
 import '../../../widgets/dialog_cancel_button.dart';
 
 /// Adds a new virtual access point, or edits [initial] when provided.

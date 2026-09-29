@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../../app_services.dart';
 import '../../../i18n/translations.g.dart';
-import '../../../models/game.dart';
-import '../../../models/game_folder_status.dart';
 import '../../setup/dialogs/message_dialog.dart';
 import 'create_shortcut_dialog.dart';
 import 'delete_shader_cache_dialog.dart';

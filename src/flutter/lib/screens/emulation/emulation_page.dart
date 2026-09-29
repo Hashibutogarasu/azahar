@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../data/platform_provider.dart';
-import '../../models/game.dart';
 import 'emulation_screens_layout.dart';
 import 'emulation_session_provider.dart';
 import 'widgets/bottom_screen.dart';

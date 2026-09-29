@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../app_services.dart';
-import '../../models/gpu_driver_info.dart';
 
 final gpuDriverProvider = Provider<GpuDriverService>(
   (ref) => GpuDriverService(),

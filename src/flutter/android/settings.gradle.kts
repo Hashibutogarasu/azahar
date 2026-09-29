@@ -24,5 +24,3 @@ plugins {
 }
 
 include(":app")
-include(":native")
-project(":native").projectDir = file("../modules/native")

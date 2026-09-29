@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 
-import '../../models/game.dart' as model;
+import 'package:azahar_for_flutter/azahar_for_flutter.dart' as model;
 import '../database.dart';
 import 'games_directory_repository.dart';
 import 'installed_titles_repository.dart';

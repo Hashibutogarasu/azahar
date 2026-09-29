@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../../i18n/translations.g.dart';
-import '../../../models/game.dart';
-import '../../../models/shader_cache_progress.dart';
 import '../../games/widgets/game_icon.dart';
 
 /// Loading card shown over the emulation screens until the game has started, mirroring the

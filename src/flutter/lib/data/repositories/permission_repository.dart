@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:permission_handler/permission_handler.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
-import '../../native/native_bridge.dart';
 import 'linux_permission_repository.dart';
 
 /// Runtime permission kinds.

@@ -1,6 +1,4 @@
-import '../../models/game.dart';
-import '../../models/installed_title_path.dart';
-import '../../native/native_bridge.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 class InstalledTitlesRepository {
   InstalledTitlesRepository(this._nativeBridge);

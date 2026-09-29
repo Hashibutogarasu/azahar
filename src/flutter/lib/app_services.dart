@@ -1,3 +1,5 @@
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
+
 import 'data/database.dart';
 import 'data/logging_service.dart';
 import 'data/repositories/accessibility_settings_repository.dart';
@@ -23,7 +25,6 @@ import 'data/settings/control_bindings_value_store.dart';
 import 'data/settings/emulator_settings_repository.dart';
 import 'data/settings/system_save_repository.dart';
 import 'data/user_files.dart';
-import 'native/native_bridge.dart';
 
 abstract final class AppServices {
   static final AppDatabase database = AppDatabase();

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../../app_services.dart';
 import '../../../i18n/translations.g.dart';
-import '../../../models/game.dart';
-import '../../../models/game_folder_status.dart';
-import '../../../models/game_uninstall_target.dart';
 
 /// Mirrors the Compose client's `UninstallMenuButton`: a tonal delete icon button that opens a
 /// dropdown listing [game]'s content, updates and DLC, deleting whichever the user picks.

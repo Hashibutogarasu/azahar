@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'app_services.dart';
 import 'i18n/translations.g.dart';
-import 'models/game.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 import 'screens/emulation/emulation_page.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_style.dart';
