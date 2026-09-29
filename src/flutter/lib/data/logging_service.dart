@@ -1,7 +1,8 @@
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
+
 import 'dart:async';
 import 'dart:convert';
 
-import '../native/native_bridge.dart';
 import 'user_files.dart';
 
 /// Single owner of where the emulator log is stored. The native logging backend only reports

@@ -2,13 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../app_services.dart';
 import '../../data/settings/media_volume_provider.dart';
 import '../../data/settings/sections/media_settings.dart';
-import '../../models/game.dart';
-import '../../models/shader_cache_progress.dart';
-import '../../native/native_bridge.dart';
 import 'emulation_screens_layout.dart';
 import 'emulation_session_state.dart';
 import 'media_session_metadata.dart';

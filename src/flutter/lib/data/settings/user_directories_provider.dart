@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../app_services.dart';
-import '../../models/copy_dir_progress.dart';
 import '../user_directory_bootstrap.dart';
 
 final userDirectoriesProvider = Provider<UserDirectoriesService>(

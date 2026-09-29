@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
-import '../../models/shader_cache_progress.dart';
 
 class EmulationSessionState {
   const EmulationSessionState({

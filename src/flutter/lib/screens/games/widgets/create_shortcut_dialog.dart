@@ -1,10 +1,9 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../../app_services.dart';
 import '../../../i18n/translations.g.dart';
-import '../../../models/create_shortcut_request.dart';
-import '../../../models/game.dart';
 import '../../../widgets/dialog_cancel_button.dart';
 import 'game_icon.dart';
 

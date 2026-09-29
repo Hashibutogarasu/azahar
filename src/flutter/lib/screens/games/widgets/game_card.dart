@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../../i18n/translations.g.dart';
-import '../../../models/game.dart';
 import '../../../theme/extensions/game_card_theme.dart';
 import '../../../theme/extensions/glass_surface_theme.dart';
 import '../../../widgets/app_liquid_glass.dart';

@@ -49,6 +49,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.13.1"
+  azahar_for_flutter:
+    dependency: "direct main"
+    description:
+      path: "../azahar_for_flutter"
+      relative: true
+    source: path
+    version: "0.0.1"
   babstrap_settings_screen:
     dependency: "direct main"
     description:
@@ -1249,5 +1256,5 @@ packages:
     source: hosted
     version: "2.2.4"
 sdks:
-  dart: ">=3.12.2 <4.0.0"
+  dart: ">=3.13.4 <4.0.0"
   flutter: ">=3.44.0"

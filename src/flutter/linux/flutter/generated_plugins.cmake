@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  azahar_for_flutter
   desktop_multi_window
   dynamic_color
   gamepads_linux
