@@ -4,6 +4,7 @@ import '../../../i18n/translations.g.dart';
 import '../../../models/game.dart';
 import '../../../theme/extensions/game_card_theme.dart';
 import '../../../theme/extensions/glass_surface_theme.dart';
+import '../../../widgets/app_liquid_glass.dart';
 import 'game_icon.dart';
 import 'game_regions_translator.dart';
 
@@ -34,23 +35,19 @@ class GameCard extends StatelessWidget {
     final cardTheme = Theme.of(context).extension<GameCardTheme>()!;
     return Padding(
       padding: EdgeInsets.all(outerPadding),
-      child: Material(
-        color: isValidExtension
+      child: AppLiquidGlass(
+        borderRadius: surfaceTheme.borderRadius,
+        blurSigma: surfaceTheme.blurSigma,
+        fillColor: isValidExtension
             ? surfaceTheme.fillColor
             : cardTheme.invalidExtensionColor,
-        borderRadius: surfaceTheme.borderRadius,
+        borderColor: surfaceTheme.borderColor,
+        shadow: surfaceTheme.shadow,
         child: InkWell(
           onTap: onTap,
           onLongPress: onLongPress,
           borderRadius: surfaceTheme.borderRadius,
           child: Container(
-            decoration: BoxDecoration(
-              borderRadius: surfaceTheme.borderRadius,
-              border: Border.all(
-                color: surfaceTheme.borderColor,
-                width: surfaceTheme.borderWidth,
-              ),
-            ),
             padding: EdgeInsets.all(innerPadding),
             child: Row(
               children: [

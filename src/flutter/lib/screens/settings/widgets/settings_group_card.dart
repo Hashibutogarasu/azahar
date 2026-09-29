@@ -2,8 +2,11 @@ import 'package:babstrap_settings_screen/babstrap_settings_screen.dart'
     as babstrap;
 import 'package:flutter/material.dart';
 
+import '../../../theme/extensions/glass_surface_theme.dart';
+import '../../../widgets/app_liquid_glass.dart';
+
 /// Renders a titled group of [babstrap.SettingsItem]s with the same title/card layout as
-/// [babstrap.SettingsGroup], but paints the card background with a [Material] instead of
+/// [babstrap.SettingsGroup], but paints the card background with [AppLiquidGlass] instead of
 /// [babstrap.SettingsGroup]'s own [Container] decoration. [babstrap.SettingsGroup] draws that
 /// background with a `DecoratedBox` sitting between its `ListTile`s and the nearest `Material`
 /// ancestor, which trips `ListTile`'s "background color or ink splashes may be invisible"
@@ -22,6 +25,7 @@ class SettingsGroupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final surfaceTheme = Theme.of(context).extension<GlassSurfaceTheme>()!;
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       child: Column(
@@ -38,10 +42,13 @@ class SettingsGroupCard extends StatelessWidget {
                 ),
               ),
             ),
-          Material(
-            color: Theme.of(context).cardColor,
+          AppLiquidGlass(
             borderRadius: BorderRadius.circular(15),
-            clipBehavior: Clip.antiAlias,
+            blurSigma: surfaceTheme.blurSigma,
+            fillColor: surfaceTheme.blurSigma > 0
+                ? surfaceTheme.fillColor
+                : Theme.of(context).cardColor,
+            borderColor: surfaceTheme.borderColor,
             child: babstrap.SettingsGroup(
               backgroundColor: Colors.transparent,
               margin: EdgeInsets.zero,

@@ -100,3 +100,6 @@
 [submodule "babstrap_settings_screen"]
 	path = src/flutter/packages/babstrap_settings_screen
 	url = git@github.com:Hashibutogarasu/babstrap_settings_screen.git
+[submodule "src/flutter/packages/glass_bottom_navigation"]
+	path = src/flutter/packages/glass_bottom_navigation
+	url = git@github.com:Hashibutogarasu/glass_bottom_navigation.git
