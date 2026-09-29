@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <functional>
 #include <string_view>
 #include "common/logging/filter.h"
 
@@ -11,8 +12,23 @@ namespace Common::Log {
 
 class Filter;
 
+/**
+ * Destination for formatted log lines. The logging backend never decides where log output is
+ * stored; the host application installs a sink and owns the log file location and policy.
+ */
+struct Sink {
+    std::function<void(std::string_view line)> write;
+    std::function<void()> flush;
+};
+
 /// Initializes the logging system. This should be the first thing called in main.
-void Initialize(std::string_view log_file = "");
+void Initialize();
+
+/**
+ * Installs the sink that receives every formatted log line. Lines produced before a sink was
+ * installed are buffered and replayed to it in order.
+ */
+void SetSink(Sink sink);
 
 void Start();
 

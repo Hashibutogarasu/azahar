@@ -32,14 +32,19 @@ class EmulationDrawer extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-              child: Text(gameTitle, style: Theme.of(context).textTheme.headlineMedium),
+              child: Text(
+                gameTitle,
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
             ),
             _MenuSection(
               title: t.emulation.menuSectionGeneral,
               children: [
                 _MenuItem(
                   icon: isPaused ? Icons.play_arrow : Icons.pause,
-                  title: isPaused ? t.emulation.resumeEmulation : t.emulation.pauseEmulation,
+                  title: isPaused
+                      ? t.emulation.resumeEmulation
+                      : t.emulation.pauseEmulation,
                   onTap: onTogglePause,
                 ),
               ],
@@ -76,9 +81,9 @@ class _MenuSection extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
           child: Text(
             title,
-            style: Theme.of(
-              context,
-            ).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.primary),
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ),
         ...children,
@@ -88,7 +93,11 @@ class _MenuSection extends StatelessWidget {
 }
 
 class _MenuItem extends StatelessWidget {
-  const _MenuItem({required this.icon, required this.title, required this.onTap});
+  const _MenuItem({
+    required this.icon,
+    required this.title,
+    required this.onTap,
+  });
 
   final IconData icon;
   final String title;

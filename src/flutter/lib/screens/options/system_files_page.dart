@@ -16,7 +16,15 @@ class SystemFilesPage extends ConsumerStatefulWidget {
 }
 
 class _SystemFilesPageState extends ConsumerState<SystemFilesPage> {
-  static const _regionLabels = ['JPN', 'USA', 'EUR', 'AUS', 'CHN', 'KOR', 'TWN'];
+  static const _regionLabels = [
+    'JPN',
+    'USA',
+    'EUR',
+    'AUS',
+    'CHN',
+    'KOR',
+    'TWN',
+  ];
 
   SystemFilesService get _service => ref.read(systemFilesProvider);
 
@@ -29,8 +37,12 @@ class _SystemFilesPageState extends ConsumerState<SystemFilesPage> {
   @override
   void initState() {
     super.initState();
-    _service.isFullConsoleLinked().then((value) => setState(() => _consoleLinked = value));
-    _service.isSystemSetupNeeded().then((value) => setState(() => _runSystemSetup = value));
+    _service.isFullConsoleLinked().then(
+      (value) => setState(() => _consoleLinked = value),
+    );
+    _service.isSystemSetupNeeded().then(
+      (value) => setState(() => _runSystemSetup = value),
+    );
     _loadHomeMenuPaths();
   }
 
@@ -99,7 +111,10 @@ class _SystemFilesPageState extends ConsumerState<SystemFilesPage> {
     final linked = await _service.isFullConsoleLinked();
     if (mounted) setState(() => _consoleLinked = linked);
     unawaited(_loadHomeMenuPaths());
-    await _service.launchArticInstall(address: result.address, installO3ds: result.installO3ds);
+    await _service.launchArticInstall(
+      address: result.address,
+      installO3ds: result.installO3ds,
+    );
   }
 
   Future<void> _confirmDeleteSystemFiles() async {
@@ -128,7 +143,10 @@ class _SystemFilesPageState extends ConsumerState<SystemFilesPage> {
         children: [
           Text(s.preamble),
           const SizedBox(height: 16),
-          FilledButton(onPressed: _connectSetupTool, child: Text(s.connectSetupTool)),
+          FilledButton(
+            onPressed: _connectSetupTool,
+            child: Text(s.connectSetupTool),
+          ),
           const SizedBox(height: 16),
           FilledButton(
             onPressed: _consoleLinked ? _confirmDeleteSystemFiles : null,

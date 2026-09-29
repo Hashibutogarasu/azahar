@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 // ignore: deprecated_member_use_from_same_package
-import '../../../data/settings/sections/system_settings.dart' show buildSystemSettingsItems;
+import '../../../data/settings/sections/system_settings.dart'
+    show buildSystemSettingsItems;
 import '../../../i18n/translations.g.dart';
 import '../widgets/settings_list.dart';
 

@@ -4,7 +4,12 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../i18n/translations.g.dart';
 
 class SetupWarningDialog extends StatelessWidget {
-  const SetupWarningDialog({super.key, required this.title, required this.description, this.helpUrl});
+  const SetupWarningDialog({
+    super.key,
+    required this.title,
+    required this.description,
+    this.helpUrl,
+  });
 
   final String title;
   final String description;
@@ -18,7 +23,11 @@ class SetupWarningDialog extends StatelessWidget {
   }) {
     return showDialog<bool>(
       context: context,
-      builder: (_) => SetupWarningDialog(title: title, description: description, helpUrl: helpUrl),
+      builder: (_) => SetupWarningDialog(
+        title: title,
+        description: description,
+        helpUrl: helpUrl,
+      ),
     );
   }
 
@@ -31,7 +40,10 @@ class SetupWarningDialog extends StatelessWidget {
       actions: [
         if (helpUrl != null)
           TextButton(
-            onPressed: () => launchUrl(Uri.parse(helpUrl!), mode: LaunchMode.externalApplication),
+            onPressed: () => launchUrl(
+              Uri.parse(helpUrl!),
+              mode: LaunchMode.externalApplication,
+            ),
             child: Text(t.setup.warningHelp),
           ),
         TextButton(

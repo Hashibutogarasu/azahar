@@ -14,7 +14,10 @@ class ControlsSettingsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(t.settings.gamepad.title)),
       body: SettingsList(
-        items: buildControlsSettingsItems(t, AppServices.controlBindingsValueStore),
+        items: buildControlsSettingsItems(
+          t,
+          AppServices.controlBindingsValueStore,
+        ),
       ),
     );
   }

@@ -8,8 +8,10 @@ part 'settings_item.freezed.dart';
 
 @freezed
 sealed class SettingsItem with _$SettingsItem {
-  const factory SettingsItem.header({required String title, String? description}) =
-      SettingsHeaderItem;
+  const factory SettingsItem.header({
+    required String title,
+    String? description,
+  }) = SettingsHeaderItem;
 
   const factory SettingsItem.switch_({
     required String title,

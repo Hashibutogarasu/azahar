@@ -19,31 +19,23 @@ import org.citra.citra_emu.channel.EmulationController
 import org.citra.citra_emu.channel.GameActionsController
 import org.citra.citra_emu.channel.GamesController
 import org.citra.citra_emu.channel.GpuDriverController
+import org.citra.citra_emu.channel.LogStreamHandler
 import org.citra.citra_emu.channel.SettingsController
 import org.citra.citra_emu.channel.ShowMiiSelector
 import org.citra.citra_emu.channel.SystemFilesController
+import org.citra.citra_emu.channel.UserFilesController
 import org.citra.citra_emu.channel.WifiController
 import org.citra.citra_emu.utils.AppletBridge
 import org.citra.citra_emu.utils.DiskShaderCacheProgress
 
 class MainActivity : FlutterFragmentActivity() {
-    private val openUserDirectoryLauncher =
-        registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
-            directoryController.onUserDirectoryPicked(uri)
-        }
-
-    private val openGamesDirectoryLauncher =
-        registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
-            directoryController.onGamesDirectoryPicked(uri)
-        }
-
     private val pickImageLauncher =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             StillImageCameraHelper.OnFilePickerResult(uri?.toString())
         }
 
     private val directoryController: DirectoryController by lazy {
-        DirectoryController(this, contentResolver, openUserDirectoryLauncher, openGamesDirectoryLauncher)
+        DirectoryController(this, contentResolver)
     }
     private val gamesController: GamesController by lazy { GamesController(this, cacheDir) }
     private val gameActionsController: GameActionsController by lazy { GameActionsController(this) }
@@ -52,6 +44,7 @@ class MainActivity : FlutterFragmentActivity() {
     private val ciaInstallController by lazy { CiaInstallController(this) }
     private val systemFilesController = SystemFilesController()
     private val wifiController = WifiController()
+    private val userFilesController by lazy { UserFilesController(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,7 +87,8 @@ class MainActivity : FlutterFragmentActivity() {
                 gameActionsController.handlers +
                 emulationController.handlers + settingsController.handlers +
                 gpuDriverController.handlers + ciaInstallController.handlers +
-                systemFilesController.handlers + wifiController.handlers)
+                systemFilesController.handlers + wifiController.handlers +
+                userFilesController.handlers)
                 .associateBy { it.name }
 
         val appletChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, APPLET_CHANNEL)
@@ -173,6 +167,9 @@ class MainActivity : FlutterFragmentActivity() {
                 }
             })
 
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, LOG_LINES_CHANNEL)
+            .setStreamHandler(LogStreamHandler())
+
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
                 handlers[call.method]?.execute(call, result) ?: result.notImplemented()
@@ -184,5 +181,6 @@ class MainActivity : FlutterFragmentActivity() {
         private const val SHADER_PROGRESS_CHANNEL = "org.citra.citra_emu/azahar_bridge/shader_progress"
         private const val APPLET_CHANNEL = "org.citra.citra_emu/azahar_bridge/applet"
         private const val COPY_PROGRESS_CHANNEL = "org.citra.citra_emu/azahar_bridge/copy_progress"
+        private const val LOG_LINES_CHANNEL = "org.citra.citra_emu/azahar_bridge/log_lines"
     }
 }

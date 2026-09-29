@@ -50,7 +50,7 @@
       "warningDescription": "この手順はAzaharの動作に必要です。ディレクトリを選択してから続行してください。",
       "warningHelpUrl": "https://web.archive.org/web/20240304193549/https://github.com/citra-emu/citra/wiki/Citra-Android-user-data-and-storage",
       "moveData": "データを移動",
-      "movingData": "データを移動中…"
+      "movingData": "データを移動中"
     },
     "gamesDirectory": {
       "title": "アプリケーション",
@@ -113,7 +113,8 @@
     "invalidRegion": "無効なリージョン"
   },
   "emulation": {
-    "loading": "読み込み中…",
+    "loading": "読み込み中",
+    "terminating": "終了しています",
     "preparingShaders": "シェーダーを準備中",
     "buildingShaders": "シェーダーをビルド中",
     "shaderProgress": "${progress}/${max}",
@@ -151,6 +152,10 @@
     "themeAndColorDescription": "アプリの見た目を変更します",
     "media": "メディア",
     "mediaDescription": "バックグラウンド再生とメディアセッションの設定",
+    "accessibility": "アクセシビリティ",
+    "accessibilityDescription": "モーションなどのアクセシビリティ設定",
+    "advanced": "詳細設定",
+    "advancedDescription": "より詳細なオプションを設定します",
     "about": "このアプリについて",
     "aboutDescription": "ビルドバージョン、クレジットなど",
     "general": "プロフィール",
@@ -171,7 +176,8 @@
       "controls": "コントロール",
       "tools": "ツール",
       "folderSettings": "フォルダ設定",
-      "other": "その他"
+      "other": "その他",
+      "accessibility": "アクセシビリティ"
     }
   },
   "systemFiles": {
@@ -225,7 +231,7 @@
       "invalidValue": "${title}: 値は${min}から${max}の間で指定してください。"
     },
     "inputBindingDialog": {
-      "waitingForInput": "コントローラーのボタンを押してください…"
+      "waitingForInput": "コントローラーのボタンを押してください"
     },
     "general": {
       "title": "プロフィール",
@@ -668,6 +674,8 @@
     "debug": {
       "title": "デバッグ",
       "warning": "これらの設定はデバッグ用途のみです。変更すると動作が不安定になる場合があります。",
+      "logToConsole": "標準出力にログを出力",
+      "logToConsoleDescription": "ネイティブのログをFlutterの標準出力にも出力します。",
       "cpuClockSpeed": "CPUクロック速度",
       "cpuClockSpeedDescription": "エミュレートされたCPUをオーバークロック/アンダークロックします。推奨しません。",
       "cpuJit": "CPU JIT",
@@ -687,10 +695,12 @@
     },
     "theme": {
       "title": "テーマと色",
+      "themeStyle": "テーマスタイル",
       "materialYou": "Material You",
       "materialYouDescription": "端末の壁紙から抽出した色を使用します。",
       "staticThemeColor": "固定テーマカラー",
-      "staticThemeColorBlue": "青（デフォルト）",
+      "staticThemeColorDefault": "デフォルト",
+      "staticThemeColorBlue": "青",
       "staticThemeColorCyan": "シアン",
       "staticThemeColorRed": "赤",
       "staticThemeColorGreen": "緑",
@@ -705,6 +715,25 @@
       "themeModeDark": "ダーク",
       "useBlackBackgrounds": "黒背景を使用",
       "useBlackBackgroundsDescription": "ダークモード有効時に、ダークグレーの代わりに黒背景を使用します。"
+    },
+    "themes": {
+      "azahar": "Azahar",
+      "legacy": "Legacy"
+    },
+    "accessibility": {
+      "title": "アクセシビリティ",
+      "reduceMotion": "視差効果を減らす",
+      "reduceMotionDescription": "アプリ内のアニメーションや動きの効果を減らします。"
+    },
+    "advanced": {
+      "title": "詳細設定",
+      "animationSpeedLabel": "アニメーション速度",
+      "animationSpeedDescription": "画面遷移などのアニメーションの速さを調整します。",
+      "animationSpeed": {
+        "fast": "速い",
+        "normal": "普通",
+        "slow": "遅い"
+      }
     },
     "language": {
       "title": "言語",

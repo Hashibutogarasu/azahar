@@ -5,7 +5,10 @@ import 'sections/networking_settings.dart';
 import 'sections/system_settings.dart';
 
 class NetworkingSettingsState {
-  const NetworkingSettingsState({required this.accessNetwork, required this.useWireless});
+  const NetworkingSettingsState({
+    required this.accessNetwork,
+    required this.useWireless,
+  });
 
   final bool accessNetwork;
   final bool useWireless;
@@ -13,8 +16,8 @@ class NetworkingSettingsState {
 
 final networkingSettingsProvider =
     NotifierProvider<NetworkingSettingsNotifier, NetworkingSettingsState>(
-  NetworkingSettingsNotifier.new,
-);
+      NetworkingSettingsNotifier.new,
+    );
 
 class NetworkingSettingsNotifier extends Notifier<NetworkingSettingsState> {
   NetworkAccessValueStore get _accessStore =>
@@ -23,7 +26,9 @@ class NetworkingSettingsNotifier extends Notifier<NetworkingSettingsState> {
   @override
   NetworkingSettingsState build() {
     return NetworkingSettingsState(
-      accessNetwork: _accessStore.readBool(SystemSettingKeys.requiredOnlineLleModules),
+      accessNetwork: _accessStore.readBool(
+        SystemSettingKeys.requiredOnlineLleModules,
+      ),
       useWireless: AppServices.emulatorSettingsRepository.readBool(
         SystemSettingKeys.scanRealWifiNetworks,
       ),
@@ -31,8 +36,14 @@ class NetworkingSettingsNotifier extends Notifier<NetworkingSettingsState> {
   }
 
   Future<void> setAccessNetwork(bool value) async {
-    await _accessStore.writeBool(SystemSettingKeys.requiredOnlineLleModules, value);
-    state = NetworkingSettingsState(accessNetwork: value, useWireless: state.useWireless);
+    await _accessStore.writeBool(
+      SystemSettingKeys.requiredOnlineLleModules,
+      value,
+    );
+    state = NetworkingSettingsState(
+      accessNetwork: value,
+      useWireless: state.useWireless,
+    );
   }
 
   Future<void> setUseWireless(bool value) async {
@@ -41,6 +52,9 @@ class NetworkingSettingsNotifier extends Notifier<NetworkingSettingsState> {
       value,
     );
     await AppServices.emulatorSettingsRepository.save();
-    state = NetworkingSettingsState(accessNetwork: state.accessNetwork, useWireless: value);
+    state = NetworkingSettingsState(
+      accessNetwork: state.accessNetwork,
+      useWireless: value,
+    );
   }
 }

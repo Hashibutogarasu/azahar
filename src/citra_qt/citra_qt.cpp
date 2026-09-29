@@ -83,6 +83,7 @@
 #include "common/file_util.h"
 #include "common/literals.h"
 #include "common/logging/backend.h"
+#include "common/logging/file_sink.h"
 #include "common/logging/log.h"
 #include "common/memory_detect.h"
 #include "common/scm_rev.h"
@@ -128,6 +129,8 @@ Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin);
 
 constexpr int default_mouse_timeout = 2500;
 
+constexpr char log_file_name[] = "azahar_log.txt";
+
 /**
  * "Callouts" are one-time instructional messages shown to the user. In the config settings, there
  * is a bitfield "callout_flags" options, used to track if a message has already been shown to the
@@ -172,6 +175,8 @@ GMainWindow::GMainWindow(Core::System& system_)
     : ui{std::make_unique<Ui::MainWindow>()}, system{system_}, movie{system.Movie()},
       user_data_migrator{this}, config{std::make_unique<QtConfig>()}, emu_thread{nullptr} {
     Common::Log::Initialize();
+    Common::Log::SetSink(Common::Log::MakeFileSink(
+        FileUtil::GetUserPath(FileUtil::UserPath::LogDir) + log_file_name));
     Common::Log::Start();
 
     Debugger::ToggleConsole();

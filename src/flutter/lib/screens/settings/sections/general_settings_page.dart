@@ -21,7 +21,9 @@ class _GeneralSettingsPageState extends State<GeneralSettingsPage> {
     final t = context.t;
     return Scaffold(
       appBar: AppBar(title: Text(t.settings.general.title)),
-      body: SettingsList(items: buildGeneralSettingsItems(t, _store, () => setState(() {}))),
+      body: SettingsList(
+        items: buildGeneralSettingsItems(t, _store, () => setState(() {})),
+      ),
     );
   }
 }

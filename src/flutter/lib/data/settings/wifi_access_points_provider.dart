@@ -5,11 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app_services.dart';
 import '../../models/access_point.dart';
 import '../../native/native_bridge.dart';
-import '../database.dart';
 
-final realAccessPointsProvider = AsyncNotifierProvider<RealAccessPointsNotifier, List<AccessPoint>>(
-  RealAccessPointsNotifier.new,
-);
+final realAccessPointsProvider =
+    AsyncNotifierProvider<RealAccessPointsNotifier, List<AccessPoint>>(
+      RealAccessPointsNotifier.new,
+    );
 
 class RealAccessPointsNotifier extends AsyncNotifier<List<AccessPoint>> {
   NativeBridge get _bridge => AppServices.nativeBridge;
@@ -24,12 +24,18 @@ class RealAccessPointsNotifier extends AsyncNotifier<List<AccessPoint>> {
 }
 
 class VirtualAccessPointsState {
-  const VirtualAccessPointsState({required this.enabled, required this.accessPoints});
+  const VirtualAccessPointsState({
+    required this.enabled,
+    required this.accessPoints,
+  });
 
   final bool enabled;
   final List<AccessPoint> accessPoints;
 
-  VirtualAccessPointsState copyWith({bool? enabled, List<AccessPoint>? accessPoints}) {
+  VirtualAccessPointsState copyWith({
+    bool? enabled,
+    List<AccessPoint>? accessPoints,
+  }) {
     return VirtualAccessPointsState(
       enabled: enabled ?? this.enabled,
       accessPoints: accessPoints ?? this.accessPoints,
@@ -39,8 +45,8 @@ class VirtualAccessPointsState {
 
 final virtualAccessPointsProvider =
     NotifierProvider<VirtualAccessPointsNotifier, VirtualAccessPointsState>(
-  VirtualAccessPointsNotifier.new,
-);
+      VirtualAccessPointsNotifier.new,
+    );
 
 class VirtualAccessPointsNotifier extends Notifier<VirtualAccessPointsState> {
   NativeBridge get _bridge => AppServices.nativeBridge;
@@ -53,11 +59,13 @@ class VirtualAccessPointsNotifier extends Notifier<VirtualAccessPointsState> {
   }
 
   Future<void> _loadPersisted() async {
-    final enabled = await AppServices.settingsRepository.readBool(
-      SettingsKeys.virtualNetworkEnabled,
+    final enabled = await AppServices.virtualAccessPointsRepository.isEnabled();
+    final accessPoints = await AppServices.virtualAccessPointsRepository
+        .readAll();
+    state = VirtualAccessPointsState(
+      enabled: enabled,
+      accessPoints: accessPoints,
     );
-    final accessPoints = await AppServices.virtualAccessPointsRepository.readAll();
-    state = VirtualAccessPointsState(enabled: enabled, accessPoints: accessPoints);
     await _syncNative();
   }
 
@@ -87,12 +95,17 @@ class VirtualAccessPointsNotifier extends Notifier<VirtualAccessPointsState> {
 
   Future<void> removeAccessPoint(AccessPoint accessPoint) async {
     state = state.copyWith(
-      accessPoints: state.accessPoints.where((it) => it != accessPoint).toList(),
+      accessPoints: state.accessPoints
+          .where((it) => it != accessPoint)
+          .toList(),
     );
     await _push();
   }
 
-  Future<void> updateAccessPoint(AccessPoint oldValue, AccessPoint newValue) async {
+  Future<void> updateAccessPoint(
+    AccessPoint oldValue,
+    AccessPoint newValue,
+  ) async {
     state = state.copyWith(
       accessPoints: [
         for (final accessPoint in state.accessPoints)
@@ -103,23 +116,24 @@ class VirtualAccessPointsNotifier extends Notifier<VirtualAccessPointsState> {
   }
 
   Future<void> _push() async {
-    await AppServices.settingsRepository.writeBool(
-      SettingsKeys.virtualNetworkEnabled,
-      state.enabled,
+    await AppServices.virtualAccessPointsRepository.setEnabled(state.enabled);
+    await AppServices.virtualAccessPointsRepository.writeAll(
+      state.accessPoints,
     );
-    await AppServices.virtualAccessPointsRepository.writeAll(state.accessPoints);
     await _syncNative();
   }
 
   Future<void> _syncNative() {
-    return _bridge.setVirtualAccessPoints(state.enabled ? state.accessPoints : null);
+    return _bridge.setVirtualAccessPoints(
+      state.enabled ? state.accessPoints : null,
+    );
   }
 }
 
 final selectedRealAccessPointsProvider =
     NotifierProvider<SelectedAccessPointsNotifier, Set<AccessPoint>>(
-  SelectedAccessPointsNotifier.new,
-);
+      SelectedAccessPointsNotifier.new,
+    );
 
 class SelectedAccessPointsNotifier extends Notifier<Set<AccessPoint>> {
   @override
@@ -138,8 +152,8 @@ class SelectedAccessPointsNotifier extends Notifier<Set<AccessPoint>> {
 
 final copiedAccessPointsProvider =
     NotifierProvider<CopiedAccessPointsNotifier, List<AccessPoint>>(
-  CopiedAccessPointsNotifier.new,
-);
+      CopiedAccessPointsNotifier.new,
+    );
 
 class CopiedAccessPointsNotifier extends Notifier<List<AccessPoint>> {
   @override

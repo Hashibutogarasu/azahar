@@ -8,7 +8,10 @@ class ArticBaseConnectDialog extends StatefulWidget {
 
   final String initialAddress;
 
-  static Future<String?> show(BuildContext context, {required String initialAddress}) {
+  static Future<String?> show(
+    BuildContext context, {
+    required String initialAddress,
+  }) {
     return showDialog<String>(
       context: context,
       builder: (_) => ArticBaseConnectDialog(initialAddress: initialAddress),

@@ -13,15 +13,19 @@ import 'widgets/settings_list.dart';
 /// The pre-redesign settings root menu, kept only for the legacy Options UI
 /// (`useLegacySettingsUI`). The current UI reaches every section directly from the Options
 /// page instead of through this hub.
-@Deprecated('Superseded by the Options page groups. Kept for the legacy Options UI only.')
+@Deprecated(
+  'Superseded by the Options page groups. Kept for the legacy Options UI only.',
+)
 class LegacySettingsMenuPage extends ConsumerStatefulWidget {
   const LegacySettingsMenuPage({super.key});
 
   @override
-  ConsumerState<LegacySettingsMenuPage> createState() => _LegacySettingsMenuPageState();
+  ConsumerState<LegacySettingsMenuPage> createState() =>
+      _LegacySettingsMenuPageState();
 }
 
-class _LegacySettingsMenuPageState extends ConsumerState<LegacySettingsMenuPage> {
+class _LegacySettingsMenuPageState
+    extends ConsumerState<LegacySettingsMenuPage> {
   @override
   void dispose() {
     AppServices.emulatorSettingsRepository.save();

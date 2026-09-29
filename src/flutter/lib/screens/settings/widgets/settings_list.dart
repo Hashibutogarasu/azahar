@@ -1,4 +1,5 @@
-import 'package:babstrap_settings_screen/babstrap_settings_screen.dart' as babstrap;
+import 'package:babstrap_settings_screen/babstrap_settings_screen.dart'
+    as babstrap;
 import 'package:flutter/material.dart';
 import 'package:gamepads/gamepads.dart';
 
@@ -9,6 +10,7 @@ import '../../../errors/app_exception.dart';
 import '../../../i18n/translations.g.dart';
 import '../../../widgets/dialog_cancel_button.dart';
 import 'settings_group_card.dart';
+import 'toggle_settings_item.dart';
 
 /// Renders a list of [SettingsItem]s using [SettingsGroupCard]/[babstrap.SettingsItem], so
 /// every settings screen shares the same visual design as the redesigned Options page. Items are
@@ -37,7 +39,8 @@ class SettingsList extends StatefulWidget {
 class _SettingsListState extends State<SettingsList> {
   final _repository = AppServices.emulatorSettingsRepository;
 
-  SettingsValueStore _storeFor(SettingsValueStore? store) => store ?? _repository;
+  SettingsValueStore _storeFor(SettingsValueStore? store) =>
+      store ?? _repository;
 
   Future<void> _persist(SettingsValueStore? store) async {
     if ((store ?? _repository) == _repository) {
@@ -82,25 +85,27 @@ class _SettingsListState extends State<SettingsList> {
 
   babstrap.SettingsItem _buildItem(BuildContext context, SettingsItem item) {
     return switch (item) {
-      SettingsHeaderItem() => throw StateError('Headers are consumed while grouping.'),
-      SettingsSwitchItem() => babstrap.SettingsItem(
-        icons: Icons.toggle_on_outlined,
+      SettingsHeaderItem() => throw StateError(
+        'Headers are consumed while grouping.',
+      ),
+      SettingsSwitchItem() => ToggleSettingsItem(
+        icon: Icons.toggle_on_outlined,
         title: item.title,
         subtitle: item.description,
-        trailing: Switch(
-          value: _storeFor(item.store).readBool(item.setting),
-          onChanged: (value) async {
-            await _storeFor(item.store).writeBool(item.setting, value);
-            await _persist(item.store);
-            setState(() {});
-          },
-        ),
+        value: _storeFor(item.store).readBool(item.setting),
+        onChanged: (value) async {
+          await _storeFor(item.store).writeBool(item.setting, value);
+          await _persist(item.store);
+          setState(() {});
+        },
       ),
       SettingsSliderItem() => babstrap.SettingsItem(
         icons: Icons.tune,
         title: item.title,
         subtitle: item.description,
-        trailing: Text('${_storeFor(item.store).readInt(item.setting)}${item.units}'),
+        trailing: Text(
+          '${_storeFor(item.store).readInt(item.setting)}${item.units}',
+        ),
         onTap: () => _showSliderDialog(item),
       ),
       SettingsSingleChoiceItem() => babstrap.SettingsItem(
@@ -114,7 +119,9 @@ class _SettingsListState extends State<SettingsList> {
         icons: Icons.tune,
         title: item.title,
         subtitle: item.description,
-        trailing: Text('${_storeFor(item.store).readFloat(item.setting).round()}${item.units}'),
+        trailing: Text(
+          '${_storeFor(item.store).readFloat(item.setting).round()}${item.units}',
+        ),
         onTap: () => _showFloatSliderDialog(item),
       ),
       SettingsStringSingleChoiceItem() => babstrap.SettingsItem(
@@ -177,7 +184,10 @@ class _SettingsListState extends State<SettingsList> {
     final raw = _storeFor(item.store).readString(item.setting);
     final seconds = int.tryParse(raw);
     if (seconds == null) return raw;
-    final dateTime = DateTime.fromMillisecondsSinceEpoch(seconds * 1000, isUtc: true).toLocal();
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(
+      seconds * 1000,
+      isUtc: true,
+    ).toLocal();
     return dateTime.toString();
   }
 
@@ -215,7 +225,9 @@ class _SettingsListState extends State<SettingsList> {
                     onChanged: (text) {
                       pendingText = text;
                       final parsed = int.tryParse(text);
-                      if (parsed != null && parsed >= item.min && parsed <= item.max) {
+                      if (parsed != null &&
+                          parsed >= item.min &&
+                          parsed <= item.max) {
                         setDialogState(() => sliderValue = parsed);
                       }
                     },
@@ -234,15 +246,18 @@ class _SettingsListState extends State<SettingsList> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () =>
-                      setDialogState(() => applySliderValue(item.setting.defaultValue)),
+                  onPressed: () => setDialogState(
+                    () => applySliderValue(item.setting.defaultValue),
+                  ),
                   child: Text(t.settings.sliderDialog.kDefault),
                 ),
                 const DialogCancelButton(),
                 TextButton(
                   onPressed: () {
                     final parsed = int.tryParse(pendingText);
-                    if (parsed == null || parsed < item.min || parsed > item.max) {
+                    if (parsed == null ||
+                        parsed < item.min ||
+                        parsed > item.max) {
                       throw InvalidSettingValueException(
                         t.settings.sliderDialog.invalidValue(
                           title: item.title,
@@ -391,7 +406,9 @@ class _SettingsListState extends State<SettingsList> {
     setState(() {});
   }
 
-  Future<void> _showStringSingleChoiceDialog(SettingsStringSingleChoiceItem item) async {
+  Future<void> _showStringSingleChoiceDialog(
+    SettingsStringSingleChoiceItem item,
+  ) async {
     final store = _storeFor(item.store);
     final current = store.readString(item.setting);
     final result = await showDialog<String>(
@@ -427,13 +444,18 @@ class _SettingsListState extends State<SettingsList> {
   Future<void> _showStringInputDialog(SettingsStringInputItem item) async {
     final store = _storeFor(item.store);
     final localizations = MaterialLocalizations.of(context);
-    final textController = TextEditingController(text: store.readString(item.setting));
+    final textController = TextEditingController(
+      text: store.readString(item.setting),
+    );
     final result = await showDialog<String>(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text(item.title),
-          content: TextField(controller: textController, maxLength: item.maxLength),
+          content: TextField(
+            controller: textController,
+            maxLength: item.maxLength,
+          ),
           actions: [
             const DialogCancelButton(),
             TextButton(
@@ -457,7 +479,10 @@ class _SettingsListState extends State<SettingsList> {
     final seconds = int.tryParse(raw);
     final initial = seconds == null
         ? DateTime.now()
-        : DateTime.fromMillisecondsSinceEpoch(seconds * 1000, isUtc: true).toLocal();
+        : DateTime.fromMillisecondsSinceEpoch(
+            seconds * 1000,
+            isUtc: true,
+          ).toLocal();
     final date = await showDatePicker(
       context: context,
       initialDate: initial,
@@ -470,7 +495,13 @@ class _SettingsListState extends State<SettingsList> {
       initialTime: TimeOfDay.fromDateTime(initial),
     );
     if (time == null) return;
-    final combined = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+    final combined = DateTime(
+      date.year,
+      date.month,
+      date.day,
+      time.hour,
+      time.minute,
+    );
     await store.writeString(
       item.setting,
       (combined.toUtc().millisecondsSinceEpoch ~/ 1000).toString(),
@@ -494,9 +525,7 @@ class _SettingsListState extends State<SettingsList> {
         return AlertDialog(
           title: Text(item.title),
           content: Text(t.settings.inputBindingDialog.waitingForInput),
-          actions: [
-            const DialogCancelButton(),
-          ],
+          actions: [const DialogCancelButton()],
         );
       },
     );
