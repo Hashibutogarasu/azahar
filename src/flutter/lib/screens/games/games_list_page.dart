@@ -5,7 +5,6 @@ import '../../app_services.dart';
 import '../../data/repositories/game_repository.dart';
 import '../../i18n/translations.g.dart';
 import '../../models/game.dart';
-import '../../theme/extensions/game_card_theme.dart';
 import '../../widgets/app_search_bar.dart';
 import 'game_process_provider.dart';
 import 'widgets/about_game_bottom_sheet.dart';
@@ -98,7 +97,6 @@ class _GamesListPageState extends ConsumerState<GamesListPage>
   Widget build(BuildContext context) {
     final t = context.t;
     final games = _filteredGames;
-    final cardTheme = Theme.of(context).extension<GameCardTheme>()!;
     final isRunning = ref.watch(gameProcessProvider);
     if (_wasRunning && !isRunning) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _rescan());
@@ -137,20 +135,15 @@ class _GamesListPageState extends ConsumerState<GamesListPage>
                             ),
                           ],
                         )
-                      : GridView.builder(
+                      : ListView.builder(
                           padding: const EdgeInsets.all(8),
-                          gridDelegate:
-                              SliverGridDelegateWithMaxCrossAxisExtent(
-                                maxCrossAxisExtent: GameCard.maxWidth(
-                                  cardTheme,
-                                ),
-                                mainAxisExtent: GameCard.height(cardTheme),
-                              ),
                           itemCount: games.length,
                           itemBuilder: (context, index) {
                             final game = games[index];
                             return GameCard(
                               game: game,
+                              isValidExtension: _gameRepository
+                                  .isValidExtension(game),
                               onTap: () => ref
                                   .read(gameProcessProvider.notifier)
                                   .launch(game),

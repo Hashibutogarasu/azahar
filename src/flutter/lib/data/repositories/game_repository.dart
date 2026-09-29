@@ -37,6 +37,11 @@ class GameRepository {
     return scanned;
   }
 
+  bool isValidExtension(model.Game game) {
+    final extension = game.filename.split('.').last.toLowerCase();
+    return !model.GameExtensions.badExtensions.contains(extension);
+  }
+
   Future<model.Game?> gameByPath(String path) async {
     final row = await (_db.select(
       _db.games,
