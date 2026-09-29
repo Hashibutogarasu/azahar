@@ -813,9 +813,35 @@ void Java_org_citra_citra_1emu_NativeLibrary_createConfigFile([[maybe_unused]] J
     Config{};
 }
 
-void Java_org_citra_citra_1emu_NativeLibrary_createLogFile([[maybe_unused]] JNIEnv* env,
-                                                           [[maybe_unused]] jobject obj) {
+void Java_org_citra_citra_1emu_NativeLibrary_startLogging(JNIEnv* env,
+                                                          [[maybe_unused]] jobject obj) {
+    const jclass native_library = IDCache::GetNativeLibraryClass();
+    const jmethodID on_log_line = env->GetStaticMethodID(native_library, "onLogLine", "([B)V");
+    const jmethodID flush_log = env->GetStaticMethodID(native_library, "flushLog", "()V");
+
     Common::Log::Initialize();
+    Common::Log::SetSink(Common::Log::Sink{
+        .write =
+            [native_library, on_log_line](std::string_view line) {
+                JNIEnv* thread_env = IDCache::GetEnvForThread();
+                jbyteArray bytes = thread_env->NewByteArray(static_cast<jsize>(line.size()));
+                thread_env->SetByteArrayRegion(bytes, 0, static_cast<jsize>(line.size()),
+                                               reinterpret_cast<const jbyte*>(line.data()));
+                thread_env->CallStaticVoidMethod(native_library, on_log_line, bytes);
+                thread_env->DeleteLocalRef(bytes);
+                if (thread_env->ExceptionCheck()) {
+                    thread_env->ExceptionClear();
+                }
+            },
+        .flush =
+            [native_library, flush_log] {
+                JNIEnv* thread_env = IDCache::GetEnvForThread();
+                thread_env->CallStaticVoidMethod(native_library, flush_log);
+                if (thread_env->ExceptionCheck()) {
+                    thread_env->ExceptionClear();
+                }
+            },
+    });
     Common::Log::Start();
     LOG_INFO(Frontend, "Logging backend initialised");
 }

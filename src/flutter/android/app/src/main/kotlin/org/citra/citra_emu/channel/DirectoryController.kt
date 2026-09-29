@@ -3,14 +3,12 @@ package org.citra.citra_emu.channel
 import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
-import androidx.documentfile.provider.DocumentFile
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.citra.citra_emu.MainActivity
 import org.citra.citra_emu.utils.DirectoryInitialization
 import org.citra.citra_emu.utils.FileUtil
-import org.citra.citra_emu.utils.Log
 import org.citra.citra_emu.utils.PermissionsHandler
 
 class DirectoryController(
@@ -21,8 +19,7 @@ class DirectoryController(
 
     val handlers: List<AzaharMethodHandler> = listOf(
         ConfirmUserDirectory(),
-        HasUserDirectoryWriteAccess(),
-        ShareLog()
+        HasUserDirectoryWriteAccess()
     )
 
     private inner class HasUserDirectoryWriteAccess : AzaharMethodHandler {
@@ -85,34 +82,6 @@ class DirectoryController(
             } else {
                 commit()
             }
-        }
-    }
-
-    private inner class ShareLog : AzaharMethodHandler {
-        override val name = "shareLog"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
-            val logDirectory = DocumentFile.fromTreeUri(activity, PermissionsHandler.citraDirectory)
-                ?.findFile("log")
-            val currentLog = logDirectory?.findFile("azahar_log.txt")
-            val oldLog = logDirectory?.findFile("azahar_log.old.txt")
-            val logFile = if (!Log.gameLaunched && oldLog?.exists() == true) {
-                oldLog
-            } else if (currentLog?.exists() == true) {
-                currentLog
-            } else {
-                null
-            }
-            if (logFile == null) {
-                result.success(false)
-                return
-            }
-            val sendIntent = Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(Intent.EXTRA_STREAM, logFile.uri)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            }
-            activity.startActivity(Intent.createChooser(sendIntent, null))
-            result.success(true)
         }
     }
 }

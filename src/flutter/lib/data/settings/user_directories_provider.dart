@@ -35,6 +35,7 @@ class UserDirectoriesService {
       );
     }
     await AppServices.citraDirectoryRepository.setCitraDirectoryUri(uri);
+    await AppServices.loggingService.userDirectoryChanged();
   }
 
   Future<String?> pickGamesDirectory() => FilePicker.getDirectoryPath();

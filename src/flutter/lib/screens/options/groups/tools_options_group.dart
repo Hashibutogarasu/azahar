@@ -6,7 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/settings/artic_base_provider.dart';
 import '../../../data/settings/cia_install_provider.dart';
 import '../../../data/settings/gpu_driver_provider.dart';
-import '../../../data/settings/share_log_provider.dart';
+import '../../../data/logging_service.dart';
+import '../../../data/settings/logging_provider.dart';
 import '../../../i18n/translations.g.dart';
 import '../../../routing/app_routes.dart';
 import '../../settings/widgets/settings_group_card.dart';
@@ -48,7 +49,7 @@ class ToolsOptionsGroup extends ConsumerWidget {
               icons: Icons.share_outlined,
               title: t.options.shareLog,
               subtitle: t.options.shareLogDescription,
-              onTap: () => _shareLog(context, ref.read(shareLogProvider)),
+              onTap: () => _shareLog(context, ref.read(loggingProvider)),
             ),
             if (supportsGpuDriverLoading)
               babstrap.SettingsItem(
@@ -77,7 +78,7 @@ class ToolsOptionsGroup extends ConsumerWidget {
     await service.connect(address);
   }
 
-  Future<void> _shareLog(BuildContext context, ShareLogService service) async {
+  Future<void> _shareLog(BuildContext context, LoggingService service) async {
     final t = context.t;
     final found = await service.share();
     if (!found && context.mounted) {

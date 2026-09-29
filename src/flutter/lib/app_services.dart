@@ -1,4 +1,5 @@
 import 'data/database.dart';
+import 'data/logging_service.dart';
 import 'data/repositories/accessibility_settings_repository.dart';
 import 'data/repositories/advanced_settings_repository.dart';
 import 'data/repositories/artic_base_address_repository.dart';
@@ -21,11 +22,17 @@ import 'data/repositories/virtual_access_points_repository.dart';
 import 'data/settings/control_bindings_value_store.dart';
 import 'data/settings/emulator_settings_repository.dart';
 import 'data/settings/system_save_repository.dart';
+import 'data/user_files.dart';
 import 'native/native_bridge.dart';
 
 abstract final class AppServices {
   static final AppDatabase database = AppDatabase();
   static final NativeBridge nativeBridge = NativeBridge();
+  static final UserFiles userFiles = UserFiles.forPlatform(nativeBridge);
+  static final LoggingService loggingService = LoggingService(
+    nativeBridge,
+    userFiles,
+  );
   static final PermissionRepository permissionRepository =
       PermissionRepository.forPlatform(nativeBridge);
   static final InstalledTitlesRepository installedTitlesRepository =

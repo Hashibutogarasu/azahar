@@ -533,11 +533,6 @@ FlMethodResponse* HandleSelectGpuDriver(GtkWindow* window, FlValue* args) {
   return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
 }
 
-FlMethodResponse* HandleShareLog(GtkWindow* window, FlValue* args) {
-  g_autoptr(FlValue) result = fl_value_new_bool(false);
-  return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
-}
-
 FlMethodResponse* HandleHasPermission(GtkWindow* window, FlValue* args) {
   const std::string permission = StringArgument(args, "permission");
   g_autoptr(FlValue) result =
@@ -695,7 +690,6 @@ const std::unordered_map<std::string, BridgeMethodHandler>& BridgeMethodHandlers
       {"getSelectedGpuDriver", HandleGetSelectedGpuDriver},
       {"installGpuDriver", HandleInstallGpuDriver},
       {"selectGpuDriver", HandleSelectGpuDriver},
-      {"shareLog", HandleShareLog},
       {"hasPermission", HandleHasPermission},
       {"requestPermission", HandleRequestPermission},
       {"createEmulationTexture", HandleCreateEmulationTexture},
@@ -799,6 +793,18 @@ FlMethodErrorResponse* HandleShaderProgressCancel(FlEventChannel* channel, FlVal
   return nullptr;
 }
 
+FlMethodErrorResponse* HandleLogLinesListen(FlEventChannel* channel, FlValue* args,
+                                            gpointer user_data) {
+  Emulation::SetLogLinesChannel(channel);
+  return nullptr;
+}
+
+FlMethodErrorResponse* HandleLogLinesCancel(FlEventChannel* channel, FlValue* args,
+                                            gpointer user_data) {
+  Emulation::SetLogLinesChannel(nullptr);
+  return nullptr;
+}
+
 gboolean HandleWindowDeleteEvent(GtkWidget* widget, GdkEvent* event, gpointer user_data) {
   if (!Emulation::IsSessionActive()) {
     return FALSE;
@@ -817,6 +823,14 @@ void RegisterShaderProgressChannel(FlBinaryMessenger* messenger) {
       messenger, "org.citra.citra_emu/azahar_bridge/shader_progress", FL_METHOD_CODEC(codec));
   fl_event_channel_set_stream_handlers(channel, HandleShaderProgressListen,
                                        HandleShaderProgressCancel, nullptr, nullptr);
+}
+
+void RegisterLogLinesChannel(FlBinaryMessenger* messenger) {
+  g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
+  FlEventChannel* channel = fl_event_channel_new(
+      messenger, "org.citra.citra_emu/azahar_bridge/log_lines", FL_METHOD_CODEC(codec));
+  fl_event_channel_set_stream_handlers(channel, HandleLogLinesListen, HandleLogLinesCancel,
+                                       nullptr, nullptr);
 }
 
 }  // namespace
@@ -892,6 +906,7 @@ static void my_application_activate(GApplication* application) {
   fl_method_channel_set_method_call_handler(
       bridge_channel, HandleBridgeMethodCall, window, nullptr);
   RegisterShaderProgressChannel(messenger);
+  RegisterLogLinesChannel(messenger);
   g_object_set_data(G_OBJECT(window), "bridge_channel", bridge_channel);
 
   gtk_widget_grab_focus(GTK_WIDGET(view));

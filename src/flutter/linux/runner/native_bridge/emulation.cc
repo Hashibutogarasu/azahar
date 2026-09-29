@@ -5,7 +5,10 @@
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
+#include <deque>
 #include <mutex>
+#include <string>
+#include <string_view>
 #include <thread>
 
 #include <EGL/egl.h>
@@ -75,10 +78,64 @@ std::mutex g_console_log_mutex;
 bool g_console_log_enabled{true};
 bool g_logging_initialized{false};
 
+constexpr std::size_t kMaxPendingLogLines = 20000;
+constexpr guint kLogDeliveryIntervalMs = 50;
+
+std::mutex g_log_lines_mutex;
+std::deque<std::string> g_pending_log_lines;
+FlEventChannel* g_log_lines_channel{};
+bool g_log_delivery_scheduled{false};
+
+gboolean DeliverLogLines(gpointer user_data);
+
+void ScheduleLogDeliveryLocked() {
+    if (g_log_delivery_scheduled || g_log_lines_channel == nullptr ||
+        g_pending_log_lines.empty()) {
+        return;
+    }
+    g_log_delivery_scheduled = true;
+    g_timeout_add(kLogDeliveryIntervalMs, DeliverLogLines, nullptr);
+}
+
+gboolean DeliverLogLines(gpointer user_data) {
+    std::deque<std::string> lines;
+    FlEventChannel* channel = nullptr;
+    {
+        std::lock_guard<std::mutex> lock(g_log_lines_mutex);
+        g_log_delivery_scheduled = false;
+        channel = g_log_lines_channel;
+        if (channel == nullptr) {
+            return G_SOURCE_REMOVE;
+        }
+        lines.swap(g_pending_log_lines);
+    }
+    if (lines.empty()) {
+        return G_SOURCE_REMOVE;
+    }
+    g_autoptr(FlValue) list = fl_value_new_list();
+    for (const std::string& line : lines) {
+        g_autofree gchar* valid_line =
+            g_utf8_make_valid(line.data(), static_cast<gssize>(line.size()));
+        fl_value_append_take(list, fl_value_new_string(valid_line));
+    }
+    fl_event_channel_send(channel, list, nullptr, nullptr);
+    return G_SOURCE_REMOVE;
+}
+
+void QueueLogLine(std::string_view line) {
+    std::lock_guard<std::mutex> lock(g_log_lines_mutex);
+    if (g_pending_log_lines.size() >= kMaxPendingLogLines) {
+        g_pending_log_lines.pop_front();
+    }
+    g_pending_log_lines.emplace_back(line);
+    ScheduleLogDeliveryLocked();
+}
+
 void EnsureLoggingInitialized() {
     static const bool initialized = [] {
         Settings::values.instant_debug_log = true;
-        Common::Log::Initialize("azahar_log.txt");
+        Common::Log::Initialize();
+        Common::Log::SetSink(Common::Log::Sink{.write = QueueLogLine});
         {
             std::lock_guard<std::mutex> lock(g_console_log_mutex);
             Common::Log::SetColorConsoleBackendEnabled(g_console_log_enabled);
@@ -719,6 +776,12 @@ gboolean StartEmulationOnMainThread(gpointer user_data) {
 
 void SetShaderProgressChannel(FlEventChannel* channel) {
     g_shader_progress_channel = channel;
+}
+
+void SetLogLinesChannel(FlEventChannel* channel) {
+    std::lock_guard<std::mutex> lock(g_log_lines_mutex);
+    g_log_lines_channel = channel;
+    ScheduleLogDeliveryLocked();
 }
 
 void SetConsoleLogEnabled(bool enabled) {

@@ -35,6 +35,7 @@ void main(List<String> args) {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+      AppServices.loggingService.start();
       await AppServices.migrateKeyValueRepositories();
       await applyDebugSettings(
         await AppServices.debugSettingsRepository.read(),

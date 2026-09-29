@@ -33,6 +33,9 @@ class NativeBridge {
       ),
       _mediaNotificationPlayPauseChannel = const EventChannel(
         'org.citra.citra_emu/azahar_bridge/media_notification_play_pause',
+      ),
+      _logLinesChannel = const EventChannel(
+        'org.citra.citra_emu/azahar_bridge/log_lines',
       ) {
     _channel.setMethodCallHandler(_handleNativeCall);
   }
@@ -43,6 +46,7 @@ class NativeBridge {
   final EventChannel _mediaNotificationStopChannel;
   final EventChannel _mediaNotificationPlayPauseChannel;
   final EventChannel _systemVolumeChannel;
+  final EventChannel _logLinesChannel;
   final _closeRequestedController = StreamController<void>.broadcast();
 
   Stream<void> get closeRequests => _closeRequestedController.stream;
@@ -99,8 +103,39 @@ class NativeBridge {
     return result ?? false;
   }
 
-  Future<bool> shareLog() async {
-    final result = await _channel.invokeMethod<bool>('shareLog');
+  Stream<List<String>> logLines() {
+    return _logLinesChannel.receiveBroadcastStream().map(
+      (event) => (event as List<Object?>).cast<String>(),
+    );
+  }
+
+  Future<bool> appendUserFile(String path, String text) async {
+    final result = await _channel.invokeMethod<bool>('appendUserFile', {
+      'path': path,
+      'text': text,
+    });
+    return result ?? false;
+  }
+
+  Future<bool> rotateUserFile(String path, String previousPath) async {
+    final result = await _channel.invokeMethod<bool>('rotateUserFile', {
+      'path': path,
+      'previousPath': previousPath,
+    });
+    return result ?? false;
+  }
+
+  Future<bool> userFileExists(String path) async {
+    final result = await _channel.invokeMethod<bool>('userFileExists', {
+      'path': path,
+    });
+    return result ?? false;
+  }
+
+  Future<bool> shareUserFile(String path) async {
+    final result = await _channel.invokeMethod<bool>('shareUserFile', {
+      'path': path,
+    });
     return result ?? false;
   }
 

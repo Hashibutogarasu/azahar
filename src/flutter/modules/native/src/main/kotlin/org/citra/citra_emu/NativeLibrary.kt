@@ -30,6 +30,7 @@ import org.citra.citra_emu.emucore.R
 import org.citra.citra_emu.utils.EmulationMenuSettings
 import org.citra.citra_emu.utils.FileUtil
 import org.citra.citra_emu.utils.Log
+import org.citra.citra_emu.utils.LogLineRelay
 import java.lang.ref.WeakReference
 import java.util.Date
 
@@ -143,8 +144,21 @@ object NativeLibrary {
 
     // Create the config.ini file.
     external fun createConfigFile()
-    external fun createLogFile()
+    external fun startLogging()
     external fun logUserDirectory(directory: String)
+
+    /**
+     * Receives one UTF-8 encoded log line from the native logging backend.
+     */
+    @JvmStatic
+    fun onLogLine(line: ByteArray) = LogLineRelay.push(line)
+
+    /**
+     * Called by the native logging backend when the log should be persisted. Lines are
+     * forwarded in batches, so there is nothing to flush here.
+     */
+    @JvmStatic
+    fun flushLog() = Unit
 
     /**
      * Begins emulation.
