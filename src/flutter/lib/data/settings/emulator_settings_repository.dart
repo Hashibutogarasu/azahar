@@ -9,7 +9,8 @@ import 'settings_value_store.dart';
 ///
 /// Like the original app's `SettingsViewModel`: writes update memory and reload the core right
 /// away, but only reach disk once [save] is called.
-class EmulatorSettingsRepository implements SettingsValueStore, Clearable, Loadable {
+class EmulatorSettingsRepository
+    implements SettingsValueStore, Clearable, Loadable {
   EmulatorSettingsRepository(this._nativeBridge);
 
   final NativeBridge _nativeBridge;

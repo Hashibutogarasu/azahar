@@ -19,7 +19,10 @@ class NetworkAccessValueStore implements SettingsValueStore {
   @override
   Future<void> writeBool(IntBoolKey setting, bool value) async {
     await _repository.writeBool(SystemSettingKeys.lleApplets, value);
-    await _repository.writeBool(SystemSettingKeys.requiredOnlineLleModules, value);
+    await _repository.writeBool(
+      SystemSettingKeys.requiredOnlineLleModules,
+      value,
+    );
     await _repository.save();
   }
 

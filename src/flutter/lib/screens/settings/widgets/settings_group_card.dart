@@ -1,4 +1,5 @@
-import 'package:babstrap_settings_screen/babstrap_settings_screen.dart' as babstrap;
+import 'package:babstrap_settings_screen/babstrap_settings_screen.dart'
+    as babstrap;
 import 'package:flutter/material.dart';
 
 /// Renders a titled group of [babstrap.SettingsItem]s with the same title/card layout as
@@ -10,7 +11,11 @@ import 'package:flutter/material.dart';
 /// color on an outer [Material] keeps the same look while giving `ListTile` an unobstructed
 /// `Material` ancestor to paint its background/ink splashes onto.
 class SettingsGroupCard extends StatelessWidget {
-  const SettingsGroupCard({super.key, this.settingsGroupTitle, required this.items});
+  const SettingsGroupCard({
+    super.key,
+    this.settingsGroupTitle,
+    required this.items,
+  });
 
   final String? settingsGroupTitle;
   final List<babstrap.SettingsItem> items;
@@ -27,7 +32,10 @@ class SettingsGroupCard extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 5),
               child: Text(
                 settingsGroupTitle!,
-                style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           Material(

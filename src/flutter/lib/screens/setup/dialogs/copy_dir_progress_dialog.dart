@@ -8,7 +8,10 @@ class CopyDirProgressDialog extends StatelessWidget {
 
   final Stream<CopyDirProgress> progressStream;
 
-  static Future<void> show(BuildContext context, {required Stream<CopyDirProgress> progressStream}) {
+  static Future<void> show(
+    BuildContext context, {
+    required Stream<CopyDirProgress> progressStream,
+  }) {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -29,7 +32,10 @@ class CopyDirProgressDialog extends StatelessWidget {
             final event = snapshot.data;
             final message = event == null
                 ? ''
-                : event.when(searching: (directoryName) => directoryName, copying: (filename, _, _) => filename);
+                : event.when(
+                    searching: (directoryName) => directoryName,
+                    copying: (filename, _, _) => filename,
+                  );
             final progress = event?.mapOrNull(copying: (e) => e.progress) ?? 0;
             final max = event?.mapOrNull(copying: (e) => e.max) ?? 0;
             return Column(
@@ -38,7 +44,9 @@ class CopyDirProgressDialog extends StatelessWidget {
               children: [
                 Text(message, maxLines: 4, overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 12),
-                LinearProgressIndicator(value: max == 0 ? null : progress / max),
+                LinearProgressIndicator(
+                  value: max == 0 ? null : progress / max,
+                ),
               ],
             );
           },

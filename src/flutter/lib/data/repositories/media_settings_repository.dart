@@ -17,6 +17,8 @@ class MediaSettingsRepository {
   Future<void> write(MediaSetting settings) {
     return _db
         .into(_db.mediaSettings)
-        .insertOnConflictUpdate(settings.toCompanion(true).copyWith(id: const Value(0)));
+        .insertOnConflictUpdate(
+          settings.toCompanion(true).copyWith(id: const Value(0)),
+        );
   }
 }

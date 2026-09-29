@@ -4,7 +4,11 @@ import '../../../i18n/translations.g.dart';
 import '../../../widgets/dialog_cancel_button.dart';
 
 class CitraDirectoryDialog extends StatefulWidget {
-  const CitraDirectoryDialog({super.key, required this.path, required this.showMoveDataCheckbox});
+  const CitraDirectoryDialog({
+    super.key,
+    required this.path,
+    required this.showMoveDataCheckbox,
+  });
 
   final String path;
   final bool showMoveDataCheckbox;
@@ -16,7 +20,10 @@ class CitraDirectoryDialog extends StatefulWidget {
   }) {
     return showDialog<bool>(
       context: context,
-      builder: (_) => CitraDirectoryDialog(path: path, showMoveDataCheckbox: showMoveDataCheckbox),
+      builder: (_) => CitraDirectoryDialog(
+        path: path,
+        showMoveDataCheckbox: showMoveDataCheckbox,
+      ),
     );
   }
 

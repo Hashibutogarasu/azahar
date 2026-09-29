@@ -37,8 +37,11 @@ class AboutGameBottomSheet extends StatefulWidget {
       useRootNavigator: true,
       isScrollControlled: true,
       showDragHandle: true,
-      builder: (_) =>
-          AboutGameBottomSheet(game: game, onPlay: onPlay, onUninstalled: onUninstalled),
+      builder: (_) => AboutGameBottomSheet(
+        game: game,
+        onPlay: onPlay,
+        onUninstalled: onUninstalled,
+      ),
     );
   }
 
@@ -97,15 +100,23 @@ class _AboutGameBottomSheetState extends State<AboutGameBottomSheet> {
                     children: [
                       Text(
                         game.title,
-                        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       Text(game.company, style: theme.textTheme.bodyMedium),
-                      Text(translateGameRegions(t, game.regions), style: theme.textTheme.bodyMedium),
+                      Text(
+                        translateGameRegions(t, game.regions),
+                        style: theme.textTheme.bodyMedium,
+                      ),
                       Text(
                         'ID: ${game.titleId.toRadixString(16).toUpperCase().padLeft(16, '0')}',
                         style: theme.textTheme.bodyMedium,
                       ),
-                      Text('File: ${game.filename}', style: theme.textTheme.bodyMedium),
+                      Text(
+                        'File: ${game.filename}',
+                        style: theme.textTheme.bodyMedium,
+                      ),
                     ],
                   ),
                 ),
@@ -160,7 +171,10 @@ class _AboutGameBottomSheetState extends State<AboutGameBottomSheet> {
                   child: Text(t.games.cheats),
                 ),
                 const SizedBox(width: 8),
-                FilledButton.tonal(onPressed: null, child: Text(t.games.compress)),
+                FilledButton.tonal(
+                  onPressed: null,
+                  child: Text(t.games.compress),
+                ),
               ],
             ),
             if (game.isInstalled) ...[
@@ -168,7 +182,8 @@ class _AboutGameBottomSheetState extends State<AboutGameBottomSheet> {
               Row(
                 children: [
                   FilledButton.tonal(
-                    onPressed: () => DeleteShaderCacheDialog.show(context, game),
+                    onPressed: () =>
+                        DeleteShaderCacheDialog.show(context, game),
                     child: Text(t.games.deleteShaderCache),
                   ),
                 ],

@@ -14,7 +14,10 @@ class ClockOptionsGroup extends StatelessWidget {
     return SettingsList(
       padding: EdgeInsets.zero,
       shrinkWrap: true,
-      items: [SettingsItem.header(title: t.options.groups.clock), ...buildClockSettingsItems(t)],
+      items: [
+        SettingsItem.header(title: t.options.groups.clock),
+        ...buildClockSettingsItems(t),
+      ],
     );
   }
 }

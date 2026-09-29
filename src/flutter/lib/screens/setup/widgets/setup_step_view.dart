@@ -55,7 +55,9 @@ class SetupStepView extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: FilledButton.icon(
-                        onPressed: action.isCompleted ? null : () => onAction(action),
+                        onPressed: action.isCompleted
+                            ? null
+                            : () => onAction(action),
                         icon: Icon(action.icon, size: 18),
                         label: Text(action.label),
                       ),

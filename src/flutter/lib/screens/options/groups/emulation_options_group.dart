@@ -14,7 +14,9 @@ class EmulationOptionsGroup extends StatefulWidget {
 }
 
 class _EmulationOptionsGroupState extends State<EmulationOptionsGroup> {
-  late final _store = HighLevelEmulationValueStore(AppServices.emulatorSettingsRepository);
+  late final _store = HighLevelEmulationValueStore(
+    AppServices.emulatorSettingsRepository,
+  );
 
   @override
   Widget build(BuildContext context) {
