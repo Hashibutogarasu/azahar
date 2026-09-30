@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
+import '../../app_services.dart';
 import '../../data/platform_provider.dart';
+import '../../data/repositories/cheat_repository.dart';
 import 'emulation_screens_layout.dart';
 import 'emulation_session_provider.dart';
 import 'widgets/bottom_screen.dart';
+import 'widgets/cheats_dialog.dart';
 import 'widgets/close_game_dialog.dart';
 import 'widgets/emulation_drawer.dart';
 import 'widgets/emulation_loading_card.dart';
+import 'widgets/emulation_menu_actions.dart';
+import 'widgets/emulation_side_panel.dart';
 import 'widgets/top_screen.dart';
 
 class EmulationPage extends ConsumerStatefulWidget {
@@ -103,6 +108,21 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
     }
   }
 
+  Future<void> _openCheats() async {
+    final game = widget.game;
+    if (game == null) return;
+    _scaffoldKey.currentState?.closeDrawer();
+    final notifier = ref.read(emulationSessionProvider.notifier);
+    final wasPaused = ref.read(emulationSessionProvider).isPaused;
+    if (!wasPaused) await notifier.pauseForClosePrompt();
+    if (!mounted) return;
+    await CheatsDialog.show(
+      context,
+      repository: CheatRepository(AppServices.nativeBridge, game.titleId),
+    );
+    if (!wasPaused) await notifier.cancelClosePrompt();
+  }
+
   Widget _screens(BoxConstraints constraints) {
     final isDesktop = ref.watch(isDesktopPlatformProvider);
     final layout = EmulationScreensLayout.fit(
@@ -144,6 +164,31 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
     if (state.isClosingWindow) {
       return const ColoredBox(color: Colors.black);
     }
+    final isDesktop = ref.watch(isDesktopPlatformProvider);
+    final notifier = ref.read(emulationSessionProvider.notifier);
+    final actions = EmulationMenuActions(
+      onTogglePause: notifier.togglePause,
+      onAdvanceFrame: notifier.advanceFrame,
+      onCheats: widget.game == null ? null : _openCheats,
+      onCloseGame: _confirmCloseGame,
+    );
+    final screens = SafeArea(
+      child: Stack(
+        children: [
+          LayoutBuilder(
+            builder: (context, constraints) => _screens(constraints),
+          ),
+          if (!state.emulationStarted || state.isTerminating)
+            Center(
+              child: EmulationLoadingCard(
+                game: widget.game,
+                progress: state.shaderProgress,
+                isTerminating: state.isTerminating,
+              ),
+            ),
+        ],
+      ),
+    );
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -154,32 +199,30 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
         key: _scaffoldKey,
         backgroundColor: Colors.black,
         drawerEnableOpenDragGesture: false,
-        drawer: state.emulationStarted
+        drawer: !isDesktop && state.emulationStarted
             ? EmulationDrawer(
-                gameTitle: widget.game?.title ?? '',
+                game: widget.game,
                 isPaused: state.isPaused,
-                onTogglePause: () =>
-                    ref.read(emulationSessionProvider.notifier).togglePause(),
-                onCloseGame: _confirmCloseGame,
+                actions: actions,
               )
             : null,
-        body: SafeArea(
-          child: Stack(
-            children: [
-              LayoutBuilder(
-                builder: (context, constraints) => _screens(constraints),
-              ),
-              if (!state.emulationStarted || state.isTerminating)
-                Center(
-                  child: EmulationLoadingCard(
-                    game: widget.game,
-                    progress: state.shaderProgress,
-                    isTerminating: state.isTerminating,
+        body: isDesktop && state.emulationStarted
+            ? Stack(
+                children: [
+                  screens,
+                  Positioned(
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    child: EmulationSidePanel(
+                      game: widget.game,
+                      isPaused: state.isPaused,
+                      actions: actions,
+                    ),
                   ),
-                ),
-            ],
-          ),
-        ),
+                ],
+              )
+            : screens,
       ),
     );
   }

@@ -553,6 +553,7 @@ FlEventChannel* g_shader_progress_channel{};
 std::atomic<bool> g_stop_run{true};
 std::atomic<bool> g_session_active{false};
 std::atomic<bool> g_pause_emulation{false};
+std::atomic<bool> g_advance_frame_requested{false};
 std::atomic<bool> g_present_frames{false};
 std::atomic<bool> g_present_thread_stop{false};
 
@@ -718,7 +719,14 @@ void RunEmulation(std::string path) {
         Settings::values.volume = 0;
 
         std::unique_lock<std::mutex> pause_lock(g_paused_mutex);
-        g_running_cv.wait(pause_lock, [] { return !g_pause_emulation || g_stop_run; });
+        g_running_cv.wait(pause_lock, [] {
+            return !g_pause_emulation || g_stop_run || g_advance_frame_requested;
+        });
+        if (g_advance_frame_requested && g_pause_emulation && !g_stop_run) {
+            pause_lock.unlock();
+            static_cast<void>(system.RunLoop());
+            g_advance_frame_requested = false;
+        }
     }
 }
 
@@ -857,6 +865,12 @@ void ResumeEmulation() {
     g_running_cv.notify_all();
 }
 
+void AdvanceFrame() {
+    Core::System::GetInstance().frame_limiter.AdvanceFrame();
+    g_advance_frame_requested = true;
+    g_running_cv.notify_all();
+}
+
 void PauseRendering() {
     g_present_frames = false;
 }
@@ -868,6 +882,7 @@ void ResumeRendering() {
 void StopEmulation() {
     g_stop_run = true;
     g_pause_emulation = false;
+    g_advance_frame_requested = false;
     g_present_frames = false;
     g_present_thread_stop = true;
     g_running_cv.notify_all();

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 import '../models/access_point.dart';
+import '../models/cheat.dart';
 import '../models/cia_install_result.dart';
 import '../models/copy_dir_progress.dart';
 import '../models/create_shortcut_request.dart';
@@ -267,6 +268,54 @@ class NativeBridge {
 
   Future<void> resumeEmulation() {
     return _channel.invokeMethod<void>('resumeEmulation');
+  }
+
+  Future<void> advanceFrame() {
+    return _channel.invokeMethod<void>('advanceFrame');
+  }
+
+  Future<void> loadCheatFile(int titleId) {
+    return _channel.invokeMethod<void>('loadCheatFile', {'titleId': titleId});
+  }
+
+  Future<void> saveCheatFile(int titleId) {
+    return _channel.invokeMethod<void>('saveCheatFile', {'titleId': titleId});
+  }
+
+  Future<List<Cheat>> getCheats() async {
+    final result = await _channel.invokeMethod<List<Object?>>('getCheats');
+    if (result == null) return const [];
+    return result
+        .map((entry) => Cheat.fromJson((entry as Map).cast<String, dynamic>()))
+        .toList();
+  }
+
+  Future<void> setCheatEnabled(int index, bool enabled) {
+    return _channel.invokeMethod<void>('setCheatEnabled', {
+      'index': index,
+      'enabled': enabled,
+    });
+  }
+
+  Future<void> addCheat({
+    required String name,
+    required String notes,
+    required String code,
+  }) {
+    return _channel.invokeMethod<void>('addCheat', {
+      'name': name,
+      'notes': notes,
+      'code': code,
+    });
+  }
+
+  /// Returns 0 when [code] is a valid gateway code, otherwise the 1-based number of the first
+  /// invalid line.
+  Future<int> validateCheatCode(String code) async {
+    final result = await _channel.invokeMethod<int>('validateCheatCode', {
+      'code': code,
+    });
+    return result ?? 0;
   }
 
   Future<void> pauseRendering() {

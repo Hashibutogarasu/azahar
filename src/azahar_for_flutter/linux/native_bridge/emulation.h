@@ -17,6 +17,11 @@ bool IsRunning();
 bool IsSessionActive();
 void PauseEmulation();
 void ResumeEmulation();
+
+/**
+ * Runs exactly one emulation frame while the emulation is paused.
+ */
+void AdvanceFrame();
 void PauseRendering();
 void ResumeRendering();
 void StopEmulation();

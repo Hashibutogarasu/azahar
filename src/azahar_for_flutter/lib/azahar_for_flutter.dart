@@ -6,6 +6,7 @@
 library;
 
 export 'src/models/access_point.dart';
+export 'src/models/cheat.dart';
 export 'src/models/cia_install_result.dart';
 export 'src/models/copy_dir_progress.dart';
 export 'src/models/create_shortcut_request.dart';

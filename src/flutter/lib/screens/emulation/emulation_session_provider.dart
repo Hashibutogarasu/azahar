@@ -126,6 +126,8 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
     await _mediaSession.updatePlaybackState(isPlaying: !state.isPaused);
   }
 
+  Future<void> advanceFrame() => _bridge.advanceFrame();
+
   Future<void> pauseForClosePrompt() => _bridge.pauseEmulation();
 
   Future<void> cancelClosePrompt() => _bridge.resumeEmulation();

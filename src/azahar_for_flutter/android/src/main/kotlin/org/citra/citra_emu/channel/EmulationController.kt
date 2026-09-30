@@ -39,6 +39,7 @@ class EmulationController(private val textureRegistry: TextureRegistry) {
         StartEmulation(),
         PauseEmulation(),
         ResumeEmulation(),
+        AdvanceFrame(),
         PauseRendering(),
         ResumeRendering(),
         SwapScreens(),
@@ -102,6 +103,14 @@ class EmulationController(private val textureRegistry: TextureRegistry) {
         override val name = "resumeEmulation"
         override fun execute(call: MethodCall, result: MethodChannel.Result) {
             NativeLibrary.unPauseEmulation()
+            result.success(null)
+        }
+    }
+
+    private inner class AdvanceFrame : AzaharMethodHandler {
+        override val name = "advanceFrame"
+        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+            NativeLibrary.advanceFrame()
             result.success(null)
         }
     }

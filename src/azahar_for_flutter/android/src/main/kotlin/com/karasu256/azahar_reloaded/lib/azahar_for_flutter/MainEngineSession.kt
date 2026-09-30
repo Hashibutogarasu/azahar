@@ -14,6 +14,7 @@ import org.citra.citra_emu.applets.MiiSelector
 import org.citra.citra_emu.applets.SoftwareKeyboard
 import org.citra.citra_emu.camera.StillImageCameraHelper
 import org.citra.citra_emu.channel.AzaharMethodHandler
+import org.citra.citra_emu.channel.CheatsController
 import org.citra.citra_emu.channel.CiaInstallController
 import org.citra.citra_emu.channel.DirectoryController
 import org.citra.citra_emu.channel.EmulationController
@@ -62,6 +63,7 @@ internal class MainEngineSession(
     private val wifiController = WifiController()
     private val userFilesController = UserFilesController(activity)
     private val emulationController = EmulationController(binding.textureRegistry)
+    private val cheatsController = CheatsController()
 
     private val methodChannel = MethodChannel(messenger, CHANNEL)
     private val appletChannel = MethodChannel(messenger, APPLET_CHANNEL)
@@ -90,7 +92,8 @@ internal class MainEngineSession(
         val handlers: Map<String, AzaharMethodHandler> =
             (directoryController.handlers + gamesController.handlers +
                 gameActionsController.handlers +
-                emulationController.handlers + settingsController.handlers +
+                emulationController.handlers + cheatsController.handlers +
+                settingsController.handlers +
                 gpuDriverController.handlers + ciaInstallController.handlers +
                 systemFilesController.handlers + wifiController.handlers +
                 userFilesController.handlers)
