@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../data/settings/sections/camera_settings.dart';
-import '../../../i18n/translations.g.dart';
-import '../widgets/settings_list.dart';
+import '../../../data/options/categories/camera_page_options.dart';
+import '../../options/widgets/option_category_page.dart';
 
-class CameraSettingsPage extends StatelessWidget {
+class CameraSettingsPage extends ConsumerWidget {
   const CameraSettingsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-    return Scaffold(
-      appBar: AppBar(title: Text(t.settings.camera.title)),
-      body: SettingsList(items: buildCameraSettingsItems(t)),
-    );
+  Widget build(BuildContext context, WidgetRef ref) {
+    return OptionCategoryPage(category: ref.watch(cameraPageOptionsProvider));
   }
 }

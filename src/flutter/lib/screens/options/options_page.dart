@@ -46,22 +46,28 @@ class _OptionsPageState extends ConsumerState<OptionsPage> {
   Widget build(BuildContext context) {
     ref.watch(settingsLoadProvider);
     final isSearching = ref.watch(optionsSearchProvider).isActive;
-    return SafeArea(
-      child: Column(
-        children: [
-          AppSearchBar(
-            controller: _queryController,
-            hintText: context.t.options.searchHint,
-            onChanged: ref.read(optionsSearchProvider.notifier).setQuery,
-            onClear: _handleClear,
-            onFocusChanged: _handleFocusChanged,
-          ),
-          Expanded(
-            child: isSearching
-                ? const OptionsSearchResults()
-                : const OptionsHomeContent(),
-          ),
-        ],
+    return PopScope(
+      canPop: !isSearching,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) _handleClear();
+      },
+      child: SafeArea(
+        child: Column(
+          children: [
+            AppSearchBar(
+              controller: _queryController,
+              hintText: context.t.options.searchHint,
+              onChanged: ref.read(optionsSearchProvider.notifier).setQuery,
+              onClear: _handleClear,
+              onFocusChanged: _handleFocusChanged,
+            ),
+            Expanded(
+              child: isSearching
+                  ? const OptionsSearchResults()
+                  : const OptionsHomeContent(),
+            ),
+          ],
+        ),
       ),
     );
   }
