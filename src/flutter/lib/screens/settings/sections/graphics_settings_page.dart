@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../../../data/settings/sections/graphics_settings.dart';
-import '../../../i18n/translations.g.dart';
-import '../widgets/settings_list.dart';
+import '../../../data/options/categories/renderer_options.dart';
+import '../../options/option_category_page.dart';
 
+/// The graphics settings page, defined as data by [rendererOptionsProvider].
 class GraphicsSettingsPage extends StatelessWidget {
   const GraphicsSettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
-    return Scaffold(
-      appBar: AppBar(title: Text(t.settings.graphics.title)),
-      body: SettingsList(items: buildGraphicsSettingsItems(t)),
-    );
+    return OptionCategoryPage(provider: rendererOptionsProvider);
   }
 }
