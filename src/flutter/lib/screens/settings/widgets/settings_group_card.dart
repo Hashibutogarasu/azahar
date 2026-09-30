@@ -17,10 +17,14 @@ class SettingsGroupCard extends StatelessWidget {
   const SettingsGroupCard({
     super.key,
     this.settingsGroupTitle,
+    this.trailing,
     required this.items,
   });
 
   final String? settingsGroupTitle;
+
+  /// Shown at the right end of the title row, such as an action that applies to the whole group.
+  final Widget? trailing;
   final List<babstrap.SettingsItem> items;
 
   @override
@@ -34,12 +38,19 @@ class SettingsGroupCard extends StatelessWidget {
           if (settingsGroupTitle != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 5),
-              child: Text(
-                settingsGroupTitle!,
-                style: const TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      settingsGroupTitle!,
+                      style: const TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  ?trailing,
+                ],
               ),
             ),
           AppLiquidGlass(

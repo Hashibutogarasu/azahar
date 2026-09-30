@@ -13,12 +13,16 @@ class AppSearchBar extends StatefulWidget {
     required this.hintText,
     required this.onChanged,
     required this.onClear,
+    this.onFocusChanged,
   });
 
   final TextEditingController controller;
   final String hintText;
   final ValueChanged<String> onChanged;
   final VoidCallback onClear;
+
+  /// Called with true when the search field gains focus and with false when it loses it.
+  final ValueChanged<bool>? onFocusChanged;
 
   @override
   State<AppSearchBar> createState() => _AppSearchBarState();
@@ -31,9 +35,10 @@ class _AppSearchBarState extends State<AppSearchBar> {
   @override
   void initState() {
     super.initState();
-    _focusNode.addListener(
-      () => setState(() => _focused = _focusNode.hasFocus),
-    );
+    _focusNode.addListener(() {
+      setState(() => _focused = _focusNode.hasFocus);
+      widget.onFocusChanged?.call(_focusNode.hasFocus);
+    });
   }
 
   @override

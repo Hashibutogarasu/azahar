@@ -18,7 +18,9 @@ import 'data/repositories/language_code_repository.dart';
 import 'data/repositories/legacy_settings_ui_repository.dart';
 import 'data/repositories/loadable.dart';
 import 'data/repositories/media_settings_repository.dart';
+import 'data/repositories/option_history_repository.dart';
 import 'data/repositories/permission_repository.dart';
+import 'data/repositories/pinned_options_repository.dart';
 import 'data/repositories/theme_settings_repository.dart';
 import 'data/repositories/virtual_access_points_repository.dart';
 import 'data/settings/control_bindings_value_store.dart';
@@ -78,6 +80,10 @@ abstract final class AppServices {
       ArticBaseAddressRepository(database);
   static final LegacySettingsUiRepository legacySettingsUiRepository =
       LegacySettingsUiRepository(database);
+  static final PinnedOptionsRepository pinnedOptionsRepository =
+      PinnedOptionsRepository(database);
+  static final OptionHistoryRepository optionHistoryRepository =
+      OptionHistoryRepository(database);
 
   static final List<KeyValueRepository> keyValueRepositories = [
     firstLaunchRepository,

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -20,6 +21,8 @@ part 'tables/debug_settings.dart';
 part 'tables/virtual_access_points.dart';
 part 'tables/control_bindings.dart';
 part 'tables/input_layout_elements.dart';
+part 'tables/pinned_options.dart';
+part 'tables/option_history_entries.dart';
 
 @DriftDatabase(
   tables: [
@@ -33,10 +36,15 @@ part 'tables/input_layout_elements.dart';
     MediaSettings,
     DebugSettings,
     VirtualAccessPoints,
+    PinnedOptions,
+    OptionHistoryEntries,
   ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase._(super.e);
+
+  @visibleForTesting
+  AppDatabase.forTesting(super.e);
 
   static AppDatabase? _instance;
   static bool isUsingTemporaryStorage = false;
@@ -46,7 +54,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 10;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -73,6 +81,10 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 9) {
         await m.createTable(debugSettings);
+      }
+      if (from < 10) {
+        await m.createTable(pinnedOptions);
+        await m.createTable(optionHistoryEntries);
       }
     },
   );
