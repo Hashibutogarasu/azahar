@@ -10,10 +10,13 @@ import '../../data/platform_provider.dart';
 import '../../data/repositories/cheat_repository.dart';
 import 'emulation_screens_layout.dart';
 import 'emulation_session_provider.dart';
+import 'motion_input_source.dart';
+import 'physical_gamepad_source.dart';
 import 'widgets/bottom_screen.dart';
 import 'widgets/cheats_dialog.dart';
 import 'widgets/close_game_dialog.dart';
 import 'widgets/emulation_drawer.dart';
+import 'widgets/gamepad/emulation_gamepad.dart';
 import 'widgets/emulation_loading_card.dart';
 import 'widgets/emulation_menu_actions.dart';
 import 'widgets/emulation_side_panel.dart';
@@ -200,7 +203,7 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
         ],
       ),
     );
-    return PopScope(
+    final page = PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
@@ -233,8 +236,18 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
                   ),
                 ],
               )
+            : !isDesktop && state.emulationStarted
+            ? Stack(
+                children: [
+                  screens,
+                  const Positioned.fill(child: EmulationGamepad()),
+                ],
+              )
             : screens,
       ),
+    );
+    return PhysicalGamepadSource(
+      child: isDesktop ? page : MotionInputSource(child: page),
     );
   }
 }

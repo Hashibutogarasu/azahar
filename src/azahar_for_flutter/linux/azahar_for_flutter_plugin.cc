@@ -23,6 +23,7 @@
 #include "native_bridge/emulation.h"
 #include "native_bridge/emulator_config.h"
 #include "native_bridge/game_actions.h"
+#include "native_bridge/gamepad.h"
 #include "native_bridge/game_scanner.h"
 #include "native_bridge/system_files.h"
 #include "native_bridge/system_save_game.h"
@@ -688,6 +689,14 @@ FlMethodResponse* HandleOnTouchMoved(GtkWindow* window, FlValue* args) {
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
 }
 
+FlMethodResponse* HandleSendGamePadEvent(GtkWindow* window, FlValue* args) {
+  if (!Gamepad::Send(args)) {
+    return FL_METHOD_RESPONSE(fl_method_error_response_new(
+        "invalid_argument", "unknown gamepad event", nullptr));
+  }
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
 FlMethodResponse* HandleSwapScreens(GtkWindow* window, FlValue* args) {
   g_autoptr(FlValue) result = fl_value_new_bool(Emulation::SwapScreens());
   return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
@@ -748,6 +757,7 @@ const std::unordered_map<std::string, BridgeMethodHandler>& BridgeMethodHandlers
       {"onTouchEvent", HandleOnTouchEvent},
       {"onTouchMoved", HandleOnTouchMoved},
       {"swapScreens", HandleSwapScreens},
+      {"sendGamePadEvent", HandleSendGamePadEvent},
   };
   return handlers;
 }
@@ -807,6 +817,18 @@ FlMethodErrorResponse* HandleLogLinesCancel(FlEventChannel* channel, FlValue* ar
   return nullptr;
 }
 
+FlMethodErrorResponse* HandleGamePadListen(FlEventChannel* channel, FlValue* args,
+                                           gpointer user_data) {
+  Gamepad::SetEventChannel(channel);
+  return nullptr;
+}
+
+FlMethodErrorResponse* HandleGamePadCancel(FlEventChannel* channel, FlValue* args,
+                                           gpointer user_data) {
+  Gamepad::SetEventChannel(nullptr);
+  return nullptr;
+}
+
 gboolean HandleWindowDeleteEvent(GtkWidget* widget, GdkEvent* event, gpointer user_data) {
   if (!Emulation::IsSessionActive()) {
     return FALSE;
@@ -835,6 +857,14 @@ void RegisterLogLinesChannel(FlBinaryMessenger* messenger) {
                                        nullptr, nullptr);
 }
 
+void RegisterGamePadChannel(FlBinaryMessenger* messenger) {
+  g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
+  FlEventChannel* channel = fl_event_channel_new(
+      messenger, "org.citra.citra_emu/azahar_bridge/gamepad_events", FL_METHOD_CODEC(codec));
+  fl_event_channel_set_stream_handlers(channel, HandleGamePadListen, HandleGamePadCancel,
+                                       nullptr, nullptr);
+}
+
 }  // namespace
 
 void azahar_for_flutter_plugin_register_with_registrar(FlPluginRegistrar* registrar) {
@@ -852,6 +882,7 @@ void azahar_for_flutter_plugin_register_with_registrar(FlPluginRegistrar* regist
                                             nullptr);
   RegisterShaderProgressChannel(messenger);
   RegisterLogLinesChannel(messenger);
+  RegisterGamePadChannel(messenger);
   g_object_set_data(G_OBJECT(window), "bridge_channel", bridge_channel);
   g_signal_connect(window, "delete-event", G_CALLBACK(HandleWindowDeleteEvent), nullptr);
 }

@@ -117,9 +117,7 @@ void Config::ReadValues() {
             Settings::values.current_input_profile.analogs[i] = default_param;
     }
 
-    Settings::values.current_input_profile.motion_device = sdl2_config->GetString(
-        "Controls", "motion_device",
-        "engine:motion_emu,update_period:100,sensitivity:0.01,tilt_clamp:90.0");
+    Settings::values.current_input_profile.motion_device = "engine:flutter_motion";
     Settings::values.current_input_profile.touch_device =
         sdl2_config->GetString("Controls", "touch_device", "engine:emu_window");
     Settings::values.current_input_profile.udp_input_address = sdl2_config->GetString(

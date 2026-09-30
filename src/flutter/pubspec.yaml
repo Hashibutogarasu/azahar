@@ -31,10 +31,12 @@ dependencies:
   path: ^1.9.1
   path_provider: ^2.1.6
   permission_handler: ^13.0.2
+  sensors_plus: ^7.1.0
   slang: ^4.19.2
   slang_flutter: ^4.19.0
   sqlite3_flutter_libs: ^0.6.0+eol
   stack_trace: ^1.12.2
+  universal_gamepad: ^1.5.8
   url_launcher: ^6.3.2
 
 dev_dependencies:
@@ -53,6 +55,7 @@ flutter:
     - assets/images/azahar_logo.png
     - assets/images/no_icon.png
     - assets/images/no_icon_dark.png
+    - assets/gamepad/
     - assets/icons/discord.svg
     - assets/icons/github.svg
     - assets/icons/linux.png

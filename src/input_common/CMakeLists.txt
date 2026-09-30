@@ -1,6 +1,8 @@
 add_library(input_common STATIC
     analog_from_button.cpp
     analog_from_button.h
+    flutter_motion.cpp
+    flutter_motion.h
     keyboard.cpp
     keyboard.h
     main.cpp

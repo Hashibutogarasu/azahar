@@ -318,6 +318,9 @@ class Translations$emulation$en {
   /// en: 'Loading'
   String get loading => 'Loading';
 
+  late final Translations$emulation$gamepad$en gamepad =
+      Translations$emulation$gamepad$en.internal(_root);
+
   /// en: 'Closing'
   String get terminating => 'Closing';
 
@@ -967,6 +970,17 @@ class Translations$setup$done$en {
 
   /// en: 'Continue'
   String get continueLabel => 'Continue';
+}
+
+// Path: emulation.gamepad
+class Translations$emulation$gamepad$en {
+  Translations$emulation$gamepad$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+  late final Translations$emulation$gamepad$buttons$en buttons =
+      Translations$emulation$gamepad$buttons$en.internal(_root);
 }
 
 // Path: options.useLegacySettingsUIDialog
@@ -2316,6 +2330,36 @@ class Translations$settings$language$en {
   String get japanese => 'Japanese (日本語)';
 }
 
+// Path: emulation.gamepad.buttons
+class Translations$emulation$gamepad$buttons$en {
+  Translations$emulation$gamepad$buttons$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'A'
+  String get a => 'A';
+
+  /// en: 'B'
+  String get b => 'B';
+
+  /// en: 'X'
+  String get x => 'X';
+
+  /// en: 'Y'
+  String get y => 'Y';
+
+  /// en: 'SELECT'
+  String get select => 'SELECT';
+
+  /// en: 'HOME'
+  String get home => 'HOME';
+
+  /// en: 'START'
+  String get start => 'START';
+}
+
 // Path: settings.system.countries
 class Translations$settings$system$countries$en {
   Translations$settings$system$countries$en.internal(this._root);
@@ -2860,6 +2904,13 @@ extension on Translations {
           'games.regionFree' => 'Region free',
           'games.invalidRegion' => 'Invalid region',
           'emulation.loading' => 'Loading',
+          'emulation.gamepad.buttons.a' => 'A',
+          'emulation.gamepad.buttons.b' => 'B',
+          'emulation.gamepad.buttons.x' => 'X',
+          'emulation.gamepad.buttons.y' => 'Y',
+          'emulation.gamepad.buttons.select' => 'SELECT',
+          'emulation.gamepad.buttons.home' => 'HOME',
+          'emulation.gamepad.buttons.start' => 'START',
           'emulation.terminating' => 'Closing',
           'emulation.preparingShaders' => 'Preparing Shaders',
           'emulation.buildingShaders' => 'Building Shaders',
@@ -3368,6 +3419,9 @@ extension on Translations {
           'settings.system.countries.monaco' => 'Monaco',
           'settings.system.countries.taiwan' => 'Taiwan',
           'settings.system.countries.southKorea' => 'South Korea',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.system.countries.hongKong' => 'Hong Kong',
           'settings.system.countries.macau' => 'Macau',
           'settings.system.countries.indonesia' => 'Indonesia',
@@ -3375,9 +3429,6 @@ extension on Translations {
           'settings.system.countries.thailand' => 'Thailand',
           'settings.system.countries.philippines' => 'Philippines',
           'settings.system.countries.malaysia' => 'Malaysia',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.system.countries.china' => 'China',
           'settings.system.countries.unitedArabEmirates' =>
             'United Arab Emirates',
