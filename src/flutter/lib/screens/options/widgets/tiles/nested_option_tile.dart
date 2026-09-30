@@ -28,8 +28,8 @@ class NestedOptionTile extends StatelessWidget {
       onLongPress: onLongPress,
       child: babstrap.SettingsItem(
         icons: option.icon,
-        title: t.resolve(option.titleKey),
-        subtitle: descriptionKey == null ? null : t.lookup(descriptionKey),
+        title: option.title(t),
+        subtitle: option.description?.call(t),
         onTap: () async {
           await option.destination.push(context);
           onAccessed();

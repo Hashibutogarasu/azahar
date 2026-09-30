@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../data/options/option_category.dart';
-import '../../../data/options/translation_lookup.dart';
 import '../../../i18n/translations.g.dart';
 import 'option_group_card.dart';
 
@@ -26,9 +25,9 @@ class OptionCategoryCards extends StatelessWidget {
       children: [
         for (final section in category.sections)
           OptionGroupCard(
-            title: switch (section.titleKey) {
-              final key? => t.resolve(key),
-              null when fallbackToCategoryTitle => t.resolve(category.titleKey),
+            title: switch (section.title) {
+              final title? => title(t),
+              null when fallbackToCategoryTitle => category.title(t),
               null => null,
             },
             entries: [
