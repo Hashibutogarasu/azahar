@@ -8,6 +8,7 @@ import 'package:sensors_plus/sensors_plus.dart';
 
 import '../../app_services.dart';
 import '../../data/settings/emulator_setting_key.dart';
+import '../../data/settings/emulator_settings_repository.dart';
 import 'emulation_session_provider.dart';
 
 /// Reads the motion sensors of the device and gives their values to the emulation, in place of
@@ -89,7 +90,13 @@ class _MotionInputSourceState extends ConsumerState<MotionInputSource> {
   Timer? _sendTimer;
   Vec3? _accel;
   Vec3? _gyro;
+  Vec3? _gravity;
+  bool? _landscape;
+  DateTime _settleUntil = DateTime.fromMillisecondsSinceEpoch(0);
   int _rotation = 0;
+
+  static const double _gravitySmoothing = 0.1;
+  static const Duration _settleDuration = Duration(seconds: 1);
 
   @override
   void initState() {
@@ -111,15 +118,32 @@ class _MotionInputSourceState extends ConsumerState<MotionInputSource> {
     super.dispose();
   }
 
-  void _onAccel(AccelerometerEvent event) {
-    final raw = Vec3(event.x, event.y, event.z);
+  void _updateRotation(Vec3 raw) {
+    _gravity = _gravity == null
+        ? raw
+        : Vec3(
+            _gravity!.x + (raw.x - _gravity!.x) * _gravitySmoothing,
+            _gravity!.y + (raw.y - _gravity!.y) * _gravitySmoothing,
+            _gravity!.z + (raw.z - _gravity!.z) * _gravitySmoothing,
+          );
     final landscape =
         MediaQuery.orientationOf(context) == Orientation.landscape;
+    final now = DateTime.now();
+    if (landscape != _landscape) {
+      _landscape = landscape;
+      _settleUntil = now.add(_settleDuration);
+    }
+    if (!now.isBefore(_settleUntil)) return;
     _rotation = MotionInputSource.rotationFrom(
-      raw,
+      _gravity!,
       landscape: landscape,
       previous: _rotation,
     );
+  }
+
+  void _onAccel(AccelerometerEvent event) {
+    final raw = Vec3(event.x, event.y, event.z);
+    _updateRotation(raw);
     final transformed = MotionInputSource.transformAxes(raw, _rotation);
     _accel = Vec3(
       transformed.x / -MotionInputSource._standardGravity,
@@ -141,6 +165,10 @@ class _MotionInputSourceState extends ConsumerState<MotionInputSource> {
     );
   }
 
+  double _sensitivity(EmulatorSettingsRepository settings, ScaledFloatKey key) {
+    return settings.readFloat(key) / key.scale;
+  }
+
   void _send() {
     final accel = _accel;
     final gyro = _gyro;
@@ -159,10 +187,10 @@ class _MotionInputSourceState extends ConsumerState<MotionInputSource> {
         settings.readBool(MotionInputSource._invertHorizontal) ? -1.0 : 1.0;
     final scaled = Vec3(
       gyro.x *
-          settings.readFloat(MotionInputSource._sensitivityVertical) *
+          _sensitivity(settings, MotionInputSource._sensitivityVertical) *
           verticalSign,
       gyro.y *
-          settings.readFloat(MotionInputSource._sensitivityHorizontal) *
+          _sensitivity(settings, MotionInputSource._sensitivityHorizontal) *
           horizontalSign,
       gyro.z,
     );
