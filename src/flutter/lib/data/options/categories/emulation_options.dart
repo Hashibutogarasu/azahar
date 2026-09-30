@@ -5,6 +5,7 @@ import '../../../app_services.dart';
 import '../../settings/sections/general_settings.dart';
 import '../../settings/sections/system_settings.dart';
 import '../abstract_base_option.dart';
+import '../emulator/settings/emulation_speed_setting.dart';
 import '../option_category.dart';
 import '../option_section.dart';
 import '../option_value.dart';
@@ -49,15 +50,13 @@ final emulationOptionsProvider = Provider<OptionCategory>(
             icon: Icons.toggle_on_outlined,
             value: const StoreBoolValue(GeneralSettingKeys.useFrameLimit),
           ),
-          PercentOption(
+          EmulatorPercentOption(
             title: (t) => t.settings.general.frameLimitSlider,
             description: (t) => t.settings.general.frameLimitSliderDescription,
             icon: Icons.tune,
-            value: const IntPercentValue(
-              StoreIntValue(GeneralSettingKeys.frameLimit),
-            ),
-            min: 0.01,
-            max: 2.0,
+            setting: const EmulationSpeedSetting(),
+            min: EmulationSpeedSetting.minSpeed,
+            max: EmulationSpeedSetting.maxSpeed,
             defaultValue: GeneralSettingKeys.frameLimit.defaultValue / 100,
           ),
           BoolOption(

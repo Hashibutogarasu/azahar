@@ -2,7 +2,9 @@ part of '../abstract_base_option.dart';
 
 /// An on/off switch.
 @freezed
-abstract class BoolOption with _$BoolOption implements AbstractBaseOption {
+abstract class BoolOption
+    with _$BoolOption, WidgetConvertable
+    implements AbstractBaseOption {
   const BoolOption._();
 
   const factory BoolOption({
@@ -16,7 +18,7 @@ abstract class BoolOption with _$BoolOption implements AbstractBaseOption {
   Widget toWidget({
     required VoidCallback onAccessed,
     required VoidCallback onLongPress,
-  }) => BoolOptionTile(
+  }) => BoolOptionWidget(
     option: this,
     onAccessed: onAccessed,
     onLongPress: onLongPress,

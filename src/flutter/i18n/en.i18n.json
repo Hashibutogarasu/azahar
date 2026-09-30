@@ -189,6 +189,8 @@
     "historyEmpty": "Settings you change or open will appear here.",
     "pinned": "Pinned",
     "pinnedEmpty": "Press and hold a setting to pin it here.",
+    "emulatorLoad": "Emulator load",
+    "emulatorLoadDescription": "How heavy your graphics and emulation settings make the emulation. A high load can slow it down.",
     "clear": "Delete",
     "clearHistoryTitle": "Delete history?",
     "clearHistoryMessage": "This removes every item from the history. Your settings are not changed.",

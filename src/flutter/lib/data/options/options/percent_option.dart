@@ -25,7 +25,7 @@ class PercentOption extends FloatOption {
   Widget toWidget({
     required VoidCallback onAccessed,
     required VoidCallback onLongPress,
-  }) => PercentOptionTile(
+  }) => PercentOptionWidget(
     option: this,
     onAccessed: onAccessed,
     onLongPress: onLongPress,

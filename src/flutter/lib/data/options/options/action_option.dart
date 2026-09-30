@@ -3,7 +3,9 @@ part of '../abstract_base_option.dart';
 /// An item that runs [onTap] when pressed. It has no value of its own. A [destructive] action is
 /// shown in the error color.
 @freezed
-abstract class ActionOption with _$ActionOption implements AbstractBaseOption {
+abstract class ActionOption
+    with _$ActionOption, WidgetConvertable
+    implements AbstractBaseOption {
   const ActionOption._();
 
   const factory ActionOption({
@@ -18,7 +20,7 @@ abstract class ActionOption with _$ActionOption implements AbstractBaseOption {
   Widget toWidget({
     required VoidCallback onAccessed,
     required VoidCallback onLongPress,
-  }) => ActionOptionTile(
+  }) => ActionOptionWidget(
     option: this,
     onAccessed: onAccessed,
     onLongPress: onLongPress,

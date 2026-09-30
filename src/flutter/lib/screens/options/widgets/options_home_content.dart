@@ -6,6 +6,7 @@ import '../../../data/options/option_history_provider.dart';
 import '../../../data/options/pinned_options_provider.dart';
 import '../../../i18n/translations.g.dart';
 import 'clear_section_button.dart';
+import 'emulator_load_section.dart';
 import 'option_category_cards.dart';
 import 'option_group_card.dart';
 
@@ -30,6 +31,7 @@ class OptionsHomeContent extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        const EmulatorLoadSection(),
         OptionGroupCard(
           title: t.options.history,
           entries: historyEntries,

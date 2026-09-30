@@ -187,6 +187,8 @@
     "historyEmpty": "変更したり開いたりした設定がここに表示されます。",
     "pinned": "ピン留め",
     "pinnedEmpty": "設定を長押しすると、ここにピン留めできます。",
+    "emulatorLoad": "エミュレータの負荷",
+    "emulatorLoadDescription": "グラフィックスとエミュレーションの設定が、エミュレーションをどれだけ重くするかを表します。負荷が高いと動作が遅くなることがあります。",
     "clear": "削除",
     "clearHistoryTitle": "履歴を削除しますか？",
     "clearHistoryMessage": "履歴のすべての項目を削除します。設定は変更されません。",
