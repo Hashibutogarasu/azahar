@@ -438,6 +438,11 @@ class _Translations$options$ja extends Translations$options$en {
   @override
   String get pinnedEmpty => '設定を長押しすると、ここにピン留めできます。';
   @override
+  String get emulatorLoad => 'エミュレータの負荷';
+  @override
+  String get emulatorLoadDescription =>
+      'グラフィックスとエミュレーションの設定が、エミュレーションをどれだけ重くするかを表します。負荷が高いと動作が遅くなることがあります。';
+  @override
   String get clear => '削除';
   @override
   String get clearHistoryTitle => '履歴を削除しますか？';
@@ -2318,6 +2323,9 @@ extension on TranslationsJa {
           'options.historyEmpty' => '変更したり開いたりした設定がここに表示されます。',
           'options.pinned' => 'ピン留め',
           'options.pinnedEmpty' => '設定を長押しすると、ここにピン留めできます。',
+          'options.emulatorLoad' => 'エミュレータの負荷',
+          'options.emulatorLoadDescription' =>
+            'グラフィックスとエミュレーションの設定が、エミュレーションをどれだけ重くするかを表します。負荷が高いと動作が遅くなることがあります。',
           'options.clear' => '削除',
           'options.clearHistoryTitle' => '履歴を削除しますか？',
           'options.clearHistoryMessage' => '履歴のすべての項目を削除します。設定は変更されません。',
@@ -2722,11 +2730,11 @@ extension on TranslationsJa {
           'settings.system.countries.malaysia' => 'マレーシア',
           'settings.system.countries.china' => '中国',
           'settings.system.countries.unitedArabEmirates' => 'アラブ首長国連邦',
-          'settings.system.countries.india' => 'インド',
-          'settings.system.countries.egypt' => 'エジプト',
           _ => null,
         } ??
         switch (path) {
+          'settings.system.countries.india' => 'インド',
+          'settings.system.countries.egypt' => 'エジプト',
           'settings.system.countries.oman' => 'オマーン',
           'settings.system.countries.qatar' => 'カタール',
           'settings.system.countries.kuwait' => 'クウェート',

@@ -4,7 +4,7 @@ part of '../abstract_base_option.dart';
 /// as text, the way the emulator stores it.
 @freezed
 abstract class DateTimeOption
-    with _$DateTimeOption
+    with _$DateTimeOption, WidgetConvertable
     implements AbstractBaseOption {
   const DateTimeOption._();
 
@@ -19,7 +19,7 @@ abstract class DateTimeOption
   Widget toWidget({
     required VoidCallback onAccessed,
     required VoidCallback onLongPress,
-  }) => DateTimeOptionTile(
+  }) => DateTimeOptionWidget(
     option: this,
     onAccessed: onAccessed,
     onLongPress: onLongPress,

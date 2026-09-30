@@ -2,7 +2,9 @@ part of '../abstract_base_option.dart';
 
 /// A line of text the user types in.
 @freezed
-abstract class StringOption with _$StringOption implements AbstractBaseOption {
+abstract class StringOption
+    with _$StringOption, WidgetConvertable
+    implements AbstractBaseOption {
   const StringOption._();
 
   const factory StringOption({
@@ -17,7 +19,7 @@ abstract class StringOption with _$StringOption implements AbstractBaseOption {
   Widget toWidget({
     required VoidCallback onAccessed,
     required VoidCallback onLongPress,
-  }) => StringOptionTile(
+  }) => StringOptionWidget(
     option: this,
     onAccessed: onAccessed,
     onLongPress: onLongPress,

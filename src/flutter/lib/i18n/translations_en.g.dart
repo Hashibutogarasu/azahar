@@ -543,6 +543,13 @@ class Translations$options$en {
   /// en: 'Press and hold a setting to pin it here.'
   String get pinnedEmpty => 'Press and hold a setting to pin it here.';
 
+  /// en: 'Emulator load'
+  String get emulatorLoad => 'Emulator load';
+
+  /// en: 'How heavy your graphics and emulation settings make the emulation. A high load can slow it down.'
+  String get emulatorLoadDescription =>
+      'How heavy your graphics and emulation settings make the emulation. A high load can slow it down.';
+
   /// en: 'Delete'
   String get clear => 'Delete';
 
@@ -2937,6 +2944,9 @@ extension on Translations {
             'Settings you change or open will appear here.',
           'options.pinned' => 'Pinned',
           'options.pinnedEmpty' => 'Press and hold a setting to pin it here.',
+          'options.emulatorLoad' => 'Emulator load',
+          'options.emulatorLoadDescription' =>
+            'How heavy your graphics and emulation settings make the emulation. A high load can slow it down.',
           'options.clear' => 'Delete',
           'options.clearHistoryTitle' => 'Delete history?',
           'options.clearHistoryMessage' =>
@@ -3365,12 +3375,12 @@ extension on Translations {
           'settings.system.countries.thailand' => 'Thailand',
           'settings.system.countries.philippines' => 'Philippines',
           'settings.system.countries.malaysia' => 'Malaysia',
-          'settings.system.countries.china' => 'China',
-          'settings.system.countries.unitedArabEmirates' =>
-            'United Arab Emirates',
           _ => null,
         } ??
         switch (path) {
+          'settings.system.countries.china' => 'China',
+          'settings.system.countries.unitedArabEmirates' =>
+            'United Arab Emirates',
           'settings.system.countries.india' => 'India',
           'settings.system.countries.egypt' => 'Egypt',
           'settings.system.countries.oman' => 'Oman',

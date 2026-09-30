@@ -3,7 +3,7 @@ part of '../abstract_base_option.dart';
 /// A gamepad button or axis bound by pressing it. The value is the key of the bound input.
 @freezed
 abstract class InputBindingOption
-    with _$InputBindingOption
+    with _$InputBindingOption, WidgetConvertable
     implements AbstractBaseOption {
   const InputBindingOption._();
 
@@ -18,7 +18,7 @@ abstract class InputBindingOption
   Widget toWidget({
     required VoidCallback onAccessed,
     required VoidCallback onLongPress,
-  }) => InputBindingOptionTile(
+  }) => InputBindingOptionWidget(
     option: this,
     onAccessed: onAccessed,
     onLongPress: onLongPress,

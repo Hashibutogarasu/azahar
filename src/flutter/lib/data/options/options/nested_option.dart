@@ -3,7 +3,9 @@ part of '../abstract_base_option.dart';
 /// An item that leads to another page. It has no value of its own; tapping it pushes
 /// [destination].
 @freezed
-abstract class NestedOption with _$NestedOption implements AbstractBaseOption {
+abstract class NestedOption
+    with _$NestedOption, WidgetConvertable
+    implements AbstractBaseOption {
   const NestedOption._();
 
   const factory NestedOption({
@@ -17,7 +19,7 @@ abstract class NestedOption with _$NestedOption implements AbstractBaseOption {
   Widget toWidget({
     required VoidCallback onAccessed,
     required VoidCallback onLongPress,
-  }) => NestedOptionTile(
+  }) => NestedOptionWidget(
     option: this,
     onAccessed: onAccessed,
     onLongPress: onLongPress,

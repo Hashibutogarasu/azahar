@@ -3,6 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../settings/sections/graphics_settings.dart';
 import '../abstract_base_option.dart';
+import '../emulator/settings/async_shaders_setting.dart';
+import '../emulator/settings/graphics_api_setting.dart';
+import '../emulator/settings/internal_resolution_setting.dart';
+import '../emulator/settings/shader_cache_setting.dart';
+import '../emulator/settings/spirv_shader_gen_setting.dart';
+import '../emulator/settings/texture_filter_setting.dart';
 import '../option_category.dart';
 import '../option_section.dart';
 import '../option_value.dart';
@@ -18,10 +24,10 @@ final rendererOptionsProvider = Provider<OptionCategory>(
       OptionSection(
         title: (t) => t.settings.graphics.renderer,
         options: [
-          EnumOption<int>(
+          EmulatorEnumOption<int>(
             title: (t) => t.settings.graphics.graphicsApi,
             icon: Icons.monitor,
-            value: const StoreIntValue(GraphicsSettingKeys.graphicsApi),
+            setting: const GraphicsApiSetting(),
             choices: [
               EnumChoice(
                 label: (t) => t.settings.graphics.graphicsApiOpengles,
@@ -33,24 +39,24 @@ final rendererOptionsProvider = Provider<OptionCategory>(
               ),
             ],
           ),
-          BoolOption(
+          EmulatorBoolOption(
             title: (t) => t.settings.graphics.spirvShaderGen,
             description: (t) => t.settings.graphics.spirvShaderGenDescription,
             icon: Icons.toggle_on_outlined,
-            value: const StoreBoolValue(GraphicsSettingKeys.spirvShaderGen),
+            setting: const SpirvShaderGenSetting(),
           ),
-          BoolOption(
+          EmulatorBoolOption(
             title: (t) => t.settings.graphics.asyncShaders,
             description: (t) => t.settings.graphics.asyncShadersDescription,
             icon: Icons.toggle_on_outlined,
-            value: const StoreBoolValue(GraphicsSettingKeys.asyncShaders),
+            setting: const AsyncShadersSetting(),
           ),
-          EnumOption<int>(
+          EmulatorEnumOption<int>(
             title: (t) => t.settings.graphics.internalResolution,
             description: (t) =>
                 t.settings.graphics.internalResolutionDescription,
             icon: Icons.aspect_ratio,
-            value: const StoreIntValue(GraphicsSettingKeys.resolutionFactor),
+            setting: const InternalResolutionSetting(),
             choices: [
               EnumChoice(
                 label: (t) => t.settings.graphics.internalResolutionNative,
@@ -107,18 +113,18 @@ final rendererOptionsProvider = Provider<OptionCategory>(
             icon: Icons.toggle_on_outlined,
             value: const StoreBoolValue(GraphicsSettingKeys.shadersAccurateMul),
           ),
-          BoolOption(
+          EmulatorBoolOption(
             title: (t) => t.settings.graphics.useDiskShaderCache,
             description: (t) =>
                 t.settings.graphics.useDiskShaderCacheDescription,
             icon: Icons.toggle_on_outlined,
-            value: const StoreBoolValue(GraphicsSettingKeys.diskShaderCache),
+            setting: const ShaderCacheSetting(),
           ),
-          EnumOption<int>(
+          EmulatorEnumOption<int>(
             title: (t) => t.settings.graphics.textureFilterName,
             description: (t) => t.settings.graphics.textureFilterDescription,
             icon: Icons.filter_vintage,
-            value: const StoreIntValue(GraphicsSettingKeys.textureFilter),
+            setting: const TextureFilterSetting(),
             choices: [
               EnumChoice(
                 label: (t) => t.settings.graphics.textureFilterNone,

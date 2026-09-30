@@ -2,7 +2,9 @@ part of '../abstract_base_option.dart';
 
 /// A whole number chosen with a slider or typed in, between [min] and [max].
 @freezed
-abstract class IntOption with _$IntOption implements AbstractBaseOption {
+abstract class IntOption
+    with _$IntOption, WidgetConvertable
+    implements AbstractBaseOption {
   const IntOption._();
 
   const factory IntOption({
@@ -20,7 +22,7 @@ abstract class IntOption with _$IntOption implements AbstractBaseOption {
   Widget toWidget({
     required VoidCallback onAccessed,
     required VoidCallback onLongPress,
-  }) => IntOptionTile(
+  }) => IntOptionWidget(
     option: this,
     onAccessed: onAccessed,
     onLongPress: onLongPress,

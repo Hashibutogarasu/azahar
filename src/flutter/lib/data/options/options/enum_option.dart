@@ -12,7 +12,7 @@ abstract class EnumChoice<T> with _$EnumChoice<T> {
 /// or `String` matching how the setting is stored, or an enum.
 @freezed
 abstract class EnumOption<T>
-    with _$EnumOption<T>
+    with _$EnumOption<T>, WidgetConvertable
     implements AbstractBaseOption {
   const EnumOption._();
 
@@ -28,7 +28,7 @@ abstract class EnumOption<T>
   Widget toWidget({
     required VoidCallback onAccessed,
     required VoidCallback onLongPress,
-  }) => EnumOptionTile<T>(
+  }) => EnumOptionWidget<T>(
     option: this,
     onAccessed: onAccessed,
     onLongPress: onLongPress,

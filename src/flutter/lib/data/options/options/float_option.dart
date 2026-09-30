@@ -1,7 +1,7 @@
 part of '../abstract_base_option.dart';
 
 /// A number chosen with a slider or typed in, between [min] and [max].
-class FloatOption implements AbstractBaseOption {
+class FloatOption with WidgetConvertable implements AbstractBaseOption {
   const FloatOption({
     required this.title,
     this.description,
@@ -34,7 +34,7 @@ class FloatOption implements AbstractBaseOption {
   Widget toWidget({
     required VoidCallback onAccessed,
     required VoidCallback onLongPress,
-  }) => FloatOptionTile(
+  }) => FloatOptionWidget(
     option: this,
     onAccessed: onAccessed,
     onLongPress: onLongPress,
