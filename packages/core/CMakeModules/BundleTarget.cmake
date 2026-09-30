@@ -285,16 +285,16 @@ else()
             COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/bundle/dist/")
         add_custom_command(
             TARGET bundle
-            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/dist/azahar.png" "${CMAKE_BINARY_DIR}/bundle/dist/azahar.png")
+            COMMAND ${CMAKE_COMMAND} -E copy "${AZAHAR_DIST_DIR}/azahar.png" "${CMAKE_BINARY_DIR}/bundle/dist/azahar.png")
         add_custom_command(
             TARGET bundle
-            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/license.txt" "${CMAKE_BINARY_DIR}/bundle/")
+            COMMAND ${CMAKE_COMMAND} -E copy "${AZAHAR_REPO_ROOT}/license.txt" "${CMAKE_BINARY_DIR}/bundle/")
         add_custom_command(
             TARGET bundle
-            COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/README.md" "${CMAKE_BINARY_DIR}/bundle/")
+            COMMAND ${CMAKE_COMMAND} -E copy "${AZAHAR_REPO_ROOT}/README.md" "${CMAKE_BINARY_DIR}/bundle/")
         add_custom_command(
             TARGET bundle
-            COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/dist/scripting" "${CMAKE_BINARY_DIR}/bundle/scripting")
+            COMMAND ${CMAKE_COMMAND} -E copy_directory "${AZAHAR_DIST_DIR}/scripting" "${CMAKE_BINARY_DIR}/bundle/scripting")
 
         # On Linux, add a command to prepare linuxdeploy and any required plugins before any bundling occurs.
         if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
@@ -349,7 +349,7 @@ else()
             "-DQT_TARGET_PATH=\"${QT_TARGET_PATH}\""
             "-DBUNDLE_TARGET_EXECUTE=1"
             "-DTARGET=${target_name}"
-            "-DSOURCE_PATH=${CMAKE_SOURCE_DIR}"
+            "-DSOURCE_PATH=${AZAHAR_APPS_DIR}/qt-desktop"
             "-DBINARY_PATH=${CMAKE_BINARY_DIR}"
             "-DEXECUTABLE_PATH=${bundle_executable_path}"
             "-DBUNDLE_LIBRARY_PATHS=\"${bundle_library_paths}\""

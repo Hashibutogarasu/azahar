@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
-if grep -nrI '\s$' src *.yml *.txt *.md Doxyfile .gitignore .gitmodules .ci* dist/*.desktop \
-                 dist/*.svg dist/*.xml; then
+if grep -nrI '\s$' apps packages/core/src *.yml *.txt *.md Doxyfile .gitignore .gitmodules .ci* apps/qt-desktop/dist/*.desktop \
+                 apps/qt-desktop/dist/*.svg apps/qt-desktop/dist/*.xml; then
     echo Trailing whitespace found, aborting
     exit 1
 fi
@@ -11,10 +11,10 @@ $CLANG_FORMAT --version
 
 if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
     # Get list of every file modified in this pull request
-    files_to_lint="$(git diff --name-only --diff-filter=ACMRTUXB $COMMIT_RANGE | grep '^src/[^.]*[.]\(cpp\|h\)$' || true)"
+    files_to_lint="$(git diff --name-only --diff-filter=ACMRTUXB $COMMIT_RANGE | grep '^\(apps\|packages/core/src\)/[^.]*[.]\(cpp\|h\)$' || true)"
 else
     # Check everything for branch pushes
-    files_to_lint="$(find src/ -name '*.cpp' -or -name '*.h')"
+    files_to_lint="$(find apps packages/core/src -name '*.cpp' -or -name '*.h')"
 fi
 
 # Turn off tracing for this because it's too verbose

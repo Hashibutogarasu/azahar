@@ -7,7 +7,9 @@ get_timestamp(BUILD_DATE)
 
 list(APPEND CMAKE_MODULE_PATH "${SRC_DIR}/externals/cmake-modules")
 
-if (EXISTS "${SRC_DIR}/.git/objects")
+get_filename_component(REPO_DIR "${SRC_DIR}/../.." ABSOLUTE)
+
+if (EXISTS "${REPO_DIR}/.git/objects")
     # Find the package here with the known path so that the GetGit commands can find it as well
     find_package(Git QUIET PATHS "${GIT_EXECUTABLE}")
 
@@ -16,9 +18,9 @@ if (EXISTS "${SRC_DIR}/.git/objects")
     get_git_head_revision(GIT_REF_SPEC GIT_REV)
     git_describe(GIT_DESC --always --long --dirty)
     git_branch_name(GIT_BRANCH)
-elseif (EXISTS "${SRC_DIR}/GIT-COMMIT" AND EXISTS "${SRC_DIR}/GIT-TAG")
+elseif (EXISTS "${REPO_DIR}/GIT-COMMIT" AND EXISTS "${REPO_DIR}/GIT-TAG")
     # unified source archive
-    file(READ "${SRC_DIR}/GIT-COMMIT" GIT_REV_RAW LIMIT 64)
+    file(READ "${REPO_DIR}/GIT-COMMIT" GIT_REV_RAW LIMIT 64)
     string(STRIP "${GIT_REV_RAW}" GIT_REV)
     string(SUBSTRING "${GIT_REV_RAW}" 0 9 GIT_DESC)
     set(GIT_BRANCH "HEAD")
@@ -38,8 +40,8 @@ if (DEFINED ENV{CI} AND DEFINED ENV{GITHUB_ACTIONS})
     if ($ENV{GITHUB_REF_TYPE} STREQUAL "tag")
         set(GIT_TAG $ENV{GITHUB_REF_NAME})
     endif()
-elseif (EXISTS "${SRC_DIR}/GIT-COMMIT" AND EXISTS "${SRC_DIR}/GIT-TAG")
-    file(READ "${SRC_DIR}/GIT-TAG" GIT_TAG)
+elseif (EXISTS "${REPO_DIR}/GIT-COMMIT" AND EXISTS "${REPO_DIR}/GIT-TAG")
+    file(READ "${REPO_DIR}/GIT-TAG" GIT_TAG)
     string(STRIP ${GIT_TAG} GIT_TAG)
 endif()
 

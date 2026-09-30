@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 mkdir build && cd build
-cmake .. -GNinja \
+cmake ../packages/core -GNinja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_SYSTEM_NAME=iOS \
     -DCMAKE_OSX_ARCHITECTURES=arm64 \

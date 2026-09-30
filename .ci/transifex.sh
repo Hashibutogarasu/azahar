@@ -10,5 +10,5 @@ cmake .. -DENABLE_QT_TRANSLATION=ON -DGENERATE_QT_TRANSLATION=ON -DCMAKE_BUILD_T
 make translation
 cd ..
 
-cd dist/languages
+cd apps/qt-desktop/dist/languages
 tx push -s

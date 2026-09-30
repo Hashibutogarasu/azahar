@@ -7,7 +7,7 @@ add_executable(citra_meta
 set_target_properties(citra_meta PROPERTIES OUTPUT_NAME "azahar")
 
 if (APPLE)
-    set(DIST_DIR "../../dist/apple")
+    set(DIST_DIR "${AZAHAR_DIST_DIR}/apple")
     set(APPLE_RESOURCES
         "${DIST_DIR}/azahar.icns"
         "${DIST_DIR}/LaunchScreen.storyboard"

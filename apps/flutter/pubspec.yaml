@@ -1,6 +1,7 @@
 name: azahar
 description: "Azahar"
 publish_to: 'none'
+resolution: workspace
 
 version: 1.0.0+1
 
@@ -9,7 +10,7 @@ environment:
 
 dependencies:
   azahar_for_flutter:
-    path: ../azahar_for_flutter
+    path: ../../packages/native
   babstrap_settings_screen:
     path: packages/babstrap_settings_screen
   desktop_multi_window: ^0.3.1

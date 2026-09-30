@@ -1,105 +1,105 @@
 [submodule "boost"]
-    path = externals/boost
+	path = packages/core/externals/boost
     url = https://github.com/azahar-emu/ext-boost.git
 [submodule "nihstro"]
-    path = externals/nihstro
+	path = packages/core/externals/nihstro
     url = https://github.com/neobrain/nihstro.git
 [submodule "soundtouch"]
-    path = externals/soundtouch
+	path = packages/core/externals/soundtouch
     url = https://github.com/azahar-emu/soundtouch.git
 [submodule "catch2"]
-    path = externals/catch2
+	path = packages/core/externals/catch2
     url = https://github.com/catchorg/Catch2
 [submodule "dynarmic"]
-    path = externals/dynarmic
+	path = packages/core/externals/dynarmic
     url = https://github.com/azahar-emu/dynarmic.git
 [submodule "xbyak"]
-    path = externals/xbyak
+	path = packages/core/externals/xbyak
     url = https://github.com/herumi/xbyak.git
 [submodule "fmt"]
-    path = externals/fmt
+	path = packages/core/externals/fmt
     url = https://github.com/fmtlib/fmt.git
 [submodule "enet"]
-    path = externals/enet
+	path = packages/core/externals/enet
     url = https://github.com/lsalzman/enet.git
 [submodule "inih"]
-    path = externals/inih/inih
+	path = packages/core/externals/inih/inih
     url = https://github.com/benhoyt/inih.git
 [submodule "libressl"]
-    path = externals/libressl
+	path = packages/core/externals/libressl
     url = https://github.com/azahar-emu/ext-libressl-portable.git
 [submodule "libusb"]
-    path = externals/libusb/libusb
+	path = packages/core/externals/libusb/libusb
     url = https://github.com/libusb/libusb.git
 [submodule "cubeb"]
-    path = externals/cubeb
+	path = packages/core/externals/cubeb
     url = https://github.com/mozilla/cubeb
 [submodule "discord-rpc"]
-    path = externals/discord-rpc
+	path = packages/core/externals/discord-rpc
     url = https://github.com/azahar-emu/discord-rpc.git
 [submodule "cpp-jwt"]
-    path = externals/cpp-jwt
+	path = packages/core/externals/cpp-jwt
     url = https://github.com/arun11299/cpp-jwt.git
 [submodule "teakra"]
-    path = externals/teakra
+	path = packages/core/externals/teakra
     url = https://github.com/wwylele/teakra.git
 [submodule "lodepng"]
-    path = externals/lodepng/lodepng
+	path = packages/core/externals/lodepng/lodepng
     url = https://github.com/lvandeve/lodepng.git
 [submodule "zstd"]
-    path = externals/zstd
+	path = packages/core/externals/zstd
     url = https://github.com/facebook/zstd.git
 [submodule "libyuv"]
-    path = externals/libyuv
+	path = packages/core/externals/libyuv
     url = https://github.com/lemenkov/libyuv.git
 [submodule "sdl2"]
-	path = externals/sdl2/SDL
+	path = packages/core/externals/sdl2/SDL
 	url = https://github.com/libsdl-org/SDL
 [submodule "cryptopp-cmake"]
-	path = externals/cryptopp-cmake
+	path = packages/core/externals/cryptopp-cmake
 	url = https://github.com/abdes/cryptopp-cmake.git
 [submodule "cryptopp"]
-	path = externals/cryptopp
+	path = packages/core/externals/cryptopp
 	url = https://github.com/weidai11/cryptopp.git
 [submodule "dds-ktx"]
-    path = externals/dds-ktx
+	path = packages/core/externals/dds-ktx
     url = https://github.com/septag/dds-ktx
 [submodule "openal-soft"]
-    path = externals/openal-soft
+	path = packages/core/externals/openal-soft
     url = https://github.com/kcat/openal-soft
 [submodule "glslang"]
-    path = externals/glslang
+	path = packages/core/externals/glslang
     url = https://github.com/KhronosGroup/glslang
 [submodule "vma"]
-    path = externals/vma
+	path = packages/core/externals/vma
     url = https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
 [submodule "vulkan-headers"]
-    path = externals/vulkan-headers
+	path = packages/core/externals/vulkan-headers
     url = https://github.com/KhronosGroup/Vulkan-Headers
 [submodule "sirit"]
-    path = externals/sirit
+	path = packages/core/externals/sirit
     url = https://github.com/azahar-emu/sirit
 [submodule "faad2"]
-    path = externals/faad2/faad2
+	path = packages/core/externals/faad2/faad2
     url = https://github.com/knik0/faad2
 [submodule "library-headers"]
-    path = externals/library-headers
+	path = packages/core/externals/library-headers
     url = https://github.com/azahar-emu/ext-library-headers.git
 [submodule "libadrenotools"]
-    path = externals/libadrenotools
+	path = packages/core/externals/libadrenotools
     url = https://github.com/bylaws/libadrenotools
 [submodule "oaknut"]
-	path = externals/oaknut
+	path = packages/core/externals/oaknut
 	url = https://github.com/merryhime/oaknut.git
 [submodule "compatibility-list"]
-	path = dist/compatibility_list
+	path = apps/qt-desktop/dist/compatibility_list
 	url = https://github.com/azahar-emu/compatibility-list
 [submodule "radial-gamepad"]
-	path = externals/radial-gamepad
+	path = packages/android/externals/radial-gamepad
 	url = git@github.com:Hashibutogarasu/RadialGamePad.git
 [submodule "babstrap_settings_screen"]
-	path = src/flutter/packages/babstrap_settings_screen
+	path = apps/flutter/packages/babstrap_settings_screen
 	url = git@github.com:Hashibutogarasu/babstrap_settings_screen.git
 [submodule "src/flutter/packages/glass_bottom_navigation"]
-	path = src/flutter/packages/glass_bottom_navigation
+	path = apps/flutter/packages/glass_bottom_navigation
 	url = git@github.com:Hashibutogarasu/glass_bottom_navigation.git

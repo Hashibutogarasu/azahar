@@ -48,6 +48,7 @@ target_link_libraries(${PLUGIN_NAME} PUBLIC PkgConfig::GTK)
 get_filename_component(PLUGIN_LINUX_DIR "${CMAKE_CURRENT_SOURCE_DIR}" REALPATH)
 get_filename_component(AZAHAR_ROOT "${PLUGIN_LINUX_DIR}/../../.." REALPATH)
 set(AZAHAR_BUILD "${AZAHAR_ROOT}/build")
+set(AZAHAR_CORE "${AZAHAR_ROOT}/packages/core")
 
 find_program(NINJA_EXECUTABLE ninja REQUIRED)
 add_custom_target(azahar_core_libs
@@ -80,17 +81,17 @@ target_compile_definitions(${PLUGIN_NAME} PRIVATE
 )
 
 target_include_directories(${PLUGIN_NAME} PRIVATE
-  "${AZAHAR_ROOT}/src"
+  "${AZAHAR_CORE}/src"
   "${AZAHAR_BUILD}/include"
   "${AZAHAR_BUILD}/src"
-  "${AZAHAR_ROOT}/externals/boost"
-  "${AZAHAR_ROOT}/externals/lodepng/lodepng"
-  "${AZAHAR_ROOT}/externals/microprofile"
+  "${AZAHAR_CORE}/externals/boost"
+  "${AZAHAR_CORE}/externals/lodepng/lodepng"
+  "${AZAHAR_CORE}/externals/microprofile"
 )
 
 file(GLOB AZAHAR_EXTERNAL_INCLUDE_DIRS
-  "${AZAHAR_ROOT}/externals/*/include"
-  "${AZAHAR_ROOT}/externals/*/*/include"
+  "${AZAHAR_CORE}/externals/*/include"
+  "${AZAHAR_CORE}/externals/*/*/include"
 )
 target_include_directories(${PLUGIN_NAME} PRIVATE ${AZAHAR_EXTERNAL_INCLUDE_DIRS})
 
