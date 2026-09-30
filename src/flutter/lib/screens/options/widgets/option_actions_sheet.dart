@@ -9,9 +9,9 @@ import '../../../i18n/translations.g.dart';
 import '../../../widgets/long_press_menu_sheet.dart';
 
 /// The bottom sheet opened by pressing and holding an Options item, inside the same
-/// [LongPressMenuSheet] frame as the game card's menu. It offers to pin the item, or to unpin it
-/// when it is pinned already; while the pin limit is reached, pinning is disabled. For an item
-/// shown in the History section it ends with an entry that removes just that item from the
+/// [LongPressMenuSheet] frame as the game card's menu. It lists an entry to pin the item, or to
+/// unpin it when it is pinned already; while the pin limit is reached, pinning is disabled. For an
+/// item shown in the History section it ends with an entry that removes just that item from the
 /// history.
 class OptionActionsSheet extends ConsumerWidget {
   const OptionActionsSheet({
@@ -47,52 +47,37 @@ class OptionActionsSheet extends ConsumerWidget {
     return LongPressMenuSheet(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              FilledButton.tonal(
-                onPressed: limitReached
-                    ? null
-                    : () async {
-                        final notifier = ref.read(
-                          pinnedOptionsProvider.notifier,
-                        );
-                        if (isPinned) {
-                          await notifier.unpin(entry.id);
-                        } else {
-                          await notifier.pin(entry.id);
-                        }
-                        if (context.mounted) Navigator.of(context).pop();
-                      },
-                child: Text(isPinned ? t.options.unpin : t.options.pin),
-              ),
-            ],
+          ListTile(
+            enabled: !limitReached,
+            leading: Icon(isPinned ? Icons.push_pin_outlined : Icons.push_pin),
+            title: Text(isPinned ? t.options.unpin : t.options.pin),
+            subtitle: limitReached
+                ? Text(
+                    t.options.pinLimitReached(
+                      count: PinnedOptionsRepository.maxPinned,
+                    ),
+                  )
+                : null,
+            onTap: () async {
+              final notifier = ref.read(pinnedOptionsProvider.notifier);
+              if (isPinned) {
+                await notifier.unpin(entry.id);
+              } else {
+                await notifier.pin(entry.id);
+              }
+              if (context.mounted) Navigator.of(context).pop();
+            },
           ),
-          if (limitReached) ...[
-            const SizedBox(height: 16),
-            Text(
-              t.options.pinLimitReached(
-                count: PinnedOptionsRepository.maxPinned,
-              ),
+          if (removableFromHistory)
+            ListTile(
+              leading: const Icon(Icons.delete_outline),
+              title: Text(t.options.removeFromHistory),
+              onTap: () async {
+                await ref.read(optionHistoryProvider.notifier).remove(entry.id);
+                if (context.mounted) Navigator.of(context).pop();
+              },
             ),
-          ],
-          if (removableFromHistory) ...[
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                FilledButton.tonal(
-                  onPressed: () async {
-                    await ref
-                        .read(optionHistoryProvider.notifier)
-                        .remove(entry.id);
-                    if (context.mounted) Navigator.of(context).pop();
-                  },
-                  child: Text(t.options.removeFromHistory),
-                ),
-              ],
-            ),
-          ],
         ],
       ),
     );
