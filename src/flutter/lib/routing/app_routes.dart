@@ -25,13 +25,13 @@ import '../screens/settings/sections/layout_settings_page.dart';
 import '../screens/settings/sections/media_settings_page.dart';
 import '../screens/settings/sections/theme_settings_page.dart';
 import '../screens/setup/setup_wizard_page.dart';
-import 'slide_transition_route.dart';
+import 'app_route_data.dart';
 
 part 'app_routes.g.dart';
 part 'options_page_routes.dart';
 
 @TypedGoRoute<SetupRoute>(path: '/setup')
-class SetupRoute extends GoRouteData with $SetupRoute, SlideTransitionRoute {
+class SetupRoute extends AppRouteData with $SetupRoute {
   const SetupRoute();
 
   @override
@@ -41,7 +41,7 @@ class SetupRoute extends GoRouteData with $SetupRoute, SlideTransitionRoute {
 }
 
 @TypedGoRoute<AboutRoute>(path: '/about')
-class AboutRoute extends GoRouteData with $AboutRoute, SlideTransitionRoute {
+class AboutRoute extends AppRouteData with $AboutRoute {
   const AboutRoute();
 
   @override
@@ -51,8 +51,7 @@ class AboutRoute extends GoRouteData with $AboutRoute, SlideTransitionRoute {
 }
 
 @TypedGoRoute<GpuDriverManagerRoute>(path: '/gpu-driver-manager')
-class GpuDriverManagerRoute extends GoRouteData
-    with $GpuDriverManagerRoute, SlideTransitionRoute {
+class GpuDriverManagerRoute extends AppRouteData with $GpuDriverManagerRoute {
   const GpuDriverManagerRoute();
 
   @override
@@ -62,8 +61,7 @@ class GpuDriverManagerRoute extends GoRouteData
 }
 
 @TypedGoRoute<SystemFilesRoute>(path: '/system-files')
-class SystemFilesRoute extends GoRouteData
-    with $SystemFilesRoute, SlideTransitionRoute {
+class SystemFilesRoute extends AppRouteData with $SystemFilesRoute {
   const SystemFilesRoute();
 
   @override

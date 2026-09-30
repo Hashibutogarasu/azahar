@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/options/option_categories_provider.dart';
 import '../../../data/options/option_history_provider.dart';
 import '../../../data/options/pinned_options_provider.dart';
-import '../../../data/options/translation_lookup.dart';
 import '../../../i18n/translations.g.dart';
 import 'clear_section_button.dart';
+import 'option_category_cards.dart';
 import 'option_group_card.dart';
 
 /// What the Options page shows when it is not searching: the recently used items, the pinned
@@ -54,14 +54,10 @@ class OptionsHomeContent extends ConsumerWidget {
           ),
         ),
         for (final category in ref.watch(optionCategoriesProvider))
-          for (final section in category.sections)
-            OptionGroupCard(
-              title: t.resolve(section.titleKey ?? category.titleKey),
-              entries: [
-                for (final entry in category.entries)
-                  if (identical(entry.section, section)) entry,
-              ],
-            ),
+          OptionCategoryCards(
+            category: category,
+            fallbackToCategoryTitle: true,
+          ),
       ],
     );
   }

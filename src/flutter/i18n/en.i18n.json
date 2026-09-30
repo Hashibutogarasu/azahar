@@ -754,7 +754,12 @@
     "accessibility": {
       "title": "Accessibility",
       "reduceMotion": "Reduce Motion",
-      "reduceMotionDescription": "Reduces animations and motion effects throughout the app."
+      "reduceMotionDescription": "Reduces animations and motion effects throughout the app.",
+      "pageTransition": "Page Transition",
+      "pageTransitionDescription": "How pages animate when they open and close.",
+      "pageTransitionSlide": "Slide",
+      "pageTransitionStandard": "Standard",
+      "pageTransitionNone": "None"
     },
     "advanced": {
       "title": "Advanced Settings",
