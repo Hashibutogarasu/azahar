@@ -120,16 +120,18 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
   Future<void> _openCheats() async {
     final game = widget.game;
     if (game == null) return;
-    _scaffoldKey.currentState?.closeDrawer();
     final notifier = ref.read(emulationSessionProvider.notifier);
     final wasPaused = ref.read(emulationSessionProvider).isPaused;
-    if (!wasPaused) await notifier.pauseForClosePrompt();
-    if (!mounted) return;
-    await CheatsDialog.show(
-      context,
-      repository: CheatRepository(AppServices.nativeBridge, game.titleId),
-    );
-    if (!wasPaused) await notifier.cancelClosePrompt();
+    await notifier.pauseForClosePrompt();
+    try {
+      if (!mounted) return;
+      await CheatsDialog.show(
+        context,
+        repository: CheatRepository(AppServices.nativeBridge, game.titleId),
+      );
+    } finally {
+      if (!wasPaused) await notifier.cancelClosePrompt();
+    }
   }
 
   Widget _screens(BoxConstraints constraints) {
