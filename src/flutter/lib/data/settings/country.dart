@@ -1,5 +1,8 @@
+import '../../i18n/translations.g.dart';
+import 'sections/general_settings.dart';
+
 /// A country the emulated console can be set to. [code] is the value stored in the system save
-/// data, and the name of each constant is its key under `settings.system.countries`.
+/// data. The constants are declared in the order of [countryLabels].
 enum Country {
   japan(1),
   anguilla(8),
@@ -139,8 +142,8 @@ enum Country {
 
   final int code;
 
-  /// The translation key path of this country's name.
-  String get labelKey => 'settings.system.countries.$name';
+  /// The name of this country in the language of [t].
+  String label(Translations t) => countryLabels(t.settings.system)[index];
 
   /// The country with [code], or null when no country has it.
   static Country? fromCode(int code) {

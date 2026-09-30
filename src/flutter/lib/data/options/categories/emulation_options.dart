@@ -15,20 +15,20 @@ import '../store_option_values.dart';
 final emulationOptionsProvider = Provider<OptionCategory>(
   (ref) => OptionCategory(
     id: 'emulation',
-    titleKey: 'options.groups.emulation',
+    title: (t) => t.options.groups.emulation,
     sections: [
       OptionSection(
         options: [
-          const BoolOption(
-            titleKey: 'settings.system.new3ds',
-            descriptionKey: 'settings.system.new3dsDescription',
+          BoolOption(
+            title: (t) => t.settings.system.new3ds,
+            description: (t) => t.settings.system.new3dsDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(SystemSettingKeys.new3ds),
+            value: const StoreBoolValue(SystemSettingKeys.new3ds),
           ),
           BoolOption(
-            titleKey: 'settings.emulation.useHighLevelEmulation',
-            descriptionKey:
-                'settings.emulation.useHighLevelEmulationDescription',
+            title: (t) => t.settings.emulation.useHighLevelEmulation,
+            description: (t) =>
+                t.settings.emulation.useHighLevelEmulationDescription,
             icon: Icons.toggle_on_outlined,
             value: CallbackOptionValue<bool>(
               onRead: (ref) => !AppServices.emulatorSettingsRepository.readBool(
@@ -43,33 +43,34 @@ final emulationOptionsProvider = Provider<OptionCategory>(
               },
             ),
           ),
-          const BoolOption(
-            titleKey: 'settings.general.frameLimitEnable',
-            descriptionKey: 'settings.general.frameLimitEnableDescription',
+          BoolOption(
+            title: (t) => t.settings.general.frameLimitEnable,
+            description: (t) => t.settings.general.frameLimitEnableDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(GeneralSettingKeys.useFrameLimit),
+            value: const StoreBoolValue(GeneralSettingKeys.useFrameLimit),
           ),
-          IntOption(
-            titleKey: 'settings.general.frameLimitSlider',
-            descriptionKey: 'settings.general.frameLimitSliderDescription',
+          PercentOption(
+            title: (t) => t.settings.general.frameLimitSlider,
+            description: (t) => t.settings.general.frameLimitSliderDescription,
             icon: Icons.tune,
-            value: const StoreIntValue(GeneralSettingKeys.frameLimit),
-            min: 1,
-            max: 200,
-            defaultValue: GeneralSettingKeys.frameLimit.defaultValue,
-            units: '%',
+            value: const IntPercentValue(
+              StoreIntValue(GeneralSettingKeys.frameLimit),
+            ),
+            min: 0.01,
+            max: 2.0,
+            defaultValue: GeneralSettingKeys.frameLimit.defaultValue / 100,
           ),
-          const BoolOption(
-            titleKey: 'settings.system.pluginLoaderEnable',
-            descriptionKey: 'settings.system.pluginLoaderEnableDescription',
+          BoolOption(
+            title: (t) => t.settings.system.pluginLoaderEnable,
+            description: (t) => t.settings.system.pluginLoaderEnableDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(SystemSettingKeys.pluginLoader),
+            value: const StoreBoolValue(SystemSettingKeys.pluginLoader),
           ),
-          const BoolOption(
-            titleKey: 'settings.system.allowPluginLoader',
-            descriptionKey: 'settings.system.allowPluginLoaderDescription',
+          BoolOption(
+            title: (t) => t.settings.system.allowPluginLoader,
+            description: (t) => t.settings.system.allowPluginLoaderDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(SystemSettingKeys.allowPluginLoader),
+            value: const StoreBoolValue(SystemSettingKeys.allowPluginLoader),
           ),
         ],
       ),

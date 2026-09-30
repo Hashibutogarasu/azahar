@@ -20,31 +20,40 @@ final profileOptionsProvider = Provider<OptionCategory>((ref) {
   );
   return OptionCategory(
     id: 'profile',
-    titleKey: 'settings.general.title',
+    title: (t) => t.settings.general.title,
     sections: [
       OptionSection(
-        titleKey: 'settings.system.profileSettings',
+        title: (t) => t.settings.system.profileSettings,
         options: [
-          const EnumOption<int>(
-            titleKey: 'settings.system.emulatedRegion',
+          EnumOption<int>(
+            title: (t) => t.settings.system.emulatedRegion,
             icon: Icons.public,
-            value: StoreIntValue(SystemSettingKeys.emulatedRegion),
+            value: const StoreIntValue(SystemSettingKeys.emulatedRegion),
             choices: [
               EnumChoice(
-                labelKey: 'settings.system.regionAutoSelect',
+                label: (t) => t.settings.system.regionAutoSelect,
                 value: -1,
               ),
-              EnumChoice(labelKey: 'settings.system.regionJapan', value: 0),
-              EnumChoice(labelKey: 'settings.system.regionUsa', value: 1),
-              EnumChoice(labelKey: 'settings.system.regionEurope', value: 2),
-              EnumChoice(labelKey: 'settings.system.regionAustralia', value: 3),
-              EnumChoice(labelKey: 'settings.system.regionChina', value: 4),
-              EnumChoice(labelKey: 'settings.system.regionKorea', value: 5),
-              EnumChoice(labelKey: 'settings.system.regionTaiwan', value: 6),
+              EnumChoice(label: (t) => t.settings.system.regionJapan, value: 0),
+              EnumChoice(label: (t) => t.settings.system.regionUsa, value: 1),
+              EnumChoice(
+                label: (t) => t.settings.system.regionEurope,
+                value: 2,
+              ),
+              EnumChoice(
+                label: (t) => t.settings.system.regionAustralia,
+                value: 3,
+              ),
+              EnumChoice(label: (t) => t.settings.system.regionChina, value: 4),
+              EnumChoice(label: (t) => t.settings.system.regionKorea, value: 5),
+              EnumChoice(
+                label: (t) => t.settings.system.regionTaiwan,
+                value: 6,
+              ),
             ],
           ),
           EnumOption<Country>(
-            titleKey: 'settings.system.country',
+            title: (t) => t.settings.system.country,
             icon: Icons.flag_outlined,
             value: CallbackOptionValue<Country>(
               onRead: (ref) =>
@@ -61,48 +70,69 @@ final profileOptionsProvider = Provider<OptionCategory>((ref) {
             ),
             choices: [
               for (final country in Country.values)
-                EnumChoice(labelKey: country.labelKey, value: country),
+                EnumChoice(label: country.label, value: country),
             ],
           ),
           EnumOption<int>(
-            titleKey: 'settings.system.emulatedLanguage',
+            title: (t) => t.settings.system.emulatedLanguage,
             icon: Icons.translate,
             value: StoreIntValue(
               SystemSettingKeys.emulatedLanguage,
               store: systemSaveStore,
             ),
-            choices: const [
+            choices: [
               EnumChoice(
-                labelKey: 'settings.system.languageJapanese',
+                label: (t) => t.settings.system.languageJapanese,
                 value: 0,
               ),
-              EnumChoice(labelKey: 'settings.system.languageEnglish', value: 1),
-              EnumChoice(labelKey: 'settings.system.languageFrench', value: 2),
-              EnumChoice(labelKey: 'settings.system.languageGerman', value: 3),
-              EnumChoice(labelKey: 'settings.system.languageItalian', value: 4),
-              EnumChoice(labelKey: 'settings.system.languageSpanish', value: 5),
               EnumChoice(
-                labelKey: 'settings.system.languageSimplifiedChinese',
+                label: (t) => t.settings.system.languageEnglish,
+                value: 1,
+              ),
+              EnumChoice(
+                label: (t) => t.settings.system.languageFrench,
+                value: 2,
+              ),
+              EnumChoice(
+                label: (t) => t.settings.system.languageGerman,
+                value: 3,
+              ),
+              EnumChoice(
+                label: (t) => t.settings.system.languageItalian,
+                value: 4,
+              ),
+              EnumChoice(
+                label: (t) => t.settings.system.languageSpanish,
+                value: 5,
+              ),
+              EnumChoice(
+                label: (t) => t.settings.system.languageSimplifiedChinese,
                 value: 6,
               ),
-              EnumChoice(labelKey: 'settings.system.languageKorean', value: 7),
-              EnumChoice(labelKey: 'settings.system.languageDutch', value: 8),
               EnumChoice(
-                labelKey: 'settings.system.languagePortuguese',
+                label: (t) => t.settings.system.languageKorean,
+                value: 7,
+              ),
+              EnumChoice(
+                label: (t) => t.settings.system.languageDutch,
+                value: 8,
+              ),
+              EnumChoice(
+                label: (t) => t.settings.system.languagePortuguese,
                 value: 9,
               ),
               EnumChoice(
-                labelKey: 'settings.system.languageRussian',
+                label: (t) => t.settings.system.languageRussian,
                 value: 10,
               ),
               EnumChoice(
-                labelKey: 'settings.system.languageTraditionalChinese',
+                label: (t) => t.settings.system.languageTraditionalChinese,
                 value: 11,
               ),
             ],
           ),
           StringOption(
-            titleKey: 'settings.system.username',
+            title: (t) => t.settings.system.username,
             icon: Icons.person_outline,
             value: StoreStringValue(
               SystemSettingKeys.username,
@@ -111,7 +141,7 @@ final profileOptionsProvider = Provider<OptionCategory>((ref) {
             maxLength: 10,
           ),
           IntOption(
-            titleKey: 'settings.system.playCoins',
+            title: (t) => t.settings.system.playCoins,
             icon: Icons.monetization_on_outlined,
             value: StoreIntValue(
               SystemSettingKeys.playCoins,
@@ -122,8 +152,8 @@ final profileOptionsProvider = Provider<OptionCategory>((ref) {
             defaultValue: SystemSettingKeys.playCoins.defaultValue,
           ),
           IntOption(
-            titleKey: 'settings.system.stepsPerHour',
-            descriptionKey: 'settings.system.stepsPerHourDescription',
+            title: (t) => t.settings.system.stepsPerHour,
+            description: (t) => t.settings.system.stepsPerHourDescription,
             icon: Icons.directions_walk,
             value: const StoreIntValue(SystemSettingKeys.stepsPerHour),
             min: 0,
@@ -131,46 +161,64 @@ final profileOptionsProvider = Provider<OptionCategory>((ref) {
             defaultValue: SystemSettingKeys.stepsPerHour.defaultValue,
           ),
           ActionOption(
-            titleKey: 'settings.system.consoleId',
-            descriptionKey: 'settings.system.consoleIdDescription',
+            title: (t) => t.settings.system.consoleId,
+            description: (t) => t.settings.system.consoleIdDescription,
             icon: Icons.badge_outlined,
             onTap: (context, ref) => systemSaveStore.regenerateConsoleId(),
           ),
           ActionOption(
-            titleKey: 'settings.system.macAddress',
-            descriptionKey: 'settings.system.macAddressDescription',
+            title: (t) => t.settings.system.macAddress,
+            description: (t) => t.settings.system.macAddressDescription,
             icon: Icons.router_outlined,
             onTap: (context, ref) => systemSaveStore.regenerateMac(),
           ),
         ],
       ),
       OptionSection(
-        titleKey: 'settings.system.birthday',
+        title: (t) => t.settings.system.birthday,
         options: [
           EnumOption<int>(
-            titleKey: 'settings.system.birthdayMonth',
+            title: (t) => t.settings.system.birthdayMonth,
             icon: Icons.cake_outlined,
             value: StoreIntValue(
               SystemSettingKeys.birthdayMonth,
               store: systemSaveStore,
             ),
-            choices: const [
-              EnumChoice(labelKey: 'settings.system.monthJanuary', value: 1),
-              EnumChoice(labelKey: 'settings.system.monthFebruary', value: 2),
-              EnumChoice(labelKey: 'settings.system.monthMarch', value: 3),
-              EnumChoice(labelKey: 'settings.system.monthApril', value: 4),
-              EnumChoice(labelKey: 'settings.system.monthMay', value: 5),
-              EnumChoice(labelKey: 'settings.system.monthJune', value: 6),
-              EnumChoice(labelKey: 'settings.system.monthJuly', value: 7),
-              EnumChoice(labelKey: 'settings.system.monthAugust', value: 8),
-              EnumChoice(labelKey: 'settings.system.monthSeptember', value: 9),
-              EnumChoice(labelKey: 'settings.system.monthOctober', value: 10),
-              EnumChoice(labelKey: 'settings.system.monthNovember', value: 11),
-              EnumChoice(labelKey: 'settings.system.monthDecember', value: 12),
+            choices: [
+              EnumChoice(
+                label: (t) => t.settings.system.monthJanuary,
+                value: 1,
+              ),
+              EnumChoice(
+                label: (t) => t.settings.system.monthFebruary,
+                value: 2,
+              ),
+              EnumChoice(label: (t) => t.settings.system.monthMarch, value: 3),
+              EnumChoice(label: (t) => t.settings.system.monthApril, value: 4),
+              EnumChoice(label: (t) => t.settings.system.monthMay, value: 5),
+              EnumChoice(label: (t) => t.settings.system.monthJune, value: 6),
+              EnumChoice(label: (t) => t.settings.system.monthJuly, value: 7),
+              EnumChoice(label: (t) => t.settings.system.monthAugust, value: 8),
+              EnumChoice(
+                label: (t) => t.settings.system.monthSeptember,
+                value: 9,
+              ),
+              EnumChoice(
+                label: (t) => t.settings.system.monthOctober,
+                value: 10,
+              ),
+              EnumChoice(
+                label: (t) => t.settings.system.monthNovember,
+                value: 11,
+              ),
+              EnumChoice(
+                label: (t) => t.settings.system.monthDecember,
+                value: 12,
+              ),
             ],
           ),
           IntOption(
-            titleKey: 'settings.system.birthdayDay',
+            title: (t) => t.settings.system.birthdayDay,
             icon: Icons.event,
             value: StoreIntValue(
               SystemSettingKeys.birthdayDay,

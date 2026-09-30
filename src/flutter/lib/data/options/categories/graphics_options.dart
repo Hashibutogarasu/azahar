@@ -8,26 +8,26 @@ import '../option_section.dart';
 
 /// The Graphics category: the pages for the renderer, screen layout and camera settings.
 final graphicsOptionsProvider = Provider<OptionCategory>(
-  (ref) => const OptionCategory(
+  (ref) => OptionCategory(
     id: 'graphics',
-    titleKey: 'options.groups.graphics',
+    title: (t) => t.options.groups.graphics,
     sections: [
       OptionSection(
         options: [
           NestedOption(
-            titleKey: 'settings.graphics.title',
+            title: (t) => t.settings.graphics.title,
             icon: Icons.monitor,
-            destination: OptionsGraphicsSettingsRoute(),
+            destination: const OptionsGraphicsSettingsRoute(),
           ),
           NestedOption(
-            titleKey: 'settings.layout.title',
+            title: (t) => t.settings.layout.title,
             icon: Icons.fit_screen,
-            destination: OptionsLayoutSettingsRoute(),
+            destination: const OptionsLayoutSettingsRoute(),
           ),
           NestedOption(
-            titleKey: 'settings.camera.title',
+            title: (t) => t.settings.camera.title,
             icon: Icons.camera_alt,
-            destination: OptionsCameraSettingsRoute(),
+            destination: const OptionsCameraSettingsRoute(),
           ),
         ],
       ),

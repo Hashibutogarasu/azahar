@@ -12,115 +12,113 @@ import '../option_section.dart';
 import '../option_value.dart';
 import '../store_option_values.dart';
 
-/// The items of the media settings page, which is not listed on the Options page: the app's media session and master volume, and the emulator's audio
-/// settings.
+/// The items of the media settings page, which is not listed on the Options page: the app's media
+/// session and master volume, and the emulator's audio settings.
 final mediaOptionsProvider = Provider<OptionCategory>((ref) {
   final systemSaveStore = SystemSaveValueStore(
     AppServices.systemSaveRepository,
   );
   return OptionCategory(
     id: 'media',
-    titleKey: 'settings.media.title',
+    title: (t) => t.settings.media.title,
     sections: [
       OptionSection(
-        titleKey: 'settings.media.groupApp',
+        title: (t) => t.settings.media.groupApp,
         options: [
-          const BoolOption(
-            titleKey: 'settings.media.treatAudioAsMediaSession',
-            descriptionKey:
-                'settings.media.treatAudioAsMediaSessionDescription',
+          BoolOption(
+            title: (t) => t.settings.media.treatAudioAsMediaSession,
+            description: (t) =>
+                t.settings.media.treatAudioAsMediaSessionDescription,
             icon: Icons.music_note_outlined,
-            value: StoreBoolValue(MediaSettingKeys.treatAudioAsMediaSession),
+            value: const StoreBoolValue(
+              MediaSettingKeys.treatAudioAsMediaSession,
+            ),
           ),
-          FloatOption(
-            titleKey: 'settings.media.masterVolume',
-            descriptionKey: 'settings.media.masterVolumeDescription',
+          PercentOption(
+            title: (t) => t.settings.media.masterVolume,
+            description: (t) => t.settings.media.masterVolumeDescription,
             icon: Icons.volume_up_outlined,
             value: CallbackOptionValue<double>(
-              onRead: (ref) => ref.watch(masterVolumeProvider),
+              onRead: (ref) => ref.watch(masterVolumeProvider) / 100,
               onWrite: (context, ref, value) async {
                 final notifier = ref.read(masterVolumeProvider.notifier);
-                await notifier.setVolume(value);
+                await notifier.setVolume(value * 100);
                 await notifier.persistVolume();
               },
             ),
-            min: 0,
-            max: 100,
-            defaultValue: 100,
-            units: '%',
+            defaultValue: 1.0,
           ),
         ],
       ),
       OptionSection(
-        titleKey: 'settings.media.groupEmulator',
+        title: (t) => t.settings.media.groupEmulator,
         options: [
-          const FloatOption(
-            titleKey: 'settings.audio.volume',
-            descriptionKey: 'settings.audio.volumeDescription',
+          PercentOption(
+            title: (t) => t.settings.audio.volume,
+            description: (t) => t.settings.audio.volumeDescription,
             icon: Icons.volume_up,
-            value: StoreFloatValue(AudioSettingKeys.volume),
-            min: 0,
-            max: 100,
-            defaultValue: 100,
-            units: '%',
+            value: const FloatPercentValue(
+              StoreFloatValue(AudioSettingKeys.volume),
+            ),
+            defaultValue: 1.0,
           ),
-          const BoolOption(
-            titleKey: 'settings.audio.audioStretching',
-            descriptionKey: 'settings.audio.audioStretchingDescription',
+          BoolOption(
+            title: (t) => t.settings.audio.audioStretching,
+            description: (t) => t.settings.audio.audioStretchingDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(AudioSettingKeys.audioStretching),
+            value: const StoreBoolValue(AudioSettingKeys.audioStretching),
           ),
-          const BoolOption(
-            titleKey: 'settings.audio.realtimeAudio',
-            descriptionKey: 'settings.audio.realtimeAudioDescription',
+          BoolOption(
+            title: (t) => t.settings.audio.realtimeAudio,
+            description: (t) => t.settings.audio.realtimeAudioDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(AudioSettingKeys.realtimeAudio),
+            value: const StoreBoolValue(AudioSettingKeys.realtimeAudio),
           ),
-          const EnumOption<int>(
-            titleKey: 'settings.audio.audioInputType',
+          EnumOption<int>(
+            title: (t) => t.settings.audio.audioInputType,
             icon: Icons.mic_none,
-            value: StoreIntValue(AudioSettingKeys.audioInputType),
+            value: const StoreIntValue(AudioSettingKeys.audioInputType),
             choices: [
               EnumChoice(
-                labelKey: 'settings.audio.audioInputTypeAuto',
+                label: (t) => t.settings.audio.audioInputTypeAuto,
                 value: 0,
               ),
               EnumChoice(
-                labelKey: 'settings.audio.audioInputTypeNone',
+                label: (t) => t.settings.audio.audioInputTypeNone,
                 value: 1,
               ),
               EnumChoice(
-                labelKey: 'settings.audio.audioInputTypeStaticNoise',
+                label: (t) => t.settings.audio.audioInputTypeStaticNoise,
                 value: 2,
               ),
               EnumChoice(
-                labelKey: 'settings.audio.audioInputTypeRealCubeb',
+                label: (t) => t.settings.audio.audioInputTypeRealCubeb,
                 value: 3,
               ),
               EnumChoice(
-                labelKey: 'settings.audio.audioInputTypeRealOpenal',
+                label: (t) => t.settings.audio.audioInputTypeRealOpenal,
                 value: 4,
               ),
             ],
           ),
           EnumOption<int>(
-            titleKey: 'settings.audio.soundOutputMode',
+            title: (t) => t.settings.audio.soundOutputMode,
             icon: Icons.speaker_group_outlined,
             value: StoreIntValue(
               AudioSettingKeys.soundOutputMode,
               store: systemSaveStore,
             ),
-            choices: const [
+            choices: [
               EnumChoice(
-                labelKey: 'settings.audio.soundOutputModeMono',
+                label: (t) => t.settings.audio.soundOutputModeMono,
                 value: 0,
               ),
               EnumChoice(
-                labelKey: 'settings.audio.soundOutputModeStereo',
+                label: (t) => t.settings.audio.soundOutputModeStereo,
                 value: 1,
               ),
               EnumChoice(
-                labelKey: 'settings.audio.soundOutputModeSurround',
+                label: (t) => t.settings.audio.soundOutputModeSurround,
                 value: 2,
               ),
             ],

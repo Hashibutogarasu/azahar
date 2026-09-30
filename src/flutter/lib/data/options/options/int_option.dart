@@ -6,8 +6,8 @@ abstract class IntOption with _$IntOption implements AbstractBaseOption {
   const IntOption._();
 
   const factory IntOption({
-    required String titleKey,
-    String? descriptionKey,
+    required TranslationText title,
+    TranslationText? description,
     required IconData icon,
     required OptionValue<int> value,
     required int min,

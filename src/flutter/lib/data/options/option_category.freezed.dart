@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$OptionCategory {
 
- String get id; String get titleKey; List<OptionSection> get sections;
+ String get id; TranslationText get title; List<OptionSection> get sections;
 /// Create a copy of OptionCategory
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $OptionCategoryCopyWith<OptionCategory> get copyWith => _$OptionCategoryCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OptionCategory&&(identical(other.id, id) || other.id == id)&&(identical(other.titleKey, titleKey) || other.titleKey == titleKey)&&const DeepCollectionEquality().equals(other.sections, sections));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OptionCategory&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other.sections, sections));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,titleKey,const DeepCollectionEquality().hash(sections));
+int get hashCode => Object.hash(runtimeType,id,title,const DeepCollectionEquality().hash(sections));
 
 @override
 String toString() {
-  return 'OptionCategory(id: $id, titleKey: $titleKey, sections: $sections)';
+  return 'OptionCategory(id: $id, title: $title, sections: $sections)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $OptionCategoryCopyWith<$Res>  {
   factory $OptionCategoryCopyWith(OptionCategory value, $Res Function(OptionCategory) _then) = _$OptionCategoryCopyWithImpl;
 @useResult
 $Res call({
- String id, String titleKey, List<OptionSection> sections
+ String id, TranslationText title, List<OptionSection> sections
 });
 
 
@@ -63,11 +63,11 @@ class _$OptionCategoryCopyWithImpl<$Res>
 
 /// Create a copy of OptionCategory
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? titleKey = null,Object? sections = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? sections = null,}) {
   return _then(OptionCategory(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,titleKey: null == titleKey ? _self.titleKey : titleKey // ignore: cast_nullable_to_non_nullable
-as String,sections: null == sections ? _self.sections : sections // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as TranslationText,sections: null == sections ? _self.sections : sections // ignore: cast_nullable_to_non_nullable
 as List<OptionSection>,
   ));
 }
@@ -153,10 +153,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String titleKey,  List<OptionSection> sections)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  TranslationText title,  List<OptionSection> sections)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _OptionCategory() when $default != null:
-return $default(_that.id,_that.titleKey,_that.sections);case _:
+return $default(_that.id,_that.title,_that.sections);case _:
   return orElse();
 
 }
@@ -174,10 +174,10 @@ return $default(_that.id,_that.titleKey,_that.sections);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String titleKey,  List<OptionSection> sections)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  TranslationText title,  List<OptionSection> sections)  $default,) {final _that = this;
 switch (_that) {
 case _OptionCategory():
-return $default(_that.id,_that.titleKey,_that.sections);case _:
+return $default(_that.id,_that.title,_that.sections);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +194,10 @@ return $default(_that.id,_that.titleKey,_that.sections);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String titleKey,  List<OptionSection> sections)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  TranslationText title,  List<OptionSection> sections)?  $default,) {final _that = this;
 switch (_that) {
 case _OptionCategory() when $default != null:
-return $default(_that.id,_that.titleKey,_that.sections);case _:
+return $default(_that.id,_that.title,_that.sections);case _:
   return null;
 
 }
@@ -209,11 +209,11 @@ return $default(_that.id,_that.titleKey,_that.sections);case _:
 
 
 class _OptionCategory extends OptionCategory {
-  const _OptionCategory({required this.id, required this.titleKey, required  List<OptionSection> sections}): _sections = sections,super._();
+  const _OptionCategory({required this.id, required this.title, required  List<OptionSection> sections}): _sections = sections,super._();
   
 
 @override final  String id;
-@override final  String titleKey;
+@override final  TranslationText title;
  final  List<OptionSection> _sections;
 @override List<OptionSection> get sections {
   if (_sections is EqualUnmodifiableListView) return _sections;
@@ -232,16 +232,16 @@ _$OptionCategoryCopyWith<_OptionCategory> get copyWith => __$OptionCategoryCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OptionCategory&&(identical(other.id, id) || other.id == id)&&(identical(other.titleKey, titleKey) || other.titleKey == titleKey)&&const DeepCollectionEquality().equals(other._sections, _sections));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OptionCategory&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other._sections, _sections));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,titleKey,const DeepCollectionEquality().hash(_sections));
+int get hashCode => Object.hash(runtimeType,id,title,const DeepCollectionEquality().hash(_sections));
 
 @override
 String toString() {
-  return 'OptionCategory(id: $id, titleKey: $titleKey, sections: $sections)';
+  return 'OptionCategory(id: $id, title: $title, sections: $sections)';
 }
 
 
@@ -252,7 +252,7 @@ abstract mixin class _$OptionCategoryCopyWith<$Res> implements $OptionCategoryCo
   factory _$OptionCategoryCopyWith(_OptionCategory value, $Res Function(_OptionCategory) _then) = __$OptionCategoryCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String titleKey, List<OptionSection> sections
+ String id, TranslationText title, List<OptionSection> sections
 });
 
 
@@ -269,11 +269,11 @@ class __$OptionCategoryCopyWithImpl<$Res>
 
 /// Create a copy of OptionCategory
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? titleKey = null,Object? sections = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? sections = null,}) {
   return _then(_OptionCategory(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,titleKey: null == titleKey ? _self.titleKey : titleKey // ignore: cast_nullable_to_non_nullable
-as String,sections: null == sections ? _self._sections : sections // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as TranslationText,sections: null == sections ? _self._sections : sections // ignore: cast_nullable_to_non_nullable
 as List<OptionSection>,
   ));
 }

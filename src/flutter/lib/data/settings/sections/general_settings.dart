@@ -38,7 +38,7 @@ List<SettingsItem> buildGeneralSettingsItems(
     SettingsItem.stringSingleChoice(
       title: s.country,
       setting: SystemSettingKeys.country,
-      choiceLabels: _countryLabels(s),
+      choiceLabels: countryLabels(s),
       choiceValues: _countryValues,
       store: systemSaveStore,
     ),
@@ -135,7 +135,8 @@ List<SettingsItem> buildGeneralSettingsItems(
 List<String> get _countryValues =>
     SystemSaveRepository.countryCodes.map((code) => code.toString()).toList();
 
-List<String> _countryLabels(Translations$settings$system$en s) => [
+/// The country names in the order of [SystemSaveRepository.countryCodes] and of `Country.values`.
+List<String> countryLabels(Translations$settings$system$en s) => [
   s.countries.japan,
   s.countries.anguilla,
   s.countries.antiguaAndBarbuda,

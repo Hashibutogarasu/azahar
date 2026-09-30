@@ -17,41 +17,41 @@ final toolsOptionsProvider = Provider<OptionCategory>((ref) {
       ref.watch(gpuDriverSupportedProvider).value ?? false;
   return OptionCategory(
     id: 'tools',
-    titleKey: 'options.groups.tools',
+    title: (t) => t.options.groups.tools,
     sections: [
       OptionSection(
         options: [
           ActionOption(
-            titleKey: 'options.articBaseConnect',
-            descriptionKey: 'options.articBaseConnectDescription',
+            title: (t) => t.options.articBaseConnect,
+            description: (t) => t.options.articBaseConnectDescription,
             icon: Icons.wifi_tethering,
             onTap: ConnectArticBaseAction.run,
           ),
           ActionOption(
-            titleKey: 'options.installGameContent',
-            descriptionKey: 'options.installGameContentDescription',
+            title: (t) => t.options.installGameContent,
+            description: (t) => t.options.installGameContentDescription,
             icon: Icons.install_mobile,
             onTap: (context, ref) =>
                 ref.read(ciaInstallProvider).pickAndInstall(),
           ),
-          const NestedOption(
-            titleKey: 'options.setupSystemFiles',
-            descriptionKey: 'options.setupSystemFilesDescription',
+          NestedOption(
+            title: (t) => t.options.setupSystemFiles,
+            description: (t) => t.options.setupSystemFilesDescription,
             icon: Icons.build_outlined,
-            destination: SystemFilesRoute(),
+            destination: const SystemFilesRoute(),
           ),
           ActionOption(
-            titleKey: 'options.shareLog',
-            descriptionKey: 'options.shareLogDescription',
+            title: (t) => t.options.shareLog,
+            description: (t) => t.options.shareLogDescription,
             icon: Icons.share_outlined,
             onTap: ShareLogAction.run,
           ),
           if (supportsGpuDriverLoading)
-            const NestedOption(
-              titleKey: 'options.gpuDriverManager',
-              descriptionKey: 'options.gpuDriverManagerDescription',
+            NestedOption(
+              title: (t) => t.options.gpuDriverManager,
+              description: (t) => t.options.gpuDriverManagerDescription,
               icon: Icons.memory,
-              destination: GpuDriverManagerRoute(),
+              destination: const GpuDriverManagerRoute(),
             ),
         ],
       ),

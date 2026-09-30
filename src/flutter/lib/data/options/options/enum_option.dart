@@ -1,14 +1,15 @@
 part of '../abstract_base_option.dart';
 
-/// One selectable value of an [EnumOption], with the translation key of its label.
+/// One selectable value of an [EnumOption], with the function that reads its label from the
+/// translations.
 @freezed
 abstract class EnumChoice<T> with _$EnumChoice<T> {
-  const factory EnumChoice({required String labelKey, required T value}) =
+  const factory EnumChoice({required TranslationText label, required T value}) =
       _EnumChoice<T>;
 }
 
-/// A value picked from a fixed list of [choices]. [T] is `int` or `String`, matching how the
-/// setting is stored.
+/// A value picked from a fixed list of [choices]. [T] is the type of the choices' values: an `int`
+/// or `String` matching how the setting is stored, or an enum.
 @freezed
 abstract class EnumOption<T>
     with _$EnumOption<T>
@@ -16,8 +17,8 @@ abstract class EnumOption<T>
   const EnumOption._();
 
   const factory EnumOption({
-    required String titleKey,
-    String? descriptionKey,
+    required TranslationText title,
+    TranslationText? description,
     required IconData icon,
     required OptionValue<T> value,
     required List<EnumChoice<T>> choices,

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/options/option_category.dart';
-import '../../data/options/translation_lookup.dart';
 import '../../i18n/translations.g.dart';
 import 'widgets/option_group_card.dart';
 
@@ -19,15 +18,13 @@ class OptionCategoryPage extends ConsumerWidget {
     final t = context.t;
     final category = ref.watch(provider);
     return Scaffold(
-      appBar: AppBar(title: Text(t.resolve(category.titleKey))),
+      appBar: AppBar(title: Text(category.title(t))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           for (final section in category.sections)
             OptionGroupCard(
-              title: section.titleKey == null
-                  ? null
-                  : t.resolve(section.titleKey!),
+              title: section.title?.call(t),
               entries: [
                 for (final entry in category.entries)
                   if (identical(entry.section, section)) entry,
