@@ -14,13 +14,13 @@ import '../store_option_values.dart';
 final debugOptionsProvider = Provider<OptionCategory>(
   (ref) => OptionCategory(
     id: 'debug',
-    titleKey: 'settings.debug.title',
+    title: (t) => t.settings.debug.title,
     sections: [
       OptionSection(
         options: [
           BoolOption(
-            titleKey: 'settings.debug.logToConsole',
-            descriptionKey: 'settings.debug.logToConsoleDescription',
+            title: (t) => t.settings.debug.logToConsole,
+            description: (t) => t.settings.debug.logToConsoleDescription,
             icon: Icons.terminal,
             value: CallbackOptionValue<bool>(
               onRead: (ref) =>
@@ -33,60 +33,62 @@ final debugOptionsProvider = Provider<OptionCategory>(
         ],
       ),
       OptionSection(
-        titleKey: 'settings.debug.warning',
+        title: (t) => t.settings.debug.warning,
         options: [
-          IntOption(
-            titleKey: 'settings.debug.cpuClockSpeed',
-            descriptionKey: 'settings.debug.cpuClockSpeedDescription',
+          PercentOption(
+            title: (t) => t.settings.debug.cpuClockSpeed,
+            description: (t) => t.settings.debug.cpuClockSpeedDescription,
             icon: Icons.tune,
-            value: StoreIntValue(DebugSettingKeys.cpuClockSpeed),
-            min: 25,
-            max: 400,
-            defaultValue: 100,
-            units: '%',
+            value: const IntPercentValue(
+              StoreIntValue(DebugSettingKeys.cpuClockSpeed),
+            ),
+            min: 0.25,
+            max: 4.0,
+            defaultValue: 1.0,
           ),
           BoolOption(
-            titleKey: 'settings.debug.cpuJit',
-            descriptionKey: 'settings.debug.cpuJitDescription',
+            title: (t) => t.settings.debug.cpuJit,
+            description: (t) => t.settings.debug.cpuJitDescription,
             icon: Icons.memory,
-            value: StoreBoolValue(DebugSettingKeys.cpuJit),
+            value: const StoreBoolValue(DebugSettingKeys.cpuJit),
           ),
           BoolOption(
-            titleKey: 'settings.debug.hwShaders',
-            descriptionKey: 'settings.debug.hwShadersDescription',
+            title: (t) => t.settings.debug.hwShaders,
+            description: (t) => t.settings.debug.hwShadersDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(DebugSettingKeys.hwShaders),
+            value: const StoreBoolValue(DebugSettingKeys.hwShaders),
           ),
           BoolOption(
-            titleKey: 'settings.debug.vsync',
-            descriptionKey: 'settings.debug.vsyncDescription',
+            title: (t) => t.settings.debug.vsync,
+            description: (t) => t.settings.debug.vsyncDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(DebugSettingKeys.vsync),
+            value: const StoreBoolValue(DebugSettingKeys.vsync),
           ),
           BoolOption(
-            titleKey: 'settings.debug.rendererDebug',
-            descriptionKey: 'settings.debug.rendererDebugDescription',
+            title: (t) => t.settings.debug.rendererDebug,
+            description: (t) => t.settings.debug.rendererDebugDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(DebugSettingKeys.rendererDebug),
+            value: const StoreBoolValue(DebugSettingKeys.rendererDebug),
           ),
           BoolOption(
-            titleKey: 'settings.debug.instantDebugLog',
-            descriptionKey: 'settings.debug.instantDebugLogDescription',
+            title: (t) => t.settings.debug.instantDebugLog,
+            description: (t) => t.settings.debug.instantDebugLogDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(DebugSettingKeys.instantDebugLog),
+            value: const StoreBoolValue(DebugSettingKeys.instantDebugLog),
           ),
           BoolOption(
-            titleKey: 'settings.debug.delayStartLleModules',
-            descriptionKey: 'settings.debug.delayStartLleModulesDescription',
+            title: (t) => t.settings.debug.delayStartLleModules,
+            description: (t) =>
+                t.settings.debug.delayStartLleModulesDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(DebugSettingKeys.delayStartLleModules),
+            value: const StoreBoolValue(DebugSettingKeys.delayStartLleModules),
           ),
           BoolOption(
-            titleKey: 'settings.debug.deterministicAsyncOperations',
-            descriptionKey:
-                'settings.debug.deterministicAsyncOperationsDescription',
+            title: (t) => t.settings.debug.deterministicAsyncOperations,
+            description: (t) =>
+                t.settings.debug.deterministicAsyncOperationsDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(
+            value: const StoreBoolValue(
               DebugSettingKeys.deterministicAsyncOperations,
             ),
           ),

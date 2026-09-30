@@ -12,13 +12,13 @@ import '../option_value.dart';
 final networkingOptionsProvider = Provider<OptionCategory>(
   (ref) => OptionCategory(
     id: 'networking',
-    titleKey: 'options.groups.networking',
+    title: (t) => t.options.groups.networking,
     sections: [
       OptionSection(
         options: [
           BoolOption(
-            titleKey: 'settings.networking.accessNetwork',
-            descriptionKey: 'settings.networking.accessNetworkDescription',
+            title: (t) => t.settings.networking.accessNetwork,
+            description: (t) => t.settings.networking.accessNetworkDescription,
             icon: Icons.wifi,
             value: CallbackOptionValue<bool>(
               onRead: (ref) =>
@@ -29,8 +29,8 @@ final networkingOptionsProvider = Provider<OptionCategory>(
             ),
           ),
           BoolOption(
-            titleKey: 'settings.networking.useWireless',
-            descriptionKey: 'settings.networking.useWirelessDescription',
+            title: (t) => t.settings.networking.useWireless,
+            description: (t) => t.settings.networking.useWirelessDescription,
             icon: Icons.wifi_tethering,
             value: CallbackOptionValue<bool>(
               onRead: (ref) =>
@@ -40,11 +40,12 @@ final networkingOptionsProvider = Provider<OptionCategory>(
                   .setUseWireless(value),
             ),
           ),
-          const NestedOption(
-            titleKey: 'settings.networking.emulatedNetwork',
-            descriptionKey: 'settings.networking.emulatedNetworkDescription',
+          NestedOption(
+            title: (t) => t.settings.networking.emulatedNetwork,
+            description: (t) =>
+                t.settings.networking.emulatedNetworkDescription,
             icon: Icons.router,
-            destination: OptionsEmulatedNetworkSettingsRoute(),
+            destination: const OptionsEmulatedNetworkSettingsRoute(),
           ),
         ],
       ),

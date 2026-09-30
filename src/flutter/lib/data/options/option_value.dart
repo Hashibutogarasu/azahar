@@ -30,3 +30,33 @@ class CallbackOptionValue<T> extends OptionValue<T> {
   Future<void> write(BuildContext context, WidgetRef ref, T value) =>
       onWrite(context, ref, value);
 }
+
+/// Presents a whole number of percentage points, such as 50, as the fraction 0.5 that a
+/// `PercentOption` works with.
+class IntPercentValue extends OptionValue<double> {
+  const IntPercentValue(this.points);
+
+  final OptionValue<int> points;
+
+  @override
+  double read(WidgetRef ref) => points.read(ref) / 100;
+
+  @override
+  Future<void> write(BuildContext context, WidgetRef ref, double value) =>
+      points.write(context, ref, (value * 100).round());
+}
+
+/// Presents a number of percentage points, such as 50.0, as the fraction 0.5 that a
+/// `PercentOption` works with.
+class FloatPercentValue extends OptionValue<double> {
+  const FloatPercentValue(this.points);
+
+  final OptionValue<double> points;
+
+  @override
+  double read(WidgetRef ref) => points.read(ref) / 100;
+
+  @override
+  Future<void> write(BuildContext context, WidgetRef ref, double value) =>
+      points.write(context, ref, value * 100);
+}

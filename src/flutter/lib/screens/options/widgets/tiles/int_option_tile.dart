@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../data/options/abstract_base_option.dart';
 import '../../../../data/options/option_values_revision_provider.dart';
-import '../../../../data/options/translation_lookup.dart';
 import '../../../../i18n/translations.g.dart';
 import '../../../settings/dialogs/slider_value_dialog.dart';
 import 'option_commit.dart';
@@ -27,15 +26,14 @@ class IntOptionTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(optionValuesRevisionProvider);
     final t = context.t;
-    final title = t.resolve(option.titleKey);
-    final descriptionKey = option.descriptionKey;
+    final title = option.title(t);
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onLongPress: onLongPress,
       child: babstrap.SettingsItem(
         icons: option.icon,
         title: title,
-        subtitle: descriptionKey == null ? null : t.lookup(descriptionKey),
+        subtitle: option.description?.call(t),
         trailing: Text('${option.value.read(ref)}${option.units}'),
         onTap: () async {
           final result = await SliderValueDialog.show(

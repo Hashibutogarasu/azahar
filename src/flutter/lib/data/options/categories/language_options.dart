@@ -8,17 +8,18 @@ import '../option_category.dart';
 import '../option_section.dart';
 import '../option_value.dart';
 
-/// The items of the language settings page, which is not listed on the Options page: the app language, with one choice per available locale plus the system
-/// default. The system default is stored as null and represented by an empty string here.
+/// The items of the language settings page, which is not listed on the Options page: the app
+/// language, with one choice per available locale plus the system default. The system default is
+/// stored as null and represented by an empty string here.
 final languageOptionsProvider = Provider<OptionCategory>(
   (ref) => OptionCategory(
     id: 'language',
-    titleKey: 'settings.language.title',
+    title: (t) => t.settings.language.title,
     sections: [
       OptionSection(
         options: [
           EnumOption<String>(
-            titleKey: 'settings.language.title',
+            title: (t) => t.settings.language.title,
             icon: Icons.language,
             value: CallbackOptionValue<String>(
               onRead: (ref) =>
@@ -28,15 +29,15 @@ final languageOptionsProvider = Provider<OptionCategory>(
                   .setLanguageCode(value.isEmpty ? null : value),
             ),
             choices: [
-              const EnumChoice(
-                labelKey: 'settings.language.systemDefault',
+              EnumChoice(
+                label: (t) => t.settings.language.systemDefault,
                 value: '',
               ),
               for (final locale in AppLocale.values)
                 EnumChoice(
-                  labelKey: switch (locale) {
-                    AppLocale.en => 'settings.language.english',
-                    AppLocale.ja => 'settings.language.japanese',
+                  label: (t) => switch (locale) {
+                    AppLocale.en => t.settings.language.english,
+                    AppLocale.ja => t.settings.language.japanese,
                   },
                   value: locale.languageCode,
                 ),

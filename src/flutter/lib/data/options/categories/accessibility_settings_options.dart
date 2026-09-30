@@ -12,13 +12,14 @@ import '../option_value.dart';
 final accessibilitySettingsOptionsProvider = Provider<OptionCategory>(
   (ref) => OptionCategory(
     id: 'accessibilitySettings',
-    titleKey: 'settings.accessibility.title',
+    title: (t) => t.settings.accessibility.title,
     sections: [
       OptionSection(
         options: [
           BoolOption(
-            titleKey: 'settings.accessibility.reduceMotion',
-            descriptionKey: 'settings.accessibility.reduceMotionDescription',
+            title: (t) => t.settings.accessibility.reduceMotion,
+            description: (t) =>
+                t.settings.accessibility.reduceMotionDescription,
             icon: Icons.motion_photos_off_outlined,
             value: CallbackOptionValue<bool>(
               onRead: (ref) =>

@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../data/options/abstract_base_option.dart';
 import '../../../../data/options/option_values_revision_provider.dart';
-import '../../../../data/options/translation_lookup.dart';
 import '../../../../i18n/translations.g.dart';
 import '../../../settings/dialogs/date_time_picker.dart';
 import 'option_commit.dart';
@@ -37,15 +36,14 @@ class DateTimeOptionTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(optionValuesRevisionProvider);
     final t = context.t;
-    final descriptionKey = option.descriptionKey;
     final raw = option.value.read(ref);
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onLongPress: onLongPress,
       child: babstrap.SettingsItem(
         icons: option.icon,
-        title: t.resolve(option.titleKey),
-        subtitle: descriptionKey == null ? null : t.lookup(descriptionKey),
+        title: option.title(t),
+        subtitle: option.description?.call(t),
         trailing: Text(_parse(raw)?.toString() ?? raw),
         onTap: () async {
           final result = await DateTimePicker.show(

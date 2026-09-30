@@ -14,13 +14,13 @@ import '../option_value.dart';
 final otherOptionsProvider = Provider<OptionCategory>(
   (ref) => OptionCategory(
     id: 'other',
-    titleKey: 'options.groups.other',
+    title: (t) => t.options.groups.other,
     sections: [
       OptionSection(
         options: [
           BoolOption(
-            titleKey: 'options.useLegacySettingsUI',
-            descriptionKey: 'options.useLegacySettingsUIDescription',
+            title: (t) => t.options.useLegacySettingsUI,
+            description: (t) => t.options.useLegacySettingsUIDescription,
             icon: Icons.history_toggle_off,
             value: CallbackOptionValue<bool>(
               onRead: (ref) =>
@@ -28,25 +28,25 @@ final otherOptionsProvider = Provider<OptionCategory>(
               onWrite: ChangeLegacySettingsUiAction.run,
             ),
           ),
-          const NestedOption(
-            titleKey: 'settings.debug.title',
+          NestedOption(
+            title: (t) => t.settings.debug.title,
             icon: Icons.code,
-            destination: OptionsDebugSettingsRoute(),
+            destination: const OptionsDebugSettingsRoute(),
           ),
-          const NestedOption(
-            titleKey: 'options.advanced',
-            descriptionKey: 'options.advancedDescription',
+          NestedOption(
+            title: (t) => t.options.advanced,
+            description: (t) => t.options.advancedDescription,
             icon: Icons.tune,
-            destination: OptionsAdvancedSettingsRoute(),
+            destination: const OptionsAdvancedSettingsRoute(),
           ),
-          const NestedOption(
-            titleKey: 'options.about',
-            descriptionKey: 'options.aboutDescription',
+          NestedOption(
+            title: (t) => t.options.about,
+            description: (t) => t.options.aboutDescription,
             icon: Icons.info_outline,
-            destination: AboutRoute(),
+            destination: const AboutRoute(),
           ),
           ActionOption(
-            titleKey: 'settings.resetToDefault',
+            title: (t) => t.settings.resetToDefault,
             icon: Icons.restore,
             onTap: ResetSettingsAction.run,
             destructive: true,

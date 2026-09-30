@@ -7,8 +7,8 @@ abstract class ActionOption with _$ActionOption implements AbstractBaseOption {
   const ActionOption._();
 
   const factory ActionOption({
-    required String titleKey,
-    String? descriptionKey,
+    required TranslationText title,
+    TranslationText? description,
     required IconData icon,
     required Future<void> Function(BuildContext context, WidgetRef ref) onTap,
     @Default(false) bool destructive,

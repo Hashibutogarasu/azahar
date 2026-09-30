@@ -10,31 +10,31 @@ import '../store_option_values.dart';
 /// The Clock category: whether the console uses the device clock or a simulated one, and the
 /// simulated time.
 final clockOptionsProvider = Provider<OptionCategory>(
-  (ref) => const OptionCategory(
+  (ref) => OptionCategory(
     id: 'clock',
-    titleKey: 'options.groups.clock',
+    title: (t) => t.options.groups.clock,
     sections: [
       OptionSection(
         options: [
           EnumOption<int>(
-            titleKey: 'settings.system.initClock',
+            title: (t) => t.settings.system.initClock,
             icon: Icons.list,
-            value: StoreIntValue(SystemSettingKeys.initClock),
+            value: const StoreIntValue(SystemSettingKeys.initClock),
             choices: [
               EnumChoice(
-                labelKey: 'settings.system.initClockDeviceClock',
+                label: (t) => t.settings.system.initClockDeviceClock,
                 value: 0,
               ),
               EnumChoice(
-                labelKey: 'settings.system.initClockSimulatedClock',
+                label: (t) => t.settings.system.initClockSimulatedClock,
                 value: 1,
               ),
             ],
           ),
           DateTimeOption(
-            titleKey: 'settings.system.simulatedClock',
+            title: (t) => t.settings.system.simulatedClock,
             icon: Icons.schedule,
-            value: StoreStringValue(SystemSettingKeys.initTime),
+            value: const StoreStringValue(SystemSettingKeys.initTime),
           ),
         ],
       ),
