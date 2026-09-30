@@ -1786,6 +1786,16 @@ class _Translations$settings$accessibility$ja
   String get reduceMotion => '視差効果を減らす';
   @override
   String get reduceMotionDescription => 'アプリ内のアニメーションや動きの効果を減らします。';
+  @override
+  String get pageTransition => 'ページ遷移アニメーション';
+  @override
+  String get pageTransitionDescription => 'ページを開いたり閉じたりするときのアニメーションを選びます。';
+  @override
+  String get pageTransitionSlide => 'スライド';
+  @override
+  String get pageTransitionStandard => '標準';
+  @override
+  String get pageTransitionNone => 'なし';
 }
 
 // Path: settings.advanced
@@ -2907,6 +2917,12 @@ extension on TranslationsJa {
           'settings.accessibility.reduceMotion' => '視差効果を減らす',
           'settings.accessibility.reduceMotionDescription' =>
             'アプリ内のアニメーションや動きの効果を減らします。',
+          'settings.accessibility.pageTransition' => 'ページ遷移アニメーション',
+          'settings.accessibility.pageTransitionDescription' =>
+            'ページを開いたり閉じたりするときのアニメーションを選びます。',
+          'settings.accessibility.pageTransitionSlide' => 'スライド',
+          'settings.accessibility.pageTransitionStandard' => '標準',
+          'settings.accessibility.pageTransitionNone' => 'なし',
           'settings.advanced.title' => '詳細設定',
           'settings.advanced.animationSpeedLabel' => 'アニメーション速度',
           'settings.advanced.animationSpeedDescription' =>

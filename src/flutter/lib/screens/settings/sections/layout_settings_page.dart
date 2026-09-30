@@ -1,44 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../data/settings/sections/layout_settings.dart';
-import '../../../i18n/translations.g.dart';
-import '../widgets/settings_list.dart';
+import '../../../data/options/categories/layout_page_options.dart';
+import '../../options/widgets/option_category_page.dart';
 
-class LayoutSettingsPage extends StatelessWidget {
+class LayoutSettingsPage extends ConsumerWidget {
   const LayoutSettingsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-    return Scaffold(
-      appBar: AppBar(title: Text(t.settings.layout.title)),
-      body: SettingsList(items: buildLayoutSettingsItems(t)),
-    );
+  Widget build(BuildContext context, WidgetRef ref) {
+    return OptionCategoryPage(category: ref.watch(layoutPageOptionsProvider));
   }
 }
 
-class CustomLandscapeLayoutSettingsPage extends StatelessWidget {
+class CustomLandscapeLayoutSettingsPage extends ConsumerWidget {
   const CustomLandscapeLayoutSettingsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-    return Scaffold(
-      appBar: AppBar(title: Text(t.settings.layout.customLandscapeLayout)),
-      body: SettingsList(items: buildCustomLandscapeLayoutItems(t)),
+  Widget build(BuildContext context, WidgetRef ref) {
+    return OptionCategoryPage(
+      category: ref.watch(customLandscapeLayoutPageOptionsProvider),
     );
   }
 }
 
-class CustomPortraitLayoutSettingsPage extends StatelessWidget {
+class CustomPortraitLayoutSettingsPage extends ConsumerWidget {
   const CustomPortraitLayoutSettingsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-    return Scaffold(
-      appBar: AppBar(title: Text(t.settings.layout.customPortraitLayout)),
-      body: SettingsList(items: buildCustomPortraitLayoutItems(t)),
+  Widget build(BuildContext context, WidgetRef ref) {
+    return OptionCategoryPage(
+      category: ref.watch(customPortraitLayoutPageOptionsProvider),
     );
   }
 }

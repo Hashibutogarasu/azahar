@@ -18,7 +18,9 @@ class EmulationScreensLayout {
   factory EmulationScreensLayout.fit(Size available, {bool isDesktop = false}) {
     final direction = isDesktop
         ? Axis.vertical
-        : (available.width > available.height ? Axis.horizontal : Axis.vertical);
+        : (available.width > available.height
+              ? Axis.horizontal
+              : Axis.vertical);
     final bottomAspect = _bottomScreenWidth / _bottomScreenHeight;
 
     final double zoom;

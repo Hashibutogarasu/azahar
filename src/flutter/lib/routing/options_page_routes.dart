@@ -1,8 +1,8 @@
 part of 'app_routes.dart';
 
 @TypedGoRoute<OptionsGeneralSettingsRoute>(path: '/options/general')
-class OptionsGeneralSettingsRoute extends GoRouteData
-    with $OptionsGeneralSettingsRoute, SlideTransitionRoute {
+class OptionsGeneralSettingsRoute extends AppRouteData
+    with $OptionsGeneralSettingsRoute {
   const OptionsGeneralSettingsRoute();
 
   @override
@@ -12,8 +12,8 @@ class OptionsGeneralSettingsRoute extends GoRouteData
 }
 
 @TypedGoRoute<OptionsMediaSettingsRoute>(path: '/options/media')
-class OptionsMediaSettingsRoute extends GoRouteData
-    with $OptionsMediaSettingsRoute, SlideTransitionRoute {
+class OptionsMediaSettingsRoute extends AppRouteData
+    with $OptionsMediaSettingsRoute {
   const OptionsMediaSettingsRoute();
 
   @override
@@ -25,8 +25,8 @@ class OptionsMediaSettingsRoute extends GoRouteData
 @TypedGoRoute<OptionsEmulatedNetworkSettingsRoute>(
   path: '/options/networking/emulated-network',
 )
-class OptionsEmulatedNetworkSettingsRoute extends GoRouteData
-    with $OptionsEmulatedNetworkSettingsRoute, SlideTransitionRoute {
+class OptionsEmulatedNetworkSettingsRoute extends AppRouteData
+    with $OptionsEmulatedNetworkSettingsRoute {
   const OptionsEmulatedNetworkSettingsRoute();
 
   @override
@@ -36,8 +36,8 @@ class OptionsEmulatedNetworkSettingsRoute extends GoRouteData
 }
 
 @TypedGoRoute<OptionsCameraSettingsRoute>(path: '/options/camera')
-class OptionsCameraSettingsRoute extends GoRouteData
-    with $OptionsCameraSettingsRoute, SlideTransitionRoute {
+class OptionsCameraSettingsRoute extends AppRouteData
+    with $OptionsCameraSettingsRoute {
   const OptionsCameraSettingsRoute();
 
   @override
@@ -47,8 +47,8 @@ class OptionsCameraSettingsRoute extends GoRouteData
 }
 
 @TypedGoRoute<OptionsControlsSettingsRoute>(path: '/options/controls')
-class OptionsControlsSettingsRoute extends GoRouteData
-    with $OptionsControlsSettingsRoute, SlideTransitionRoute {
+class OptionsControlsSettingsRoute extends AppRouteData
+    with $OptionsControlsSettingsRoute {
   const OptionsControlsSettingsRoute();
 
   @override
@@ -58,8 +58,8 @@ class OptionsControlsSettingsRoute extends GoRouteData
 }
 
 @TypedGoRoute<OptionsGraphicsSettingsRoute>(path: '/options/graphics')
-class OptionsGraphicsSettingsRoute extends GoRouteData
-    with $OptionsGraphicsSettingsRoute, SlideTransitionRoute {
+class OptionsGraphicsSettingsRoute extends AppRouteData
+    with $OptionsGraphicsSettingsRoute {
   const OptionsGraphicsSettingsRoute();
 
   @override
@@ -69,8 +69,8 @@ class OptionsGraphicsSettingsRoute extends GoRouteData
 }
 
 @TypedGoRoute<OptionsLayoutSettingsRoute>(path: '/options/graphics/layout')
-class OptionsLayoutSettingsRoute extends GoRouteData
-    with $OptionsLayoutSettingsRoute, SlideTransitionRoute {
+class OptionsLayoutSettingsRoute extends AppRouteData
+    with $OptionsLayoutSettingsRoute {
   const OptionsLayoutSettingsRoute();
 
   @override
@@ -82,8 +82,8 @@ class OptionsLayoutSettingsRoute extends GoRouteData
 @TypedGoRoute<OptionsCustomLandscapeLayoutSettingsRoute>(
   path: '/options/graphics/layout/custom-landscape',
 )
-class OptionsCustomLandscapeLayoutSettingsRoute extends GoRouteData
-    with $OptionsCustomLandscapeLayoutSettingsRoute, SlideTransitionRoute {
+class OptionsCustomLandscapeLayoutSettingsRoute extends AppRouteData
+    with $OptionsCustomLandscapeLayoutSettingsRoute {
   const OptionsCustomLandscapeLayoutSettingsRoute();
 
   @override
@@ -95,8 +95,8 @@ class OptionsCustomLandscapeLayoutSettingsRoute extends GoRouteData
 @TypedGoRoute<OptionsCustomPortraitLayoutSettingsRoute>(
   path: '/options/graphics/layout/custom-portrait',
 )
-class OptionsCustomPortraitLayoutSettingsRoute extends GoRouteData
-    with $OptionsCustomPortraitLayoutSettingsRoute, SlideTransitionRoute {
+class OptionsCustomPortraitLayoutSettingsRoute extends AppRouteData
+    with $OptionsCustomPortraitLayoutSettingsRoute {
   const OptionsCustomPortraitLayoutSettingsRoute();
 
   @override
@@ -106,8 +106,8 @@ class OptionsCustomPortraitLayoutSettingsRoute extends GoRouteData
 }
 
 @TypedGoRoute<OptionsDebugSettingsRoute>(path: '/options/debug')
-class OptionsDebugSettingsRoute extends GoRouteData
-    with $OptionsDebugSettingsRoute, SlideTransitionRoute {
+class OptionsDebugSettingsRoute extends AppRouteData
+    with $OptionsDebugSettingsRoute {
   const OptionsDebugSettingsRoute();
 
   @override
@@ -117,8 +117,8 @@ class OptionsDebugSettingsRoute extends GoRouteData
 }
 
 @TypedGoRoute<OptionsLanguageSettingsRoute>(path: '/options/language')
-class OptionsLanguageSettingsRoute extends GoRouteData
-    with $OptionsLanguageSettingsRoute, SlideTransitionRoute {
+class OptionsLanguageSettingsRoute extends AppRouteData
+    with $OptionsLanguageSettingsRoute {
   const OptionsLanguageSettingsRoute();
 
   @override
@@ -128,8 +128,8 @@ class OptionsLanguageSettingsRoute extends GoRouteData
 }
 
 @TypedGoRoute<OptionsThemeSettingsRoute>(path: '/options/theme')
-class OptionsThemeSettingsRoute extends GoRouteData
-    with $OptionsThemeSettingsRoute, SlideTransitionRoute {
+class OptionsThemeSettingsRoute extends AppRouteData
+    with $OptionsThemeSettingsRoute {
   const OptionsThemeSettingsRoute();
 
   @override
@@ -139,8 +139,8 @@ class OptionsThemeSettingsRoute extends GoRouteData
 }
 
 @TypedGoRoute<OptionsAccessibilitySettingsRoute>(path: '/options/accessibility')
-class OptionsAccessibilitySettingsRoute extends GoRouteData
-    with $OptionsAccessibilitySettingsRoute, SlideTransitionRoute {
+class OptionsAccessibilitySettingsRoute extends AppRouteData
+    with $OptionsAccessibilitySettingsRoute {
   const OptionsAccessibilitySettingsRoute();
 
   @override
@@ -150,8 +150,8 @@ class OptionsAccessibilitySettingsRoute extends GoRouteData
 }
 
 @TypedGoRoute<OptionsAdvancedSettingsRoute>(path: '/options/advanced')
-class OptionsAdvancedSettingsRoute extends GoRouteData
-    with $OptionsAdvancedSettingsRoute, SlideTransitionRoute {
+class OptionsAdvancedSettingsRoute extends AppRouteData
+    with $OptionsAdvancedSettingsRoute {
   const OptionsAdvancedSettingsRoute();
 
   @override

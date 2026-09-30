@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
-
 class EmulationSessionState {
   const EmulationSessionState({
     this.isLaunched = false,

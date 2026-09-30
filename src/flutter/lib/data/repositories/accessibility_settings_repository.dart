@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../database.dart';
+import '../settings/page_transition_style.dart';
 
 class AccessibilitySettingsRepository {
   AccessibilitySettingsRepository(this._db);
@@ -11,7 +12,12 @@ class AccessibilitySettingsRepository {
     final row = await (_db.select(
       _db.accessibilitySettings,
     )..where((tbl) => tbl.id.equals(0))).getSingleOrNull();
-    return row ?? const AccessibilitySetting(id: 0, reduceMotion: false);
+    return row ??
+        const AccessibilitySetting(
+          id: 0,
+          reduceMotion: false,
+          pageTransition: PageTransitionStyle.slide,
+        );
   }
 
   Future<void> write(AccessibilitySetting settings) {
