@@ -1,16 +1,17 @@
 import 'dart:async';
 
+import 'package:babstrap_settings_screen/babstrap_settings_screen.dart'
+    as babstrap;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../data/options/abstract_base_option.dart';
 import '../../../../data/options/option_values_revision_provider.dart';
 import '../../../../i18n/translations.g.dart';
-import '../../../settings/widgets/slider_settings_card.dart';
 import 'option_commit.dart';
 
-/// The tile of a [PercentOption]: a [SliderSettingsCard] that shows the fraction as a percentage
-/// and changes it in steps of 1% within the option's range. The value is written when the slider
+/// The tile of a [PercentOption]: a settings row that shows the fraction as a percentage with a
+/// slider beneath it, changing it in steps of 1% within the option's range. The value is written when the slider
 /// is released; while it is dragged, only [PercentOption.preview] is called.
 class PercentOptionTile extends ConsumerStatefulWidget {
   const PercentOptionTile({
@@ -63,17 +64,28 @@ class _PercentOptionTileState extends ConsumerState<PercentOptionTile> {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onLongPress: widget.onLongPress,
-      child: SliderSettingsCard(
-        title: option.title(t),
-        valueLabel: percentLabel,
-        description: option.description?.call(t),
-        value: value,
-        min: option.min,
-        max: option.max,
-        divisions: steps > 0 ? steps : null,
-        label: percentLabel,
-        onChanged: _onChanged,
-        onChangeEnd: _onChangeEnd,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          babstrap.SettingsItem(
+            icons: option.icon,
+            title: option.title(t),
+            subtitle: option.description?.call(t),
+            trailing: Text(percentLabel),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Slider(
+              value: value.clamp(option.min, option.max),
+              min: option.min,
+              max: option.max,
+              divisions: steps > 0 ? steps : null,
+              label: percentLabel,
+              onChanged: _onChanged,
+              onChangeEnd: _onChangeEnd,
+            ),
+          ),
+        ],
       ),
     );
   }
