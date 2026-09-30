@@ -289,11 +289,33 @@ class _Translations$emulation$ja extends Translations$emulation$en {
   String shaderProgress({required Object progress, required Object max}) =>
       '${progress}/${max}';
   @override
-  String get menuSectionGeneral => '一般';
+  String get menuSectionEmulation => 'エミュレーション';
   @override
   String get pauseEmulation => 'エミュレーションを一時停止';
   @override
   String get resumeEmulation => 'エミュレーションを再開';
+  @override
+  String get advanceFrame => 'フレーム送り';
+  @override
+  String get menuSectionTools => 'ツール';
+  @override
+  String get cheats => 'チート';
+  @override
+  String get noCheats => 'チートがありません';
+  @override
+  String get addCheat => 'チートを追加';
+  @override
+  String get cheatName => '名前';
+  @override
+  String get cheatNotes => 'メモ';
+  @override
+  String get cheatCode => 'コード';
+  @override
+  String get cheatNameEmpty => '名前を入力してください';
+  @override
+  String get cheatCodeEmpty => 'コードを入力してください';
+  @override
+  String cheatErrorOnLine({required Object line}) => '${line}行目にエラーがあります';
   @override
   String get menuSectionOther => 'その他';
   @override
@@ -2179,9 +2201,21 @@ extension on TranslationsJa {
           'emulation.shaderProgress' =>
             ({required Object progress, required Object max}) =>
                 '${progress}/${max}',
-          'emulation.menuSectionGeneral' => '一般',
+          'emulation.menuSectionEmulation' => 'エミュレーション',
           'emulation.pauseEmulation' => 'エミュレーションを一時停止',
           'emulation.resumeEmulation' => 'エミュレーションを再開',
+          'emulation.advanceFrame' => 'フレーム送り',
+          'emulation.menuSectionTools' => 'ツール',
+          'emulation.cheats' => 'チート',
+          'emulation.noCheats' => 'チートがありません',
+          'emulation.addCheat' => 'チートを追加',
+          'emulation.cheatName' => '名前',
+          'emulation.cheatNotes' => 'メモ',
+          'emulation.cheatCode' => 'コード',
+          'emulation.cheatNameEmpty' => '名前を入力してください',
+          'emulation.cheatCodeEmpty' => 'コードを入力してください',
+          'emulation.cheatErrorOnLine' =>
+            ({required Object line}) => '${line}行目にエラーがあります',
           'emulation.menuSectionOther' => 'その他',
           'emulation.closeGame' => 'ゲームを終了',
           'emulation.closeGameMessage' => '現在のゲームを終了してもよろしいですか？',
@@ -2644,6 +2678,9 @@ extension on TranslationsJa {
             '仮想カメラの画像ソースを設定します。画像ファイル、または対応している場合はデバイスのカメラを使用できます。',
           'settings.camera.imageSourceBlank' => 'なし',
           'settings.camera.imageSourceStillImage' => '静止画',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.camera.imageSourceDeviceCamera' => 'デバイスのカメラ',
           'settings.camera.cameraDevice' => 'カメラ',
           'settings.camera.cameraDeviceDescription' =>
@@ -2656,9 +2693,6 @@ extension on TranslationsJa {
           'settings.camera.imageFlipHorizontal' => '水平',
           'settings.camera.imageFlipVertical' => '垂直',
           'settings.camera.imageFlipReverse' => '反転',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.gamepad.title' => 'ゲームパッド',
           'settings.gamepad.controllerInputMode' => 'コントローラー入力モード',
           'settings.gamepad.controllerInputModeDescription' =>

@@ -18,6 +18,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "native_bridge/cheats.h"
 #include "native_bridge/cia_install.h"
 #include "native_bridge/emulation.h"
 #include "native_bridge/emulator_config.h"
@@ -580,6 +581,57 @@ FlMethodResponse* HandleResumeEmulation(GtkWindow* window, FlValue* args) {
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
 }
 
+FlMethodResponse* HandleAdvanceFrame(GtkWindow* window, FlValue* args) {
+  Emulation::AdvanceFrame();
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+FlMethodResponse* HandleLoadCheatFile(GtkWindow* window, FlValue* args) {
+  CheatBridge::LoadCheatFile(TitleIdArgument(args));
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+FlMethodResponse* HandleSaveCheatFile(GtkWindow* window, FlValue* args) {
+  CheatBridge::SaveCheatFile(TitleIdArgument(args));
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+FlMethodResponse* HandleGetCheats(GtkWindow* window, FlValue* args) {
+  g_autoptr(FlValue) result = fl_value_new_list();
+  for (const auto& cheat : CheatBridge::GetCheats()) {
+    FlValue* map = fl_value_new_map();
+    fl_value_set_string_take(map, "name", fl_value_new_string(cheat.name.c_str()));
+    fl_value_set_string_take(map, "notes", fl_value_new_string(cheat.notes.c_str()));
+    fl_value_set_string_take(map, "code", fl_value_new_string(cheat.code.c_str()));
+    fl_value_set_string_take(map, "enabled", fl_value_new_bool(cheat.enabled));
+    fl_value_append_take(result, map);
+  }
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
+}
+
+FlMethodResponse* HandleSetCheatEnabled(GtkWindow* window, FlValue* args) {
+  FlValue* index = fl_value_lookup_string(args, "index");
+  if (index == nullptr || fl_value_get_type(index) != FL_VALUE_TYPE_INT ||
+      !CheatBridge::SetCheatEnabled(static_cast<std::size_t>(fl_value_get_int(index)),
+                                    BoolArgument(args, "enabled", false))) {
+    return FL_METHOD_RESPONSE(
+        fl_method_error_response_new("invalid_argument", "invalid cheat index", nullptr));
+  }
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+FlMethodResponse* HandleAddCheat(GtkWindow* window, FlValue* args) {
+  CheatBridge::AddCheat(StringArgument(args, "name"), StringArgument(args, "notes"),
+                        StringArgument(args, "code"));
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+FlMethodResponse* HandleValidateCheatCode(GtkWindow* window, FlValue* args) {
+  g_autoptr(FlValue) result =
+      fl_value_new_int(CheatBridge::ValidateGatewayCode(StringArgument(args, "code")));
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
+}
+
 FlMethodResponse* HandlePauseRendering(GtkWindow* window, FlValue* args) {
   Emulation::PauseRendering();
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
@@ -684,6 +736,13 @@ const std::unordered_map<std::string, BridgeMethodHandler>& BridgeMethodHandlers
       {"startEmulation", HandleStartEmulation},
       {"pauseEmulation", HandlePauseEmulation},
       {"resumeEmulation", HandleResumeEmulation},
+      {"advanceFrame", HandleAdvanceFrame},
+      {"loadCheatFile", HandleLoadCheatFile},
+      {"saveCheatFile", HandleSaveCheatFile},
+      {"getCheats", HandleGetCheats},
+      {"setCheatEnabled", HandleSetCheatEnabled},
+      {"addCheat", HandleAddCheat},
+      {"validateCheatCode", HandleValidateCheatCode},
       {"pauseRendering", HandlePauseRendering},
       {"resumeRendering", HandleResumeRendering},
       {"onTouchEvent", HandleOnTouchEvent},

@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../data/platform_provider.dart';
 import '../../data/settings/accessibility_settings_provider.dart';
 import '../../data/settings/advanced_settings_provider.dart';
 import '../../data/settings/animation_speed.dart';
@@ -10,6 +11,7 @@ import '../../theme/extensions/app_navigation_bar_theme.dart';
 import '../../theme/extensions/background_blob_theme.dart';
 import '../../widgets/app_nav_bar.dart';
 import '../../widgets/background_blobs.dart';
+import 'desktop_app_shell.dart';
 
 /// The bottom navigation shell across the Games/Options tabs, mirroring the original app's
 /// `MainScreen` + `MainBottomNavigation`. Every other screen (emulation, settings, ...) lives
@@ -60,6 +62,9 @@ class _AppShellState extends ConsumerState<AppShell> {
       reduceMotion: reduceMotion,
       speed: animationSpeed,
     );
+    if (ref.watch(isDesktopPlatformProvider)) {
+      return DesktopAppShell(navigationShell: widget.navigationShell);
+    }
     final hiddenBottomOffset =
         -(navBarTheme.barHeight + navBarTheme.bottomMargin + 32);
     return Scaffold(

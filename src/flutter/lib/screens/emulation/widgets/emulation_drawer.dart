@@ -1,27 +1,26 @@
+import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 import 'package:flutter/material.dart';
 
-import '../../../i18n/translations.g.dart';
+import 'emulation_menu_actions.dart';
+import 'emulation_menu_sections.dart';
+import 'game_title.dart';
 
-/// The in-game drawer opened from the emulation screen. Mirrors the shape of the original app's
-/// `SidebarWidget` (a 300dp-wide panel rounded on the outer edge), but for now only carries the
-/// "Other" section's close-game action; the rest of the sidebar's sections are not ported yet.
+/// The in-game drawer opened from the emulation screen on mobile: a 300dp-wide panel rounded on
+/// the outer edge, to be passed to [Scaffold.drawer]. Desktop uses [EmulationSidePanel] instead.
 class EmulationDrawer extends StatelessWidget {
   const EmulationDrawer({
     super.key,
-    required this.gameTitle,
+    required this.game,
     required this.isPaused,
-    required this.onTogglePause,
-    required this.onCloseGame,
+    required this.actions,
   });
 
-  final String gameTitle;
+  final Game? game;
   final bool isPaused;
-  final VoidCallback onTogglePause;
-  final VoidCallback onCloseGame;
+  final EmulationMenuActions actions;
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
     return Drawer(
       width: 300,
       shape: const RoundedRectangleBorder(
@@ -32,79 +31,15 @@ class EmulationDrawer extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-              child: Text(
-                gameTitle,
+              child: GameTitle(
+                game: game,
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
-            _MenuSection(
-              title: t.emulation.menuSectionGeneral,
-              children: [
-                _MenuItem(
-                  icon: isPaused ? Icons.play_arrow : Icons.pause,
-                  title: isPaused
-                      ? t.emulation.resumeEmulation
-                      : t.emulation.pauseEmulation,
-                  onTap: onTogglePause,
-                ),
-              ],
-            ),
-            _MenuSection(
-              title: t.emulation.menuSectionOther,
-              children: [
-                _MenuItem(
-                  icon: Icons.exit_to_app,
-                  title: t.emulation.closeGame,
-                  onTap: onCloseGame,
-                ),
-              ],
-            ),
+            EmulationMenuSections(isPaused: isPaused, actions: actions),
           ],
         ),
       ),
     );
-  }
-}
-
-class _MenuSection extends StatelessWidget {
-  const _MenuSection({required this.title, required this.children});
-
-  final String title;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-          child: Text(
-            title,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-        ),
-        ...children,
-      ],
-    );
-  }
-}
-
-class _MenuItem extends StatelessWidget {
-  const _MenuItem({
-    required this.icon,
-    required this.title,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(leading: Icon(icon), title: Text(title), onTap: onTap);
   }
 }

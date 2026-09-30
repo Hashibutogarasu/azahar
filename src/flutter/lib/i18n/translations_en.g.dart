@@ -325,14 +325,47 @@ class Translations$emulation$en {
   String shaderProgress({required Object progress, required Object max}) =>
       '${progress}/${max}';
 
-  /// en: 'General'
-  String get menuSectionGeneral => 'General';
+  /// en: 'Emulation'
+  String get menuSectionEmulation => 'Emulation';
 
   /// en: 'Pause Emulation'
   String get pauseEmulation => 'Pause Emulation';
 
   /// en: 'Resume Emulation'
   String get resumeEmulation => 'Resume Emulation';
+
+  /// en: 'Advance Frame'
+  String get advanceFrame => 'Advance Frame';
+
+  /// en: 'Tools'
+  String get menuSectionTools => 'Tools';
+
+  /// en: 'Cheats'
+  String get cheats => 'Cheats';
+
+  /// en: 'No cheats'
+  String get noCheats => 'No cheats';
+
+  /// en: 'Add Cheat'
+  String get addCheat => 'Add Cheat';
+
+  /// en: 'Name'
+  String get cheatName => 'Name';
+
+  /// en: 'Notes'
+  String get cheatNotes => 'Notes';
+
+  /// en: 'Code'
+  String get cheatCode => 'Code';
+
+  /// en: 'Name can't be empty'
+  String get cheatNameEmpty => 'Name can\'t be empty';
+
+  /// en: 'Code can't be empty'
+  String get cheatCodeEmpty => 'Code can\'t be empty';
+
+  /// en: 'Error on line ${line}'
+  String cheatErrorOnLine({required Object line}) => 'Error on line ${line}';
 
   /// en: 'Other'
   String get menuSectionOther => 'Other';
@@ -2750,9 +2783,21 @@ extension on Translations {
           'emulation.shaderProgress' =>
             ({required Object progress, required Object max}) =>
                 '${progress}/${max}',
-          'emulation.menuSectionGeneral' => 'General',
+          'emulation.menuSectionEmulation' => 'Emulation',
           'emulation.pauseEmulation' => 'Pause Emulation',
           'emulation.resumeEmulation' => 'Resume Emulation',
+          'emulation.advanceFrame' => 'Advance Frame',
+          'emulation.menuSectionTools' => 'Tools',
+          'emulation.cheats' => 'Cheats',
+          'emulation.noCheats' => 'No cheats',
+          'emulation.addCheat' => 'Add Cheat',
+          'emulation.cheatName' => 'Name',
+          'emulation.cheatNotes' => 'Notes',
+          'emulation.cheatCode' => 'Code',
+          'emulation.cheatNameEmpty' => 'Name can\'t be empty',
+          'emulation.cheatCodeEmpty' => 'Code can\'t be empty',
+          'emulation.cheatErrorOnLine' =>
+            ({required Object line}) => 'Error on line ${line}',
           'emulation.menuSectionOther' => 'Other',
           'emulation.closeGame' => 'Close Game',
           'emulation.closeGameMessage' =>
@@ -3246,6 +3291,9 @@ extension on Translations {
           'settings.camera.imageSource' => 'Camera Image Source',
           'settings.camera.imageSourceDescription' =>
             'Sets the image source of the virtual camera. You can use an image file, or a device camera when supported.',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.camera.imageSourceBlank' => 'Blank',
           'settings.camera.imageSourceStillImage' => 'Still Image',
           'settings.camera.imageSourceDeviceCamera' => 'Device Camera',
@@ -3258,9 +3306,6 @@ extension on Translations {
           'settings.camera.imageFlip' => 'Flip',
           'settings.camera.imageFlipNone' => 'None',
           'settings.camera.imageFlipHorizontal' => 'Horizontal',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.camera.imageFlipVertical' => 'Vertical',
           'settings.camera.imageFlipReverse' => 'Reverse',
           'settings.gamepad.title' => 'Gamepad',

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:glass_bottom_navigation/glass_bottom_navigation.dart';
 import 'package:go_router/go_router.dart';
 
-import '../i18n/translations.g.dart';
 import '../theme/extensions/app_navigation_bar_theme.dart';
+import 'app_nav_destination.dart';
 
 /// The bottom navigation bar. Its shape (floating pill vs. flush full-width bar) and colors come
 /// entirely from [AppNavigationBarTheme], so this single widget renders both the Azahar and
@@ -27,11 +27,7 @@ class AppNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<AppNavigationBarTheme>()!;
-    final t = context.t;
-    final destinations = [
-      (icon: Icons.videogame_asset, label: t.home.games),
-      (icon: Icons.more_horiz, label: t.home.options),
-    ];
+    final destinations = AppNavDestination.of(context);
 
     void onTap(int index) => navigationShell.goBranch(
       index,
