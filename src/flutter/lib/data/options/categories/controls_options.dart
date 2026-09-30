@@ -8,16 +8,16 @@ import '../option_section.dart';
 
 /// The Controls category: the page for the gamepad settings.
 final controlsOptionsProvider = Provider<OptionCategory>(
-  (ref) => const OptionCategory(
+  (ref) => OptionCategory(
     id: 'controls',
-    titleKey: 'options.groups.controls',
+    title: (t) => t.options.groups.controls,
     sections: [
       OptionSection(
         options: [
           NestedOption(
-            titleKey: 'settings.gamepad.title',
+            title: (t) => t.settings.gamepad.title,
             icon: Icons.sports_esports,
-            destination: OptionsControlsSettingsRoute(),
+            destination: const OptionsControlsSettingsRoute(),
           ),
         ],
       ),

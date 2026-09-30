@@ -9,8 +9,8 @@ abstract class DateTimeOption
   const DateTimeOption._();
 
   const factory DateTimeOption({
-    required String titleKey,
-    String? descriptionKey,
+    required TranslationText title,
+    TranslationText? description,
     required IconData icon,
     required OptionValue<String> value,
   }) = _DateTimeOption;

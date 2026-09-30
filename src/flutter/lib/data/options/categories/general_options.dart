@@ -8,34 +8,34 @@ import '../option_section.dart';
 
 /// The General category: the pages for the profile, language, theme and media settings.
 final generalOptionsProvider = Provider<OptionCategory>(
-  (ref) => const OptionCategory(
+  (ref) => OptionCategory(
     id: 'general',
-    titleKey: 'options.groups.general',
+    title: (t) => t.options.groups.general,
     sections: [
       OptionSection(
         options: [
           NestedOption(
-            titleKey: 'options.general',
-            descriptionKey: 'options.generalDescription',
+            title: (t) => t.options.general,
+            description: (t) => t.options.generalDescription,
             icon: Icons.account_circle_outlined,
-            destination: OptionsGeneralSettingsRoute(),
+            destination: const OptionsGeneralSettingsRoute(),
           ),
           NestedOption(
-            titleKey: 'settings.language.title',
+            title: (t) => t.settings.language.title,
             icon: Icons.language,
-            destination: OptionsLanguageSettingsRoute(),
+            destination: const OptionsLanguageSettingsRoute(),
           ),
           NestedOption(
-            titleKey: 'options.themeAndColor',
-            descriptionKey: 'options.themeAndColorDescription',
+            title: (t) => t.options.themeAndColor,
+            description: (t) => t.options.themeAndColorDescription,
             icon: Icons.palette_outlined,
-            destination: OptionsThemeSettingsRoute(),
+            destination: const OptionsThemeSettingsRoute(),
           ),
           NestedOption(
-            titleKey: 'options.media',
-            descriptionKey: 'options.mediaDescription',
+            title: (t) => t.options.media,
+            description: (t) => t.options.mediaDescription,
             icon: Icons.music_note_outlined,
-            destination: OptionsMediaSettingsRoute(),
+            destination: const OptionsMediaSettingsRoute(),
           ),
         ],
       ),

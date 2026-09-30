@@ -7,55 +7,56 @@ import '../abstract_base_option.dart';
 import '../option_category.dart';
 import '../option_section.dart';
 import '../option_value.dart';
+import '../translation_text.dart';
 
-/// The items of the theme and color settings page, which is not listed on the Options page: theme style, Material You, the static color, the theme mode and
-/// black backgrounds. The static color choices depend on the theme style, so this provider
-/// rebuilds when the style changes.
+/// The items of the theme and color settings page, which is not listed on the Options page: theme
+/// style, Material You, the static color, the theme mode and black backgrounds. The static color
+/// choices depend on the theme style, so this provider rebuilds when the style changes.
 final themeOptionsProvider = Provider<OptionCategory>((ref) {
   final style = ref.watch(
     themeSettingsProvider.select((settings) => settings.themeStyle),
   );
-  const namedColorKeys = [
-    'Blue',
-    'Cyan',
-    'Red',
-    'Green',
-    'Yellow',
-    'Orange',
-    'Violet',
-    'Pink',
-    'Gray',
-  ];
-  final colorKeys = [
-    if (style == ThemeStyle.azahar) 'Default',
-    ...namedColorKeys,
+  final List<TranslationText> colorLabels = [
+    if (style == ThemeStyle.azahar)
+      (t) => t.settings.theme.staticThemeColorDefault,
+    (t) => t.settings.theme.staticThemeColorBlue,
+    (t) => t.settings.theme.staticThemeColorCyan,
+    (t) => t.settings.theme.staticThemeColorRed,
+    (t) => t.settings.theme.staticThemeColorGreen,
+    (t) => t.settings.theme.staticThemeColorYellow,
+    (t) => t.settings.theme.staticThemeColorOrange,
+    (t) => t.settings.theme.staticThemeColorViolet,
+    (t) => t.settings.theme.staticThemeColorPink,
+    (t) => t.settings.theme.staticThemeColorGray,
   ];
   return OptionCategory(
     id: 'theme',
-    titleKey: 'settings.theme.title',
+    title: (t) => t.settings.theme.title,
     sections: [
       OptionSection(
         options: [
-          EnumOption<String>(
-            titleKey: 'settings.theme.themeStyle',
+          EnumOption<ThemeStyle>(
+            title: (t) => t.settings.theme.themeStyle,
             icon: Icons.style_outlined,
-            value: CallbackOptionValue<String>(
-              onRead: (ref) => ref.watch(themeSettingsProvider).themeStyle.name,
-              onWrite: (context, ref, value) => ref
-                  .read(themeSettingsProvider.notifier)
-                  .setThemeStyle(ThemeStyle.values.byName(value)),
+            value: CallbackOptionValue<ThemeStyle>(
+              onRead: (ref) => ref.watch(themeSettingsProvider).themeStyle,
+              onWrite: (context, ref, value) =>
+                  ref.read(themeSettingsProvider.notifier).setThemeStyle(value),
             ),
             choices: [
-              for (final style in ThemeStyle.values)
-                EnumChoice(
-                  labelKey: 'settings.themes.${style.name}',
-                  value: style.name,
-                ),
+              EnumChoice(
+                label: (t) => t.settings.themes.azahar,
+                value: ThemeStyle.azahar,
+              ),
+              EnumChoice(
+                label: (t) => t.settings.themes.legacy,
+                value: ThemeStyle.legacy,
+              ),
             ],
           ),
           BoolOption(
-            titleKey: 'settings.theme.materialYou',
-            descriptionKey: 'settings.theme.materialYouDescription',
+            title: (t) => t.settings.theme.materialYou,
+            description: (t) => t.settings.theme.materialYouDescription,
             icon: Icons.auto_awesome,
             value: CallbackOptionValue<bool>(
               onRead: (ref) => ref.watch(themeSettingsProvider).materialYou,
@@ -65,7 +66,7 @@ final themeOptionsProvider = Provider<OptionCategory>((ref) {
             ),
           ),
           EnumOption<int>(
-            titleKey: 'settings.theme.staticThemeColor',
+            title: (t) => t.settings.theme.staticThemeColor,
             icon: Icons.palette_outlined,
             value: CallbackOptionValue<int>(
               onRead: (ref) =>
@@ -75,39 +76,36 @@ final themeOptionsProvider = Provider<OptionCategory>((ref) {
                   .setStaticThemeColor(value),
             ),
             choices: [
-              for (var i = 0; i < colorKeys.length; i++)
-                EnumChoice(
-                  labelKey: 'settings.theme.staticThemeColor${colorKeys[i]}',
-                  value: i,
-                ),
+              for (final (index, label) in colorLabels.indexed)
+                EnumChoice(label: label, value: index),
             ],
           ),
           EnumOption<String>(
-            titleKey: 'settings.theme.themeMode',
+            title: (t) => t.settings.theme.themeMode,
             icon: Icons.brightness_6_outlined,
             value: CallbackOptionValue<String>(
               onRead: (ref) => ref.watch(themeSettingsProvider).themeMode,
               onWrite: (context, ref, value) =>
                   ref.read(themeSettingsProvider.notifier).setThemeMode(value),
             ),
-            choices: const [
+            choices: [
               EnumChoice(
-                labelKey: 'settings.theme.themeModeFollowSystem',
+                label: (t) => t.settings.theme.themeModeFollowSystem,
                 value: 'system',
               ),
               EnumChoice(
-                labelKey: 'settings.theme.themeModeLight',
+                label: (t) => t.settings.theme.themeModeLight,
                 value: 'light',
               ),
               EnumChoice(
-                labelKey: 'settings.theme.themeModeDark',
+                label: (t) => t.settings.theme.themeModeDark,
                 value: 'dark',
               ),
             ],
           ),
           BoolOption(
-            titleKey: 'settings.theme.useBlackBackgrounds',
-            descriptionKey: 'settings.theme.useBlackBackgroundsDescription',
+            title: (t) => t.settings.theme.useBlackBackgrounds,
+            description: (t) => t.settings.theme.useBlackBackgroundsDescription,
             icon: Icons.contrast,
             value: CallbackOptionValue<bool>(
               onRead: (ref) =>

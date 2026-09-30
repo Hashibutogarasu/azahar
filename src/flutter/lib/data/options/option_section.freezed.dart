@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$OptionSection {
 
- String? get titleKey; List<AbstractBaseOption> get options;
+ TranslationText? get title; List<AbstractBaseOption> get options;
 /// Create a copy of OptionSection
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $OptionSectionCopyWith<OptionSection> get copyWith => _$OptionSectionCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OptionSection&&(identical(other.titleKey, titleKey) || other.titleKey == titleKey)&&const DeepCollectionEquality().equals(other.options, options));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OptionSection&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other.options, options));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,titleKey,const DeepCollectionEquality().hash(options));
+int get hashCode => Object.hash(runtimeType,title,const DeepCollectionEquality().hash(options));
 
 @override
 String toString() {
-  return 'OptionSection(titleKey: $titleKey, options: $options)';
+  return 'OptionSection(title: $title, options: $options)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $OptionSectionCopyWith<$Res>  {
   factory $OptionSectionCopyWith(OptionSection value, $Res Function(OptionSection) _then) = _$OptionSectionCopyWithImpl;
 @useResult
 $Res call({
- String? titleKey, List<AbstractBaseOption> options
+ TranslationText? title, List<AbstractBaseOption> options
 });
 
 
@@ -63,10 +63,10 @@ class _$OptionSectionCopyWithImpl<$Res>
 
 /// Create a copy of OptionSection
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? titleKey = freezed,Object? options = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? title = freezed,Object? options = null,}) {
   return _then(OptionSection(
-titleKey: freezed == titleKey ? _self.titleKey : titleKey // ignore: cast_nullable_to_non_nullable
-as String?,options: null == options ? _self.options : options // ignore: cast_nullable_to_non_nullable
+title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as TranslationText?,options: null == options ? _self.options : options // ignore: cast_nullable_to_non_nullable
 as List<AbstractBaseOption>,
   ));
 }
@@ -152,10 +152,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? titleKey,  List<AbstractBaseOption> options)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( TranslationText? title,  List<AbstractBaseOption> options)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _OptionSection() when $default != null:
-return $default(_that.titleKey,_that.options);case _:
+return $default(_that.title,_that.options);case _:
   return orElse();
 
 }
@@ -173,10 +173,10 @@ return $default(_that.titleKey,_that.options);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? titleKey,  List<AbstractBaseOption> options)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( TranslationText? title,  List<AbstractBaseOption> options)  $default,) {final _that = this;
 switch (_that) {
 case _OptionSection():
-return $default(_that.titleKey,_that.options);case _:
+return $default(_that.title,_that.options);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -193,10 +193,10 @@ return $default(_that.titleKey,_that.options);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? titleKey,  List<AbstractBaseOption> options)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( TranslationText? title,  List<AbstractBaseOption> options)?  $default,) {final _that = this;
 switch (_that) {
 case _OptionSection() when $default != null:
-return $default(_that.titleKey,_that.options);case _:
+return $default(_that.title,_that.options);case _:
   return null;
 
 }
@@ -208,10 +208,10 @@ return $default(_that.titleKey,_that.options);case _:
 
 
 class _OptionSection implements OptionSection {
-  const _OptionSection({this.titleKey, required  List<AbstractBaseOption> options}): _options = options;
+  const _OptionSection({this.title, required  List<AbstractBaseOption> options}): _options = options;
   
 
-@override final  String? titleKey;
+@override final  TranslationText? title;
  final  List<AbstractBaseOption> _options;
 @override List<AbstractBaseOption> get options {
   if (_options is EqualUnmodifiableListView) return _options;
@@ -230,16 +230,16 @@ _$OptionSectionCopyWith<_OptionSection> get copyWith => __$OptionSectionCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OptionSection&&(identical(other.titleKey, titleKey) || other.titleKey == titleKey)&&const DeepCollectionEquality().equals(other._options, _options));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OptionSection&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other._options, _options));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,titleKey,const DeepCollectionEquality().hash(_options));
+int get hashCode => Object.hash(runtimeType,title,const DeepCollectionEquality().hash(_options));
 
 @override
 String toString() {
-  return 'OptionSection(titleKey: $titleKey, options: $options)';
+  return 'OptionSection(title: $title, options: $options)';
 }
 
 
@@ -250,7 +250,7 @@ abstract mixin class _$OptionSectionCopyWith<$Res> implements $OptionSectionCopy
   factory _$OptionSectionCopyWith(_OptionSection value, $Res Function(_OptionSection) _then) = __$OptionSectionCopyWithImpl;
 @override @useResult
 $Res call({
- String? titleKey, List<AbstractBaseOption> options
+ TranslationText? title, List<AbstractBaseOption> options
 });
 
 
@@ -267,10 +267,10 @@ class __$OptionSectionCopyWithImpl<$Res>
 
 /// Create a copy of OptionSection
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? titleKey = freezed,Object? options = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = freezed,Object? options = null,}) {
   return _then(_OptionSection(
-titleKey: freezed == titleKey ? _self.titleKey : titleKey // ignore: cast_nullable_to_non_nullable
-as String?,options: null == options ? _self._options : options // ignore: cast_nullable_to_non_nullable
+title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as TranslationText?,options: null == options ? _self._options : options // ignore: cast_nullable_to_non_nullable
 as List<AbstractBaseOption>,
   ));
 }

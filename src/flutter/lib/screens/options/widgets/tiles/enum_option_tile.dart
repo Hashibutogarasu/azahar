@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../data/options/abstract_base_option.dart';
 import '../../../../data/options/option_values_revision_provider.dart';
-import '../../../../data/options/translation_lookup.dart';
 import '../../../../i18n/translations.g.dart';
 import '../../../settings/dialogs/choice_dialog.dart';
 import 'option_commit.dart';
@@ -28,12 +27,11 @@ class EnumOptionTile<T> extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(optionValuesRevisionProvider);
     final t = context.t;
-    final title = t.resolve(option.titleKey);
-    final descriptionKey = option.descriptionKey;
+    final title = option.title(t);
     final current = option.value.read(ref);
     final currentLabel = [
       for (final choice in option.choices)
-        if (choice.value == current) t.resolve(choice.labelKey),
+        if (choice.value == current) choice.label(t),
     ].firstOrNull;
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
@@ -41,15 +39,13 @@ class EnumOptionTile<T> extends ConsumerWidget {
       child: babstrap.SettingsItem(
         icons: option.icon,
         title: title,
-        subtitle: descriptionKey == null ? null : t.lookup(descriptionKey),
+        subtitle: option.description?.call(t),
         trailing: Text(currentLabel ?? ''),
         onTap: () async {
           final result = await ChoiceDialog.show<T>(
             context,
             title: title,
-            labels: [
-              for (final choice in option.choices) t.resolve(choice.labelKey),
-            ],
+            labels: [for (final choice in option.choices) choice.label(t)],
             values: [for (final choice in option.choices) choice.value],
             current: current,
           );

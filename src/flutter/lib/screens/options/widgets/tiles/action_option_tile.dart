@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../data/options/abstract_base_option.dart';
-import '../../../../data/options/translation_lookup.dart';
 import '../../../../i18n/translations.g.dart';
 
 /// The tile of an [ActionOption]: a row that runs the option's action when tapped. A destructive
@@ -24,15 +23,14 @@ class ActionOptionTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = context.t;
-    final descriptionKey = option.descriptionKey;
     final errorColor = Theme.of(context).colorScheme.error;
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onLongPress: onLongPress,
       child: babstrap.SettingsItem(
         icons: option.icon,
-        title: t.resolve(option.titleKey),
-        subtitle: descriptionKey == null ? null : t.lookup(descriptionKey),
+        title: option.title(t),
+        subtitle: option.description?.call(t),
         titleStyle: option.destructive
             ? TextStyle(fontWeight: FontWeight.bold, color: errorColor)
             : null,

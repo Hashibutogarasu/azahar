@@ -5,148 +5,153 @@ import '../../settings/sections/graphics_settings.dart';
 import '../abstract_base_option.dart';
 import '../option_category.dart';
 import '../option_section.dart';
+import '../option_value.dart';
 import '../store_option_values.dart';
 
 /// The items of the graphics settings page, which is not listed on the Options page: the renderer,
 /// stereoscopy, Cardboard VR, utility and advanced settings.
 final rendererOptionsProvider = Provider<OptionCategory>(
-  (ref) => const OptionCategory(
+  (ref) => OptionCategory(
     id: 'renderer',
-    titleKey: 'settings.graphics.title',
+    title: (t) => t.settings.graphics.title,
     sections: [
       OptionSection(
-        titleKey: 'settings.graphics.renderer',
+        title: (t) => t.settings.graphics.renderer,
         options: [
           EnumOption<int>(
-            titleKey: 'settings.graphics.graphicsApi',
+            title: (t) => t.settings.graphics.graphicsApi,
             icon: Icons.monitor,
-            value: StoreIntValue(GraphicsSettingKeys.graphicsApi),
+            value: const StoreIntValue(GraphicsSettingKeys.graphicsApi),
             choices: [
               EnumChoice(
-                labelKey: 'settings.graphics.graphicsApiOpengles',
+                label: (t) => t.settings.graphics.graphicsApiOpengles,
                 value: 1,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.graphicsApiVulkan',
+                label: (t) => t.settings.graphics.graphicsApiVulkan,
                 value: 2,
               ),
             ],
           ),
           BoolOption(
-            titleKey: 'settings.graphics.spirvShaderGen',
-            descriptionKey: 'settings.graphics.spirvShaderGenDescription',
+            title: (t) => t.settings.graphics.spirvShaderGen,
+            description: (t) => t.settings.graphics.spirvShaderGenDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(GraphicsSettingKeys.spirvShaderGen),
+            value: const StoreBoolValue(GraphicsSettingKeys.spirvShaderGen),
           ),
           BoolOption(
-            titleKey: 'settings.graphics.asyncShaders',
-            descriptionKey: 'settings.graphics.asyncShadersDescription',
+            title: (t) => t.settings.graphics.asyncShaders,
+            description: (t) => t.settings.graphics.asyncShadersDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(GraphicsSettingKeys.asyncShaders),
+            value: const StoreBoolValue(GraphicsSettingKeys.asyncShaders),
           ),
           EnumOption<int>(
-            titleKey: 'settings.graphics.internalResolution',
-            descriptionKey: 'settings.graphics.internalResolutionDescription',
+            title: (t) => t.settings.graphics.internalResolution,
+            description: (t) =>
+                t.settings.graphics.internalResolutionDescription,
             icon: Icons.aspect_ratio,
-            value: StoreIntValue(GraphicsSettingKeys.resolutionFactor),
+            value: const StoreIntValue(GraphicsSettingKeys.resolutionFactor),
             choices: [
               EnumChoice(
-                labelKey: 'settings.graphics.internalResolutionNative',
+                label: (t) => t.settings.graphics.internalResolutionNative,
                 value: 1,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.internalResolution2x',
+                label: (t) => t.settings.graphics.internalResolution2x,
                 value: 2,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.internalResolution3x',
+                label: (t) => t.settings.graphics.internalResolution3x,
                 value: 3,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.internalResolution4x',
+                label: (t) => t.settings.graphics.internalResolution4x,
                 value: 4,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.internalResolution5x',
+                label: (t) => t.settings.graphics.internalResolution5x,
                 value: 5,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.internalResolution6x',
+                label: (t) => t.settings.graphics.internalResolution6x,
                 value: 6,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.internalResolution7x',
+                label: (t) => t.settings.graphics.internalResolution7x,
                 value: 7,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.internalResolution8x',
+                label: (t) => t.settings.graphics.internalResolution8x,
                 value: 8,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.internalResolution9x',
+                label: (t) => t.settings.graphics.internalResolution9x,
                 value: 9,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.internalResolution10x',
+                label: (t) => t.settings.graphics.internalResolution10x,
                 value: 10,
               ),
             ],
           ),
           BoolOption(
-            titleKey: 'settings.graphics.linearFiltering',
-            descriptionKey: 'settings.graphics.linearFilteringDescription',
+            title: (t) => t.settings.graphics.linearFiltering,
+            description: (t) => t.settings.graphics.linearFilteringDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(GraphicsSettingKeys.linearFiltering),
+            value: const StoreBoolValue(GraphicsSettingKeys.linearFiltering),
           ),
           BoolOption(
-            titleKey: 'settings.graphics.shadersAccurateMul',
-            descriptionKey: 'settings.graphics.shadersAccurateMulDescription',
+            title: (t) => t.settings.graphics.shadersAccurateMul,
+            description: (t) =>
+                t.settings.graphics.shadersAccurateMulDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(GraphicsSettingKeys.shadersAccurateMul),
+            value: const StoreBoolValue(GraphicsSettingKeys.shadersAccurateMul),
           ),
           BoolOption(
-            titleKey: 'settings.graphics.useDiskShaderCache',
-            descriptionKey: 'settings.graphics.useDiskShaderCacheDescription',
+            title: (t) => t.settings.graphics.useDiskShaderCache,
+            description: (t) =>
+                t.settings.graphics.useDiskShaderCacheDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(GraphicsSettingKeys.diskShaderCache),
+            value: const StoreBoolValue(GraphicsSettingKeys.diskShaderCache),
           ),
           EnumOption<int>(
-            titleKey: 'settings.graphics.textureFilterName',
-            descriptionKey: 'settings.graphics.textureFilterDescription',
+            title: (t) => t.settings.graphics.textureFilterName,
+            description: (t) => t.settings.graphics.textureFilterDescription,
             icon: Icons.filter_vintage,
-            value: StoreIntValue(GraphicsSettingKeys.textureFilter),
+            value: const StoreIntValue(GraphicsSettingKeys.textureFilter),
             choices: [
               EnumChoice(
-                labelKey: 'settings.graphics.textureFilterNone',
+                label: (t) => t.settings.graphics.textureFilterNone,
                 value: 0,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.textureFilterAnime4k',
+                label: (t) => t.settings.graphics.textureFilterAnime4k,
                 value: 1,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.textureFilterBicubic',
+                label: (t) => t.settings.graphics.textureFilterBicubic,
                 value: 2,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.textureFilterScaleforce',
+                label: (t) => t.settings.graphics.textureFilterScaleforce,
                 value: 3,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.textureFilterXbrz',
+                label: (t) => t.settings.graphics.textureFilterXbrz,
                 value: 4,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.textureFilterMmpx',
+                label: (t) => t.settings.graphics.textureFilterMmpx,
                 value: 5,
               ),
             ],
           ),
           IntOption(
-            titleKey: 'settings.graphics.delayRenderThread',
-            descriptionKey: 'settings.graphics.delayRenderThreadDescription',
+            title: (t) => t.settings.graphics.delayRenderThread,
+            description: (t) =>
+                t.settings.graphics.delayRenderThreadDescription,
             icon: Icons.tune,
-            value: StoreIntValue(GraphicsSettingKeys.delayRenderThreadUs),
+            value: const StoreIntValue(GraphicsSettingKeys.delayRenderThreadUs),
             min: 0,
             max: 16000,
             defaultValue: 0,
@@ -155,136 +160,143 @@ final rendererOptionsProvider = Provider<OptionCategory>(
         ],
       ),
       OptionSection(
-        titleKey: 'settings.graphics.stereoscopy',
+        title: (t) => t.settings.graphics.stereoscopy,
         options: [
           EnumOption<int>(
-            titleKey: 'settings.graphics.render3d',
+            title: (t) => t.settings.graphics.render3d,
             icon: Icons.view_in_ar,
-            value: StoreIntValue(GraphicsSettingKeys.stereoscopic3dMode),
+            value: const StoreIntValue(GraphicsSettingKeys.stereoscopic3dMode),
             choices: [
-              EnumChoice(labelKey: 'settings.graphics.render3dOff', value: 0),
               EnumChoice(
-                labelKey: 'settings.graphics.render3dSideBySide',
+                label: (t) => t.settings.graphics.render3dOff,
+                value: 0,
+              ),
+              EnumChoice(
+                label: (t) => t.settings.graphics.render3dSideBySide,
                 value: 1,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.render3dReverseSideBySide',
+                label: (t) => t.settings.graphics.render3dReverseSideBySide,
                 value: 2,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.render3dAnaglyph',
+                label: (t) => t.settings.graphics.render3dAnaglyph,
                 value: 3,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.render3dInterlaced',
+                label: (t) => t.settings.graphics.render3dInterlaced,
                 value: 4,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.render3dReverseInterlaced',
+                label: (t) => t.settings.graphics.render3dReverseInterlaced,
                 value: 5,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.render3dCardboardVr',
+                label: (t) => t.settings.graphics.render3dCardboardVr,
                 value: 6,
               ),
             ],
           ),
-          IntOption(
-            titleKey: 'settings.graphics.factor3d',
-            descriptionKey: 'settings.graphics.factor3dDescription',
+          PercentOption(
+            title: (t) => t.settings.graphics.factor3d,
+            description: (t) => t.settings.graphics.factor3dDescription,
             icon: Icons.tune,
-            value: StoreIntValue(GraphicsSettingKeys.stereoscopic3dDepth),
-            min: 0,
-            max: 100,
-            defaultValue: 0,
-            units: '%',
+            value: const IntPercentValue(
+              StoreIntValue(GraphicsSettingKeys.stereoscopic3dDepth),
+            ),
+            defaultValue: 0.0,
           ),
           BoolOption(
-            titleKey: 'settings.graphics.disableRightEyeRender',
-            descriptionKey:
-                'settings.graphics.disableRightEyeRenderDescription',
+            title: (t) => t.settings.graphics.disableRightEyeRender,
+            description: (t) =>
+                t.settings.graphics.disableRightEyeRenderDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(GraphicsSettingKeys.disableRightEyeRender),
+            value: const StoreBoolValue(
+              GraphicsSettingKeys.disableRightEyeRender,
+            ),
           ),
         ],
       ),
       OptionSection(
-        titleKey: 'settings.graphics.cardboardVr',
+        title: (t) => t.settings.graphics.cardboardVr,
         options: [
-          IntOption(
-            titleKey: 'settings.graphics.cardboardScreenSize',
-            descriptionKey: 'settings.graphics.cardboardScreenSizeDescription',
+          PercentOption(
+            title: (t) => t.settings.graphics.cardboardScreenSize,
+            description: (t) =>
+                t.settings.graphics.cardboardScreenSizeDescription,
             icon: Icons.tune,
-            value: StoreIntValue(GraphicsSettingKeys.cardboardScreenSize),
-            min: 30,
-            max: 100,
-            defaultValue: 85,
-            units: '%',
+            value: const IntPercentValue(
+              StoreIntValue(GraphicsSettingKeys.cardboardScreenSize),
+            ),
+            min: 0.3,
+            defaultValue: 0.85,
           ),
-          IntOption(
-            titleKey: 'settings.graphics.cardboardXShift',
-            descriptionKey: 'settings.graphics.cardboardXShiftDescription',
+          PercentOption(
+            title: (t) => t.settings.graphics.cardboardXShift,
+            description: (t) => t.settings.graphics.cardboardXShiftDescription,
             icon: Icons.tune,
-            value: StoreIntValue(GraphicsSettingKeys.cardboardXShift),
-            min: -100,
-            max: 100,
-            defaultValue: 0,
-            units: '%',
+            value: const IntPercentValue(
+              StoreIntValue(GraphicsSettingKeys.cardboardXShift),
+            ),
+            min: -1.0,
+            defaultValue: 0.0,
           ),
-          IntOption(
-            titleKey: 'settings.graphics.cardboardYShift',
-            descriptionKey: 'settings.graphics.cardboardYShiftDescription',
+          PercentOption(
+            title: (t) => t.settings.graphics.cardboardYShift,
+            description: (t) => t.settings.graphics.cardboardYShiftDescription,
             icon: Icons.tune,
-            value: StoreIntValue(GraphicsSettingKeys.cardboardYShift),
-            min: -100,
-            max: 100,
-            defaultValue: 0,
-            units: '%',
+            value: const IntPercentValue(
+              StoreIntValue(GraphicsSettingKeys.cardboardYShift),
+            ),
+            min: -1.0,
+            defaultValue: 0.0,
           ),
         ],
       ),
       OptionSection(
-        titleKey: 'settings.graphics.utility',
+        title: (t) => t.settings.graphics.utility,
         options: [
           BoolOption(
-            titleKey: 'settings.graphics.dumpTextures',
-            descriptionKey: 'settings.graphics.dumpTexturesDescription',
+            title: (t) => t.settings.graphics.dumpTextures,
+            description: (t) => t.settings.graphics.dumpTexturesDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(GraphicsSettingKeys.dumpTextures),
+            value: const StoreBoolValue(GraphicsSettingKeys.dumpTextures),
           ),
           BoolOption(
-            titleKey: 'settings.graphics.customTextures',
-            descriptionKey: 'settings.graphics.customTexturesDescription',
+            title: (t) => t.settings.graphics.customTextures,
+            description: (t) => t.settings.graphics.customTexturesDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(GraphicsSettingKeys.customTextures),
+            value: const StoreBoolValue(GraphicsSettingKeys.customTextures),
           ),
           BoolOption(
-            titleKey: 'settings.graphics.asyncCustomLoading',
-            descriptionKey: 'settings.graphics.asyncCustomLoadingDescription',
+            title: (t) => t.settings.graphics.asyncCustomLoading,
+            description: (t) =>
+                t.settings.graphics.asyncCustomLoadingDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(GraphicsSettingKeys.asyncCustomLoading),
+            value: const StoreBoolValue(GraphicsSettingKeys.asyncCustomLoading),
           ),
         ],
       ),
       OptionSection(
-        titleKey: 'settings.graphics.advanced',
+        title: (t) => t.settings.graphics.advanced,
         options: [
           EnumOption<int>(
-            titleKey: 'settings.graphics.textureSamplingName',
-            descriptionKey: 'settings.graphics.textureSamplingDescription',
+            title: (t) => t.settings.graphics.textureSamplingName,
+            description: (t) => t.settings.graphics.textureSamplingDescription,
             icon: Icons.grid_on,
-            value: StoreIntValue(GraphicsSettingKeys.textureSampling),
+            value: const StoreIntValue(GraphicsSettingKeys.textureSampling),
             choices: [
               EnumChoice(
-                labelKey: 'settings.graphics.textureSamplingGameControlled',
+                label: (t) => t.settings.graphics.textureSamplingGameControlled,
                 value: 0,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.textureSamplingNearestNeighbor',
+                label: (t) =>
+                    t.settings.graphics.textureSamplingNearestNeighbor,
                 value: 1,
               ),
               EnumChoice(
-                labelKey: 'settings.graphics.textureSamplingLinear',
+                label: (t) => t.settings.graphics.textureSamplingLinear,
                 value: 2,
               ),
             ],

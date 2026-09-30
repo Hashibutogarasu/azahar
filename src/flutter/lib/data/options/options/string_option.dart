@@ -6,8 +6,8 @@ abstract class StringOption with _$StringOption implements AbstractBaseOption {
   const StringOption._();
 
   const factory StringOption({
-    required String titleKey,
-    String? descriptionKey,
+    required TranslationText title,
+    TranslationText? description,
     required IconData icon,
     required OptionValue<String> value,
     int? maxLength,

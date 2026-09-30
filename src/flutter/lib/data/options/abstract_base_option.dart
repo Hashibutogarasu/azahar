@@ -11,8 +11,10 @@ import '../../screens/options/widgets/tiles/float_option_tile.dart';
 import '../../screens/options/widgets/tiles/input_binding_option_tile.dart';
 import '../../screens/options/widgets/tiles/int_option_tile.dart';
 import '../../screens/options/widgets/tiles/nested_option_tile.dart';
+import '../../screens/options/widgets/tiles/percent_option_tile.dart';
 import '../../screens/options/widgets/tiles/string_option_tile.dart';
 import 'option_value.dart';
+import 'translation_text.dart';
 
 part 'abstract_base_option.freezed.dart';
 part 'options/action_option.dart';
@@ -23,20 +25,22 @@ part 'options/float_option.dart';
 part 'options/input_binding_option.dart';
 part 'options/int_option.dart';
 part 'options/nested_option.dart';
+part 'options/percent_option.dart';
 part 'options/string_option.dart';
 
-/// What every Options item has in common: the translation keys of its title and description, its
-/// icon, and how it turns into a widget. The rest, such as how its value is read or where it
-/// leads, belongs to each kind.
+/// What every Options item has in common: how its title and description are read from the
+/// translations, its icon, and how it turns into a widget. The rest, such as how its value is read
+/// or where it leads, belongs to each kind.
 ///
-/// The keys are translation key paths (for example `settings.graphics.title`), resolved against
-/// the current locale when the item is shown or searched.
+/// The title and description are [TranslationText] functions, for example
+/// `(t) => t.settings.graphics.title`, applied to the current locale when the item is shown or
+/// searched.
 sealed class AbstractBaseOption {
   const AbstractBaseOption();
 
-  String get titleKey;
+  TranslationText get title;
 
-  String? get descriptionKey;
+  TranslationText? get description;
 
   IconData get icon;
 

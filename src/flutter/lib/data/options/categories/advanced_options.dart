@@ -13,27 +13,34 @@ import '../option_value.dart';
 final advancedOptionsProvider = Provider<OptionCategory>(
   (ref) => OptionCategory(
     id: 'advanced',
-    titleKey: 'settings.advanced.title',
+    title: (t) => t.settings.advanced.title,
     sections: [
       OptionSection(
         options: [
-          EnumOption<String>(
-            titleKey: 'settings.advanced.animationSpeedLabel',
-            descriptionKey: 'settings.advanced.animationSpeedDescription',
+          EnumOption<AnimationSpeed>(
+            title: (t) => t.settings.advanced.animationSpeedLabel,
+            description: (t) => t.settings.advanced.animationSpeedDescription,
             icon: Icons.tune,
-            value: CallbackOptionValue<String>(
+            value: CallbackOptionValue<AnimationSpeed>(
               onRead: (ref) =>
-                  ref.watch(advancedSettingsProvider).animationSpeed.name,
+                  ref.watch(advancedSettingsProvider).animationSpeed,
               onWrite: (context, ref, value) => ref
                   .read(advancedSettingsProvider.notifier)
-                  .setAnimationSpeed(AnimationSpeed.values.byName(value)),
+                  .setAnimationSpeed(value),
             ),
             choices: [
-              for (final speed in AnimationSpeed.values)
-                EnumChoice(
-                  labelKey: 'settings.advanced.animationSpeed.${speed.name}',
-                  value: speed.name,
-                ),
+              EnumChoice(
+                label: (t) => t.settings.advanced.animationSpeed.fast,
+                value: AnimationSpeed.fast,
+              ),
+              EnumChoice(
+                label: (t) => t.settings.advanced.animationSpeed.normal,
+                value: AnimationSpeed.normal,
+              ),
+              EnumChoice(
+                label: (t) => t.settings.advanced.animationSpeed.slow,
+                value: AnimationSpeed.slow,
+              ),
             ],
           ),
         ],

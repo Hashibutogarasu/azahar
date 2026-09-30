@@ -6,48 +6,56 @@ import '../../settings/emulator_setting_key.dart';
 import '../abstract_base_option.dart';
 import '../option_category.dart';
 import '../option_section.dart';
+import '../option_value.dart';
 import '../store_option_values.dart';
+import '../translation_text.dart';
 
 /// The items of the gamepad settings page, which is not listed on the Options page: the controller
 /// input mode, gyro, button and axis bindings, hotkeys and the Artic Base controller.
 final controlsSettingsOptionsProvider = Provider<OptionCategory>((ref) {
   final bindings = AppServices.controlBindingsValueStore;
 
-  InputBindingOption binding(String titleKey, String key) => InputBindingOption(
-    titleKey: 'settings.gamepad.$titleKey',
-    icon: Icons.sports_esports_outlined,
-    value: StoreStringValue(StringKey('Controls', key, ''), store: bindings),
-  );
+  InputBindingOption binding(TranslationText title, String key) =>
+      InputBindingOption(
+        title: title,
+        icon: Icons.sports_esports_outlined,
+        value: StoreStringValue(
+          StringKey('Controls', key, ''),
+          store: bindings,
+        ),
+      );
 
   return OptionCategory(
     id: 'controlsSettings',
-    titleKey: 'settings.gamepad.title',
+    title: (t) => t.settings.gamepad.title,
     sections: [
-      const OptionSection(
+      OptionSection(
         options: [
           EnumOption<int>(
-            titleKey: 'settings.gamepad.controllerInputMode',
-            descriptionKey: 'settings.gamepad.controllerInputModeDescription',
+            title: (t) => t.settings.gamepad.controllerInputMode,
+            description: (t) =>
+                t.settings.gamepad.controllerInputModeDescription,
             icon: Icons.list,
-            value: StoreIntValue(
+            value: const StoreIntValue(
               IntKey('Controls', 'controller_input_mode', 0),
             ),
             choices: [
               EnumChoice(
-                labelKey: 'settings.gamepad.controllerInputModeManual',
+                label: (t) => t.settings.gamepad.controllerInputModeManual,
                 value: 0,
               ),
               EnumChoice(
-                labelKey: 'settings.gamepad.controllerInputModeAutoDetect',
+                label: (t) => t.settings.gamepad.controllerInputModeAutoDetect,
                 value: 1,
               ),
             ],
           ),
           BoolOption(
-            titleKey: 'settings.gamepad.invertLeftStickYAxis',
-            descriptionKey: 'settings.gamepad.invertLeftStickYAxisDescription',
+            title: (t) => t.settings.gamepad.invertLeftStickYAxis,
+            description: (t) =>
+                t.settings.gamepad.invertLeftStickYAxisDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(
+            value: const StoreBoolValue(
               IntBoolKey(
                 'Controls',
                 'invert_controller_left_stick_y_axis',
@@ -57,145 +65,187 @@ final controlsSettingsOptionsProvider = Provider<OptionCategory>((ref) {
           ),
         ],
       ),
-      const OptionSection(
-        titleKey: 'settings.gamepad.gyroSettings',
+      OptionSection(
+        title: (t) => t.settings.gamepad.gyroSettings,
         options: [
           EnumOption<int>(
-            titleKey: 'settings.gamepad.gyroInputSource',
-            descriptionKey: 'settings.gamepad.gyroInputSourceDescription',
+            title: (t) => t.settings.gamepad.gyroInputSource,
+            description: (t) => t.settings.gamepad.gyroInputSourceDescription,
             icon: Icons.list,
-            value: StoreIntValue(IntKey('Controls', 'gyro_input_source', 0)),
+            value: const StoreIntValue(
+              IntKey('Controls', 'gyro_input_source', 0),
+            ),
             choices: [
               EnumChoice(
-                labelKey: 'settings.gamepad.gyroInputSourceDevice',
+                label: (t) => t.settings.gamepad.gyroInputSourceDevice,
                 value: 0,
               ),
               EnumChoice(
-                labelKey: 'settings.gamepad.gyroInputSourceController',
+                label: (t) => t.settings.gamepad.gyroInputSourceController,
                 value: 1,
               ),
             ],
           ),
-          FloatOption(
-            titleKey: 'settings.gamepad.gyroSensitivityVertical',
-            descriptionKey:
-                'settings.gamepad.gyroSensitivityVerticalDescription',
+          PercentOption(
+            title: (t) => t.settings.gamepad.gyroSensitivityVertical,
+            description: (t) =>
+                t.settings.gamepad.gyroSensitivityVerticalDescription,
             icon: Icons.screen_rotation,
-            value: StoreFloatValue(
-              ScaledFloatKey('Controls', 'gyro_sensitivity_vertical', 1.0, 100),
+            value: const FloatPercentValue(
+              StoreFloatValue(
+                ScaledFloatKey(
+                  'Controls',
+                  'gyro_sensitivity_vertical',
+                  1.0,
+                  100,
+                ),
+              ),
             ),
-            min: 0,
-            max: 200,
-            defaultValue: 100,
-            units: '%',
+            max: 2.0,
+            defaultValue: 1.0,
           ),
           BoolOption(
-            titleKey: 'settings.gamepad.invertGyroVertical',
-            descriptionKey: 'settings.gamepad.invertGyroVerticalDescription',
+            title: (t) => t.settings.gamepad.invertGyroVertical,
+            description: (t) =>
+                t.settings.gamepad.invertGyroVerticalDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(
+            value: const StoreBoolValue(
               IntBoolKey('Controls', 'invert_gyro_vertical', false),
             ),
           ),
-          FloatOption(
-            titleKey: 'settings.gamepad.gyroSensitivityHorizontal',
-            descriptionKey:
-                'settings.gamepad.gyroSensitivityHorizontalDescription',
+          PercentOption(
+            title: (t) => t.settings.gamepad.gyroSensitivityHorizontal,
+            description: (t) =>
+                t.settings.gamepad.gyroSensitivityHorizontalDescription,
             icon: Icons.screen_rotation,
-            value: StoreFloatValue(
-              ScaledFloatKey(
-                'Controls',
-                'gyro_sensitivity_horizontal',
-                1.0,
-                100,
+            value: const FloatPercentValue(
+              StoreFloatValue(
+                ScaledFloatKey(
+                  'Controls',
+                  'gyro_sensitivity_horizontal',
+                  1.0,
+                  100,
+                ),
               ),
             ),
-            min: 0,
-            max: 200,
-            defaultValue: 100,
-            units: '%',
+            max: 2.0,
+            defaultValue: 1.0,
           ),
           BoolOption(
-            titleKey: 'settings.gamepad.invertGyroHorizontal',
-            descriptionKey: 'settings.gamepad.invertGyroHorizontalDescription',
+            title: (t) => t.settings.gamepad.invertGyroHorizontal,
+            description: (t) =>
+                t.settings.gamepad.invertGyroHorizontalDescription,
             icon: Icons.toggle_on_outlined,
-            value: StoreBoolValue(
+            value: const StoreBoolValue(
               IntBoolKey('Controls', 'invert_gyro_horizontal', false),
             ),
           ),
         ],
       ),
       OptionSection(
-        titleKey: 'settings.gamepad.genericButtons',
+        title: (t) => t.settings.gamepad.genericButtons,
         options: [
-          binding('buttonA', 'button_a'),
-          binding('buttonB', 'button_b'),
-          binding('buttonX', 'button_x'),
-          binding('buttonY', 'button_y'),
-          binding('buttonSelect', 'button_select'),
-          binding('buttonStart', 'button_start'),
-          binding('buttonHome', 'button_home'),
+          binding((t) => t.settings.gamepad.buttonA, 'button_a'),
+          binding((t) => t.settings.gamepad.buttonB, 'button_b'),
+          binding((t) => t.settings.gamepad.buttonX, 'button_x'),
+          binding((t) => t.settings.gamepad.buttonY, 'button_y'),
+          binding((t) => t.settings.gamepad.buttonSelect, 'button_select'),
+          binding((t) => t.settings.gamepad.buttonStart, 'button_start'),
+          binding((t) => t.settings.gamepad.buttonHome, 'button_home'),
         ],
       ),
       OptionSection(
-        titleKey: 'settings.gamepad.circlePad',
+        title: (t) => t.settings.gamepad.circlePad,
         options: [
-          binding('axisVertical', 'circlepad_axis_vertical'),
-          binding('axisHorizontal', 'circlepad_axis_horizontal'),
+          binding(
+            (t) => t.settings.gamepad.axisVertical,
+            'circlepad_axis_vertical',
+          ),
+          binding(
+            (t) => t.settings.gamepad.axisHorizontal,
+            'circlepad_axis_horizontal',
+          ),
         ],
       ),
       OptionSection(
-        titleKey: 'settings.gamepad.cStick',
+        title: (t) => t.settings.gamepad.cStick,
         options: [
-          binding('axisVertical', 'cstick_axis_vertical'),
-          binding('axisHorizontal', 'cstick_axis_horizontal'),
+          binding(
+            (t) => t.settings.gamepad.axisVertical,
+            'cstick_axis_vertical',
+          ),
+          binding(
+            (t) => t.settings.gamepad.axisHorizontal,
+            'cstick_axis_horizontal',
+          ),
         ],
       ),
       OptionSection(
-        titleKey: 'settings.gamepad.dpadAxis',
+        title: (t) => t.settings.gamepad.dpadAxis,
         options: [
-          binding('axisVertical', 'dpad_axis_vertical'),
-          binding('axisHorizontal', 'dpad_axis_horizontal'),
+          binding((t) => t.settings.gamepad.axisVertical, 'dpad_axis_vertical'),
+          binding(
+            (t) => t.settings.gamepad.axisHorizontal,
+            'dpad_axis_horizontal',
+          ),
         ],
       ),
       OptionSection(
-        titleKey: 'settings.gamepad.dpadButtons',
+        title: (t) => t.settings.gamepad.dpadButtons,
         options: [
-          binding('buttonUp', 'button_up'),
-          binding('buttonDown', 'button_down'),
-          binding('buttonLeft', 'button_left'),
-          binding('buttonRight', 'button_right'),
+          binding((t) => t.settings.gamepad.buttonUp, 'button_up'),
+          binding((t) => t.settings.gamepad.buttonDown, 'button_down'),
+          binding((t) => t.settings.gamepad.buttonLeft, 'button_left'),
+          binding((t) => t.settings.gamepad.buttonRight, 'button_right'),
         ],
       ),
       OptionSection(
-        titleKey: 'settings.gamepad.triggers',
+        title: (t) => t.settings.gamepad.triggers,
         options: [
-          binding('buttonL', 'button_l'),
-          binding('buttonR', 'button_r'),
-          binding('buttonZl', 'button_zl'),
-          binding('buttonZr', 'button_zr'),
+          binding((t) => t.settings.gamepad.buttonL, 'button_l'),
+          binding((t) => t.settings.gamepad.buttonR, 'button_r'),
+          binding((t) => t.settings.gamepad.buttonZl, 'button_zl'),
+          binding((t) => t.settings.gamepad.buttonZr, 'button_zr'),
         ],
       ),
       OptionSection(
-        titleKey: 'settings.gamepad.hotkeys',
+        title: (t) => t.settings.gamepad.hotkeys,
         options: [
-          binding('hotkeySwapScreens', 'hotkey_screen_swap'),
-          binding('hotkeyCycleLayout', 'hotkey_toggle_layout'),
-          binding('hotkeyCloseGame', 'hotkey_close_game'),
-          binding('hotkeyPauseOrResume', 'hotkey_pause_or_resume_game'),
-          binding('hotkeyQuicksave', 'hotkey_quickload'),
-          binding('hotkeyQuickload', 'hotkey_quickpause'),
+          binding(
+            (t) => t.settings.gamepad.hotkeySwapScreens,
+            'hotkey_screen_swap',
+          ),
+          binding(
+            (t) => t.settings.gamepad.hotkeyCycleLayout,
+            'hotkey_toggle_layout',
+          ),
+          binding(
+            (t) => t.settings.gamepad.hotkeyCloseGame,
+            'hotkey_close_game',
+          ),
+          binding(
+            (t) => t.settings.gamepad.hotkeyPauseOrResume,
+            'hotkey_pause_or_resume_game',
+          ),
+          binding(
+            (t) => t.settings.gamepad.hotkeyQuicksave,
+            'hotkey_quickload',
+          ),
+          binding(
+            (t) => t.settings.gamepad.hotkeyQuickload,
+            'hotkey_quickpause',
+          ),
         ],
       ),
-      const OptionSection(
-        titleKey: 'settings.gamepad.miscellaneous',
+      OptionSection(
+        title: (t) => t.settings.gamepad.miscellaneous,
         options: [
           BoolOption(
-            titleKey: 'settings.gamepad.useArticBaseController',
-            descriptionKey:
-                'settings.gamepad.useArticBaseControllerDescription',
+            title: (t) => t.settings.gamepad.useArticBaseController,
+            description: (t) =>
+                t.settings.gamepad.useArticBaseControllerDescription,
             icon: Icons.cloud_outlined,
-            value: StoreBoolValue(
+            value: const StoreBoolValue(
               IntBoolKey('Controls', 'use_artic_base_controller', false),
             ),
           ),
