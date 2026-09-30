@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../theme/theme_style.dart';
 import 'settings/animation_speed.dart';
+import 'settings/page_transition_style.dart';
 import 'user_directory_bootstrap.dart';
 
 part 'database.g.dart';
@@ -54,7 +55,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -85,6 +86,12 @@ class AppDatabase extends _$AppDatabase {
       if (from < 10) {
         await m.createTable(pinnedOptions);
         await m.createTable(optionHistoryEntries);
+      }
+      if (from < 11) {
+        await m.addColumn(
+          accessibilitySettings,
+          accessibilitySettings.pageTransition,
+        );
       }
     },
   );

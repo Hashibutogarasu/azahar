@@ -2248,6 +2248,22 @@ class Translations$settings$accessibility$en {
   /// en: 'Reduces animations and motion effects throughout the app.'
   String get reduceMotionDescription =>
       'Reduces animations and motion effects throughout the app.';
+
+  /// en: 'Page Transition'
+  String get pageTransition => 'Page Transition';
+
+  /// en: 'How pages animate when they open and close.'
+  String get pageTransitionDescription =>
+      'How pages animate when they open and close.';
+
+  /// en: 'Slide'
+  String get pageTransitionSlide => 'Slide';
+
+  /// en: 'Standard'
+  String get pageTransitionStandard => 'Standard';
+
+  /// en: 'None'
+  String get pageTransitionNone => 'None';
 }
 
 // Path: settings.advanced
@@ -3555,6 +3571,12 @@ extension on Translations {
           'settings.accessibility.reduceMotion' => 'Reduce Motion',
           'settings.accessibility.reduceMotionDescription' =>
             'Reduces animations and motion effects throughout the app.',
+          'settings.accessibility.pageTransition' => 'Page Transition',
+          'settings.accessibility.pageTransitionDescription' =>
+            'How pages animate when they open and close.',
+          'settings.accessibility.pageTransitionSlide' => 'Slide',
+          'settings.accessibility.pageTransitionStandard' => 'Standard',
+          'settings.accessibility.pageTransitionNone' => 'None',
           'settings.advanced.title' => 'Advanced Settings',
           'settings.advanced.animationSpeedLabel' => 'Animation Speed',
           'settings.advanced.animationSpeedDescription' =>

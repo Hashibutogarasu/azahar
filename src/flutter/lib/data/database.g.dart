@@ -2089,7 +2089,20 @@ class $AccessibilitySettingsTable extends AccessibilitySettings
     defaultValue: const Constant(false),
   );
   @override
-  List<GeneratedColumn> get $columns => [id, reduceMotion];
+  late final GeneratedColumnWithTypeConverter<PageTransitionStyle, int>
+  pageTransition =
+      GeneratedColumn<int>(
+        'page_transition',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+        defaultValue: Constant(PageTransitionStyle.slide.index),
+      ).withConverter<PageTransitionStyle>(
+        $AccessibilitySettingsTable.$converterpageTransition,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [id, reduceMotion, pageTransition];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -2131,6 +2144,13 @@ class $AccessibilitySettingsTable extends AccessibilitySettings
         DriftSqlType.bool,
         data['${effectivePrefix}reduce_motion'],
       )!,
+      pageTransition: $AccessibilitySettingsTable.$converterpageTransition
+          .fromSql(
+            attachedDatabase.typeMapping.read(
+              DriftSqlType.int,
+              data['${effectivePrefix}page_transition'],
+            )!,
+          ),
     );
   }
 
@@ -2138,18 +2158,35 @@ class $AccessibilitySettingsTable extends AccessibilitySettings
   $AccessibilitySettingsTable createAlias(String alias) {
     return $AccessibilitySettingsTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<PageTransitionStyle, int, int>
+  $converterpageTransition = const EnumIndexConverter<PageTransitionStyle>(
+    PageTransitionStyle.values,
+  );
 }
 
 class AccessibilitySetting extends DataClass
     implements Insertable<AccessibilitySetting> {
   final int id;
   final bool reduceMotion;
-  const AccessibilitySetting({required this.id, required this.reduceMotion});
+  final PageTransitionStyle pageTransition;
+  const AccessibilitySetting({
+    required this.id,
+    required this.reduceMotion,
+    required this.pageTransition,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['reduce_motion'] = Variable<bool>(reduceMotion);
+    {
+      map['page_transition'] = Variable<int>(
+        $AccessibilitySettingsTable.$converterpageTransition.toSql(
+          pageTransition,
+        ),
+      );
+    }
     return map;
   }
 
@@ -2157,6 +2194,7 @@ class AccessibilitySetting extends DataClass
     return AccessibilitySettingsCompanion(
       id: Value(id),
       reduceMotion: Value(reduceMotion),
+      pageTransition: Value(pageTransition),
     );
   }
 
@@ -2168,6 +2206,8 @@ class AccessibilitySetting extends DataClass
     return AccessibilitySetting(
       id: serializer.fromJson<int>(json['id']),
       reduceMotion: serializer.fromJson<bool>(json['reduceMotion']),
+      pageTransition: $AccessibilitySettingsTable.$converterpageTransition
+          .fromJson(serializer.fromJson<int>(json['pageTransition'])),
     );
   }
   @override
@@ -2176,20 +2216,32 @@ class AccessibilitySetting extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'reduceMotion': serializer.toJson<bool>(reduceMotion),
+      'pageTransition': serializer.toJson<int>(
+        $AccessibilitySettingsTable.$converterpageTransition.toJson(
+          pageTransition,
+        ),
+      ),
     };
   }
 
-  AccessibilitySetting copyWith({int? id, bool? reduceMotion}) =>
-      AccessibilitySetting(
-        id: id ?? this.id,
-        reduceMotion: reduceMotion ?? this.reduceMotion,
-      );
+  AccessibilitySetting copyWith({
+    int? id,
+    bool? reduceMotion,
+    PageTransitionStyle? pageTransition,
+  }) => AccessibilitySetting(
+    id: id ?? this.id,
+    reduceMotion: reduceMotion ?? this.reduceMotion,
+    pageTransition: pageTransition ?? this.pageTransition,
+  );
   AccessibilitySetting copyWithCompanion(AccessibilitySettingsCompanion data) {
     return AccessibilitySetting(
       id: data.id.present ? data.id.value : this.id,
       reduceMotion: data.reduceMotion.present
           ? data.reduceMotion.value
           : this.reduceMotion,
+      pageTransition: data.pageTransition.present
+          ? data.pageTransition.value
+          : this.pageTransition,
     );
   }
 
@@ -2197,50 +2249,59 @@ class AccessibilitySetting extends DataClass
   String toString() {
     return (StringBuffer('AccessibilitySetting(')
           ..write('id: $id, ')
-          ..write('reduceMotion: $reduceMotion')
+          ..write('reduceMotion: $reduceMotion, ')
+          ..write('pageTransition: $pageTransition')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, reduceMotion);
+  int get hashCode => Object.hash(id, reduceMotion, pageTransition);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is AccessibilitySetting &&
           other.id == this.id &&
-          other.reduceMotion == this.reduceMotion);
+          other.reduceMotion == this.reduceMotion &&
+          other.pageTransition == this.pageTransition);
 }
 
 class AccessibilitySettingsCompanion
     extends UpdateCompanion<AccessibilitySetting> {
   final Value<int> id;
   final Value<bool> reduceMotion;
+  final Value<PageTransitionStyle> pageTransition;
   const AccessibilitySettingsCompanion({
     this.id = const Value.absent(),
     this.reduceMotion = const Value.absent(),
+    this.pageTransition = const Value.absent(),
   });
   AccessibilitySettingsCompanion.insert({
     this.id = const Value.absent(),
     this.reduceMotion = const Value.absent(),
+    this.pageTransition = const Value.absent(),
   });
   static Insertable<AccessibilitySetting> custom({
     Expression<int>? id,
     Expression<bool>? reduceMotion,
+    Expression<int>? pageTransition,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (reduceMotion != null) 'reduce_motion': reduceMotion,
+      if (pageTransition != null) 'page_transition': pageTransition,
     });
   }
 
   AccessibilitySettingsCompanion copyWith({
     Value<int>? id,
     Value<bool>? reduceMotion,
+    Value<PageTransitionStyle>? pageTransition,
   }) {
     return AccessibilitySettingsCompanion(
       id: id ?? this.id,
       reduceMotion: reduceMotion ?? this.reduceMotion,
+      pageTransition: pageTransition ?? this.pageTransition,
     );
   }
 
@@ -2253,6 +2314,13 @@ class AccessibilitySettingsCompanion
     if (reduceMotion.present) {
       map['reduce_motion'] = Variable<bool>(reduceMotion.value);
     }
+    if (pageTransition.present) {
+      map['page_transition'] = Variable<int>(
+        $AccessibilitySettingsTable.$converterpageTransition.toSql(
+          pageTransition.value,
+        ),
+      );
+    }
     return map;
   }
 
@@ -2260,7 +2328,8 @@ class AccessibilitySettingsCompanion
   String toString() {
     return (StringBuffer('AccessibilitySettingsCompanion(')
           ..write('id: $id, ')
-          ..write('reduceMotion: $reduceMotion')
+          ..write('reduceMotion: $reduceMotion, ')
+          ..write('pageTransition: $pageTransition')
           ..write(')'))
         .toString();
   }
@@ -4874,11 +4943,13 @@ typedef $$AccessibilitySettingsTableCreateCompanionBuilder =
     AccessibilitySettingsCompanion Function({
       Value<int> id,
       Value<bool> reduceMotion,
+      Value<PageTransitionStyle> pageTransition,
     });
 typedef $$AccessibilitySettingsTableUpdateCompanionBuilder =
     AccessibilitySettingsCompanion Function({
       Value<int> id,
       Value<bool> reduceMotion,
+      Value<PageTransitionStyle> pageTransition,
     });
 
 class $$AccessibilitySettingsTableFilterComposer
@@ -4898,6 +4969,12 @@ class $$AccessibilitySettingsTableFilterComposer
   ColumnFilters<bool> get reduceMotion => $composableBuilder(
     column: $table.reduceMotion,
     builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<PageTransitionStyle, PageTransitionStyle, int>
+  get pageTransition => $composableBuilder(
+    column: $table.pageTransition,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 }
 
@@ -4919,6 +4996,11 @@ class $$AccessibilitySettingsTableOrderingComposer
     column: $table.reduceMotion,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get pageTransition => $composableBuilder(
+    column: $table.pageTransition,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$AccessibilitySettingsTableAnnotationComposer
@@ -4935,6 +5017,12 @@ class $$AccessibilitySettingsTableAnnotationComposer
 
   GeneratedColumn<bool> get reduceMotion => $composableBuilder(
     column: $table.reduceMotion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumnWithTypeConverter<PageTransitionStyle, int>
+  get pageTransition => $composableBuilder(
+    column: $table.pageTransition,
     builder: (column) => column,
   );
 }
@@ -4987,17 +5075,23 @@ class $$AccessibilitySettingsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<bool> reduceMotion = const Value.absent(),
+                Value<PageTransitionStyle> pageTransition =
+                    const Value.absent(),
               }) => AccessibilitySettingsCompanion(
                 id: id,
                 reduceMotion: reduceMotion,
+                pageTransition: pageTransition,
               ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 Value<bool> reduceMotion = const Value.absent(),
+                Value<PageTransitionStyle> pageTransition =
+                    const Value.absent(),
               }) => AccessibilitySettingsCompanion.insert(
                 id: id,
                 reduceMotion: reduceMotion,
+                pageTransition: pageTransition,
               ),
           withReferenceMapper: (p0) => p0
               .map(

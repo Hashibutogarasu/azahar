@@ -752,7 +752,12 @@
     "accessibility": {
       "title": "アクセシビリティ",
       "reduceMotion": "視差効果を減らす",
-      "reduceMotionDescription": "アプリ内のアニメーションや動きの効果を減らします。"
+      "reduceMotionDescription": "アプリ内のアニメーションや動きの効果を減らします。",
+      "pageTransition": "ページ遷移アニメーション",
+      "pageTransitionDescription": "ページを開いたり閉じたりするときのアニメーションを選びます。",
+      "pageTransitionSlide": "スライド",
+      "pageTransitionStandard": "標準",
+      "pageTransitionNone": "なし"
     },
     "advanced": {
       "title": "詳細設定",
