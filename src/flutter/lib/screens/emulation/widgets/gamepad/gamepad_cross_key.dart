@@ -1,138 +1,121 @@
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
-/// The cross-shaped key with an up, down, left and right button, each a square-cornered
-/// [FilledButton] in the theme's default style that presses the button of the same name.
+import 'gamepad_layout.dart';
+
+/// The cross key, drawn from the images of the original Android app, that presses the up, down,
+/// left and right buttons.
 ///
-/// The whole cross is one touch area, so a finger that stays down and slides from one direction to
-/// another releases the first button and presses the second one.
+/// A finger that touches down on it is followed until it lifts off, even when it leaves the key,
+/// and the directions are read again as it slides, so it can move from one direction to another
+/// without lifting. A direction counts as pressed once the finger is past half way from the
+/// centre towards the edge, and two neighbouring directions can be pressed at once.
 class GamepadCrossKey extends StatefulWidget {
   const GamepadCrossKey({super.key, required this.onButton});
 
   final void Function(GamePadButton button, bool pressed) onButton;
 
-  static const double _arrowSize = 40;
+  static const double _deadZone = 0.5;
 
   @override
   State<GamepadCrossKey> createState() => _GamepadCrossKeyState();
 }
 
 class _GamepadCrossKeyState extends State<GamepadCrossKey> {
-  static const _directions = [
-    GamePadButton.up,
-    GamePadButton.down,
-    GamePadButton.left,
-    GamePadButton.right,
-  ];
+  int? _pointer;
+  Set<GamePadButton> _pressed = {};
 
-  final Map<GamePadButton, WidgetStatesController> _controllers = {
-    for (final direction in _directions) direction: WidgetStatesController(),
-  };
-  final Map<int, GamePadButton> _pointers = {};
-  final Set<GamePadButton> _pressed = {};
-
-  GamePadButton? _directionAt(Offset position, Size size) {
-    final offset = position - size.center(Offset.zero);
-    if (offset.distance < size.shortestSide / 6) return null;
-    if (offset.dx.abs() > offset.dy.abs()) {
-      return offset.dx < 0 ? GamePadButton.left : GamePadButton.right;
+  void _update(Offset position, Size size) {
+    final half = size.center(Offset.zero);
+    final x = (position.dx - half.dx) / half.dx;
+    final y = (position.dy - half.dy) / half.dy;
+    final next = <GamePadButton>{
+      if (y < -GamepadCrossKey._deadZone) GamePadButton.up,
+      if (y > GamepadCrossKey._deadZone) GamePadButton.down,
+      if (x < -GamepadCrossKey._deadZone) GamePadButton.left,
+      if (x > GamepadCrossKey._deadZone) GamePadButton.right,
+    };
+    for (final button in _pressed.difference(next)) {
+      widget.onButton(button, false);
     }
-    return offset.dy < 0 ? GamePadButton.up : GamePadButton.down;
+    for (final button in next.difference(_pressed)) {
+      widget.onButton(button, true);
+    }
+    setState(() => _pressed = next);
   }
 
-  void _track(int pointer, Offset position, Size size) {
-    final direction = _directionAt(position, size);
-    if (direction == null) {
-      _pointers.remove(pointer);
-    } else {
-      _pointers[pointer] = direction;
+  void _release(PointerEvent event) {
+    if (_pointer != event.pointer) return;
+    _pointer = null;
+    for (final button in _pressed) {
+      widget.onButton(button, false);
     }
-    _sync();
-  }
-
-  void _release(int pointer) {
-    _pointers.remove(pointer);
-    _sync();
-  }
-
-  void _sync() {
-    final next = _pointers.values.toSet();
-    for (final direction in _pressed.difference(next)) {
-      _controllers[direction]!.update(WidgetState.pressed, false);
-      widget.onButton(direction, false);
-    }
-    for (final direction in next.difference(_pressed)) {
-      _controllers[direction]!.update(WidgetState.pressed, true);
-      widget.onButton(direction, true);
-    }
-    _pressed
-      ..clear()
-      ..addAll(next);
+    setState(() => _pressed = {});
   }
 
   @override
   void dispose() {
-    _pointers.clear();
-    for (final direction in _pressed) {
-      widget.onButton(direction, false);
-    }
-    for (final controller in _controllers.values) {
-      controller.dispose();
+    for (final button in _pressed) {
+      widget.onButton(button, false);
     }
     super.dispose();
   }
 
-  Widget _arrow(GamePadButton direction, IconData icon) {
-    return IgnorePointer(
-      child: FilledButton(
-        onPressed: () {},
-        statesController: _controllers[direction],
-        style: FilledButton.styleFrom(
-          shape: const RoundedRectangleBorder(),
-          padding: EdgeInsets.zero,
-          fixedSize: const Size.square(GamepadCrossKey._arrowSize),
-          minimumSize: Size.zero,
-        ),
-        child: Icon(icon),
-      ),
-    );
+  int get _quarterTurns {
+    final up = _pressed.contains(GamePadButton.up);
+    final down = _pressed.contains(GamePadButton.down);
+    final left = _pressed.contains(GamePadButton.left);
+    final right = _pressed.contains(GamePadButton.right);
+    if (_pressed.length == 1) {
+      if (right) return 1;
+      if (down) return 2;
+      if (left) return 3;
+      return 0;
+    }
+    if (up && right) return 1;
+    if (down && right) return 2;
+    if (down && left) return 3;
+    return 0;
+  }
+
+  String get _image {
+    if (_pressed.isEmpty) return 'dpad';
+    return _pressed.length == 1
+        ? 'dpad_pressed_one_direction'
+        : 'dpad_pressed_two_directions';
   }
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final size = constraints.biggest;
-        return Listener(
-          behavior: HitTestBehavior.opaque,
-          onPointerDown: (event) =>
-              _track(event.pointer, event.localPosition, size),
-          onPointerMove: (event) =>
-              _track(event.pointer, event.localPosition, size),
-          onPointerUp: (event) => _release(event.pointer),
-          onPointerCancel: (event) => _release(event.pointer),
-          child: Stack(
-            children: [
-              Align(
-                alignment: Alignment.topCenter,
-                child: _arrow(GamePadButton.up, Icons.keyboard_arrow_up),
-              ),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: _arrow(GamePadButton.left, Icons.keyboard_arrow_left),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: _arrow(GamePadButton.right, Icons.keyboard_arrow_right),
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: _arrow(GamePadButton.down, Icons.keyboard_arrow_down),
-              ),
-            ],
+    final rect = GamepadLayoutScope.of(context).rectOf(GamepadControl.cross);
+    return Positioned.fromRect(
+      rect: rect,
+      child: Listener(
+        behavior: HitTestBehavior.opaque,
+        onPointerDown: (event) {
+          if (_pointer != null) return;
+          _pointer = event.pointer;
+          _update(event.localPosition, rect.size);
+        },
+        onPointerMove: (event) {
+          if (_pointer != event.pointer) return;
+          _update(event.localPosition, rect.size);
+        },
+        onPointerUp: _release,
+        onPointerCancel: _release,
+        child: Opacity(
+          opacity: GamepadLayout.opacity,
+          child: RotatedBox(
+            quarterTurns: _quarterTurns,
+            child: Image.asset(
+              'assets/gamepad/$_image.png',
+              fit: BoxFit.fill,
+              filterQuality: FilterQuality.medium,
+              gaplessPlayback: true,
+            ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

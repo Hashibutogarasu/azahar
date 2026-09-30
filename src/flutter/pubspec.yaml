@@ -55,6 +55,7 @@ flutter:
     - assets/images/azahar_logo.png
     - assets/images/no_icon.png
     - assets/images/no_icon_dark.png
+    - assets/gamepad/
     - assets/icons/discord.svg
     - assets/icons/github.svg
     - assets/icons/linux.png

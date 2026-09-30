@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -173,27 +172,6 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
     );
   }
 
-  /// The on-screen controllers, placed in the area below the screens when they are stacked and
-  /// over the whole area when they sit side by side.
-  Widget _gamepad(BoxConstraints constraints) {
-    final layout = EmulationScreensLayout.fit(constraints.biggest);
-    final height = layout.direction == Axis.vertical
-        ? max(
-            0.0,
-            constraints.maxHeight -
-                layout.topScreen.height -
-                layout.bottomScreen.height,
-          )
-        : constraints.maxHeight;
-    return Positioned(
-      left: 0,
-      right: 0,
-      bottom: 0,
-      height: height,
-      child: const EmulationGamepad(),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(emulationSessionProvider);
@@ -212,12 +190,7 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
       child: Stack(
         children: [
           LayoutBuilder(
-            builder: (context, constraints) => Stack(
-              children: [
-                _screens(constraints),
-                if (!isDesktop && state.emulationStarted) _gamepad(constraints),
-              ],
-            ),
+            builder: (context, constraints) => _screens(constraints),
           ),
           if (!state.emulationStarted || state.isTerminating)
             Center(
@@ -261,6 +234,13 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
                       actions: actions,
                     ),
                   ),
+                ],
+              )
+            : !isDesktop && state.emulationStarted
+            ? Stack(
+                children: [
+                  screens,
+                  const Positioned.fill(child: EmulationGamepad()),
                 ],
               )
             : screens,

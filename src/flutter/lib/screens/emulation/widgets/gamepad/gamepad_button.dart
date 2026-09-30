@@ -1,132 +1,162 @@
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
-import '../../../../i18n/translations.g.dart';
+import 'gamepad_layout.dart';
 
-/// The outline of a [GamepadButton].
-enum GamepadButtonShape {
-  /// A circle whose diameter is the button's height.
-  circle,
-
-  /// A rectangle with square corners.
-  rectangle,
-}
-
-/// One on-screen button that reports when it is pressed and released. It shows either a [label] or
-/// an [icon], and takes its colors from the theme's [FilledButton].
+/// One on-screen button drawn from the image of the original Android app, with a second image
+/// while it is pressed.
 ///
-/// It listens to raw pointer events, so several buttons can be held at once and a button stays
-/// pressed while a finger rests on it.
+/// A finger presses it by touching down on it and releases it by lifting off, wherever it has
+/// moved to meanwhile. Several buttons can be held at once.
 class GamepadButton extends StatefulWidget {
   const GamepadButton({
     super.key,
-    this.label,
-    this.icon,
+    required this.image,
     required this.onChanged,
-    this.shape = GamepadButtonShape.circle,
-    this.width = 56,
-    this.height = 56,
-  }) : assert(label != null || icon != null);
+  });
 
-  final String? label;
+  final String image;
 
-  final IconData? icon;
-
-  /// Called with true when the button is pressed and false when it is released.
   final ValueChanged<bool> onChanged;
-
-  final GamepadButtonShape shape;
-
-  final double width;
-
-  final double height;
 
   @override
   State<GamepadButton> createState() => _GamepadButtonState();
 }
 
 class _GamepadButtonState extends State<GamepadButton> {
-  bool _pressed = false;
+  int? _pointer;
 
-  void _setPressed(bool pressed) {
-    if (_pressed == pressed) return;
-    _pressed = pressed;
-    widget.onChanged(pressed);
+  void _press(PointerDownEvent event) {
+    if (_pointer != null) return;
+    setState(() => _pointer = event.pointer);
+    widget.onChanged(true);
+  }
+
+  void _release(PointerEvent event) {
+    if (_pointer != event.pointer) return;
+    setState(() => _pointer = null);
+    widget.onChanged(false);
   }
 
   @override
   void dispose() {
-    if (_pressed) widget.onChanged(false);
+    if (_pointer != null) widget.onChanged(false);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final OutlinedBorder shape = switch (widget.shape) {
-      GamepadButtonShape.circle => const CircleBorder(),
-      GamepadButtonShape.rectangle => const RoundedRectangleBorder(),
-    };
+    final suffix = _pointer == null ? '' : '_pressed';
     return Listener(
       behavior: HitTestBehavior.opaque,
-      onPointerDown: (_) => _setPressed(true),
-      onPointerUp: (_) => _setPressed(false),
-      onPointerCancel: (_) => _setPressed(false),
-      child: FilledButton(
-        onPressed: () {},
-        style: FilledButton.styleFrom(
-          shape: shape,
-          padding: EdgeInsets.zero,
-          fixedSize: Size(widget.width, widget.height),
-          minimumSize: Size.zero,
+      onPointerDown: _press,
+      onPointerUp: _release,
+      onPointerCancel: _release,
+      child: Opacity(
+        opacity: GamepadLayout.opacity,
+        child: Image.asset(
+          'assets/gamepad/${widget.image}$suffix.png',
+          fit: BoxFit.fill,
+          filterQuality: FilterQuality.medium,
+          gaplessPlayback: true,
         ),
-        child: widget.icon != null ? Icon(widget.icon) : Text(widget.label!),
       ),
     );
   }
 }
 
-/// The A, B, X and Y buttons in the layout of the 3DS: X on top, Y on the left, A on the right
-/// and B at the bottom. Each one is a [GamepadButton].
+/// A [GamepadButton] of the console placed where the original Android app places it.
+class PlacedGamepadButton extends StatelessWidget {
+  const PlacedGamepadButton({
+    super.key,
+    required this.control,
+    required this.image,
+    required this.button,
+    required this.onButton,
+  });
+
+  final GamepadControl control;
+
+  final String image;
+
+  final GamePadButton button;
+
+  final void Function(GamePadButton button, bool pressed) onButton;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned.fromRect(
+      rect: GamepadLayoutScope.of(context).rectOf(control),
+      child: GamepadButton(
+        image: image,
+        onChanged: (pressed) => onButton(button, pressed),
+      ),
+    );
+  }
+}
+
+/// The A, B, X and Y buttons, each a [GamepadButton].
 class GamepadFaceButtons extends StatelessWidget {
   const GamepadFaceButtons({super.key, required this.onButton});
 
   final void Function(GamePadButton button, bool pressed) onButton;
 
-  static const double _buttonSize = 56;
-  static const double _gap = 4;
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        PlacedGamepadButton(
+          control: GamepadControl.a,
+          image: 'button_a',
+          button: GamePadButton.a,
+          onButton: onButton,
+        ),
+        PlacedGamepadButton(
+          control: GamepadControl.b,
+          image: 'button_b',
+          button: GamePadButton.b,
+          onButton: onButton,
+        ),
+        PlacedGamepadButton(
+          control: GamepadControl.x,
+          image: 'button_x',
+          button: GamePadButton.x,
+          onButton: onButton,
+        ),
+        PlacedGamepadButton(
+          control: GamepadControl.y,
+          image: 'button_y',
+          button: GamePadButton.y,
+          onButton: onButton,
+        ),
+      ],
+    );
+  }
+}
+
+/// The L and R buttons, each a [GamepadButton].
+class GamepadShoulderButtons extends StatelessWidget {
+  const GamepadShoulderButtons({super.key, required this.onButton});
+
+  final void Function(GamePadButton button, bool pressed) onButton;
 
   @override
   Widget build(BuildContext context) {
-    final buttons = context.t.emulation.gamepad.buttons;
-    Widget button(String label, GamePadButton value) => GamepadButton(
-      label: label,
-      width: _buttonSize,
-      height: _buttonSize,
-      onChanged: (pressed) => onButton(value, pressed),
-    );
-    const side = _buttonSize * 3 + _gap * 2;
-    return SizedBox.square(
-      dimension: side,
-      child: Stack(
-        children: [
-          Align(
-            alignment: Alignment.topCenter,
-            child: button(buttons.x, GamePadButton.x),
-          ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: button(buttons.y, GamePadButton.y),
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: button(buttons.a, GamePadButton.a),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: button(buttons.b, GamePadButton.b),
-          ),
-        ],
-      ),
+    return Stack(
+      children: [
+        PlacedGamepadButton(
+          control: GamepadControl.l,
+          image: 'button_l',
+          button: GamePadButton.l,
+          onButton: onButton,
+        ),
+        PlacedGamepadButton(
+          control: GamepadControl.r,
+          image: 'button_r',
+          button: GamePadButton.r,
+          onButton: onButton,
+        ),
+      ],
     );
   }
 }
