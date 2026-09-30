@@ -8,8 +8,8 @@ abstract class InputBindingOption
   const InputBindingOption._();
 
   const factory InputBindingOption({
-    required String titleKey,
-    String? descriptionKey,
+    required TranslationText title,
+    TranslationText? description,
     required IconData icon,
     required OptionValue<String> value,
   }) = _InputBindingOption;

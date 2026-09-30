@@ -11,19 +11,19 @@ import '../option_section.dart';
 final folderSettingsOptionsProvider = Provider<OptionCategory>(
   (ref) => OptionCategory(
     id: 'folderSettings',
-    titleKey: 'options.groups.folderSettings',
+    title: (t) => t.options.groups.folderSettings,
     sections: [
       OptionSection(
         options: [
           ActionOption(
-            titleKey: 'options.selectUserFolder',
-            descriptionKey: 'options.selectUserFolderDescription',
+            title: (t) => t.options.selectUserFolder,
+            description: (t) => t.options.selectUserFolderDescription,
             icon: Icons.folder_outlined,
             onTap: SelectUserFolderAction.run,
           ),
           ActionOption(
-            titleKey: 'options.selectGamesFolder',
-            descriptionKey: 'options.selectGamesFolderDescription',
+            title: (t) => t.options.selectGamesFolder,
+            description: (t) => t.options.selectGamesFolderDescription,
             icon: Icons.videogame_asset_outlined,
             onTap: SelectGamesFolderAction.run,
           ),

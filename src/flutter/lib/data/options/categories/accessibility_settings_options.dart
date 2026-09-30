@@ -8,17 +8,19 @@ import '../option_category.dart';
 import '../option_section.dart';
 import '../option_value.dart';
 
-/// The options on the Accessibility page: reducing motion and choosing the page transition.
-final accessibilityPageOptionsProvider = Provider<OptionCategory>(
+/// The items of the accessibility settings page, which is not listed on the Options page: the
+/// reduce-motion switch and the page transition.
+final accessibilitySettingsOptionsProvider = Provider<OptionCategory>(
   (ref) => OptionCategory(
-    id: 'accessibilityPage',
-    titleKey: 'settings.accessibility.title',
+    id: 'accessibilitySettings',
+    title: (t) => t.settings.accessibility.title,
     sections: [
       OptionSection(
         options: [
           BoolOption(
-            titleKey: 'settings.accessibility.reduceMotion',
-            descriptionKey: 'settings.accessibility.reduceMotionDescription',
+            title: (t) => t.settings.accessibility.reduceMotion,
+            description: (t) =>
+                t.settings.accessibility.reduceMotionDescription,
             icon: Icons.motion_photos_off_outlined,
             value: CallbackOptionValue<bool>(
               onRead: (ref) =>
@@ -29,8 +31,9 @@ final accessibilityPageOptionsProvider = Provider<OptionCategory>(
             ),
           ),
           EnumOption<PageTransitionStyle>(
-            titleKey: 'settings.accessibility.pageTransition',
-            descriptionKey: 'settings.accessibility.pageTransitionDescription',
+            title: (t) => t.settings.accessibility.pageTransition,
+            description: (t) =>
+                t.settings.accessibility.pageTransitionDescription,
             icon: Icons.animation,
             value: CallbackOptionValue<PageTransitionStyle>(
               onRead: (ref) =>
@@ -39,17 +42,17 @@ final accessibilityPageOptionsProvider = Provider<OptionCategory>(
                   .read(accessibilitySettingsProvider.notifier)
                   .setPageTransition(value),
             ),
-            choices: const [
+            choices: [
               EnumChoice(
-                labelKey: 'settings.accessibility.pageTransitionSlide',
+                label: (t) => t.settings.accessibility.pageTransitionSlide,
                 value: PageTransitionStyle.slide,
               ),
               EnumChoice(
-                labelKey: 'settings.accessibility.pageTransitionStandard',
+                label: (t) => t.settings.accessibility.pageTransitionStandard,
                 value: PageTransitionStyle.standard,
               ),
               EnumChoice(
-                labelKey: 'settings.accessibility.pageTransitionNone',
+                label: (t) => t.settings.accessibility.pageTransitionNone,
                 value: PageTransitionStyle.none,
               ),
             ],

@@ -7,28 +7,29 @@ import '../abstract_base_option.dart';
 import '../option_category.dart';
 import '../option_section.dart';
 import '../store_option_values.dart';
+import '../translation_text.dart';
 
 /// The options on the Camera page: the image source, camera device and flip of the inner camera
 /// and of the outer left and right cameras.
 final cameraPageOptionsProvider = Provider<OptionCategory>(
   (ref) => OptionCategory(
     id: 'cameraPage',
-    titleKey: 'settings.camera.title',
+    title: (t) => t.settings.camera.title,
     sections: [
       buildCameraSection(
-        titleKey: 'settings.camera.innerCamera',
+        title: (t) => t.settings.camera.innerCamera,
         imageSource: CameraSettingKeys.innerImageSource,
         cameraDevice: CameraSettingKeys.innerCameraDevice,
         imageFlip: CameraSettingKeys.innerImageFlip,
       ),
       buildCameraSection(
-        titleKey: 'settings.camera.outerLeftCamera',
+        title: (t) => t.settings.camera.outerLeftCamera,
         imageSource: CameraSettingKeys.outerLeftImageSource,
         cameraDevice: CameraSettingKeys.outerLeftCameraDevice,
         imageFlip: CameraSettingKeys.outerLeftImageFlip,
       ),
       buildCameraSection(
-        titleKey: 'settings.camera.outerRightCamera',
+        title: (t) => t.settings.camera.outerRightCamera,
         imageSource: CameraSettingKeys.outerRightImageSource,
         cameraDevice: CameraSettingKeys.outerRightCameraDevice,
         imageFlip: CameraSettingKeys.outerRightImageFlip,
@@ -39,63 +40,72 @@ final cameraPageOptionsProvider = Provider<OptionCategory>(
 
 /// Builds the section of one camera, set with the given emulator setting keys.
 OptionSection buildCameraSection({
-  required String titleKey,
+  required TranslationText title,
   required StringKey imageSource,
   required StringKey cameraDevice,
   required IntKey imageFlip,
 }) {
   return OptionSection(
-    titleKey: titleKey,
+    title: title,
     options: [
       EnumOption<String>(
-        titleKey: 'settings.camera.imageSource',
-        descriptionKey: 'settings.camera.imageSourceDescription',
+        title: (t) => t.settings.camera.imageSource,
+        description: (t) => t.settings.camera.imageSourceDescription,
         icon: Icons.list,
         value: StoreStringValue(imageSource),
-        choices: const [
+        choices: [
           EnumChoice(
-            labelKey: 'settings.camera.imageSourceBlank',
+            label: (t) => t.settings.camera.imageSourceBlank,
             value: 'blank',
           ),
           EnumChoice(
-            labelKey: 'settings.camera.imageSourceStillImage',
+            label: (t) => t.settings.camera.imageSourceStillImage,
             value: 'image',
           ),
           EnumChoice(
-            labelKey: 'settings.camera.imageSourceDeviceCamera',
+            label: (t) => t.settings.camera.imageSourceDeviceCamera,
             value: 'ndk',
           ),
         ],
       ),
       EnumOption<String>(
-        titleKey: 'settings.camera.cameraDevice',
-        descriptionKey: 'settings.camera.cameraDeviceDescription',
+        title: (t) => t.settings.camera.cameraDevice,
+        description: (t) => t.settings.camera.cameraDeviceDescription,
         icon: Icons.list,
         value: StoreStringValue(cameraDevice),
-        choices: const [
+        choices: [
           EnumChoice(
-            labelKey: 'settings.camera.cameraDeviceDefault',
+            label: (t) => t.settings.camera.cameraDeviceDefault,
             value: '',
           ),
           EnumChoice(
-            labelKey: 'settings.camera.cameraDeviceAnyFront',
+            label: (t) => t.settings.camera.cameraDeviceAnyFront,
             value: '_front',
           ),
           EnumChoice(
-            labelKey: 'settings.camera.cameraDeviceAnyBack',
+            label: (t) => t.settings.camera.cameraDeviceAnyBack,
             value: '_back',
           ),
         ],
       ),
       EnumOption<int>(
-        titleKey: 'settings.camera.imageFlip',
+        title: (t) => t.settings.camera.imageFlip,
         icon: Icons.list,
         value: StoreIntValue(imageFlip),
-        choices: const [
-          EnumChoice(labelKey: 'settings.camera.imageFlipNone', value: 0),
-          EnumChoice(labelKey: 'settings.camera.imageFlipHorizontal', value: 1),
-          EnumChoice(labelKey: 'settings.camera.imageFlipVertical', value: 2),
-          EnumChoice(labelKey: 'settings.camera.imageFlipReverse', value: 3),
+        choices: [
+          EnumChoice(label: (t) => t.settings.camera.imageFlipNone, value: 0),
+          EnumChoice(
+            label: (t) => t.settings.camera.imageFlipHorizontal,
+            value: 1,
+          ),
+          EnumChoice(
+            label: (t) => t.settings.camera.imageFlipVertical,
+            value: 2,
+          ),
+          EnumChoice(
+            label: (t) => t.settings.camera.imageFlipReverse,
+            value: 3,
+          ),
         ],
       ),
     ],

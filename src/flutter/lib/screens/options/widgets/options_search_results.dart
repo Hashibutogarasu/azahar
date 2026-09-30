@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/options/option_entry.dart';
 import '../../../data/options/options_search_provider.dart';
-import '../../../data/options/translation_lookup.dart';
 import '../../../i18n/translations.g.dart';
 import 'option_group_card.dart';
 
@@ -42,9 +41,7 @@ class OptionsSearchResults extends ConsumerWidget {
       children: [
         for (final group in groups)
           OptionGroupCard(
-            title: t.resolve(
-              group.first.section.titleKey ?? group.first.category.titleKey,
-            ),
+            title: (group.first.section.title ?? group.first.category.title)(t),
             entries: group,
           ),
       ],

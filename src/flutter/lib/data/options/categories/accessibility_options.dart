@@ -8,17 +8,17 @@ import '../option_section.dart';
 
 /// The Accessibility category: the page for the accessibility settings.
 final accessibilityOptionsProvider = Provider<OptionCategory>(
-  (ref) => const OptionCategory(
+  (ref) => OptionCategory(
     id: 'accessibility',
-    titleKey: 'options.groups.accessibility',
+    title: (t) => t.options.groups.accessibility,
     sections: [
       OptionSection(
         options: [
           NestedOption(
-            titleKey: 'options.accessibility',
-            descriptionKey: 'options.accessibilityDescription',
+            title: (t) => t.options.accessibility,
+            description: (t) => t.options.accessibilityDescription,
             icon: Icons.accessibility_new_outlined,
-            destination: OptionsAccessibilitySettingsRoute(),
+            destination: const OptionsAccessibilitySettingsRoute(),
           ),
         ],
       ),

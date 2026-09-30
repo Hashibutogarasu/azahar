@@ -1,10 +1,9 @@
 import '../../i18n/translations.g.dart';
 import 'option_entry.dart';
-import 'translation_lookup.dart';
 
-/// Matches Options items against a search query using only what they already have: the
-/// translation keys of their title and description, and the translated text those keys resolve to
-/// in the current locale, together with the text of the category and section they belong to.
+/// Matches Options items against a search query using only what they already have: their title
+/// and description in the current locale, together with the text of the category and section they
+/// belong to.
 abstract final class OptionSearch {
   /// Whether [entry] contains every whitespace-separated term of [query], ignoring case.
   /// A blank query matches nothing.
@@ -30,15 +29,15 @@ abstract final class OptionSearch {
   ];
 
   static List<String> _searchableTexts(OptionEntry entry, Translations t) {
-    final keys = [
-      entry.option.titleKey,
-      entry.option.descriptionKey,
-      entry.category.titleKey,
-      entry.section.titleKey,
+    final texts = [
+      entry.option.title,
+      entry.option.description,
+      entry.category.title,
+      entry.section.title,
     ];
     return [
-      for (final key in keys)
-        if (key != null) ...[key, ?t.lookup(key)],
+      for (final text in texts)
+        if (text != null) text(t),
     ];
   }
 }

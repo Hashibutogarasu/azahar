@@ -7,8 +7,8 @@ abstract class NestedOption with _$NestedOption implements AbstractBaseOption {
   const NestedOption._();
 
   const factory NestedOption({
-    required String titleKey,
-    String? descriptionKey,
+    required TranslationText title,
+    TranslationText? description,
     required IconData icon,
     required GoRouteData destination,
   }) = _NestedOption;
