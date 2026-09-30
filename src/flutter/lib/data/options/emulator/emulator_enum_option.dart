@@ -13,11 +13,11 @@ class EmulatorEnumOption<T> extends AbstractEmulatorOption<T> {
   final List<EnumChoice<T>> choices;
 
   @override
-  T read(WidgetRef ref) => setting.read(ref);
+  T read(WidgetRef ref) => setting.read();
 
   @override
   Future<void> apply(BuildContext context, WidgetRef ref, T value) =>
-      setting.apply(context, ref, value);
+      setting.write(value);
 
   @override
   Widget toWidget({
@@ -28,7 +28,7 @@ class EmulatorEnumOption<T> extends AbstractEmulatorOption<T> {
       title: title,
       description: description,
       icon: icon,
-      value: setting,
+      value: optionValue,
       choices: choices,
     ),
     onAccessed: onAccessed,

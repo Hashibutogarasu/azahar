@@ -10,10 +10,10 @@ abstract class IntKeyEmulatorSetting extends EmulatorSetting<int> {
   IntKey get key;
 
   @override
-  int readCurrent() => AppServices.emulatorSettingsRepository.readInt(key);
+  int read() => AppServices.emulatorSettingsRepository.readInt(key);
 
   @override
-  Future<void> writeCurrent(int value) async {
+  Future<void> write(int value) async {
     await AppServices.emulatorSettingsRepository.writeInt(key, value);
     await AppServices.emulatorSettingsRepository.save();
   }

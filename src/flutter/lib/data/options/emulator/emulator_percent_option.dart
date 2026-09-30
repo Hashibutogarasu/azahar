@@ -23,11 +23,11 @@ class EmulatorPercentOption extends AbstractEmulatorOption<double> {
   final Future<void> Function(WidgetRef ref, double value)? preview;
 
   @override
-  double read(WidgetRef ref) => setting.read(ref);
+  double read(WidgetRef ref) => setting.read();
 
   @override
   Future<void> apply(BuildContext context, WidgetRef ref, double value) =>
-      setting.apply(context, ref, value);
+      setting.write(value);
 
   @override
   Widget toWidget({
@@ -38,7 +38,7 @@ class EmulatorPercentOption extends AbstractEmulatorOption<double> {
       title: title,
       description: description,
       icon: icon,
-      value: setting,
+      value: optionValue,
       min: min,
       max: max,
       defaultValue: defaultValue,

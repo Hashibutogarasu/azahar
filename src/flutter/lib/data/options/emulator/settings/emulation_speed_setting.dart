@@ -17,14 +17,14 @@ class EmulationSpeedSetting extends EmulatorSetting<double> {
   double weightFactor(double value) => (value / maxSpeed).clamp(0.0, 1.0);
 
   @override
-  double readCurrent() =>
+  double read() =>
       AppServices.emulatorSettingsRepository.readInt(
         GeneralSettingKeys.frameLimit,
       ) /
       100;
 
   @override
-  Future<void> writeCurrent(double value) async {
+  Future<void> write(double value) async {
     await AppServices.emulatorSettingsRepository.writeInt(
       GeneralSettingKeys.frameLimit,
       (value * 100).round(),

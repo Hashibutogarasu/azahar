@@ -13,11 +13,11 @@ class EmulatorStringOption extends AbstractEmulatorOption<String> {
   final int? maxLength;
 
   @override
-  String read(WidgetRef ref) => setting.read(ref);
+  String read(WidgetRef ref) => setting.read();
 
   @override
   Future<void> apply(BuildContext context, WidgetRef ref, String value) =>
-      setting.apply(context, ref, value);
+      setting.write(value);
 
   @override
   Widget toWidget({
@@ -28,7 +28,7 @@ class EmulatorStringOption extends AbstractEmulatorOption<String> {
       title: title,
       description: description,
       icon: icon,
-      value: setting,
+      value: optionValue,
       maxLength: maxLength,
     ),
     onAccessed: onAccessed,

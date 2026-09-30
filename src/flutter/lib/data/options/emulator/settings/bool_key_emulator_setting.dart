@@ -10,10 +10,10 @@ abstract class BoolKeyEmulatorSetting extends EmulatorSetting<bool> {
   IntBoolKey get key;
 
   @override
-  bool readCurrent() => AppServices.emulatorSettingsRepository.readBool(key);
+  bool read() => AppServices.emulatorSettingsRepository.readBool(key);
 
   @override
-  Future<void> writeCurrent(bool value) async {
+  Future<void> write(bool value) async {
     await AppServices.emulatorSettingsRepository.writeBool(key, value);
     await AppServices.emulatorSettingsRepository.save();
   }

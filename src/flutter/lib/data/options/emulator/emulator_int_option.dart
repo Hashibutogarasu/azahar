@@ -22,11 +22,11 @@ class EmulatorIntOption extends AbstractEmulatorOption<int> {
   final String units;
 
   @override
-  int read(WidgetRef ref) => setting.read(ref);
+  int read(WidgetRef ref) => setting.read();
 
   @override
   Future<void> apply(BuildContext context, WidgetRef ref, int value) =>
-      setting.apply(context, ref, value);
+      setting.write(value);
 
   @override
   Widget toWidget({
@@ -37,7 +37,7 @@ class EmulatorIntOption extends AbstractEmulatorOption<int> {
       title: title,
       description: description,
       icon: icon,
-      value: setting,
+      value: optionValue,
       min: min,
       max: max,
       defaultValue: defaultValue,

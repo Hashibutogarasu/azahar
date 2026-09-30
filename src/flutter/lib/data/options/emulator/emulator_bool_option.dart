@@ -10,11 +10,11 @@ class EmulatorBoolOption extends AbstractEmulatorOption<bool> {
   });
 
   @override
-  bool read(WidgetRef ref) => setting.read(ref);
+  bool read(WidgetRef ref) => setting.read();
 
   @override
   Future<void> apply(BuildContext context, WidgetRef ref, bool value) =>
-      setting.apply(context, ref, value);
+      setting.write(value);
 
   @override
   Widget toWidget({
@@ -25,7 +25,7 @@ class EmulatorBoolOption extends AbstractEmulatorOption<bool> {
       title: title,
       description: description,
       icon: icon,
-      value: setting,
+      value: optionValue,
     ),
     onAccessed: onAccessed,
     onLongPress: onLongPress,
