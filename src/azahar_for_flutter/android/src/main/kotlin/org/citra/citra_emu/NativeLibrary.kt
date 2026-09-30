@@ -112,6 +112,20 @@ object NativeLibrary {
     external fun setGyroInvert(invertVertical: Boolean, invertHorizontal: Boolean)
 
     /**
+     * Sets the latest motion sensor sample the core reads, given by the frontend instead of being
+     * read from the device's sensors. Acceleration is in g and angular velocity in degrees per
+     * second, both with the axes of the 3DS.
+     */
+    external fun setMotion(
+        accelX: Float,
+        accelY: Float,
+        accelZ: Float,
+        gyroX: Float,
+        gyroY: Float,
+        gyroZ: Float
+    )
+
+    /**
      * Handles touch events.
      *
      * @param xAxis  The value of the x-axis.

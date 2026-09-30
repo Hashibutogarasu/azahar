@@ -11,6 +11,7 @@ import '../models/game.dart';
 import '../models/game_folder_kind.dart';
 import '../models/game_folder_status.dart';
 import '../models/game_uninstall_target.dart';
+import '../models/gamepad_context.dart';
 import '../models/gpu_driver_info.dart';
 import '../models/installed_title_path.dart';
 import '../models/shader_cache_backend.dart';
@@ -37,6 +38,9 @@ class NativeBridge {
       ),
       _logLinesChannel = const EventChannel(
         'org.citra.citra_emu/azahar_bridge/log_lines',
+      ),
+      _gamePadChannel = const EventChannel(
+        'org.citra.citra_emu/azahar_bridge/gamepad_events',
       ) {
     _channel.setMethodCallHandler(_handleNativeCall);
   }
@@ -48,6 +52,7 @@ class NativeBridge {
   final EventChannel _mediaNotificationPlayPauseChannel;
   final EventChannel _systemVolumeChannel;
   final EventChannel _logLinesChannel;
+  final EventChannel _gamePadChannel;
   final _closeRequestedController = StreamController<void>.broadcast();
 
   Stream<void> get closeRequests => _closeRequestedController.stream;
@@ -83,6 +88,21 @@ class NativeBridge {
         max: (map['max'] as num).toInt(),
       );
     });
+  }
+
+  /// Gives [event] to the core as if it came from the console's own buttons, sticks or motion
+  /// sensors.
+  Future<void> sendGamePadEvent(GamePadContext event) {
+    return _channel.invokeMethod<void>('sendGamePadEvent', event.toMap());
+  }
+
+  /// Reports every gamepad input the native side handed to the core, whichever source it came
+  /// from.
+  Stream<GamePadContext> onGamePadEvent() {
+    return _gamePadChannel.receiveBroadcastStream().map(
+      (event) =>
+          GamePadContext.fromMap((event as Map).cast<Object?, Object?>()),
+    );
   }
 
   Future<void> confirmUserDirectory({

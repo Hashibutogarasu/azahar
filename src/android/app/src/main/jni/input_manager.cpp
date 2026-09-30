@@ -12,6 +12,7 @@
 #include "common/logging/log.h"
 #include "common/math_util.h"
 #include "common/param_package.h"
+#include "input_common/flutter_motion.h"
 #include "input_common/main.h"
 #include "input_common/sdl/sdl.h"
 #include "jni/input_manager.h"
@@ -317,13 +318,13 @@ void Init() {
     motion = std::make_shared<NDKMotionFactory>();
     Input::RegisterFactory<Input::ButtonDevice>("gamepad", button);
     Input::RegisterFactory<Input::AnalogDevice>("gamepad", analog);
-    Input::RegisterFactory<Input::MotionDevice>("motion_emu", motion);
+    InputCommon::FlutterMotion::Register();
 }
 
 void Shutdown() {
     Input::UnregisterFactory<Input::ButtonDevice>("gamepad");
     Input::UnregisterFactory<Input::AnalogDevice>("gamepad");
-    Input::UnregisterFactory<Input::MotionDevice>("motion_emu");
+    InputCommon::FlutterMotion::Unregister();
     button.reset();
     analog.reset();
     motion.reset();

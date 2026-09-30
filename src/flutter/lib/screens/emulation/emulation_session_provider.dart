@@ -178,6 +178,25 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
     _bridge.onTouchEvent(x: 0, y: 0, pressed: false);
   }
 
+  /// Presses or releases [button] on the console.
+  void sendGamePadButton(GamePadButton button, {required bool pressed}) {
+    unawaited(
+      _bridge.sendGamePadEvent(GamePadContext.button(button, pressed: pressed)),
+    );
+  }
+
+  /// Moves [axis] to the position ([x], [y]), each from -1.0 to 1.0 with y positive upwards.
+  void sendGamePadAxis(GamePadAxis axis, double x, double y) {
+    unawaited(_bridge.sendGamePadEvent(GamePadContext.axis(axis, x: x, y: y)));
+  }
+
+  /// Gives the latest motion sensor sample, in g and degrees per second.
+  void sendMotion({required Vec3 accel, required Vec3 gyro}) {
+    unawaited(
+      _bridge.sendGamePadEvent(GamePadContext.motion(accel: accel, gyro: gyro)),
+    );
+  }
+
   Future<void> swapScreens() async {
     final swapped = await _bridge.swapScreens();
     state = state.copyWith(isScreensSwapped: swapped);

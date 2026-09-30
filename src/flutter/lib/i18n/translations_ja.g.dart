@@ -284,6 +284,9 @@ class _Translations$emulation$ja extends Translations$emulation$en {
   @override
   String get loading => '読み込み中';
   @override
+  late final _Translations$emulation$gamepad$ja gamepad =
+      _Translations$emulation$gamepad$ja._(_root);
+  @override
   String get terminating => '終了しています';
   @override
   String get preparingShaders => 'シェーダーを準備中';
@@ -822,6 +825,21 @@ class _Translations$setup$done$ja extends Translations$setup$done$en {
   String get description => '準備が整いました。\nエミュレータをお楽しみください！';
   @override
   String get continueLabel => '続ける';
+}
+
+// Path: emulation.gamepad
+class _Translations$emulation$gamepad$ja
+    extends Translations$emulation$gamepad$en {
+  _Translations$emulation$gamepad$ja._(TranslationsJa root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsJa _root; // ignore: unused_field
+
+  // Translations
+  @override
+  late final _Translations$emulation$gamepad$buttons$ja buttons =
+      _Translations$emulation$gamepad$buttons$ja._(_root);
 }
 
 // Path: options.useLegacySettingsUIDialog
@@ -1844,6 +1862,32 @@ class _Translations$settings$language$ja
   String get japanese => '日本語';
 }
 
+// Path: emulation.gamepad.buttons
+class _Translations$emulation$gamepad$buttons$ja
+    extends Translations$emulation$gamepad$buttons$en {
+  _Translations$emulation$gamepad$buttons$ja._(TranslationsJa root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsJa _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get a => 'A';
+  @override
+  String get b => 'B';
+  @override
+  String get x => 'X';
+  @override
+  String get y => 'Y';
+  @override
+  String get select => 'SELECT';
+  @override
+  String get home => 'HOME';
+  @override
+  String get start => 'START';
+}
+
 // Path: settings.system.countries
 class _Translations$settings$system$countries$ja
     extends Translations$settings$system$countries$en {
@@ -2248,6 +2292,13 @@ extension on TranslationsJa {
           'games.regionFree' => 'リージョンフリー',
           'games.invalidRegion' => '無効なリージョン',
           'emulation.loading' => '読み込み中',
+          'emulation.gamepad.buttons.a' => 'A',
+          'emulation.gamepad.buttons.b' => 'B',
+          'emulation.gamepad.buttons.x' => 'X',
+          'emulation.gamepad.buttons.y' => 'Y',
+          'emulation.gamepad.buttons.select' => 'SELECT',
+          'emulation.gamepad.buttons.home' => 'HOME',
+          'emulation.gamepad.buttons.start' => 'START',
           'emulation.terminating' => '終了しています',
           'emulation.preparingShaders' => 'シェーダーを準備中',
           'emulation.buildingShaders' => 'シェーダーをビルド中',
@@ -2723,6 +2774,9 @@ extension on TranslationsJa {
           'settings.system.countries.southKorea' => '韓国',
           'settings.system.countries.hongKong' => '香港',
           'settings.system.countries.macau' => 'マカオ',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.system.countries.indonesia' => 'インドネシア',
           'settings.system.countries.singapore' => 'シンガポール',
           'settings.system.countries.thailand' => 'タイ',
@@ -2730,9 +2784,6 @@ extension on TranslationsJa {
           'settings.system.countries.malaysia' => 'マレーシア',
           'settings.system.countries.china' => '中国',
           'settings.system.countries.unitedArabEmirates' => 'アラブ首長国連邦',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.system.countries.india' => 'インド',
           'settings.system.countries.egypt' => 'エジプト',
           'settings.system.countries.oman' => 'オマーン',

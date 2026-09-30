@@ -116,6 +116,17 @@
   },
   "emulation": {
     "loading": "Loading",
+    "gamepad": {
+      "buttons": {
+        "a": "A",
+        "b": "B",
+        "x": "X",
+        "y": "Y",
+        "select": "SELECT",
+        "home": "HOME",
+        "start": "START"
+      }
+    },
     "terminating": "Closing",
     "preparingShaders": "Preparing Shaders",
     "buildingShaders": "Building Shaders",

@@ -22,6 +22,7 @@ import org.citra.citra_emu.applets.SoftwareKeyboard
 import org.citra.citra_emu.camera.StillImageCameraHelper
 import org.citra.citra_emu.channel.AzaharMethodHandler
 import org.citra.citra_emu.channel.CheatsController
+import org.citra.citra_emu.channel.GamepadController
 import org.citra.citra_emu.channel.EmulationController
 import org.citra.citra_emu.channel.LogStreamHandler
 import org.citra.citra_emu.channel.MediaNotificationController
@@ -113,11 +114,12 @@ class EmulationActivity : FlutterFragmentActivity() {
         val wifiController = WifiController()
         val userFilesController = UserFilesController(this)
         val cheatsController = CheatsController()
+        val gamepadController = GamepadController()
         val handlers: Map<String, AzaharMethodHandler> =
             (emulationController.handlers + systemVolumeController.handlers +
                 settingsController.handlers + mediaNotificationController.handlers +
                 wifiController.handlers + userFilesController.handlers +
-                cheatsController.handlers + TerminateProcess())
+                cheatsController.handlers + gamepadController.handlers + TerminateProcess())
                 .associateBy { it.name }
 
         val appletChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, APPLET_CHANNEL)
@@ -197,6 +199,9 @@ class EmulationActivity : FlutterFragmentActivity() {
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, LOG_LINES_CHANNEL)
             .setStreamHandler(LogStreamHandler())
 
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, GAMEPAD_CHANNEL)
+            .setStreamHandler(gamepadController.createStreamHandler())
+
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
                 handlers[call.method]?.execute(call, result) ?: result.notImplemented()
@@ -220,6 +225,7 @@ class EmulationActivity : FlutterFragmentActivity() {
         private const val SHADER_PROGRESS_CHANNEL = "org.citra.citra_emu/azahar_bridge/shader_progress"
         private const val APPLET_CHANNEL = "org.citra.citra_emu/azahar_bridge/applet"
         private const val LOG_LINES_CHANNEL = "org.citra.citra_emu/azahar_bridge/log_lines"
+        private const val GAMEPAD_CHANNEL = "org.citra.citra_emu/azahar_bridge/gamepad_events"
         private const val SYSTEM_VOLUME_CHANNEL = "org.citra.citra_emu/azahar_bridge/system_volume"
         private const val MEDIA_NOTIFICATION_STOP_CHANNEL =
             "org.citra.citra_emu/azahar_bridge/media_notification_stop"

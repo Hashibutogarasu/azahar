@@ -25,6 +25,7 @@
 #include "core/frontend/emu_window.h"
 #include "core/frontend/framebuffer_layout.h"
 #include "core/hle/service/service.h"
+#include "gamepad.h"
 #include "input_common/main.h"
 #include "network/network.h"
 #include "user_directory.h"
@@ -181,6 +182,7 @@ void EnsureInputProfileInitialized() {
         if (Settings::values.current_input_profile.touch_device.empty()) {
             Settings::values.current_input_profile.touch_device = "engine:emu_window";
         }
+        Gamepad::EnsureInputProfileInitialized();
         return true;
     }();
     (void)initialized;
@@ -845,6 +847,7 @@ void StartEmulation(const std::string& path) {
     static bool input_and_network_initialized = false;
     if (!input_and_network_initialized) {
         InputCommon::Init();
+        Gamepad::Register();
         Network::Init();
         input_and_network_initialized = true;
     }

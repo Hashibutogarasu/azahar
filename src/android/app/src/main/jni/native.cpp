@@ -61,6 +61,7 @@
 #include "jni/emu_window/emu_window_vk.h"
 #endif
 #include "jni/id_cache.h"
+#include "input_common/flutter_motion.h"
 #include "jni/input_manager.h"
 #include "jni/ndk_motion.h"
 #include "jni/util.h"
@@ -764,6 +765,14 @@ jboolean Java_org_citra_citra_1emu_NativeLibrary_onGamePadAxisEvent(
     jint axis_id, jfloat axis_val) {
     return static_cast<jboolean>(
         InputManager::ButtonHandler()->AnalogButtonEvent(axis_id, axis_val));
+}
+
+void Java_org_citra_citra_1emu_NativeLibrary_setMotion([[maybe_unused]] JNIEnv* env,
+                                                       [[maybe_unused]] jobject obj, jfloat accel_x,
+                                                       jfloat accel_y, jfloat accel_z,
+                                                       jfloat gyro_x, jfloat gyro_y, jfloat gyro_z) {
+    InputCommon::FlutterMotion::Set(Common::Vec3<float>{accel_x, accel_y, accel_z},
+                                    Common::Vec3<float>{gyro_x, gyro_y, gyro_z});
 }
 
 jboolean Java_org_citra_citra_1emu_NativeLibrary_onTouchEvent([[maybe_unused]] JNIEnv* env,
