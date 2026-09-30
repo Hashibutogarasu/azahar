@@ -47,6 +47,8 @@ final mediaOptionsProvider = Provider<OptionCategory>((ref) {
               },
             ),
             defaultValue: 1.0,
+            preview: (ref, value) =>
+                ref.read(masterVolumeProvider.notifier).setVolume(value * 100),
           ),
         ],
       ),
