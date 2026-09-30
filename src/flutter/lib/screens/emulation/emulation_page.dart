@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
@@ -41,6 +44,12 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  Future<AppExitResponse> didRequestAppExit() async {
+    unawaited(ref.read(emulationSessionProvider.notifier).terminate());
+    return AppExitResponse.cancel;
   }
 
   @override

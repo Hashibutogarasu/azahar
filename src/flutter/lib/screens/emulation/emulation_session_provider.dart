@@ -184,6 +184,7 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
   }
 
   Future<void> terminate() async {
+    if (state.isTerminating) return;
     state = state.copyWith(isTerminating: true);
     await _releaseNativeSession();
     state = state.copyWith(isClosingWindow: true);
