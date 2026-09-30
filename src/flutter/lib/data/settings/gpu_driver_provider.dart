@@ -7,6 +7,11 @@ final gpuDriverProvider = Provider<GpuDriverService>(
   (ref) => GpuDriverService(),
 );
 
+/// Whether the platform can load custom GPU drivers, which decides if the driver manager is shown.
+final gpuDriverSupportedProvider = FutureProvider<bool>(
+  (ref) => ref.read(gpuDriverProvider).isSupported(),
+);
+
 class GpuDriverService {
   Future<bool> isSupported() =>
       AppServices.nativeBridge.supportsCustomDriverLoading();

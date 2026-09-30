@@ -212,6 +212,12 @@ class Translations$games$en {
   /// en: 'Compress'
   String get compress => 'Compress';
 
+  /// en: 'ID: ${id}'
+  String titleIdLabel({required Object id}) => 'ID: ${id}';
+
+  /// en: 'File: ${name}'
+  String fileLabel({required Object name}) => 'File: ${name}';
+
   /// en: 'Delete Shader Cache'
   String get deleteShaderCache => 'Delete Shader Cache';
 
@@ -515,6 +521,58 @@ class Translations$options$en {
   late final Translations$options$useLegacySettingsUIDialog$en
   useLegacySettingsUIDialog =
       Translations$options$useLegacySettingsUIDialog$en.internal(_root);
+
+  /// en: 'Search Options'
+  String get searchHint => 'Search Options';
+
+  /// en: 'Type to search the settings'
+  String get searchPrompt => 'Type to search the settings';
+
+  /// en: 'No matching settings'
+  String get searchNoResults => 'No matching settings';
+
+  /// en: 'History'
+  String get history => 'History';
+
+  /// en: 'Settings you change or open will appear here.'
+  String get historyEmpty => 'Settings you change or open will appear here.';
+
+  /// en: 'Pinned'
+  String get pinned => 'Pinned';
+
+  /// en: 'Press and hold a setting to pin it here.'
+  String get pinnedEmpty => 'Press and hold a setting to pin it here.';
+
+  /// en: 'Delete'
+  String get clear => 'Delete';
+
+  /// en: 'Delete history?'
+  String get clearHistoryTitle => 'Delete history?';
+
+  /// en: 'This removes every item from the history. Your settings are not changed.'
+  String get clearHistoryMessage =>
+      'This removes every item from the history. Your settings are not changed.';
+
+  /// en: 'Unpin all items?'
+  String get clearPinnedTitle => 'Unpin all items?';
+
+  /// en: 'This removes every pinned item. Your settings are not changed.'
+  String get clearPinnedMessage =>
+      'This removes every pinned item. Your settings are not changed.';
+
+  /// en: 'Remove from history'
+  String get removeFromHistory => 'Remove from history';
+
+  /// en: 'Pin'
+  String get pin => 'Pin';
+
+  /// en: 'Unpin'
+  String get unpin => 'Unpin';
+
+  /// en: 'You can pin up to ${count} items.'
+  String pinLimitReached({required Object count}) =>
+      'You can pin up to ${count} items.';
+
   late final Translations$options$groups$en groups =
       Translations$options$groups$en.internal(_root);
 }
@@ -2746,6 +2804,8 @@ extension on Translations {
           'games.cheatsUnavailable' =>
             'Cheats are not available yet in this version of the app.',
           'games.compress' => 'Compress',
+          'games.titleIdLabel' => ({required Object id}) => 'ID: ${id}',
+          'games.fileLabel' => ({required Object name}) => 'File: ${name}',
           'games.deleteShaderCache' => 'Delete Shader Cache',
           'games.deleteCacheSelectBackend' =>
             'Select the graphics API whose shader cache should be deleted',
@@ -2853,6 +2913,26 @@ extension on Translations {
           'options.useLegacySettingsUIDialog.message' =>
             'This changes how the Options screen looks. You can switch back at any time.',
           'options.useLegacySettingsUIDialog.confirm' => 'Switch',
+          'options.searchHint' => 'Search Options',
+          'options.searchPrompt' => 'Type to search the settings',
+          'options.searchNoResults' => 'No matching settings',
+          'options.history' => 'History',
+          'options.historyEmpty' =>
+            'Settings you change or open will appear here.',
+          'options.pinned' => 'Pinned',
+          'options.pinnedEmpty' => 'Press and hold a setting to pin it here.',
+          'options.clear' => 'Delete',
+          'options.clearHistoryTitle' => 'Delete history?',
+          'options.clearHistoryMessage' =>
+            'This removes every item from the history. Your settings are not changed.',
+          'options.clearPinnedTitle' => 'Unpin all items?',
+          'options.clearPinnedMessage' =>
+            'This removes every pinned item. Your settings are not changed.',
+          'options.removeFromHistory' => 'Remove from history',
+          'options.pin' => 'Pin',
+          'options.unpin' => 'Unpin',
+          'options.pinLimitReached' =>
+            ({required Object count}) => 'You can pin up to ${count} items.',
           'options.groups.general' => 'General',
           'options.groups.emulation' => 'Emulation',
           'options.groups.clock' => 'Clock',
@@ -3272,6 +3352,9 @@ extension on Translations {
           'settings.system.countries.china' => 'China',
           'settings.system.countries.unitedArabEmirates' =>
             'United Arab Emirates',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.system.countries.india' => 'India',
           'settings.system.countries.egypt' => 'Egypt',
           'settings.system.countries.oman' => 'Oman',
@@ -3291,9 +3374,6 @@ extension on Translations {
           'settings.camera.imageSource' => 'Camera Image Source',
           'settings.camera.imageSourceDescription' =>
             'Sets the image source of the virtual camera. You can use an image file, or a device camera when supported.',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.camera.imageSourceBlank' => 'Blank',
           'settings.camera.imageSourceStillImage' => 'Still Image',
           'settings.camera.imageSourceDeviceCamera' => 'Device Camera',

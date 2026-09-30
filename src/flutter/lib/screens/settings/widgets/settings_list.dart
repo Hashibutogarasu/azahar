@@ -1,14 +1,15 @@
 import 'package:babstrap_settings_screen/babstrap_settings_screen.dart'
     as babstrap;
 import 'package:flutter/material.dart';
-import 'package:gamepads/gamepads.dart';
 
 import '../../../app_services.dart';
 import '../../../data/settings/settings_item.dart';
 import '../../../data/settings/settings_value_store.dart';
-import '../../../errors/app_exception.dart';
-import '../../../i18n/translations.g.dart';
-import '../../../widgets/dialog_cancel_button.dart';
+import '../dialogs/choice_dialog.dart';
+import '../dialogs/date_time_picker.dart';
+import '../dialogs/input_binding_dialog.dart';
+import '../dialogs/slider_value_dialog.dart';
+import '../dialogs/text_input_dialog.dart';
 import 'settings_group_card.dart';
 import 'toggle_settings_item.dart';
 
@@ -106,14 +107,14 @@ class _SettingsListState extends State<SettingsList> {
         trailing: Text(
           '${_storeFor(item.store).readInt(item.setting)}${item.units}',
         ),
-        onTap: () => _showSliderDialog(item),
+        onTap: () => _editSlider(item),
       ),
       SettingsSingleChoiceItem() => babstrap.SettingsItem(
         icons: Icons.list,
         title: item.title,
         subtitle: item.description,
         trailing: Text(_singleChoiceLabel(item)),
-        onTap: () => _showSingleChoiceDialog(item),
+        onTap: () => _editSingleChoice(item),
       ),
       SettingsFloatSliderItem() => babstrap.SettingsItem(
         icons: Icons.tune,
@@ -122,35 +123,35 @@ class _SettingsListState extends State<SettingsList> {
         trailing: Text(
           '${_storeFor(item.store).readFloat(item.setting).round()}${item.units}',
         ),
-        onTap: () => _showFloatSliderDialog(item),
+        onTap: () => _editFloatSlider(item),
       ),
       SettingsStringSingleChoiceItem() => babstrap.SettingsItem(
         icons: Icons.list,
         title: item.title,
         subtitle: item.description,
         trailing: Text(_stringSingleChoiceLabel(item)),
-        onTap: () => _showStringSingleChoiceDialog(item),
+        onTap: () => _editStringSingleChoice(item),
       ),
       SettingsStringInputItem() => babstrap.SettingsItem(
         icons: Icons.edit_outlined,
         title: item.title,
         subtitle: item.description,
         trailing: Text(_storeFor(item.store).readString(item.setting)),
-        onTap: () => _showStringInputDialog(item),
+        onTap: () => _editStringInput(item),
       ),
       SettingsDateTimeItem() => babstrap.SettingsItem(
         icons: Icons.schedule,
         title: item.title,
         subtitle: item.description,
         trailing: Text(_dateTimeLabel(item)),
-        onTap: () => _showDateTimeDialog(item),
+        onTap: () => _editDateTime(item),
       ),
       SettingsInputBindingItem() => babstrap.SettingsItem(
         icons: Icons.sports_esports_outlined,
         title: item.title,
         subtitle: item.description,
         trailing: Text(_storeFor(item.store).readString(item.setting)),
-        onTap: () => _showInputBindingDialog(item),
+        onTap: () => _editInputBinding(item),
       ),
       SettingsActionItem() => babstrap.SettingsItem(
         icons: item.icon ?? Icons.chevron_right,
@@ -191,124 +192,16 @@ class _SettingsListState extends State<SettingsList> {
     return dateTime.toString();
   }
 
-  Future<void> _showSliderDialog(SettingsSliderItem item) async {
+  Future<void> _editSlider(SettingsSliderItem item) async {
     final store = _storeFor(item.store);
-    final initial = store.readInt(item.setting);
-    var sliderValue = initial;
-    var pendingText = initial.toString();
-    final t = context.t;
-    final localizations = MaterialLocalizations.of(context);
-    final textController = TextEditingController(text: pendingText);
-    final result = await showDialog<int>(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            void applySliderValue(int newValue) {
-              sliderValue = newValue;
-              pendingText = newValue.toString();
-              textController.value = TextEditingValue(
-                text: pendingText,
-                selection: TextSelection.collapsed(offset: pendingText.length),
-              );
-            }
-
-            return AlertDialog(
-              title: Text(item.title),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: textController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(suffixText: item.units),
-                    onChanged: (text) {
-                      pendingText = text;
-                      final parsed = int.tryParse(text);
-                      if (parsed != null &&
-                          parsed >= item.min &&
-                          parsed <= item.max) {
-                        setDialogState(() => sliderValue = parsed);
-                      }
-                    },
-                  ),
-                  Slider(
-                    value: sliderValue.toDouble(),
-                    min: item.min.toDouble(),
-                    max: item.max.toDouble(),
-                    divisions: item.max - item.min,
-                    label: '$sliderValue${item.units}',
-                    onChanged: (newValue) {
-                      setDialogState(() => applySliderValue(newValue.round()));
-                    },
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => setDialogState(
-                    () => applySliderValue(item.setting.defaultValue),
-                  ),
-                  child: Text(t.settings.sliderDialog.kDefault),
-                ),
-                const DialogCancelButton(),
-                TextButton(
-                  onPressed: () {
-                    final parsed = int.tryParse(pendingText);
-                    if (parsed == null ||
-                        parsed < item.min ||
-                        parsed > item.max) {
-                      throw InvalidSettingValueException(
-                        t.settings.sliderDialog.invalidValue(
-                          title: item.title,
-                          min: item.min,
-                          max: item.max,
-                        ),
-                      );
-                    }
-                    Navigator.of(context).pop(parsed);
-                  },
-                  child: Text(localizations.okButtonLabel),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-    textController.dispose();
-    if (result == null) return;
-    await store.writeInt(item.setting, result);
-    await _persist(item.store);
-    setState(() {});
-  }
-
-  Future<void> _showSingleChoiceDialog(SettingsSingleChoiceItem item) async {
-    final store = _storeFor(item.store);
-    final current = store.readInt(item.setting);
-    final result = await showDialog<int>(
-      context: context,
-      builder: (context) {
-        return SimpleDialog(
-          title: Text(item.title),
-          children: [
-            RadioGroup<int>(
-              groupValue: current,
-              onChanged: (value) => Navigator.of(context).pop(value),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  for (var i = 0; i < item.choiceValues.length; i++)
-                    RadioListTile<int>(
-                      title: Text(item.choiceLabels[i]),
-                      value: item.choiceValues[i],
-                    ),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
+    final result = await SliderValueDialog.show(
+      context,
+      title: item.title,
+      min: item.min,
+      max: item.max,
+      units: item.units,
+      initialValue: store.readInt(item.setting),
+      defaultValue: item.setting.defaultValue,
     );
     if (result == null) return;
     await store.writeInt(item.setting, result);
@@ -316,124 +209,48 @@ class _SettingsListState extends State<SettingsList> {
     setState(() {});
   }
 
-  Future<void> _showFloatSliderDialog(SettingsFloatSliderItem item) async {
+  Future<void> _editFloatSlider(SettingsFloatSliderItem item) async {
     final store = _storeFor(item.store);
-    final initial = store.readFloat(item.setting).round();
-    var sliderValue = initial;
-    var pendingText = initial.toString();
-    final t = context.t;
-    final localizations = MaterialLocalizations.of(context);
-    final textController = TextEditingController(text: pendingText);
-    final min = item.min.round();
-    final max = item.max.round();
-    final result = await showDialog<int>(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            void applySliderValue(int newValue) {
-              sliderValue = newValue;
-              pendingText = newValue.toString();
-              textController.value = TextEditingValue(
-                text: pendingText,
-                selection: TextSelection.collapsed(offset: pendingText.length),
-              );
-            }
-
-            return AlertDialog(
-              title: Text(item.title),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: textController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(suffixText: item.units),
-                    onChanged: (text) {
-                      pendingText = text;
-                      final parsed = int.tryParse(text);
-                      if (parsed != null && parsed >= min && parsed <= max) {
-                        setDialogState(() => sliderValue = parsed);
-                      }
-                    },
-                  ),
-                  Slider(
-                    value: sliderValue.toDouble(),
-                    min: min.toDouble(),
-                    max: max.toDouble(),
-                    divisions: max - min,
-                    label: '$sliderValue${item.units}',
-                    onChanged: (newValue) {
-                      setDialogState(() => applySliderValue(newValue.round()));
-                    },
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => setDialogState(
-                    () => applySliderValue(item.setting.defaultValue.round()),
-                  ),
-                  child: Text(t.settings.sliderDialog.kDefault),
-                ),
-                const DialogCancelButton(),
-                TextButton(
-                  onPressed: () {
-                    final parsed = int.tryParse(pendingText);
-                    if (parsed == null || parsed < min || parsed > max) {
-                      throw InvalidSettingValueException(
-                        t.settings.sliderDialog.invalidValue(
-                          title: item.title,
-                          min: min,
-                          max: max,
-                        ),
-                      );
-                    }
-                    Navigator.of(context).pop(parsed);
-                  },
-                  child: Text(localizations.okButtonLabel),
-                ),
-              ],
-            );
-          },
-        );
-      },
+    final result = await SliderValueDialog.show(
+      context,
+      title: item.title,
+      min: item.min.round(),
+      max: item.max.round(),
+      units: item.units,
+      initialValue: store.readFloat(item.setting).round(),
+      defaultValue: item.setting.defaultValue.round(),
     );
-    textController.dispose();
     if (result == null) return;
     await store.writeFloat(item.setting, result.toDouble());
     await _persist(item.store);
     setState(() {});
   }
 
-  Future<void> _showStringSingleChoiceDialog(
+  Future<void> _editSingleChoice(SettingsSingleChoiceItem item) async {
+    final store = _storeFor(item.store);
+    final result = await ChoiceDialog.show<int>(
+      context,
+      title: item.title,
+      labels: item.choiceLabels,
+      values: item.choiceValues,
+      current: store.readInt(item.setting),
+    );
+    if (result == null) return;
+    await store.writeInt(item.setting, result);
+    await _persist(item.store);
+    setState(() {});
+  }
+
+  Future<void> _editStringSingleChoice(
     SettingsStringSingleChoiceItem item,
   ) async {
     final store = _storeFor(item.store);
-    final current = store.readString(item.setting);
-    final result = await showDialog<String>(
-      context: context,
-      builder: (context) {
-        return SimpleDialog(
-          title: Text(item.title),
-          children: [
-            RadioGroup<String>(
-              groupValue: current,
-              onChanged: (value) => Navigator.of(context).pop(value),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  for (var i = 0; i < item.choiceValues.length; i++)
-                    RadioListTile<String>(
-                      title: Text(item.choiceLabels[i]),
-                      value: item.choiceValues[i],
-                    ),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
+    final result = await ChoiceDialog.show<String>(
+      context,
+      title: item.title,
+      labels: item.choiceLabels,
+      values: item.choiceValues,
+      current: store.readString(item.setting),
     );
     if (result == null) return;
     await store.writeString(item.setting, result);
@@ -441,95 +258,42 @@ class _SettingsListState extends State<SettingsList> {
     setState(() {});
   }
 
-  Future<void> _showStringInputDialog(SettingsStringInputItem item) async {
+  Future<void> _editStringInput(SettingsStringInputItem item) async {
     final store = _storeFor(item.store);
-    final localizations = MaterialLocalizations.of(context);
-    final textController = TextEditingController(
-      text: store.readString(item.setting),
+    final result = await TextInputDialog.show(
+      context,
+      title: item.title,
+      initialText: store.readString(item.setting),
+      maxLength: item.maxLength,
     );
-    final result = await showDialog<String>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(item.title),
-          content: TextField(
-            controller: textController,
-            maxLength: item.maxLength,
-          ),
-          actions: [
-            const DialogCancelButton(),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(textController.text),
-              child: Text(localizations.okButtonLabel),
-            ),
-          ],
-        );
-      },
-    );
-    textController.dispose();
     if (result == null) return;
     await store.writeString(item.setting, result);
     await _persist(item.store);
     setState(() {});
   }
 
-  Future<void> _showDateTimeDialog(SettingsDateTimeItem item) async {
+  Future<void> _editDateTime(SettingsDateTimeItem item) async {
     final store = _storeFor(item.store);
-    final raw = store.readString(item.setting);
-    final seconds = int.tryParse(raw);
+    final seconds = int.tryParse(store.readString(item.setting));
     final initial = seconds == null
         ? DateTime.now()
         : DateTime.fromMillisecondsSinceEpoch(
             seconds * 1000,
             isUtc: true,
           ).toLocal();
-    final date = await showDatePicker(
-      context: context,
-      initialDate: initial,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-    if (date == null || !mounted) return;
-    final time = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.fromDateTime(initial),
-    );
-    if (time == null) return;
-    final combined = DateTime(
-      date.year,
-      date.month,
-      date.day,
-      time.hour,
-      time.minute,
-    );
+    final result = await DateTimePicker.show(context, initial: initial);
+    if (result == null) return;
     await store.writeString(
       item.setting,
-      (combined.toUtc().millisecondsSinceEpoch ~/ 1000).toString(),
+      (result.toUtc().millisecondsSinceEpoch ~/ 1000).toString(),
     );
     await _persist(item.store);
     setState(() {});
   }
 
-  Future<void> _showInputBindingDialog(SettingsInputBindingItem item) async {
+  Future<void> _editInputBinding(SettingsInputBindingItem item) async {
     final store = _storeFor(item.store);
-    final t = context.t;
-    final subscription = Gamepads.events
-        .where((event) => event.type == KeyType.button && event.value > 0.5)
-        .listen(null);
-    final result = await showDialog<String>(
-      context: context,
-      builder: (context) {
-        subscription.onData((event) {
-          if (context.mounted) Navigator.of(context).pop(event.key);
-        });
-        return AlertDialog(
-          title: Text(item.title),
-          content: Text(t.settings.inputBindingDialog.waitingForInput),
-          actions: [const DialogCancelButton()],
-        );
-      },
-    );
-    await subscription.cancel();
+    final result = await InputBindingDialog.show(context, title: item.title);
     if (result == null) return;
     await store.writeString(item.setting, result);
     await _persist(item.store);

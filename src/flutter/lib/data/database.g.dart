@@ -3233,6 +3233,448 @@ class VirtualAccessPointsCompanion extends UpdateCompanion<VirtualAccessPoint> {
   }
 }
 
+class $PinnedOptionsTable extends PinnedOptions
+    with TableInfo<$PinnedOptionsTable, PinnedOption> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PinnedOptionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _optionIdMeta = const VerificationMeta(
+    'optionId',
+  );
+  @override
+  late final GeneratedColumn<String> optionId = GeneratedColumn<String>(
+    'option_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sortIndexMeta = const VerificationMeta(
+    'sortIndex',
+  );
+  @override
+  late final GeneratedColumn<int> sortIndex = GeneratedColumn<int>(
+    'sort_index',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [optionId, sortIndex];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'pinned_options';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<PinnedOption> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('option_id')) {
+      context.handle(
+        _optionIdMeta,
+        optionId.isAcceptableOrUnknown(data['option_id']!, _optionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_optionIdMeta);
+    }
+    if (data.containsKey('sort_index')) {
+      context.handle(
+        _sortIndexMeta,
+        sortIndex.isAcceptableOrUnknown(data['sort_index']!, _sortIndexMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sortIndexMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {optionId};
+  @override
+  PinnedOption map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PinnedOption(
+      optionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}option_id'],
+      )!,
+      sortIndex: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_index'],
+      )!,
+    );
+  }
+
+  @override
+  $PinnedOptionsTable createAlias(String alias) {
+    return $PinnedOptionsTable(attachedDatabase, alias);
+  }
+}
+
+class PinnedOption extends DataClass implements Insertable<PinnedOption> {
+  final String optionId;
+  final int sortIndex;
+  const PinnedOption({required this.optionId, required this.sortIndex});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['option_id'] = Variable<String>(optionId);
+    map['sort_index'] = Variable<int>(sortIndex);
+    return map;
+  }
+
+  PinnedOptionsCompanion toCompanion(bool nullToAbsent) {
+    return PinnedOptionsCompanion(
+      optionId: Value(optionId),
+      sortIndex: Value(sortIndex),
+    );
+  }
+
+  factory PinnedOption.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PinnedOption(
+      optionId: serializer.fromJson<String>(json['optionId']),
+      sortIndex: serializer.fromJson<int>(json['sortIndex']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'optionId': serializer.toJson<String>(optionId),
+      'sortIndex': serializer.toJson<int>(sortIndex),
+    };
+  }
+
+  PinnedOption copyWith({String? optionId, int? sortIndex}) => PinnedOption(
+    optionId: optionId ?? this.optionId,
+    sortIndex: sortIndex ?? this.sortIndex,
+  );
+  PinnedOption copyWithCompanion(PinnedOptionsCompanion data) {
+    return PinnedOption(
+      optionId: data.optionId.present ? data.optionId.value : this.optionId,
+      sortIndex: data.sortIndex.present ? data.sortIndex.value : this.sortIndex,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PinnedOption(')
+          ..write('optionId: $optionId, ')
+          ..write('sortIndex: $sortIndex')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(optionId, sortIndex);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PinnedOption &&
+          other.optionId == this.optionId &&
+          other.sortIndex == this.sortIndex);
+}
+
+class PinnedOptionsCompanion extends UpdateCompanion<PinnedOption> {
+  final Value<String> optionId;
+  final Value<int> sortIndex;
+  final Value<int> rowid;
+  const PinnedOptionsCompanion({
+    this.optionId = const Value.absent(),
+    this.sortIndex = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  PinnedOptionsCompanion.insert({
+    required String optionId,
+    required int sortIndex,
+    this.rowid = const Value.absent(),
+  }) : optionId = Value(optionId),
+       sortIndex = Value(sortIndex);
+  static Insertable<PinnedOption> custom({
+    Expression<String>? optionId,
+    Expression<int>? sortIndex,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (optionId != null) 'option_id': optionId,
+      if (sortIndex != null) 'sort_index': sortIndex,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  PinnedOptionsCompanion copyWith({
+    Value<String>? optionId,
+    Value<int>? sortIndex,
+    Value<int>? rowid,
+  }) {
+    return PinnedOptionsCompanion(
+      optionId: optionId ?? this.optionId,
+      sortIndex: sortIndex ?? this.sortIndex,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (optionId.present) {
+      map['option_id'] = Variable<String>(optionId.value);
+    }
+    if (sortIndex.present) {
+      map['sort_index'] = Variable<int>(sortIndex.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PinnedOptionsCompanion(')
+          ..write('optionId: $optionId, ')
+          ..write('sortIndex: $sortIndex, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $OptionHistoryEntriesTable extends OptionHistoryEntries
+    with TableInfo<$OptionHistoryEntriesTable, OptionHistoryEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $OptionHistoryEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _optionIdMeta = const VerificationMeta(
+    'optionId',
+  );
+  @override
+  late final GeneratedColumn<String> optionId = GeneratedColumn<String>(
+    'option_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _accessOrderMeta = const VerificationMeta(
+    'accessOrder',
+  );
+  @override
+  late final GeneratedColumn<int> accessOrder = GeneratedColumn<int>(
+    'access_order',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [optionId, accessOrder];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'option_history_entries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<OptionHistoryEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('option_id')) {
+      context.handle(
+        _optionIdMeta,
+        optionId.isAcceptableOrUnknown(data['option_id']!, _optionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_optionIdMeta);
+    }
+    if (data.containsKey('access_order')) {
+      context.handle(
+        _accessOrderMeta,
+        accessOrder.isAcceptableOrUnknown(
+          data['access_order']!,
+          _accessOrderMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_accessOrderMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {optionId};
+  @override
+  OptionHistoryEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return OptionHistoryEntry(
+      optionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}option_id'],
+      )!,
+      accessOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}access_order'],
+      )!,
+    );
+  }
+
+  @override
+  $OptionHistoryEntriesTable createAlias(String alias) {
+    return $OptionHistoryEntriesTable(attachedDatabase, alias);
+  }
+}
+
+class OptionHistoryEntry extends DataClass
+    implements Insertable<OptionHistoryEntry> {
+  final String optionId;
+  final int accessOrder;
+  const OptionHistoryEntry({required this.optionId, required this.accessOrder});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['option_id'] = Variable<String>(optionId);
+    map['access_order'] = Variable<int>(accessOrder);
+    return map;
+  }
+
+  OptionHistoryEntriesCompanion toCompanion(bool nullToAbsent) {
+    return OptionHistoryEntriesCompanion(
+      optionId: Value(optionId),
+      accessOrder: Value(accessOrder),
+    );
+  }
+
+  factory OptionHistoryEntry.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return OptionHistoryEntry(
+      optionId: serializer.fromJson<String>(json['optionId']),
+      accessOrder: serializer.fromJson<int>(json['accessOrder']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'optionId': serializer.toJson<String>(optionId),
+      'accessOrder': serializer.toJson<int>(accessOrder),
+    };
+  }
+
+  OptionHistoryEntry copyWith({String? optionId, int? accessOrder}) =>
+      OptionHistoryEntry(
+        optionId: optionId ?? this.optionId,
+        accessOrder: accessOrder ?? this.accessOrder,
+      );
+  OptionHistoryEntry copyWithCompanion(OptionHistoryEntriesCompanion data) {
+    return OptionHistoryEntry(
+      optionId: data.optionId.present ? data.optionId.value : this.optionId,
+      accessOrder: data.accessOrder.present
+          ? data.accessOrder.value
+          : this.accessOrder,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OptionHistoryEntry(')
+          ..write('optionId: $optionId, ')
+          ..write('accessOrder: $accessOrder')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(optionId, accessOrder);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is OptionHistoryEntry &&
+          other.optionId == this.optionId &&
+          other.accessOrder == this.accessOrder);
+}
+
+class OptionHistoryEntriesCompanion
+    extends UpdateCompanion<OptionHistoryEntry> {
+  final Value<String> optionId;
+  final Value<int> accessOrder;
+  final Value<int> rowid;
+  const OptionHistoryEntriesCompanion({
+    this.optionId = const Value.absent(),
+    this.accessOrder = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  OptionHistoryEntriesCompanion.insert({
+    required String optionId,
+    required int accessOrder,
+    this.rowid = const Value.absent(),
+  }) : optionId = Value(optionId),
+       accessOrder = Value(accessOrder);
+  static Insertable<OptionHistoryEntry> custom({
+    Expression<String>? optionId,
+    Expression<int>? accessOrder,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (optionId != null) 'option_id': optionId,
+      if (accessOrder != null) 'access_order': accessOrder,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  OptionHistoryEntriesCompanion copyWith({
+    Value<String>? optionId,
+    Value<int>? accessOrder,
+    Value<int>? rowid,
+  }) {
+    return OptionHistoryEntriesCompanion(
+      optionId: optionId ?? this.optionId,
+      accessOrder: accessOrder ?? this.accessOrder,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (optionId.present) {
+      map['option_id'] = Variable<String>(optionId.value);
+    }
+    if (accessOrder.present) {
+      map['access_order'] = Variable<int>(accessOrder.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OptionHistoryEntriesCompanion(')
+          ..write('optionId: $optionId, ')
+          ..write('accessOrder: $accessOrder, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3253,6 +3695,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $DebugSettingsTable debugSettings = $DebugSettingsTable(this);
   late final $VirtualAccessPointsTable virtualAccessPoints =
       $VirtualAccessPointsTable(this);
+  late final $PinnedOptionsTable pinnedOptions = $PinnedOptionsTable(this);
+  late final $OptionHistoryEntriesTable optionHistoryEntries =
+      $OptionHistoryEntriesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3268,6 +3713,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     mediaSettings,
     debugSettings,
     virtualAccessPoints,
+    pinnedOptions,
+    optionHistoryEntries,
   ];
 }
 
@@ -5254,6 +5701,330 @@ typedef $$VirtualAccessPointsTableProcessedTableManager =
       VirtualAccessPoint,
       PrefetchHooks Function()
     >;
+typedef $$PinnedOptionsTableCreateCompanionBuilder =
+    PinnedOptionsCompanion Function({
+      required String optionId,
+      required int sortIndex,
+      Value<int> rowid,
+    });
+typedef $$PinnedOptionsTableUpdateCompanionBuilder =
+    PinnedOptionsCompanion Function({
+      Value<String> optionId,
+      Value<int> sortIndex,
+      Value<int> rowid,
+    });
+
+class $$PinnedOptionsTableFilterComposer
+    extends Composer<_$AppDatabase, $PinnedOptionsTable> {
+  $$PinnedOptionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get optionId => $composableBuilder(
+    column: $table.optionId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sortIndex => $composableBuilder(
+    column: $table.sortIndex,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$PinnedOptionsTableOrderingComposer
+    extends Composer<_$AppDatabase, $PinnedOptionsTable> {
+  $$PinnedOptionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get optionId => $composableBuilder(
+    column: $table.optionId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get sortIndex => $composableBuilder(
+    column: $table.sortIndex,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$PinnedOptionsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PinnedOptionsTable> {
+  $$PinnedOptionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get optionId =>
+      $composableBuilder(column: $table.optionId, builder: (column) => column);
+
+  GeneratedColumn<int> get sortIndex =>
+      $composableBuilder(column: $table.sortIndex, builder: (column) => column);
+}
+
+class $$PinnedOptionsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $PinnedOptionsTable,
+          PinnedOption,
+          $$PinnedOptionsTableFilterComposer,
+          $$PinnedOptionsTableOrderingComposer,
+          $$PinnedOptionsTableAnnotationComposer,
+          $$PinnedOptionsTableCreateCompanionBuilder,
+          $$PinnedOptionsTableUpdateCompanionBuilder,
+          (
+            PinnedOption,
+            BaseReferences<_$AppDatabase, $PinnedOptionsTable, PinnedOption>,
+          ),
+          PinnedOption,
+          PrefetchHooks Function()
+        > {
+  $$PinnedOptionsTableTableManager(_$AppDatabase db, $PinnedOptionsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PinnedOptionsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PinnedOptionsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PinnedOptionsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> optionId = const Value.absent(),
+                Value<int> sortIndex = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => PinnedOptionsCompanion(
+                optionId: optionId,
+                sortIndex: sortIndex,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String optionId,
+                required int sortIndex,
+                Value<int> rowid = const Value.absent(),
+              }) => PinnedOptionsCompanion.insert(
+                optionId: optionId,
+                sortIndex: sortIndex,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$PinnedOptionsTable, PinnedOption>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $PinnedOptionsTable,
+                    PinnedOption
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$PinnedOptionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PinnedOptionsTable,
+      PinnedOption,
+      $$PinnedOptionsTableFilterComposer,
+      $$PinnedOptionsTableOrderingComposer,
+      $$PinnedOptionsTableAnnotationComposer,
+      $$PinnedOptionsTableCreateCompanionBuilder,
+      $$PinnedOptionsTableUpdateCompanionBuilder,
+      (
+        PinnedOption,
+        BaseReferences<_$AppDatabase, $PinnedOptionsTable, PinnedOption>,
+      ),
+      PinnedOption,
+      PrefetchHooks Function()
+    >;
+typedef $$OptionHistoryEntriesTableCreateCompanionBuilder =
+    OptionHistoryEntriesCompanion Function({
+      required String optionId,
+      required int accessOrder,
+      Value<int> rowid,
+    });
+typedef $$OptionHistoryEntriesTableUpdateCompanionBuilder =
+    OptionHistoryEntriesCompanion Function({
+      Value<String> optionId,
+      Value<int> accessOrder,
+      Value<int> rowid,
+    });
+
+class $$OptionHistoryEntriesTableFilterComposer
+    extends Composer<_$AppDatabase, $OptionHistoryEntriesTable> {
+  $$OptionHistoryEntriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get optionId => $composableBuilder(
+    column: $table.optionId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get accessOrder => $composableBuilder(
+    column: $table.accessOrder,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$OptionHistoryEntriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $OptionHistoryEntriesTable> {
+  $$OptionHistoryEntriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get optionId => $composableBuilder(
+    column: $table.optionId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get accessOrder => $composableBuilder(
+    column: $table.accessOrder,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$OptionHistoryEntriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $OptionHistoryEntriesTable> {
+  $$OptionHistoryEntriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get optionId =>
+      $composableBuilder(column: $table.optionId, builder: (column) => column);
+
+  GeneratedColumn<int> get accessOrder => $composableBuilder(
+    column: $table.accessOrder,
+    builder: (column) => column,
+  );
+}
+
+class $$OptionHistoryEntriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $OptionHistoryEntriesTable,
+          OptionHistoryEntry,
+          $$OptionHistoryEntriesTableFilterComposer,
+          $$OptionHistoryEntriesTableOrderingComposer,
+          $$OptionHistoryEntriesTableAnnotationComposer,
+          $$OptionHistoryEntriesTableCreateCompanionBuilder,
+          $$OptionHistoryEntriesTableUpdateCompanionBuilder,
+          (
+            OptionHistoryEntry,
+            BaseReferences<
+              _$AppDatabase,
+              $OptionHistoryEntriesTable,
+              OptionHistoryEntry
+            >,
+          ),
+          OptionHistoryEntry,
+          PrefetchHooks Function()
+        > {
+  $$OptionHistoryEntriesTableTableManager(
+    _$AppDatabase db,
+    $OptionHistoryEntriesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$OptionHistoryEntriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$OptionHistoryEntriesTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$OptionHistoryEntriesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> optionId = const Value.absent(),
+                Value<int> accessOrder = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OptionHistoryEntriesCompanion(
+                optionId: optionId,
+                accessOrder: accessOrder,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String optionId,
+                required int accessOrder,
+                Value<int> rowid = const Value.absent(),
+              }) => OptionHistoryEntriesCompanion.insert(
+                optionId: optionId,
+                accessOrder: accessOrder,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$OptionHistoryEntriesTable, OptionHistoryEntry>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $OptionHistoryEntriesTable,
+                    OptionHistoryEntry
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$OptionHistoryEntriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $OptionHistoryEntriesTable,
+      OptionHistoryEntry,
+      $$OptionHistoryEntriesTableFilterComposer,
+      $$OptionHistoryEntriesTableOrderingComposer,
+      $$OptionHistoryEntriesTableAnnotationComposer,
+      $$OptionHistoryEntriesTableCreateCompanionBuilder,
+      $$OptionHistoryEntriesTableUpdateCompanionBuilder,
+      (
+        OptionHistoryEntry,
+        BaseReferences<
+          _$AppDatabase,
+          $OptionHistoryEntriesTable,
+          OptionHistoryEntry
+        >,
+      ),
+      OptionHistoryEntry,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5278,4 +6049,8 @@ class $AppDatabaseManager {
       $$DebugSettingsTableTableManager(_db, _db.debugSettings);
   $$VirtualAccessPointsTableTableManager get virtualAccessPoints =>
       $$VirtualAccessPointsTableTableManager(_db, _db.virtualAccessPoints);
+  $$PinnedOptionsTableTableManager get pinnedOptions =>
+      $$PinnedOptionsTableTableManager(_db, _db.pinnedOptions);
+  $$OptionHistoryEntriesTableTableManager get optionHistoryEntries =>
+      $$OptionHistoryEntriesTableTableManager(_db, _db.optionHistoryEntries);
 }

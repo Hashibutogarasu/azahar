@@ -209,6 +209,10 @@ class _Translations$games$ja extends Translations$games$en {
   @override
   String get compress => '圧縮';
   @override
+  String titleIdLabel({required Object id}) => 'ID: ${id}';
+  @override
+  String fileLabel({required Object name}) => 'ファイル: ${name}';
+  @override
   String get deleteShaderCache => 'シェーダーキャッシュを削除';
   @override
   String get deleteCacheSelectBackend => 'シェーダーキャッシュを削除するグラフィックスAPIを選択してください';
@@ -419,6 +423,38 @@ class _Translations$options$ja extends Translations$options$en {
   late final _Translations$options$useLegacySettingsUIDialog$ja
   useLegacySettingsUIDialog =
       _Translations$options$useLegacySettingsUIDialog$ja._(_root);
+  @override
+  String get searchHint => 'オプションを検索';
+  @override
+  String get searchPrompt => '設定を検索するには入力してください';
+  @override
+  String get searchNoResults => '一致する設定がありません';
+  @override
+  String get history => '履歴';
+  @override
+  String get historyEmpty => '変更したり開いたりした設定がここに表示されます。';
+  @override
+  String get pinned => 'ピン留め';
+  @override
+  String get pinnedEmpty => '設定を長押しすると、ここにピン留めできます。';
+  @override
+  String get clear => '削除';
+  @override
+  String get clearHistoryTitle => '履歴を削除しますか？';
+  @override
+  String get clearHistoryMessage => '履歴のすべての項目を削除します。設定は変更されません。';
+  @override
+  String get clearPinnedTitle => 'すべてのピン留めを解除しますか？';
+  @override
+  String get clearPinnedMessage => 'ピン留めしたすべての項目を解除します。設定は変更されません。';
+  @override
+  String get removeFromHistory => '履歴から削除';
+  @override
+  String get pin => 'ピン留めする';
+  @override
+  String get unpin => 'ピン留めを解除';
+  @override
+  String pinLimitReached({required Object count}) => 'ピン留めは最大${count}件までです。';
   @override
   late final _Translations$options$groups$ja groups =
       _Translations$options$groups$ja._(_root);
@@ -2164,6 +2200,8 @@ extension on TranslationsJa {
           'games.cheats' => 'チート',
           'games.cheatsUnavailable' => 'このバージョンのアプリではチートはまだ利用できません。',
           'games.compress' => '圧縮',
+          'games.titleIdLabel' => ({required Object id}) => 'ID: ${id}',
+          'games.fileLabel' => ({required Object name}) => 'ファイル: ${name}',
           'games.deleteShaderCache' => 'シェーダーキャッシュを削除',
           'games.deleteCacheSelectBackend' =>
             'シェーダーキャッシュを削除するグラフィックスAPIを選択してください',
@@ -2263,6 +2301,23 @@ extension on TranslationsJa {
           'options.useLegacySettingsUIDialog.message' =>
             'オプション画面の見た目が変わります。いつでも元に戻すことができます。',
           'options.useLegacySettingsUIDialog.confirm' => '切り替える',
+          'options.searchHint' => 'オプションを検索',
+          'options.searchPrompt' => '設定を検索するには入力してください',
+          'options.searchNoResults' => '一致する設定がありません',
+          'options.history' => '履歴',
+          'options.historyEmpty' => '変更したり開いたりした設定がここに表示されます。',
+          'options.pinned' => 'ピン留め',
+          'options.pinnedEmpty' => '設定を長押しすると、ここにピン留めできます。',
+          'options.clear' => '削除',
+          'options.clearHistoryTitle' => '履歴を削除しますか？',
+          'options.clearHistoryMessage' => '履歴のすべての項目を削除します。設定は変更されません。',
+          'options.clearPinnedTitle' => 'すべてのピン留めを解除しますか？',
+          'options.clearPinnedMessage' => 'ピン留めしたすべての項目を解除します。設定は変更されません。',
+          'options.removeFromHistory' => '履歴から削除',
+          'options.pin' => 'ピン留めする',
+          'options.unpin' => 'ピン留めを解除',
+          'options.pinLimitReached' =>
+            ({required Object count}) => 'ピン留めは最大${count}件までです。',
           'options.groups.general' => '一般',
           'options.groups.emulation' => 'エミュレーション',
           'options.groups.clock' => '時計',
@@ -2659,6 +2714,9 @@ extension on TranslationsJa {
           'settings.system.countries.unitedArabEmirates' => 'アラブ首長国連邦',
           'settings.system.countries.india' => 'インド',
           'settings.system.countries.egypt' => 'エジプト',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.system.countries.oman' => 'オマーン',
           'settings.system.countries.qatar' => 'カタール',
           'settings.system.countries.kuwait' => 'クウェート',
@@ -2678,9 +2736,6 @@ extension on TranslationsJa {
             '仮想カメラの画像ソースを設定します。画像ファイル、または対応している場合はデバイスのカメラを使用できます。',
           'settings.camera.imageSourceBlank' => 'なし',
           'settings.camera.imageSourceStillImage' => '静止画',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.camera.imageSourceDeviceCamera' => 'デバイスのカメラ',
           'settings.camera.cameraDevice' => 'カメラ',
           'settings.camera.cameraDeviceDescription' =>

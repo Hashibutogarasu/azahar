@@ -1,40 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/options/options_search_provider.dart';
 import '../../data/settings/settings_load_provider.dart';
-import 'groups/accessibility_options_group.dart';
-import 'groups/clock_options_group.dart';
-import 'groups/controls_options_group.dart';
-import 'groups/emulation_options_group.dart';
-import 'groups/folder_settings_options_group.dart';
-import 'groups/general_options_group.dart';
-import 'groups/graphics_options_group.dart';
-import 'groups/networking_options_group.dart';
-import 'groups/other_options_group.dart';
-import 'groups/tools_options_group.dart';
+import '../../i18n/translations.g.dart';
+import '../../widgets/app_search_bar.dart';
+import 'widgets/options_home_content.dart';
+import 'widgets/options_search_results.dart';
 
-/// The Options tab: a grouped settings screen built on `babstrap_settings_screen`. Each category
-/// is its own widget under `groups/`, so this file only lays them out in order.
-class OptionsPage extends ConsumerWidget {
+/// The Options tab: a search bar above either the categories of settings or, once the search bar
+/// is used, the search results. The settings themselves are defined as data under
+/// `data/options/` and turned into tiles by [OptionsHomeContent] and [OptionsSearchResults].
+class OptionsPage extends ConsumerStatefulWidget {
   const OptionsPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<OptionsPage> createState() => _OptionsPageState();
+}
+
+class _OptionsPageState extends ConsumerState<OptionsPage> {
+  final _queryController = TextEditingController();
+
+  @override
+  void dispose() {
+    _queryController.dispose();
+    super.dispose();
+  }
+
+  void _handleFocusChanged(bool focused) {
+    final notifier = ref.read(optionsSearchProvider.notifier);
+    if (focused) {
+      notifier.activate();
+    } else if (_queryController.text.isEmpty) {
+      notifier.deactivate();
+    }
+  }
+
+  void _handleClear() {
+    _queryController.clear();
+    ref.read(optionsSearchProvider.notifier).deactivate();
+    FocusScope.of(context).unfocus();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     ref.watch(settingsLoadProvider);
+    final isSearching = ref.watch(optionsSearchProvider).isActive;
     return SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: const [
-          GeneralOptionsGroup(),
-          EmulationOptionsGroup(),
-          ClockOptionsGroup(),
-          GraphicsOptionsGroup(),
-          NetworkingOptionsGroup(),
-          ControlsOptionsGroup(),
-          ToolsOptionsGroup(),
-          FolderSettingsOptionsGroup(),
-          AccessibilityOptionsGroup(),
-          OtherOptionsGroup(),
+      child: Column(
+        children: [
+          AppSearchBar(
+            controller: _queryController,
+            hintText: context.t.options.searchHint,
+            onChanged: ref.read(optionsSearchProvider.notifier).setQuery,
+            onClear: _handleClear,
+            onFocusChanged: _handleFocusChanged,
+          ),
+          Expanded(
+            child: isSearching
+                ? const OptionsSearchResults()
+                : const OptionsHomeContent(),
+          ),
         ],
       ),
     );
