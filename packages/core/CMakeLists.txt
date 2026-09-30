@@ -19,6 +19,10 @@ include(CMakeDependentOption)
 
 project(citra LANGUAGES C CXX ASM)
 
+get_filename_component(AZAHAR_REPO_ROOT "${PROJECT_SOURCE_DIR}/../.." ABSOLUTE)
+set(AZAHAR_APPS_DIR "${AZAHAR_REPO_ROOT}/apps")
+set(AZAHAR_DIST_DIR "${AZAHAR_APPS_DIR}/qt-desktop/dist")
+
 # Some submodules like to pick their own default build type if not specified.
 # Make sure we default to Release build type always, unless the generator has custom types.
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -134,10 +138,10 @@ if (CITRA_USE_PRECOMPILED_HEADERS)
     endif()
 endif()
 
-if(NOT EXISTS ${PROJECT_SOURCE_DIR}/.git/hooks/pre-commit)
+if(NOT EXISTS ${AZAHAR_REPO_ROOT}/.git/hooks/pre-commit)
     message(STATUS "Copying pre-commit hook")
-    file(COPY hooks/pre-commit
-        DESTINATION ${PROJECT_SOURCE_DIR}/.git/hooks)
+    file(COPY ${AZAHAR_REPO_ROOT}/hooks/pre-commit
+        DESTINATION ${AZAHAR_REPO_ROOT}/.git/hooks)
 endif()
 
 # Use ccache for android if available
@@ -184,26 +188,26 @@ endif()
 # =======================================================================
 
 function(check_submodules_present)
-    file(READ "${PROJECT_SOURCE_DIR}/.gitmodules" gitmodules)
+    file(READ "${AZAHAR_REPO_ROOT}/.gitmodules" gitmodules)
     string(REGEX MATCHALL "path *= *[^ \t\r\n]*" gitmodules ${gitmodules})
     foreach(module ${gitmodules})
         string(REGEX REPLACE "path *= *" "" module ${module})
-        if (NOT EXISTS "${PROJECT_SOURCE_DIR}/${module}/.git")
+        if (NOT EXISTS "${AZAHAR_REPO_ROOT}/${module}/.git")
             message(SEND_ERROR "Git submodule ${module} not found."
                     "Please run: git submodule update --init --recursive")
         endif()
     endforeach()
 endfunction()
-if (EXISTS "${PROJECT_SOURCE_DIR}/.git/objects")
+if (EXISTS "${AZAHAR_REPO_ROOT}/.git/objects")
     # only check submodules when source is obtained via Git
     check_submodules_present()
 endif()
 
-configure_file(${PROJECT_SOURCE_DIR}/dist/compatibility_list/compatibility_list.qrc
+configure_file(${AZAHAR_DIST_DIR}/compatibility_list/compatibility_list.qrc
                ${PROJECT_BINARY_DIR}/dist/compatibility_list/compatibility_list.qrc
                COPYONLY)
-if (EXISTS ${PROJECT_SOURCE_DIR}/dist/compatibility_list/compatibility_list.json)
-    file(COPY "${PROJECT_SOURCE_DIR}/dist/compatibility_list/compatibility_list.json"
+if (EXISTS ${AZAHAR_DIST_DIR}/compatibility_list/compatibility_list.json)
+    file(COPY "${AZAHAR_DIST_DIR}/compatibility_list/compatibility_list.json"
         DESTINATION "${PROJECT_BINARY_DIR}/dist/compatibility_list/")
 endif()
 if (NOT EXISTS ${PROJECT_BINARY_DIR}/dist/compatibility_list/compatibility_list.json)
@@ -280,6 +284,10 @@ if (ENABLE_QT)
     endif()
 
     find_package(Qt6 REQUIRED COMPONENTS Widgets Multimedia Concurrent)
+
+    if (NOT WIN32)
+        find_package(Qt6 REQUIRED COMPONENTS GuiPrivate)
+    endif()
 
     if (UNIX AND NOT APPLE)
         find_package(Qt6 REQUIRED COMPONENTS DBus)
@@ -498,15 +506,15 @@ endif()
 # http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
 # http://standards.freedesktop.org/shared-mime-info-spec/shared-mime-info-spec-latest.html
 if(ENABLE_QT AND UNIX AND NOT APPLE)
-    install(FILES "${PROJECT_SOURCE_DIR}/dist/azahar.desktop"
+    install(FILES "${AZAHAR_DIST_DIR}/azahar.desktop"
             DESTINATION "${CMAKE_INSTALL_PREFIX}/share/applications"
             RENAME "org.azahar_emu.Azahar.desktop")
-    install(FILES "${PROJECT_SOURCE_DIR}/dist/azahar.svg"
+    install(FILES "${AZAHAR_DIST_DIR}/azahar.svg"
             DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps"
             RENAME "org.azahar_emu.Azahar.svg")
-    install(FILES "${PROJECT_SOURCE_DIR}/dist/azahar.png"
+    install(FILES "${AZAHAR_DIST_DIR}/azahar.png"
             DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/512x512/apps"
             RENAME "org.azahar_emu.Azahar.png")
-    install(FILES "${PROJECT_SOURCE_DIR}/dist/org.azahar_emu.Azahar.xml"
+    install(FILES "${AZAHAR_DIST_DIR}/org.azahar_emu.Azahar.xml"
             DESTINATION "${CMAKE_INSTALL_PREFIX}/share/mime/packages")
 endif()

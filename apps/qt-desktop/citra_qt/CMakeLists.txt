@@ -195,8 +195,8 @@ add_library(citra_qt STATIC EXCLUDE_FROM_ALL
 file(GLOB COMPAT_LIST
      ${PROJECT_BINARY_DIR}/dist/compatibility_list/compatibility_list.qrc
      ${PROJECT_BINARY_DIR}/dist/compatibility_list/compatibility_list.json)
-file(GLOB_RECURSE ICONS ${PROJECT_SOURCE_DIR}/dist/icons/*)
-file(GLOB_RECURSE THEMES ${PROJECT_SOURCE_DIR}/dist/qt_themes/*)
+file(GLOB_RECURSE ICONS ${AZAHAR_DIST_DIR}/icons/*)
+file(GLOB_RECURSE THEMES ${AZAHAR_DIST_DIR}/qt_themes/*)
 
 if (ENABLE_QT_UPDATE_CHECKER)
     target_link_libraries(citra_qt PRIVATE httplib json-headers)
@@ -205,7 +205,7 @@ if (ENABLE_QT_UPDATE_CHECKER)
 endif()
 
 if (ENABLE_QT_TRANSLATION)
-    set(CITRA_QT_LANGUAGES "${PROJECT_SOURCE_DIR}/dist/languages" CACHE PATH "Path to the translation bundle for the Qt frontend")
+    set(CITRA_QT_LANGUAGES "${AZAHAR_DIST_DIR}/languages" CACHE PATH "Path to the translation bundle for the Qt frontend")
     option(GENERATE_QT_TRANSLATION "Generate en.ts as the translation source file" OFF)
 
     # Update source TS file if enabled
@@ -273,7 +273,7 @@ if (ENABLE_VULKAN)
 endif()
 
 if (NOT WIN32)
-    target_include_directories(citra_qt PRIVATE ${Qt6Gui_PRIVATE_INCLUDE_DIRS})
+    target_link_libraries(citra_qt PRIVATE Qt6::GuiPrivate)
 endif()
 
 if (UNIX AND NOT APPLE)

@@ -7,10 +7,10 @@ doc-build/
 build-*/
 
 # NSIS built executables
-src/installer/*.exe
+packages/core/src/installer/*.exe
 
 # Generated source files
-src/common/scm_rev.cpp
+packages/core/src/common/scm_rev.cpp
 .travis.descriptor.json
 
 # Project/editor files
@@ -62,3 +62,5 @@ VULKAN_SDK/
 
 # Environment
 .envrc
+.dart_tool/
+melos_*.iml

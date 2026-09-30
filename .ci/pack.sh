@@ -52,7 +52,7 @@ function pack_artifacts() {
 
 if [ "$OS" = "windows" ] && [ "$GITHUB_REF_TYPE" = "tag" ]; then
     # Move the installer to the artifacts directory
-    mv src/installer/bin/*.exe artifacts/
+    mv packages/core/src/installer/bin/*.exe artifacts/
 fi
 
 if [ -n "$UNPACKED" ]; then

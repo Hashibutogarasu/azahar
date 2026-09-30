@@ -7,7 +7,7 @@ if [ ! -z "${ANDROID_KEYSTORE_B64}" ]; then
     base64 --decode <<< "${ANDROID_KEYSTORE_B64}" > "${ANDROID_KEYSTORE_FILE}"
 fi
 
-cd src/android
+cd apps/android
 chmod +x ./gradlew
 ./gradlew assembleRelease
 ./gradlew bundleRelease

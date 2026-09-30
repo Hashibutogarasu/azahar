@@ -16,7 +16,7 @@ if [ "$GITHUB_REF_TYPE" == "tag" ]; then
 fi
 
 mkdir build && cd build
-cmake .. -G Ninja \
+cmake ../packages/core -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_C_COMPILER_LAUNCHER=ccache \
     -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \

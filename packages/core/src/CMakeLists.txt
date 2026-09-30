@@ -1,5 +1,6 @@
 # Enable modules to include each other's files
 include_directories(.)
+include_directories(${AZAHAR_APPS_DIR}/qt-desktop)
 
 # CMake seems to only define _DEBUG on Windows
 set_property(DIRECTORY APPEND PROPERTY
@@ -188,11 +189,11 @@ if (ENABLE_SDL2_FRONTEND)
 endif()
 
 if (ENABLE_QT)
-    add_subdirectory(citra_qt)
+    add_subdirectory(${AZAHAR_APPS_DIR}/qt-desktop/citra_qt ${PROJECT_BINARY_DIR}/apps/qt-desktop/citra_qt)
 endif()
 
 if (ENABLE_QT OR ENABLE_SDL2_FRONTEND)
-    add_subdirectory(citra_meta)
+    add_subdirectory(${AZAHAR_APPS_DIR}/qt-desktop/citra_meta ${PROJECT_BINARY_DIR}/apps/qt-desktop/citra_meta)
 endif()
 
 if (ENABLE_ROOM)
@@ -200,8 +201,8 @@ if (ENABLE_ROOM)
 endif()
 
 if (ANDROID)
-    add_subdirectory(android/app/src/main/jni)
-    target_include_directories(citra-android PRIVATE android/app/src/main)
+    add_subdirectory(${AZAHAR_APPS_DIR}/android/app/src/main/jni ${PROJECT_BINARY_DIR}/apps/android/jni)
+    target_include_directories(citra-android PRIVATE ${AZAHAR_APPS_DIR}/android/app/src/main)
 endif()
 
 if (ENABLE_WEB_SERVICE)

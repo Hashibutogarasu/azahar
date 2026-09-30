@@ -5,7 +5,7 @@ if [ "$GITHUB_REF_TYPE" == "tag" ]; then
 fi
 
 mkdir build && cd build
-cmake .. -GNinja \
+cmake ../packages/core -GNinja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_OSX_ARCHITECTURES="$TARGET" \
     -DCMAKE_C_COMPILER_LAUNCHER=ccache \

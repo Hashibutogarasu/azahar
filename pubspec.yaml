@@ -1,0 +1,16 @@
+name: azahar_workspace
+description: Melos workspace root for the Azahar monorepo.
+publish_to: none
+
+environment:
+  sdk: ^3.12.2
+
+workspace:
+  - apps/flutter
+  - packages/native
+
+dev_dependencies:
+  melos: ^7.0.0
+
+melos:
+  name: azahar
