@@ -88,10 +88,20 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(optionHistoryEntries);
       }
       if (from < 11) {
-        await m.addColumn(
-          accessibilitySettings,
-          accessibilitySettings.pageTransition,
+        final columns = await customSelect(
+          'PRAGMA table_info(${accessibilitySettings.actualTableName})',
+        ).get();
+        final hasPageTransition = columns.any(
+          (column) =>
+              column.read<String>('name') ==
+              accessibilitySettings.pageTransition.name,
         );
+        if (!hasPageTransition) {
+          await m.addColumn(
+            accessibilitySettings,
+            accessibilitySettings.pageTransition,
+          );
+        }
       }
     },
   );

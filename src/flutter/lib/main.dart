@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
+import 'package:stack_trace/stack_trace.dart' as stack_trace;
 
 import 'app_services.dart';
 import 'data/settings/debug_settings_provider.dart';
@@ -32,6 +33,11 @@ void reportAppException(AppException error) {
 }
 
 void main(List<String> args) {
+  FlutterError.demangleStackTrace = (stack) => switch (stack) {
+    stack_trace.Chain() => stack.toTrace().vmTrace,
+    stack_trace.Trace() => stack.vmTrace,
+    _ => stack,
+  };
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
