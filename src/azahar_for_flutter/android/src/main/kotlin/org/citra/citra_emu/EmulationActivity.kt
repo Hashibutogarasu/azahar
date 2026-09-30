@@ -21,6 +21,7 @@ import org.citra.citra_emu.applets.MiiSelector
 import org.citra.citra_emu.applets.SoftwareKeyboard
 import org.citra.citra_emu.camera.StillImageCameraHelper
 import org.citra.citra_emu.channel.AzaharMethodHandler
+import org.citra.citra_emu.channel.CheatsController
 import org.citra.citra_emu.channel.EmulationController
 import org.citra.citra_emu.channel.LogStreamHandler
 import org.citra.citra_emu.channel.MediaNotificationController
@@ -111,10 +112,12 @@ class EmulationActivity : FlutterFragmentActivity() {
         val mediaNotificationController = MediaNotificationController(this)
         val wifiController = WifiController()
         val userFilesController = UserFilesController(this)
+        val cheatsController = CheatsController()
         val handlers: Map<String, AzaharMethodHandler> =
             (emulationController.handlers + systemVolumeController.handlers +
                 settingsController.handlers + mediaNotificationController.handlers +
-                wifiController.handlers + userFilesController.handlers + TerminateProcess())
+                wifiController.handlers + userFilesController.handlers +
+                cheatsController.handlers + TerminateProcess())
                 .associateBy { it.name }
 
         val appletChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, APPLET_CHANNEL)

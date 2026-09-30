@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../../data/repositories/cheat_repository.dart';
 import '../../../i18n/translations.g.dart';
-import '../../settings/widgets/settings_group_card.dart';
 import 'add_cheat_dialog.dart';
 import 'cheat_toggle_tile.dart';
 
 /// Lists the cheats of the running title and lets the user toggle them.
 ///
-/// Open it through [show]. The plus buttons at the top and the bottom of the list close this
-/// dialog and open [AddCheatDialog]; once that one is dismissed, this dialog is shown again.
+/// Open it through [show]. The plus buttons at the top and the bottom of the list open
+/// [AddCheatDialog] on top of this dialog, which stays open and shows the new cheat once that
+/// one is dismissed.
 class CheatsDialog extends StatefulWidget {
   const CheatsDialog({super.key, required this.repository});
 
@@ -20,15 +20,11 @@ class CheatsDialog extends StatefulWidget {
     required CheatRepository repository,
   }) async {
     await repository.load();
-    while (true) {
-      if (!context.mounted) return;
-      final addRequested = await showDialog<bool>(
-        context: context,
-        builder: (_) => CheatsDialog(repository: repository),
-      );
-      if (addRequested != true || !context.mounted) return;
-      await AddCheatDialog.show(context, repository: repository);
-    }
+    if (!context.mounted) return;
+    await showDialog<void>(
+      context: context,
+      builder: (_) => CheatsDialog(repository: repository),
+    );
   }
 
   @override
@@ -41,7 +37,10 @@ class _CheatsDialogState extends State<CheatsDialog> {
     if (mounted) setState(() {});
   }
 
-  void _requestAdd() => Navigator.of(context).pop(true);
+  Future<void> _requestAdd() async {
+    await AddCheatDialog.show(context, repository: widget.repository);
+    if (mounted) setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,15 +61,11 @@ class _CheatsDialogState extends State<CheatsDialog> {
                   child: Text(t.emulation.noCheats),
                 )
               else
-                SettingsGroupCard(
-                  items: [
-                    for (var i = 0; i < cheats.length; i++)
-                      CheatToggleTile(
-                        cheat: cheats[i],
-                        onChanged: (value) => _setEnabled(i, value),
-                      ),
-                  ],
-                ),
+                for (var i = 0; i < cheats.length; i++)
+                  CheatToggleTile(
+                    cheat: cheats[i],
+                    onChanged: (value) => _setEnabled(i, value),
+                  ),
               _AddCheatButton(onPressed: _requestAdd),
             ],
           ),
