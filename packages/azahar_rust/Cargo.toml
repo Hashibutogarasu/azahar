@@ -1,0 +1,20 @@
+[package]
+name = "azahar_rust"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+cpal = "0.15"
+flutter_rust_bridge = "=2.13.0"
+ringbuf = "0.4"
+thiserror = "2"
+
+[lib]
+crate-type = ["cdylib", "staticlib", "lib"]
+
+[features]
+default = []
+link_core = []
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ["cfg(frb_expand)"] }
