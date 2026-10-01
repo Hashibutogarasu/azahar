@@ -1,5 +1,6 @@
 part of '../database.dart';
 
+@DataClassName('FeatureFlagSetting')
 class FeatureFlags extends Table {
   IntColumn get id => integer().withDefault(const Constant(0))();
   BoolColumn get performanceImprovements =>

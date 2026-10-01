@@ -5,14 +5,17 @@ import 'loadable.dart';
 import 'writable.dart';
 
 /// Holds the feature flags in memory, so they can be read synchronously once [load] has completed.
-class FeatureFlagsRepository implements Loadable, Writable<FeatureFlag> {
+class FeatureFlagsRepository implements Loadable, Writable<FeatureFlagSetting> {
   FeatureFlagsRepository(this._db);
 
   final AppDatabase _db;
 
-  FeatureFlag _flags = const FeatureFlag(id: 0, performanceImprovements: false);
+  FeatureFlagSetting _flags = const FeatureFlagSetting(
+    id: 0,
+    performanceImprovements: false,
+  );
 
-  FeatureFlag get flags => _flags;
+  FeatureFlagSetting get flags => _flags;
 
   @override
   Future<void> load() async {
@@ -23,7 +26,7 @@ class FeatureFlagsRepository implements Loadable, Writable<FeatureFlag> {
   }
 
   @override
-  Future<void> write(FeatureFlag value) async {
+  Future<void> write(FeatureFlagSetting value) async {
     await _db
         .into(_db.featureFlags)
         .insertOnConflictUpdate(

@@ -4427,7 +4427,7 @@ class UserGameInfosCompanion extends UpdateCompanion<UserGameInfoRow> {
 }
 
 class $FeatureFlagsTable extends FeatureFlags
-    with TableInfo<$FeatureFlagsTable, FeatureFlag> {
+    with TableInfo<$FeatureFlagsTable, FeatureFlagSetting> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -4466,7 +4466,7 @@ class $FeatureFlagsTable extends FeatureFlags
   static const String $name = 'feature_flags';
   @override
   VerificationContext validateIntegrity(
-    Insertable<FeatureFlag> instance, {
+    Insertable<FeatureFlagSetting> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -4489,9 +4489,9 @@ class $FeatureFlagsTable extends FeatureFlags
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  FeatureFlag map(Map<String, dynamic> data, {String? tablePrefix}) {
+  FeatureFlagSetting map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return FeatureFlag(
+    return FeatureFlagSetting(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -4509,10 +4509,14 @@ class $FeatureFlagsTable extends FeatureFlags
   }
 }
 
-class FeatureFlag extends DataClass implements Insertable<FeatureFlag> {
+class FeatureFlagSetting extends DataClass
+    implements Insertable<FeatureFlagSetting> {
   final int id;
   final bool performanceImprovements;
-  const FeatureFlag({required this.id, required this.performanceImprovements});
+  const FeatureFlagSetting({
+    required this.id,
+    required this.performanceImprovements,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -4528,12 +4532,12 @@ class FeatureFlag extends DataClass implements Insertable<FeatureFlag> {
     );
   }
 
-  factory FeatureFlag.fromJson(
+  factory FeatureFlagSetting.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return FeatureFlag(
+    return FeatureFlagSetting(
       id: serializer.fromJson<int>(json['id']),
       performanceImprovements: serializer.fromJson<bool>(
         json['performanceImprovements'],
@@ -4551,13 +4555,14 @@ class FeatureFlag extends DataClass implements Insertable<FeatureFlag> {
     };
   }
 
-  FeatureFlag copyWith({int? id, bool? performanceImprovements}) => FeatureFlag(
-    id: id ?? this.id,
-    performanceImprovements:
-        performanceImprovements ?? this.performanceImprovements,
-  );
-  FeatureFlag copyWithCompanion(FeatureFlagsCompanion data) {
-    return FeatureFlag(
+  FeatureFlagSetting copyWith({int? id, bool? performanceImprovements}) =>
+      FeatureFlagSetting(
+        id: id ?? this.id,
+        performanceImprovements:
+            performanceImprovements ?? this.performanceImprovements,
+      );
+  FeatureFlagSetting copyWithCompanion(FeatureFlagsCompanion data) {
+    return FeatureFlagSetting(
       id: data.id.present ? data.id.value : this.id,
       performanceImprovements: data.performanceImprovements.present
           ? data.performanceImprovements.value
@@ -4567,7 +4572,7 @@ class FeatureFlag extends DataClass implements Insertable<FeatureFlag> {
 
   @override
   String toString() {
-    return (StringBuffer('FeatureFlag(')
+    return (StringBuffer('FeatureFlagSetting(')
           ..write('id: $id, ')
           ..write('performanceImprovements: $performanceImprovements')
           ..write(')'))
@@ -4579,12 +4584,12 @@ class FeatureFlag extends DataClass implements Insertable<FeatureFlag> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is FeatureFlag &&
+      (other is FeatureFlagSetting &&
           other.id == this.id &&
           other.performanceImprovements == this.performanceImprovements);
 }
 
-class FeatureFlagsCompanion extends UpdateCompanion<FeatureFlag> {
+class FeatureFlagsCompanion extends UpdateCompanion<FeatureFlagSetting> {
   final Value<int> id;
   final Value<bool> performanceImprovements;
   const FeatureFlagsCompanion({
@@ -4595,7 +4600,7 @@ class FeatureFlagsCompanion extends UpdateCompanion<FeatureFlag> {
     this.id = const Value.absent(),
     this.performanceImprovements = const Value.absent(),
   });
-  static Insertable<FeatureFlag> custom({
+  static Insertable<FeatureFlagSetting> custom({
     Expression<int>? id,
     Expression<bool>? performanceImprovements,
   }) {
@@ -7774,17 +7779,21 @@ class $$FeatureFlagsTableTableManager
         RootTableManager<
           _$AppDatabase,
           $FeatureFlagsTable,
-          FeatureFlag,
+          FeatureFlagSetting,
           $$FeatureFlagsTableFilterComposer,
           $$FeatureFlagsTableOrderingComposer,
           $$FeatureFlagsTableAnnotationComposer,
           $$FeatureFlagsTableCreateCompanionBuilder,
           $$FeatureFlagsTableUpdateCompanionBuilder,
           (
-            FeatureFlag,
-            BaseReferences<_$AppDatabase, $FeatureFlagsTable, FeatureFlag>,
+            FeatureFlagSetting,
+            BaseReferences<
+              _$AppDatabase,
+              $FeatureFlagsTable,
+              FeatureFlagSetting
+            >,
           ),
-          FeatureFlag,
+          FeatureFlagSetting,
           PrefetchHooks Function()
         > {
   $$FeatureFlagsTableTableManager(_$AppDatabase db, $FeatureFlagsTable table)
@@ -7817,11 +7826,11 @@ class $$FeatureFlagsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable<$FeatureFlagsTable, FeatureFlag>(table),
+                  e.readTable<$FeatureFlagsTable, FeatureFlagSetting>(table),
                   BaseReferences<
                     _$AppDatabase,
                     $FeatureFlagsTable,
-                    FeatureFlag
+                    FeatureFlagSetting
                   >(db, table, e),
                 ),
               )
@@ -7835,17 +7844,17 @@ typedef $$FeatureFlagsTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $FeatureFlagsTable,
-      FeatureFlag,
+      FeatureFlagSetting,
       $$FeatureFlagsTableFilterComposer,
       $$FeatureFlagsTableOrderingComposer,
       $$FeatureFlagsTableAnnotationComposer,
       $$FeatureFlagsTableCreateCompanionBuilder,
       $$FeatureFlagsTableUpdateCompanionBuilder,
       (
-        FeatureFlag,
-        BaseReferences<_$AppDatabase, $FeatureFlagsTable, FeatureFlag>,
+        FeatureFlagSetting,
+        BaseReferences<_$AppDatabase, $FeatureFlagsTable, FeatureFlagSetting>,
       ),
-      FeatureFlag,
+      FeatureFlagSetting,
       PrefetchHooks Function()
     >;
 
