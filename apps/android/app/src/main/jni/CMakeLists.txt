@@ -32,7 +32,42 @@ add_library(citra-android SHARED
     util.h
 )
 
+set(AZAHAR_RUST_DIR "${AZAHAR_REPO_ROOT}/packages/azahar_rust")
+if ("${ANDROID_ABI}" STREQUAL "arm64-v8a")
+    set(AZAHAR_RUST_TARGET aarch64-linux-android)
+elseif ("${ANDROID_ABI}" STREQUAL "x86_64")
+    set(AZAHAR_RUST_TARGET x86_64-linux-android)
+else()
+    message(FATAL_ERROR "azahar_rust does not support the ABI ${ANDROID_ABI}")
+endif()
+string(REPLACE "-" "_" AZAHAR_RUST_TARGET_ENV "${AZAHAR_RUST_TARGET}")
+string(TOUPPER "${AZAHAR_RUST_TARGET_ENV}" AZAHAR_RUST_TARGET_UPPER)
+set(AZAHAR_RUST_CLANG "${ANDROID_TOOLCHAIN_ROOT}/bin/${AZAHAR_RUST_TARGET}${ANDROID_PLATFORM_LEVEL}-clang")
+set(AZAHAR_RUST_LIB "${AZAHAR_RUST_DIR}/target/${AZAHAR_RUST_TARGET}/release/libazahar_rust.a")
+find_program(CARGO_EXECUTABLE cargo REQUIRED)
+add_custom_target(azahar_rust_lib
+    COMMAND ${CMAKE_COMMAND} -E env
+        "CC_${AZAHAR_RUST_TARGET_ENV}=${AZAHAR_RUST_CLANG}"
+        "CXX_${AZAHAR_RUST_TARGET_ENV}=${AZAHAR_RUST_CLANG}++"
+        "AR_${AZAHAR_RUST_TARGET_ENV}=${ANDROID_TOOLCHAIN_ROOT}/bin/llvm-ar"
+        "CARGO_TARGET_${AZAHAR_RUST_TARGET_UPPER}_LINKER=${AZAHAR_RUST_CLANG}"
+        "${CARGO_EXECUTABLE}" rustc --release --lib --crate-type staticlib
+        --target ${AZAHAR_RUST_TARGET}
+    WORKING_DIRECTORY "${AZAHAR_RUST_DIR}"
+    BYPRODUCTS "${AZAHAR_RUST_LIB}"
+    COMMENT "Building azahar_rust for ${AZAHAR_RUST_TARGET}"
+)
+add_dependencies(citra-android azahar_rust_lib)
+target_include_directories(citra-android PRIVATE "${AZAHAR_RUST_DIR}/include")
+
 target_link_libraries(citra-android PRIVATE audio_core citra_common citra_core input_common network)
+target_link_libraries(citra-android PRIVATE
+    -Wl,--whole-archive
+    "${AZAHAR_RUST_LIB}"
+    -Wl,--no-whole-archive
+    OpenSLES
+)
+target_link_options(citra-android PRIVATE "-Wl,--export-dynamic-symbol=frb_*")
 target_link_libraries(citra-android PRIVATE android camera2ndk inih jnigraphics log mediandk yuv)
 
 if (ENABLE_OPENGL)

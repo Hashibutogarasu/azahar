@@ -33,6 +33,8 @@ jmethodID GetRequestCameraPermission();
 jmethodID GetRequestMicPermission();
 jmethodID GetRequestWifiPermission();
 jmethodID GetScanWifiAccessPoints();
+jmethodID GetCreateSessionTexture();
+jmethodID GetReleaseSessionTextures();
 
 jclass GetCheatClass();
 jfieldID GetCheatPointer();

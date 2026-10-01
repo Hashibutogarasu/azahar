@@ -8,6 +8,8 @@
 #include <charconv>
 #include <codecvt>
 #include <cstdio>
+#include <cstring>
+#include <mutex>
 #include <optional>
 #include <string>
 #include <thread>
@@ -22,6 +24,9 @@
 
 #include <core/hle/service/cfg/cfg.h>
 #include "audio_core/dsp_interface.h"
+#include "audio_core/external_sink.h"
+#include "audio_core/sink_details.h"
+#include "azahar_session.h"
 #include "common/arch.h"
 #if CITRA_ARCH(arm64)
 #include "common/aarch64/cpu_detect.h"
@@ -41,11 +46,13 @@
 #include "core/core.h"
 #include "core/frontend/applets/default_applets.h"
 #include "core/frontend/camera/factory.h"
+#include "core/hle/kernel/kernel.h"
 #include "core/hle/service/ac/ac.h"
 #include "core/hle/service/am/am.h"
 #include "core/hle/service/nfc/nfc.h"
 #include "core/hw/unique_data.h"
 #include "core/loader/loader.h"
+#include "core/memory.h"
 #include "core/savestate.h"
 #include "core/system_titles.h"
 #include "jni/android_common/android_common.h"
@@ -123,7 +130,36 @@ static bool HandleCoreError(Core::System::ResultStatus result, const std::string
                                         env->NewStringUTF(details.c_str())) != JNI_FALSE;
 }
 
+static std::mutex g_session_callbacks_mutex;
+static std::optional<AzaharSessionCallbacks> g_session_callbacks;
+
+static int32_t ToSessionShaderStage(VideoCore::LoadCallbackStage stage) {
+    switch (stage) {
+    case VideoCore::LoadCallbackStage::Prepare:
+    case VideoCore::LoadCallbackStage::Preload:
+        return AZAHAR_SHADER_STAGE_PREPARE;
+    case VideoCore::LoadCallbackStage::Decompile:
+        return AZAHAR_SHADER_STAGE_DECOMPILE;
+    case VideoCore::LoadCallbackStage::Build:
+        return AZAHAR_SHADER_STAGE_BUILD;
+    case VideoCore::LoadCallbackStage::Complete:
+        return AZAHAR_SHADER_STAGE_COMPLETE;
+    }
+    return AZAHAR_SHADER_STAGE_PREPARE;
+}
+
 static void LoadDiskCacheProgress(VideoCore::LoadCallbackStage stage, int progress, int max) {
+    {
+        std::lock_guard lock{g_session_callbacks_mutex};
+        if (g_session_callbacks) {
+            if (g_session_callbacks->on_shader_progress) {
+                g_session_callbacks->on_shader_progress(
+                    g_session_callbacks->user, ToSessionShaderStage(stage),
+                    static_cast<uint64_t>(progress), static_cast<uint64_t>(max));
+            }
+            return;
+        }
+    }
     JNIEnv* env = IDCache::GetEnvForThread();
     env->CallStaticVoidMethod(IDCache::GetDiskCacheProgressClass(),
                               IDCache::GetDiskCacheLoadProgress(),
@@ -1030,6 +1066,242 @@ jboolean Java_org_citra_citra_1emu_NativeLibrary_isFullConsoleLinked(JNIEnv* env
 
 void Java_org_citra_citra_1emu_NativeLibrary_unlinkConsole(JNIEnv* env, jobject obj) {
     HW::UniqueData::UnlinkConsole();
+}
+
+} // extern "C"
+
+/**
+ * One emulation session driven through the C ABI declared in azahar_session.h.
+ *
+ * The session owns the emulation thread, the callbacks and the screen textures it asked the
+ * application for. Destroying it stops the emulation, joins the thread and releases everything,
+ * so another session can be created in the same process afterwards.
+ */
+struct AzaharSession {
+    AzaharSessionCallbacks callbacks{};
+    AzaharSessionOptions options{};
+    std::string path;
+    std::thread emulation_thread;
+    AudioCore::SinkType previous_output_type{AudioCore::SinkType::Auto};
+    bool previous_swap_screen{false};
+};
+
+namespace {
+
+std::mutex g_active_session_mutex;
+AzaharSession* g_active_session{};
+
+std::size_t CurrentFcramSize() {
+    return Settings::values.is_new_3ds.GetValue() ? Memory::FCRAM_N3DS_SIZE : Memory::FCRAM_SIZE;
+}
+
+void ReportSessionError(const AzaharSessionCallbacks& callbacks, const std::string& message) {
+    LOG_CRITICAL(Frontend, "{}", message);
+    if (callbacks.on_error) {
+        callbacks.on_error(callbacks.user, message.c_str());
+    }
+}
+
+bool CreateSessionTexture(const AzaharSession& session, int width, int height, bool secondary) {
+    JNIEnv* env = IDCache::GetEnvForThread();
+    const jlong texture_id = env->CallStaticLongMethod(
+        IDCache::GetNativeLibraryClass(), IDCache::GetCreateSessionTexture(),
+        static_cast<jint>(width), static_cast<jint>(height), static_cast<jboolean>(secondary));
+    if (env->ExceptionCheck()) {
+        env->ExceptionClear();
+        return false;
+    }
+    if (texture_id < 0) {
+        return false;
+    }
+    if (session.callbacks.on_texture) {
+        session.callbacks.on_texture(session.callbacks.user, static_cast<int64_t>(texture_id),
+                                     secondary ? 1 : 0);
+    }
+    return true;
+}
+
+void ReleaseSessionTextures() {
+    JNIEnv* env = IDCache::GetEnvForThread();
+    env->CallStaticVoidMethod(IDCache::GetNativeLibraryClass(),
+                              IDCache::GetReleaseSessionTextures());
+    if (env->ExceptionCheck()) {
+        env->ExceptionClear();
+    }
+}
+
+} // Anonymous namespace
+
+extern "C" {
+
+AzaharSession* azahar_session_create(const char* game_path, const AzaharSessionOptions* options,
+                                     const AzaharSessionCallbacks* callbacks) {
+    if (game_path == nullptr || options == nullptr || callbacks == nullptr) {
+        return nullptr;
+    }
+    std::lock_guard lock{g_active_session_mutex};
+    if (g_active_session != nullptr) {
+        return nullptr;
+    }
+    auto* session = new AzaharSession();
+    session->callbacks = *callbacks;
+    session->options = *options;
+    session->path = game_path;
+    session->previous_swap_screen = Settings::values.swap_screen.GetValue();
+    g_active_session = session;
+    return session;
+}
+
+int32_t azahar_session_start(AzaharSession* session) {
+    if (session == nullptr) {
+        return AZAHAR_STATUS_INVALID_ARGUMENT;
+    }
+
+    if (!CreateSessionTexture(*session, session->options.primary_width,
+                              session->options.primary_height, false)) {
+        ReportSessionError(session->callbacks, "Failed to create the top screen texture");
+        return AZAHAR_STATUS_LOAD_FAILED;
+    }
+    if (session->options.dual_screen != 0 &&
+        !CreateSessionTexture(*session, session->options.secondary_width,
+                              session->options.secondary_height, true)) {
+        ReportSessionError(session->callbacks, "Failed to create the bottom screen texture");
+        return AZAHAR_STATUS_LOAD_FAILED;
+    }
+
+    {
+        std::lock_guard lock{g_session_callbacks_mutex};
+        g_session_callbacks = session->callbacks;
+    }
+    session->previous_output_type = Settings::values.output_type.GetValue();
+    Settings::values.output_type = AudioCore::SinkType::External;
+    AudioCore::SetExternalAudioHandler(
+        [callbacks = session->callbacks](const s16* frames, std::size_t frame_count) {
+            if (callbacks.on_audio) {
+                callbacks.on_audio(callbacks.user, frames, frame_count);
+            }
+        });
+
+    session->emulation_thread = std::thread([session] {
+        const Core::System::ResultStatus result = RunCitra(session->path);
+        stop_run = true;
+        if (result != Core::System::ResultStatus::Success &&
+            result != Core::System::ResultStatus::ShutdownRequested) {
+            ReportSessionError(session->callbacks,
+                               "The emulation ended with status " +
+                                   std::to_string(static_cast<int>(result)));
+        }
+    });
+    return AZAHAR_STATUS_OK;
+}
+
+int32_t azahar_session_pause(AzaharSession* session) {
+    if (session == nullptr) {
+        return AZAHAR_STATUS_INVALID_ARGUMENT;
+    }
+    pause_emulation = true;
+    Core::System::GetInstance().frame_limiter.SetFrameAdvancing(true);
+    if (auto* handler = InputManager::NDKMotionHandler()) {
+        handler->DisableSensors();
+    }
+    return AZAHAR_STATUS_OK;
+}
+
+int32_t azahar_session_resume(AzaharSession* session) {
+    if (session == nullptr) {
+        return AZAHAR_STATUS_INVALID_ARGUMENT;
+    }
+    pause_emulation = false;
+    Core::System::GetInstance().frame_limiter.SetFrameAdvancing(false);
+    running_cv.notify_all();
+    if (auto* handler = InputManager::NDKMotionHandler()) {
+        handler->EnableSensors();
+    }
+    return AZAHAR_STATUS_OK;
+}
+
+size_t azahar_session_fcram_size(const AzaharSession* session) {
+    if (session == nullptr || stop_run || !Core::System::GetInstance().IsPoweredOn()) {
+        return 0;
+    }
+    return CurrentFcramSize();
+}
+
+int32_t azahar_session_read_memory(AzaharSession* session, uint32_t address, uint8_t* out,
+                                   size_t len) {
+    if (session == nullptr || out == nullptr) {
+        return AZAHAR_STATUS_INVALID_ARGUMENT;
+    }
+    Core::System& system = Core::System::GetInstance();
+    if (len == 0 || stop_run || !system.IsPoweredOn()) {
+        return AZAHAR_STATUS_INVALID_ADDRESS;
+    }
+    const auto process = system.Kernel().GetCurrentProcess();
+    if (!process) {
+        return AZAHAR_STATUS_INVALID_ADDRESS;
+    }
+    constexpr uint64_t page_size = 0x1000;
+    const uint64_t end = static_cast<uint64_t>(address) + len;
+    if (end > 0x100000000ULL) {
+        return AZAHAR_STATUS_INVALID_ADDRESS;
+    }
+    Memory::MemorySystem& memory = system.Memory();
+    for (uint64_t page = address & ~(page_size - 1); page < end; page += page_size) {
+        if (!memory.IsValidVirtualAddress(*process, static_cast<VAddr>(page))) {
+            return AZAHAR_STATUS_INVALID_ADDRESS;
+        }
+    }
+    memory.ReadBlock(*process, address, out, len);
+    return AZAHAR_STATUS_OK;
+}
+
+int32_t azahar_session_read_fcram(AzaharSession* session, size_t offset, uint8_t* out, size_t len) {
+    if (session == nullptr || out == nullptr) {
+        return AZAHAR_STATUS_INVALID_ARGUMENT;
+    }
+    Core::System& system = Core::System::GetInstance();
+    if (stop_run || !system.IsPoweredOn()) {
+        return AZAHAR_STATUS_INVALID_ADDRESS;
+    }
+    const std::size_t size = CurrentFcramSize();
+    if (offset > size || len > size - offset) {
+        return AZAHAR_STATUS_INVALID_ADDRESS;
+    }
+    std::memcpy(out, system.Memory().GetFCRAMPointer(0) + offset, len);
+    return AZAHAR_STATUS_OK;
+}
+
+void azahar_session_destroy(AzaharSession* session) {
+    if (session == nullptr) {
+        return;
+    }
+
+    stop_run = true;
+    pause_emulation = false;
+    advance_frame_requested = false;
+    if (window) {
+        window->StopPresenting();
+    }
+    running_cv.notify_all();
+    if (session->emulation_thread.joinable()) {
+        session->emulation_thread.join();
+    }
+
+    TryShutdown();
+    AudioCore::SetExternalAudioHandler({});
+    Settings::values.output_type = session->previous_output_type;
+    Settings::values.swap_screen = session->previous_swap_screen;
+    {
+        std::lock_guard lock{g_session_callbacks_mutex};
+        g_session_callbacks.reset();
+    }
+    ReleaseSessionTextures();
+
+    {
+        std::lock_guard lock{g_active_session_mutex};
+        g_active_session = nullptr;
+    }
+    delete session;
 }
 
 } // extern "C"
