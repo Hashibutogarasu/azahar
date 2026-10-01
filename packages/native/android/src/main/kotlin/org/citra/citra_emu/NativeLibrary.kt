@@ -27,6 +27,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.R
+import org.citra.citra_emu.channel.EmulationController
 import org.citra.citra_emu.utils.EmulationMenuSettings
 import org.citra.citra_emu.utils.FileUtil
 import org.citra.citra_emu.utils.Log
@@ -737,6 +738,26 @@ object NativeLibrary {
     @JvmStatic
     fun scanWifiAccessPoints(): Array<String>? {
         return virtualAccessPoints ?: scanRealWifiAccessPoints()
+    }
+
+    /**
+     * Called from native code to create a screen texture for a session.
+     *
+     * @return The id of the texture, or -1 when no engine is available.
+     */
+    @Keep
+    @JvmStatic
+    fun createSessionTexture(width: Int, height: Int, secondary: Boolean): Long {
+        return EmulationController.current?.createSessionTexture(width, height, secondary) ?: -1L
+    }
+
+    /**
+     * Called from native code to release the screen textures of a session.
+     */
+    @Keep
+    @JvmStatic
+    fun releaseSessionTextures() {
+        EmulationController.current?.releaseSessionTextures()
     }
 
     /**

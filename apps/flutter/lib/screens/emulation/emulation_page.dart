@@ -51,8 +51,8 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
 
   @override
   Future<AppExitResponse> didRequestAppExit() async {
-    unawaited(ref.read(emulationSessionProvider.notifier).terminate());
-    return AppExitResponse.cancel;
+    await ref.read(emulationSessionProvider.notifier).stopForExit();
+    return AppExitResponse.exit;
   }
 
   @override
@@ -174,6 +174,12 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(emulationSessionProvider.select((state) => state.isFinished), (
+      _,
+      isFinished,
+    ) {
+      if (isFinished) Navigator.of(context).pop();
+    });
     final state = ref.watch(emulationSessionProvider);
     if (state.isClosingWindow) {
       return const ColoredBox(color: Colors.black);

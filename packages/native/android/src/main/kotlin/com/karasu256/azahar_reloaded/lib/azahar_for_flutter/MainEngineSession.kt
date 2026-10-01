@@ -8,6 +8,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.citra.citra_emu.NativeLibrary
 import org.citra.citra_emu.applets.MiiSelector
@@ -19,16 +20,18 @@ import org.citra.citra_emu.channel.CiaInstallController
 import org.citra.citra_emu.channel.DirectoryController
 import org.citra.citra_emu.channel.EmulationController
 import org.citra.citra_emu.channel.GameActionsController
+import org.citra.citra_emu.channel.GamepadController
 import org.citra.citra_emu.channel.GamesController
 import org.citra.citra_emu.channel.GpuDriverController
 import org.citra.citra_emu.channel.LogStreamHandler
+import org.citra.citra_emu.channel.MediaNotificationController
 import org.citra.citra_emu.channel.SettingsController
 import org.citra.citra_emu.channel.ShowMiiSelector
 import org.citra.citra_emu.channel.SystemFilesController
+import org.citra.citra_emu.channel.SystemVolumeController
 import org.citra.citra_emu.channel.UserFilesController
 import org.citra.citra_emu.channel.WifiController
 import org.citra.citra_emu.utils.AppletBridge
-import org.citra.citra_emu.utils.DiskShaderCacheProgress
 
 /**
  * Binds the native controllers to the Flutter engine of the host activity.
@@ -64,6 +67,13 @@ internal class MainEngineSession(
     private val userFilesController = UserFilesController(activity)
     private val emulationController = EmulationController(binding.textureRegistry)
     private val cheatsController = CheatsController()
+    private val systemVolumeController = SystemVolumeController(activity)
+    private val mediaNotificationController = MediaNotificationController(activity)
+    private val gamepadController = GamepadController()
+
+    /** The game the host activity was started to launch, until Dart takes it. */
+    @Volatile
+    var pendingLaunch: String? = null
 
     private val methodChannel = MethodChannel(messenger, CHANNEL)
     private val appletChannel = MethodChannel(messenger, APPLET_CHANNEL)
@@ -96,7 +106,9 @@ internal class MainEngineSession(
                 settingsController.handlers +
                 gpuDriverController.handlers + ciaInstallController.handlers +
                 systemFilesController.handlers + wifiController.handlers +
-                userFilesController.handlers)
+                userFilesController.handlers + systemVolumeController.handlers +
+                mediaNotificationController.handlers + gamepadController.handlers +
+                TakePendingLaunch())
                 .associateBy { it.name }
 
         val showMiiSelector = ShowMiiSelector(appletChannel)
@@ -151,28 +163,20 @@ internal class MainEngineSession(
             }
         })
 
-        registerEventChannel(SHADER_PROGRESS_CHANNEL, object : EventChannel.StreamHandler {
-            private var installedListener: DiskShaderCacheProgress.Listener? = null
-
-            override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
-                val listener = DiskShaderCacheProgress.Listener { stage, progress, max ->
-                    events.success(
-                        mapOf("stage" to stage.name, "progress" to progress, "max" to max)
-                    )
-                }
-                installedListener = listener
-                DiskShaderCacheProgress.listener = listener
-            }
-
-            override fun onCancel(arguments: Any?) {
-                if (DiskShaderCacheProgress.listener === installedListener) {
-                    DiskShaderCacheProgress.listener = null
-                }
-                installedListener = null
-            }
-        })
-
         registerEventChannel(LOG_LINES_CHANNEL, LogStreamHandler())
+        registerEventChannel(
+            SYSTEM_VOLUME_CHANNEL,
+            systemVolumeController.createVolumeChangeStreamHandler()
+        )
+        registerEventChannel(
+            MEDIA_NOTIFICATION_STOP_CHANNEL,
+            mediaNotificationController.createStopEventStreamHandler()
+        )
+        registerEventChannel(
+            MEDIA_NOTIFICATION_PLAY_PAUSE_CHANNEL,
+            mediaNotificationController.createPlayPauseEventStreamHandler()
+        )
+        registerEventChannel(GAMEPAD_CHANNEL, gamepadController.createStreamHandler())
 
         methodChannel.setMethodCallHandler { call, result ->
             handlers[call.method]?.execute(call, result) ?: result.notImplemented()
@@ -195,16 +199,35 @@ internal class MainEngineSession(
         AppletBridge.listener = null
     }
 
+    /** Asks Dart to launch the game at [path] while the app is running. */
+    fun requestLaunch(path: String) {
+        methodChannel.invokeMethod("launchGame", mapOf("path" to path))
+    }
+
     private fun registerEventChannel(name: String, handler: EventChannel.StreamHandler) {
         eventChannels += EventChannel(messenger, name).also { it.setStreamHandler(handler) }
+    }
+
+    private inner class TakePendingLaunch : AzaharMethodHandler {
+        override val name = "takePendingLaunch"
+        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+            val path = pendingLaunch
+            pendingLaunch = null
+            result.success(path)
+        }
     }
 
     private companion object {
         const val PICK_IMAGE_REGISTRY_KEY = "azahar_for_flutter.pick_image"
         const val CHANNEL = "org.citra.citra_emu/azahar_bridge"
-        const val SHADER_PROGRESS_CHANNEL = "org.citra.citra_emu/azahar_bridge/shader_progress"
         const val APPLET_CHANNEL = "org.citra.citra_emu/azahar_bridge/applet"
         const val COPY_PROGRESS_CHANNEL = "org.citra.citra_emu/azahar_bridge/copy_progress"
         const val LOG_LINES_CHANNEL = "org.citra.citra_emu/azahar_bridge/log_lines"
+        const val GAMEPAD_CHANNEL = "org.citra.citra_emu/azahar_bridge/gamepad_events"
+        const val SYSTEM_VOLUME_CHANNEL = "org.citra.citra_emu/azahar_bridge/system_volume"
+        const val MEDIA_NOTIFICATION_STOP_CHANNEL =
+            "org.citra.citra_emu/azahar_bridge/media_notification_stop"
+        const val MEDIA_NOTIFICATION_PLAY_PAUSE_CHANNEL =
+            "org.citra.citra_emu/azahar_bridge/media_notification_play_pause"
     }
 }

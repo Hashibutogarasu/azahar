@@ -30,19 +30,10 @@ class SystemFilesService {
     return AppServices.nativeBridge.setSystemSetupNeeded(needed);
   }
 
-  Future<void> launchArticInstall({
-    required String address,
-    required bool installO3ds,
-  }) {
+  /// Returns the path that starts the system files installation from the Artic Base server at
+  /// [address].
+  String articInstallPath({required String address, required bool installO3ds}) {
     final scheme = installO3ds ? 'articinio' : 'articinin';
-    return AppServices.nativeBridge.launchEmulationActivity(
-      '$scheme://$address',
-    );
-  }
-
-  Future<void> launchHomeMenu(int region) async {
-    final path = await getHomeMenuPath(region);
-    if (path.isEmpty) return;
-    await AppServices.nativeBridge.launchEmulationActivity(path);
+    return '$scheme://$address';
   }
 }

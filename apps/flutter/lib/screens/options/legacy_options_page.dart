@@ -15,6 +15,7 @@ import '../../i18n/translations.g.dart';
 import '../../routing/app_routes.dart';
 import '../../widgets/app_toggle_switch.dart';
 import '../../widgets/confirmation_dialog.dart';
+import '../games/game_process_provider.dart';
 import '../settings/settings_routes.dart';
 import '../setup/dialogs/citra_directory_dialog.dart';
 import '../setup/dialogs/copy_dir_progress_dialog.dart';
@@ -56,8 +57,7 @@ class LegacyOptionsPage extends ConsumerWidget {
                   icon: Icons.wifi_tethering,
                   title: t.options.articBaseConnect,
                   description: t.options.articBaseConnectDescription,
-                  onTap: () =>
-                      _connectArticBase(context, ref.read(articBaseProvider)),
+                  onTap: () => _connectArticBase(context, ref),
                 ),
                 _LegacyOptionCard(
                   icon: Icons.install_mobile,
@@ -177,10 +177,8 @@ class LegacyOptionsPage extends ConsumerWidget {
     await service.confirmGamesDirectory(pickedUri);
   }
 
-  Future<void> _connectArticBase(
-    BuildContext context,
-    ArticBaseService service,
-  ) async {
+  Future<void> _connectArticBase(BuildContext context, WidgetRef ref) async {
+    final service = ref.read(articBaseProvider);
     final previousAddress = await service.previousAddress();
     if (!context.mounted) return;
     final address = await ArticBaseConnectDialog.show(
@@ -188,7 +186,9 @@ class LegacyOptionsPage extends ConsumerWidget {
       initialAddress: previousAddress ?? '',
     );
     if (address == null || address.isEmpty) return;
-    await service.connect(address);
+    final path = await service.connectionPath(address);
+    if (!context.mounted) return;
+    await ref.read(gameProcessProvider.notifier).launch(context, path: path);
   }
 
   Future<void> _shareLog(BuildContext context, LoggingService service) async {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
@@ -30,16 +32,36 @@ class _GamesListPageState extends ConsumerState<GamesListPage>
     text: ref.read(gameQueryProvider),
   );
   bool _wasRunning = false;
+  StreamSubscription<String>? _launchRequests;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     ref.read(gamesProvider.notifier).rescan();
+    _launchRequests = AppServices.nativeBridge.launchRequests.listen(
+      (path) => unawaited(_launchRequested(path)),
+    );
+    unawaited(_launchPending());
+  }
+
+  Future<void> _launchPending() async {
+    final path = await AppServices.nativeBridge.takePendingLaunch();
+    if (path == null || path.isEmpty) return;
+    await _launchRequested(path);
+  }
+
+  Future<void> _launchRequested(String path) async {
+    final game = await _gameRepository.gameByPath(path);
+    if (!mounted) return;
+    await ref
+        .read(gameProcessProvider.notifier)
+        .launch(context, path: path, game: game);
   }
 
   @override
   void dispose() {
+    _launchRequests?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     _queryController.dispose();
     super.dispose();
@@ -59,7 +81,9 @@ class _GamesListPageState extends ConsumerState<GamesListPage>
     show(
       context,
       game: game,
-      onPlay: () => ref.read(gameProcessProvider.notifier).launch(game),
+      onPlay: () => ref
+          .read(gameProcessProvider.notifier)
+          .launch(context, path: game.path, game: game),
       onUninstalled: ref.read(gamesProvider.notifier).rescan,
     );
   }
@@ -132,7 +156,7 @@ class _GamesListPageState extends ConsumerState<GamesListPage>
                                   .isValidExtension(game),
                               onTap: () => ref
                                   .read(gameProcessProvider.notifier)
-                                  .launch(game),
+                                  .launch(context, path: game.path, game: game),
                               onInfo: () => _showGameInfo(game),
                               showInfoButton: isDesktop,
                             );

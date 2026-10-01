@@ -13,7 +13,7 @@ import androidx.documentfile.provider.DocumentFile
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.citra.citra_emu.CitraApplication
-import org.citra.citra_emu.EmulationActivity
+import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.AzaharForFlutterPlugin
 
 /**
  * Backs the game long-press menu (Open Folder / Uninstall / Delete Shader Cache /
@@ -241,8 +241,8 @@ class GameActionsController(private val activity: Activity) {
     }
 
     private fun buildShortcutIntent(context: Context, path: String): Intent =
-        EmulationActivity.createLaunchIntent(context, path).apply {
-            action = Intent.ACTION_VIEW
+        checkNotNull(context.packageManager.getLaunchIntentForPackage(context.packageName)).apply {
+            putExtra(AzaharForFlutterPlugin.EXTRA_GAME_PATH, path)
             putExtra("launched_from_shortcut", true)
         }
 }

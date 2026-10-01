@@ -1,5 +1,7 @@
 package org.citra.citra_emu.channel
 
+import android.os.Handler
+import android.os.Looper
 import android.view.Choreographer
 import androidx.preference.PreferenceManager
 import io.flutter.plugin.common.MethodCall
@@ -7,8 +9,13 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.view.TextureRegistry
 import org.citra.citra_emu.CitraApplication
 import org.citra.citra_emu.NativeLibrary
+import java.util.concurrent.CountDownLatch
 
 class EmulationController(private val textureRegistry: TextureRegistry) {
+    init {
+        current = this
+    }
+
     private var surfaceProducer: TextureRegistry.SurfaceProducer? = null
     private var secondarySurfaceProducer: TextureRegistry.SurfaceProducer? = null
     private var screensSwapped = false
@@ -35,15 +42,10 @@ class EmulationController(private val textureRegistry: TextureRegistry) {
     }
 
     val handlers: List<AzaharMethodHandler> = listOf(
-        CreateEmulationTexture(),
-        StartEmulation(),
-        PauseEmulation(),
-        ResumeEmulation(),
         AdvanceFrame(),
         PauseRendering(),
         ResumeRendering(),
         SwapScreens(),
-        StopEmulation(),
         TouchEvent(),
         TouchMoved()
     )
@@ -52,59 +54,62 @@ class EmulationController(private val textureRegistry: TextureRegistry) {
         get() = PreferenceManager.getDefaultSharedPreferences(CitraApplication.appContext)
             .getBoolean("isTouchEnabled", true)
 
-    private inner class CreateEmulationTexture : AzaharMethodHandler {
-        override val name = "createEmulationTexture"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
-            val width = call.argument<Int>("width") ?: 1
-            val height = call.argument<Int>("height") ?: 1
-            val secondary = call.argument<Boolean>("secondary") ?: false
+    /**
+     * Creates a screen texture for a session owned by the native side and hands its surface to the
+     * emulation. Blocks the calling thread until the platform thread has created it.
+     *
+     * @return The id of the texture, or -1 when it could not be created.
+     */
+    fun createSessionTexture(width: Int, height: Int, secondary: Boolean): Long {
+        return runOnPlatformThread(-1L) {
+            screensSwapped = false
             val producer = textureRegistry.createSurfaceProducer()
             producer.setSize(width, height)
             if (secondary) {
                 secondarySurfaceProducer?.release()
                 secondarySurfaceProducer = producer
+                NativeLibrary.surfaceChangedSecondary(producer.surface)
             } else {
                 surfaceProducer?.release()
                 surfaceProducer = producer
-            }
-            result.success(producer.id().toInt())
-        }
-    }
-
-    private inner class StartEmulation : AzaharMethodHandler {
-        override val name = "startEmulation"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
-            val path = call.argument<String>("path")
-            if (path == null) {
-                result.error("invalid_argument", "path is required", null)
-                return
-            }
-            surfaceProducer?.let { NativeLibrary.surfaceChanged(it.surface) }
-            secondarySurfaceProducer?.let { NativeLibrary.surfaceChangedSecondary(it.surface) }
-            if (NativeLibrary.isRunning()) {
-                NativeLibrary.unPauseEmulation()
-            } else {
-                Thread { NativeLibrary.run(path) }.start()
+                NativeLibrary.surfaceChanged(producer.surface)
             }
             startPresentingFrames()
-            result.success(null)
+            producer.id()
         }
     }
 
-    private inner class PauseEmulation : AzaharMethodHandler {
-        override val name = "pauseEmulation"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
-            NativeLibrary.pauseEmulation()
-            result.success(null)
+    /**
+     * Detaches and releases the textures created by [createSessionTexture]. Blocks the calling
+     * thread until the platform thread has released them.
+     */
+    fun releaseSessionTextures() {
+        runOnPlatformThread(Unit) {
+            stopPresentingFrames()
+            NativeLibrary.surfaceDestroyed()
+            NativeLibrary.surfaceDestroyedSecondary()
+            surfaceProducer?.release()
+            surfaceProducer = null
+            secondarySurfaceProducer?.release()
+            secondarySurfaceProducer = null
         }
     }
 
-    private inner class ResumeEmulation : AzaharMethodHandler {
-        override val name = "resumeEmulation"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
-            NativeLibrary.unPauseEmulation()
-            result.success(null)
+    private fun <T> runOnPlatformThread(fallback: T, block: () -> T): T {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            return block()
         }
+        var result = fallback
+        val done = CountDownLatch(1)
+        Handler(Looper.getMainLooper()).post {
+            try {
+                result = block()
+            } finally {
+                done.countDown()
+            }
+        }
+        done.await()
+        return result
     }
 
     private inner class AdvanceFrame : AzaharMethodHandler {
@@ -140,21 +145,6 @@ class EmulationController(private val textureRegistry: TextureRegistry) {
         }
     }
 
-    private inner class StopEmulation : AzaharMethodHandler {
-        override val name = "stopEmulation"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
-            stopPresentingFrames()
-            NativeLibrary.stopEmulation()
-            NativeLibrary.surfaceDestroyed()
-            NativeLibrary.surfaceDestroyedSecondary()
-            surfaceProducer?.release()
-            surfaceProducer = null
-            secondarySurfaceProducer?.release()
-            secondarySurfaceProducer = null
-            result.success(null)
-        }
-    }
-
     private inner class TouchEvent : AzaharMethodHandler {
         override val name = "onTouchEvent"
         override fun execute(call: MethodCall, result: MethodChannel.Result) {
@@ -179,5 +169,15 @@ class EmulationController(private val textureRegistry: TextureRegistry) {
             }
             result.success(null)
         }
+    }
+
+    companion object {
+        /**
+         * The controller bound to the engine of this process, used by the native side to create
+         * the screen textures of a session.
+         */
+        @Volatile
+        var current: EmulationController? = null
+            private set
     }
 }
