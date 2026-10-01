@@ -4434,31 +4434,28 @@ class $FeatureFlagsTable extends FeatureFlags
   $FeatureFlagsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
     'id',
     aliasedName,
     false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
   );
-  static const VerificationMeta _performanceImprovementsMeta =
-      const VerificationMeta('performanceImprovements');
+  static const VerificationMeta _valueMeta = const VerificationMeta('value');
   @override
-  late final GeneratedColumn<bool> performanceImprovements =
-      GeneratedColumn<bool>(
-        'performance_improvements',
-        aliasedName,
-        false,
-        type: DriftSqlType.bool,
-        requiredDuringInsert: false,
-        defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'CHECK ("performance_improvements" IN (0, 1))',
-        ),
-        defaultValue: const Constant(false),
-      );
+  late final GeneratedColumn<bool> value = GeneratedColumn<bool>(
+    'value',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("value" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
-  List<GeneratedColumn> get $columns => [id, performanceImprovements];
+  List<GeneratedColumn> get $columns => [id, value];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -4473,14 +4470,13 @@ class $FeatureFlagsTable extends FeatureFlags
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
     }
-    if (data.containsKey('performance_improvements')) {
+    if (data.containsKey('value')) {
       context.handle(
-        _performanceImprovementsMeta,
-        performanceImprovements.isAcceptableOrUnknown(
-          data['performance_improvements']!,
-          _performanceImprovementsMeta,
-        ),
+        _valueMeta,
+        value.isAcceptableOrUnknown(data['value']!, _valueMeta),
       );
     }
     return context;
@@ -4493,12 +4489,12 @@ class $FeatureFlagsTable extends FeatureFlags
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return FeatureFlagSetting(
       id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
-      performanceImprovements: attachedDatabase.typeMapping.read(
+      value: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
-        data['${effectivePrefix}performance_improvements'],
+        data['${effectivePrefix}value'],
       )!,
     );
   }
@@ -4511,25 +4507,19 @@ class $FeatureFlagsTable extends FeatureFlags
 
 class FeatureFlagSetting extends DataClass
     implements Insertable<FeatureFlagSetting> {
-  final int id;
-  final bool performanceImprovements;
-  const FeatureFlagSetting({
-    required this.id,
-    required this.performanceImprovements,
-  });
+  final String id;
+  final bool value;
+  const FeatureFlagSetting({required this.id, required this.value});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['performance_improvements'] = Variable<bool>(performanceImprovements);
+    map['id'] = Variable<String>(id);
+    map['value'] = Variable<bool>(value);
     return map;
   }
 
   FeatureFlagsCompanion toCompanion(bool nullToAbsent) {
-    return FeatureFlagsCompanion(
-      id: Value(id),
-      performanceImprovements: Value(performanceImprovements),
-    );
+    return FeatureFlagsCompanion(id: Value(id), value: Value(value));
   }
 
   factory FeatureFlagSetting.fromJson(
@@ -4538,35 +4528,25 @@ class FeatureFlagSetting extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return FeatureFlagSetting(
-      id: serializer.fromJson<int>(json['id']),
-      performanceImprovements: serializer.fromJson<bool>(
-        json['performanceImprovements'],
-      ),
+      id: serializer.fromJson<String>(json['id']),
+      value: serializer.fromJson<bool>(json['value']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'performanceImprovements': serializer.toJson<bool>(
-        performanceImprovements,
-      ),
+      'id': serializer.toJson<String>(id),
+      'value': serializer.toJson<bool>(value),
     };
   }
 
-  FeatureFlagSetting copyWith({int? id, bool? performanceImprovements}) =>
-      FeatureFlagSetting(
-        id: id ?? this.id,
-        performanceImprovements:
-            performanceImprovements ?? this.performanceImprovements,
-      );
+  FeatureFlagSetting copyWith({String? id, bool? value}) =>
+      FeatureFlagSetting(id: id ?? this.id, value: value ?? this.value);
   FeatureFlagSetting copyWithCompanion(FeatureFlagsCompanion data) {
     return FeatureFlagSetting(
       id: data.id.present ? data.id.value : this.id,
-      performanceImprovements: data.performanceImprovements.present
-          ? data.performanceImprovements.value
-          : this.performanceImprovements,
+      value: data.value.present ? data.value.value : this.value,
     );
   }
 
@@ -4574,51 +4554,56 @@ class FeatureFlagSetting extends DataClass
   String toString() {
     return (StringBuffer('FeatureFlagSetting(')
           ..write('id: $id, ')
-          ..write('performanceImprovements: $performanceImprovements')
+          ..write('value: $value')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, performanceImprovements);
+  int get hashCode => Object.hash(id, value);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is FeatureFlagSetting &&
           other.id == this.id &&
-          other.performanceImprovements == this.performanceImprovements);
+          other.value == this.value);
 }
 
 class FeatureFlagsCompanion extends UpdateCompanion<FeatureFlagSetting> {
-  final Value<int> id;
-  final Value<bool> performanceImprovements;
+  final Value<String> id;
+  final Value<bool> value;
+  final Value<int> rowid;
   const FeatureFlagsCompanion({
     this.id = const Value.absent(),
-    this.performanceImprovements = const Value.absent(),
+    this.value = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   FeatureFlagsCompanion.insert({
-    this.id = const Value.absent(),
-    this.performanceImprovements = const Value.absent(),
-  });
+    required String id,
+    this.value = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id);
   static Insertable<FeatureFlagSetting> custom({
-    Expression<int>? id,
-    Expression<bool>? performanceImprovements,
+    Expression<String>? id,
+    Expression<bool>? value,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (performanceImprovements != null)
-        'performance_improvements': performanceImprovements,
+      if (value != null) 'value': value,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   FeatureFlagsCompanion copyWith({
-    Value<int>? id,
-    Value<bool>? performanceImprovements,
+    Value<String>? id,
+    Value<bool>? value,
+    Value<int>? rowid,
   }) {
     return FeatureFlagsCompanion(
       id: id ?? this.id,
-      performanceImprovements:
-          performanceImprovements ?? this.performanceImprovements,
+      value: value ?? this.value,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -4626,12 +4611,13 @@ class FeatureFlagsCompanion extends UpdateCompanion<FeatureFlagSetting> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
-    if (performanceImprovements.present) {
-      map['performance_improvements'] = Variable<bool>(
-        performanceImprovements.value,
-      );
+    if (value.present) {
+      map['value'] = Variable<bool>(value.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -4640,7 +4626,8 @@ class FeatureFlagsCompanion extends UpdateCompanion<FeatureFlagSetting> {
   String toString() {
     return (StringBuffer('FeatureFlagsCompanion(')
           ..write('id: $id, ')
-          ..write('performanceImprovements: $performanceImprovements')
+          ..write('value: $value, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -7707,13 +7694,15 @@ typedef $$UserGameInfosTableProcessedTableManager =
     >;
 typedef $$FeatureFlagsTableCreateCompanionBuilder =
     FeatureFlagsCompanion Function({
-      Value<int> id,
-      Value<bool> performanceImprovements,
+      required String id,
+      Value<bool> value,
+      Value<int> rowid,
     });
 typedef $$FeatureFlagsTableUpdateCompanionBuilder =
     FeatureFlagsCompanion Function({
-      Value<int> id,
-      Value<bool> performanceImprovements,
+      Value<String> id,
+      Value<bool> value,
+      Value<int> rowid,
     });
 
 class $$FeatureFlagsTableFilterComposer
@@ -7725,13 +7714,13 @@ class $$FeatureFlagsTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<bool> get performanceImprovements => $composableBuilder(
-    column: $table.performanceImprovements,
+  ColumnFilters<bool> get value => $composableBuilder(
+    column: $table.value,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -7745,13 +7734,13 @@ class $$FeatureFlagsTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<bool> get performanceImprovements => $composableBuilder(
-    column: $table.performanceImprovements,
+  ColumnOrderings<bool> get value => $composableBuilder(
+    column: $table.value,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -7765,13 +7754,11 @@ class $$FeatureFlagsTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<bool> get performanceImprovements => $composableBuilder(
-    column: $table.performanceImprovements,
-    builder: (column) => column,
-  );
+  GeneratedColumn<bool> get value =>
+      $composableBuilder(column: $table.value, builder: (column) => column);
 }
 
 class $$FeatureFlagsTableTableManager
@@ -7809,19 +7796,19 @@ class $$FeatureFlagsTableTableManager
               $$FeatureFlagsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
-                Value<bool> performanceImprovements = const Value.absent(),
-              }) => FeatureFlagsCompanion(
-                id: id,
-                performanceImprovements: performanceImprovements,
-              ),
+                Value<String> id = const Value.absent(),
+                Value<bool> value = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FeatureFlagsCompanion(id: id, value: value, rowid: rowid),
           createCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
-                Value<bool> performanceImprovements = const Value.absent(),
+                required String id,
+                Value<bool> value = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => FeatureFlagsCompanion.insert(
                 id: id,
-                performanceImprovements: performanceImprovements,
+                value: value,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map(

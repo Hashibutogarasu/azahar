@@ -64,7 +64,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 14;
+  int get schemaVersion => 15;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -122,7 +122,8 @@ class AppDatabase extends _$AppDatabase {
       if (from < 13) {
         await m.createTable(userGameInfos);
       }
-      if (from < 14) {
+      if (from < 15) {
+        await customStatement('DROP TABLE IF EXISTS feature_flags');
         await m.createTable(featureFlags);
       }
     },
