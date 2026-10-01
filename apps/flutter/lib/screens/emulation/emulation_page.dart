@@ -97,7 +97,8 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
   }
 
   void _handleBackPressed() {
-    if (!ref.read(emulationSessionProvider).emulationStarted) return;
+    final state = ref.read(emulationSessionProvider);
+    if (!state.emulationStarted || state.isTerminating) return;
     final scaffold = _scaffoldKey.currentState;
     if (scaffold == null) return;
     if (scaffold.isDrawerOpen) {
@@ -193,21 +194,8 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
       onCloseGame: _confirmCloseGame,
     );
     final screens = SafeArea(
-      child: Stack(
-        children: [
-          LayoutBuilder(
-            builder: (context, constraints) => _screens(constraints),
-          ),
-          if (!state.emulationStarted || state.isTerminating)
-            Center(
-              child: EmulationLoadingCard(
-                gamePath: widget.gamePath,
-                game: widget.game,
-                progress: state.shaderProgress,
-                isTerminating: state.isTerminating,
-              ),
-            ),
-        ],
+      child: LayoutBuilder(
+        builder: (context, constraints) => _screens(constraints),
       ),
     );
     final page = PopScope(
@@ -254,8 +242,35 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
             : screens,
       ),
     );
+    // The loading overlay sits above the whole scaffold, including the side panel and the drawer,
+    // and is fully opaque so that neither the emulator screens nor the menus can be seen or used
+    // until it is gone.
+    final showLoadingOverlay = !state.emulationStarted || state.isTerminating;
+    final content = Stack(
+      children: [
+        page,
+        if (showLoadingOverlay)
+          Positioned.fill(
+            child: AbsorbPointer(
+              child: ColoredBox(
+                color: Colors.black,
+                child: SafeArea(
+                  child: Center(
+                    child: EmulationLoadingCard(
+                      gamePath: widget.gamePath,
+                      game: widget.game,
+                      progress: state.shaderProgress,
+                      isTerminating: state.isTerminating,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
     return PhysicalGamepadSource(
-      child: isDesktop ? page : MotionInputSource(child: page),
+      child: isDesktop ? content : MotionInputSource(child: content),
     );
   }
 }
