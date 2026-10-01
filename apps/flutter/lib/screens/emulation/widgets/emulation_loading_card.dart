@@ -3,17 +3,20 @@ import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../../i18n/translations.g.dart';
 import '../../games/widgets/game_icon.dart';
+import 'game_title.dart';
 
 /// Loading card shown over the emulation screens until the game has started, mirroring the
 /// original Android `loading_indicator` in `fragment_emulation.xml`.
 class EmulationLoadingCard extends StatelessWidget {
   const EmulationLoadingCard({
     super.key,
+    required this.gamePath,
     required this.game,
     required this.progress,
     this.isTerminating = false,
   });
 
+  final String gamePath;
   final Game? game;
   final ShaderCacheProgress? progress;
   final bool isTerminating;
@@ -57,7 +60,7 @@ class EmulationLoadingCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(game?.title ?? '', style: textTheme.titleMedium),
+                  GameTitle(gamePath: gamePath, style: textTheme.titleMedium),
                   const SizedBox(height: 4),
                   Text(message, style: textTheme.titleSmall),
                   const SizedBox(height: 12),

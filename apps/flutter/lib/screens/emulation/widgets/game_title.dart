@@ -1,25 +1,27 @@
-import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// The title of the running [game], rendered as empty text while the game is not known yet.
-class GameTitle extends StatelessWidget {
+import '../../../data/games/game_title_provider.dart';
+
+/// The name of the running game, rendered as empty text while the game is not known yet.
+class GameTitle extends ConsumerWidget {
   const GameTitle({
     super.key,
-    required this.game,
+    required this.gamePath,
     this.style,
     this.maxLines,
     this.overflow,
   });
 
-  final Game? game;
+  final String gamePath;
   final TextStyle? style;
   final int? maxLines;
   final TextOverflow? overflow;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Text(
-      game?.title ?? '',
+      ref.watch(gameTitleProvider(gamePath)),
       style: style,
       maxLines: maxLines,
       overflow: overflow,
