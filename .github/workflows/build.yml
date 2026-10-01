@@ -199,6 +199,10 @@ jobs:
           submodules: recursive
       - name: Free disk space
         uses: ./.github/actions/free-disk-space
+      - name: Load build image
+        uses: ./.github/actions/docker-image
+        with:
+          image: bilelmoussaoui/flatpak-github-actions:kde-6.7
       - name: Restore build cache
         uses: actions/cache/restore@v4
         with:
@@ -249,6 +253,10 @@ jobs:
           submodules: recursive
       - name: Free disk space
         uses: ./.github/actions/free-disk-space
+      - name: Load build image
+        uses: ./.github/actions/docker-image
+        with:
+          image: opensauce04/azahar-build-environment:latest
       - name: Restore build cache
         uses: actions/cache/restore@v4
         with:
