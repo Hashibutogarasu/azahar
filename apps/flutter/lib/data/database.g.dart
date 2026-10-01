@@ -3744,6 +3744,473 @@ class OptionHistoryEntriesCompanion
   }
 }
 
+class $TagsTable extends Tags with TableInfo<$TagsTable, TagRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TagsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => cuid(),
+  );
+  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
+  @override
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _sortIndexMeta = const VerificationMeta(
+    'sortIndex',
+  );
+  @override
+  late final GeneratedColumn<int> sortIndex = GeneratedColumn<int>(
+    'sort_index',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, kind, sortIndex];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'tags';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TagRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('kind')) {
+      context.handle(
+        _kindMeta,
+        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_kindMeta);
+    }
+    if (data.containsKey('sort_index')) {
+      context.handle(
+        _sortIndexMeta,
+        sortIndex.isAcceptableOrUnknown(data['sort_index']!, _sortIndexMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sortIndexMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TagRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TagRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      sortIndex: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_index'],
+      )!,
+    );
+  }
+
+  @override
+  $TagsTable createAlias(String alias) {
+    return $TagsTable(attachedDatabase, alias);
+  }
+}
+
+class TagRow extends DataClass implements Insertable<TagRow> {
+  final String id;
+  final String kind;
+  final int sortIndex;
+  const TagRow({required this.id, required this.kind, required this.sortIndex});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['kind'] = Variable<String>(kind);
+    map['sort_index'] = Variable<int>(sortIndex);
+    return map;
+  }
+
+  TagsCompanion toCompanion(bool nullToAbsent) {
+    return TagsCompanion(
+      id: Value(id),
+      kind: Value(kind),
+      sortIndex: Value(sortIndex),
+    );
+  }
+
+  factory TagRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TagRow(
+      id: serializer.fromJson<String>(json['id']),
+      kind: serializer.fromJson<String>(json['kind']),
+      sortIndex: serializer.fromJson<int>(json['sortIndex']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'kind': serializer.toJson<String>(kind),
+      'sortIndex': serializer.toJson<int>(sortIndex),
+    };
+  }
+
+  TagRow copyWith({String? id, String? kind, int? sortIndex}) => TagRow(
+    id: id ?? this.id,
+    kind: kind ?? this.kind,
+    sortIndex: sortIndex ?? this.sortIndex,
+  );
+  TagRow copyWithCompanion(TagsCompanion data) {
+    return TagRow(
+      id: data.id.present ? data.id.value : this.id,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      sortIndex: data.sortIndex.present ? data.sortIndex.value : this.sortIndex,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TagRow(')
+          ..write('id: $id, ')
+          ..write('kind: $kind, ')
+          ..write('sortIndex: $sortIndex')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, kind, sortIndex);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TagRow &&
+          other.id == this.id &&
+          other.kind == this.kind &&
+          other.sortIndex == this.sortIndex);
+}
+
+class TagsCompanion extends UpdateCompanion<TagRow> {
+  final Value<String> id;
+  final Value<String> kind;
+  final Value<int> sortIndex;
+  final Value<int> rowid;
+  const TagsCompanion({
+    this.id = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.sortIndex = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TagsCompanion.insert({
+    this.id = const Value.absent(),
+    required String kind,
+    required int sortIndex,
+    this.rowid = const Value.absent(),
+  }) : kind = Value(kind),
+       sortIndex = Value(sortIndex);
+  static Insertable<TagRow> custom({
+    Expression<String>? id,
+    Expression<String>? kind,
+    Expression<int>? sortIndex,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (kind != null) 'kind': kind,
+      if (sortIndex != null) 'sort_index': sortIndex,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TagsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? kind,
+    Value<int>? sortIndex,
+    Value<int>? rowid,
+  }) {
+    return TagsCompanion(
+      id: id ?? this.id,
+      kind: kind ?? this.kind,
+      sortIndex: sortIndex ?? this.sortIndex,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (sortIndex.present) {
+      map['sort_index'] = Variable<int>(sortIndex.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TagsCompanion(')
+          ..write('id: $id, ')
+          ..write('kind: $kind, ')
+          ..write('sortIndex: $sortIndex, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $GameTagsTable extends GameTags
+    with TableInfo<$GameTagsTable, GameTagRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $GameTagsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _gamePathMeta = const VerificationMeta(
+    'gamePath',
+  );
+  @override
+  late final GeneratedColumn<String> gamePath = GeneratedColumn<String>(
+    'game_path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tagIdMeta = const VerificationMeta('tagId');
+  @override
+  late final GeneratedColumn<String> tagId = GeneratedColumn<String>(
+    'tag_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES tags (id) ON DELETE CASCADE',
+    ),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [gamePath, tagId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'game_tags';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<GameTagRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('game_path')) {
+      context.handle(
+        _gamePathMeta,
+        gamePath.isAcceptableOrUnknown(data['game_path']!, _gamePathMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_gamePathMeta);
+    }
+    if (data.containsKey('tag_id')) {
+      context.handle(
+        _tagIdMeta,
+        tagId.isAcceptableOrUnknown(data['tag_id']!, _tagIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_tagIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {gamePath, tagId};
+  @override
+  GameTagRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return GameTagRow(
+      gamePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}game_path'],
+      )!,
+      tagId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tag_id'],
+      )!,
+    );
+  }
+
+  @override
+  $GameTagsTable createAlias(String alias) {
+    return $GameTagsTable(attachedDatabase, alias);
+  }
+}
+
+class GameTagRow extends DataClass implements Insertable<GameTagRow> {
+  final String gamePath;
+  final String tagId;
+  const GameTagRow({required this.gamePath, required this.tagId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['game_path'] = Variable<String>(gamePath);
+    map['tag_id'] = Variable<String>(tagId);
+    return map;
+  }
+
+  GameTagsCompanion toCompanion(bool nullToAbsent) {
+    return GameTagsCompanion(gamePath: Value(gamePath), tagId: Value(tagId));
+  }
+
+  factory GameTagRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return GameTagRow(
+      gamePath: serializer.fromJson<String>(json['gamePath']),
+      tagId: serializer.fromJson<String>(json['tagId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'gamePath': serializer.toJson<String>(gamePath),
+      'tagId': serializer.toJson<String>(tagId),
+    };
+  }
+
+  GameTagRow copyWith({String? gamePath, String? tagId}) => GameTagRow(
+    gamePath: gamePath ?? this.gamePath,
+    tagId: tagId ?? this.tagId,
+  );
+  GameTagRow copyWithCompanion(GameTagsCompanion data) {
+    return GameTagRow(
+      gamePath: data.gamePath.present ? data.gamePath.value : this.gamePath,
+      tagId: data.tagId.present ? data.tagId.value : this.tagId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GameTagRow(')
+          ..write('gamePath: $gamePath, ')
+          ..write('tagId: $tagId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(gamePath, tagId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is GameTagRow &&
+          other.gamePath == this.gamePath &&
+          other.tagId == this.tagId);
+}
+
+class GameTagsCompanion extends UpdateCompanion<GameTagRow> {
+  final Value<String> gamePath;
+  final Value<String> tagId;
+  final Value<int> rowid;
+  const GameTagsCompanion({
+    this.gamePath = const Value.absent(),
+    this.tagId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  GameTagsCompanion.insert({
+    required String gamePath,
+    required String tagId,
+    this.rowid = const Value.absent(),
+  }) : gamePath = Value(gamePath),
+       tagId = Value(tagId);
+  static Insertable<GameTagRow> custom({
+    Expression<String>? gamePath,
+    Expression<String>? tagId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (gamePath != null) 'game_path': gamePath,
+      if (tagId != null) 'tag_id': tagId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  GameTagsCompanion copyWith({
+    Value<String>? gamePath,
+    Value<String>? tagId,
+    Value<int>? rowid,
+  }) {
+    return GameTagsCompanion(
+      gamePath: gamePath ?? this.gamePath,
+      tagId: tagId ?? this.tagId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (gamePath.present) {
+      map['game_path'] = Variable<String>(gamePath.value);
+    }
+    if (tagId.present) {
+      map['tag_id'] = Variable<String>(tagId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GameTagsCompanion(')
+          ..write('gamePath: $gamePath, ')
+          ..write('tagId: $tagId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3767,6 +4234,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $PinnedOptionsTable pinnedOptions = $PinnedOptionsTable(this);
   late final $OptionHistoryEntriesTable optionHistoryEntries =
       $OptionHistoryEntriesTable(this);
+  late final $TagsTable tags = $TagsTable(this);
+  late final $GameTagsTable gameTags = $GameTagsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3784,7 +4253,19 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     virtualAccessPoints,
     pinnedOptions,
     optionHistoryEntries,
+    tags,
+    gameTags,
   ];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'tags',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('game_tags', kind: UpdateKind.delete)],
+    ),
+  ]);
 }
 
 typedef $$GamesTableCreateCompanionBuilder =
@@ -6119,6 +6600,520 @@ typedef $$OptionHistoryEntriesTableProcessedTableManager =
       OptionHistoryEntry,
       PrefetchHooks Function()
     >;
+typedef $$TagsTableCreateCompanionBuilder =
+    TagsCompanion Function({
+      Value<String> id,
+      required String kind,
+      required int sortIndex,
+      Value<int> rowid,
+    });
+typedef $$TagsTableUpdateCompanionBuilder =
+    TagsCompanion Function({
+      Value<String> id,
+      Value<String> kind,
+      Value<int> sortIndex,
+      Value<int> rowid,
+    });
+
+final class $$TagsTableReferences
+    extends BaseReferences<_$AppDatabase, $TagsTable, TagRow> {
+  $$TagsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$GameTagsTable, List<GameTagRow>>
+  _gameTagsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.gameTags,
+    aliasName: 'tags__id__game_tags__tag_id',
+  );
+
+  $$GameTagsTableProcessedTableManager get gameTagsRefs {
+    final manager = $$GameTagsTableTableManager(
+      $_db,
+      $_db.gameTags,
+    ).filter((f) => f.tagId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_gameTagsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$TagsTableFilterComposer extends Composer<_$AppDatabase, $TagsTable> {
+  $$TagsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sortIndex => $composableBuilder(
+    column: $table.sortIndex,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> gameTagsRefs(
+    Expression<bool> Function($$GameTagsTableFilterComposer f) f,
+  ) {
+    final $$GameTagsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.gameTags,
+      getReferencedColumn: (t) => t.tagId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GameTagsTableFilterComposer(
+            $db: $db,
+            $table: $db.gameTags,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$TagsTableOrderingComposer extends Composer<_$AppDatabase, $TagsTable> {
+  $$TagsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get sortIndex => $composableBuilder(
+    column: $table.sortIndex,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$TagsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TagsTable> {
+  $$TagsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<int> get sortIndex =>
+      $composableBuilder(column: $table.sortIndex, builder: (column) => column);
+
+  Expression<T> gameTagsRefs<T extends Object>(
+    Expression<T> Function($$GameTagsTableAnnotationComposer a) f,
+  ) {
+    final $$GameTagsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.gameTags,
+      getReferencedColumn: (t) => t.tagId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GameTagsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.gameTags,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$TagsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $TagsTable,
+          TagRow,
+          $$TagsTableFilterComposer,
+          $$TagsTableOrderingComposer,
+          $$TagsTableAnnotationComposer,
+          $$TagsTableCreateCompanionBuilder,
+          $$TagsTableUpdateCompanionBuilder,
+          (TagRow, $$TagsTableReferences),
+          TagRow,
+          PrefetchHooks Function({bool gameTagsRefs})
+        > {
+  $$TagsTableTableManager(_$AppDatabase db, $TagsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TagsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TagsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TagsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> kind = const Value.absent(),
+                Value<int> sortIndex = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TagsCompanion(
+                id: id,
+                kind: kind,
+                sortIndex: sortIndex,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                required String kind,
+                required int sortIndex,
+                Value<int> rowid = const Value.absent(),
+              }) => TagsCompanion.insert(
+                id: id,
+                kind: kind,
+                sortIndex: sortIndex,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$TagsTable, TagRow>(table),
+                  $$TagsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({gameTagsRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (gameTagsRefs) db.gameTags],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (gameTagsRefs)
+                    await $_getPrefetchedData<TagRow, $TagsTable, GameTagRow>(
+                      currentTable: table,
+                      referencedTable: $$TagsTableReferences._gameTagsRefsTable(
+                        db,
+                      ),
+                      managerFromTypedResult: (p0) =>
+                          $$TagsTableReferences(db, table, p0).gameTagsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.tagId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$TagsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $TagsTable,
+      TagRow,
+      $$TagsTableFilterComposer,
+      $$TagsTableOrderingComposer,
+      $$TagsTableAnnotationComposer,
+      $$TagsTableCreateCompanionBuilder,
+      $$TagsTableUpdateCompanionBuilder,
+      (TagRow, $$TagsTableReferences),
+      TagRow,
+      PrefetchHooks Function({bool gameTagsRefs})
+    >;
+typedef $$GameTagsTableCreateCompanionBuilder =
+    GameTagsCompanion Function({
+      required String gamePath,
+      required String tagId,
+      Value<int> rowid,
+    });
+typedef $$GameTagsTableUpdateCompanionBuilder =
+    GameTagsCompanion Function({
+      Value<String> gamePath,
+      Value<String> tagId,
+      Value<int> rowid,
+    });
+
+final class $$GameTagsTableReferences
+    extends BaseReferences<_$AppDatabase, $GameTagsTable, GameTagRow> {
+  $$GameTagsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $TagsTable _tagIdTable(_$AppDatabase db) =>
+      db.tags.createAlias('game_tags__tag_id__tags__id');
+
+  $$TagsTableProcessedTableManager get tagId {
+    final $_column = $_itemColumn<String>('tag_id')!;
+
+    final manager = $$TagsTableTableManager(
+      $_db,
+      $_db.tags,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_tagIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$GameTagsTableFilterComposer
+    extends Composer<_$AppDatabase, $GameTagsTable> {
+  $$GameTagsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get gamePath => $composableBuilder(
+    column: $table.gamePath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$TagsTableFilterComposer get tagId {
+    final $$TagsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.tagId,
+      referencedTable: $db.tags,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TagsTableFilterComposer(
+            $db: $db,
+            $table: $db.tags,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$GameTagsTableOrderingComposer
+    extends Composer<_$AppDatabase, $GameTagsTable> {
+  $$GameTagsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get gamePath => $composableBuilder(
+    column: $table.gamePath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$TagsTableOrderingComposer get tagId {
+    final $$TagsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.tagId,
+      referencedTable: $db.tags,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TagsTableOrderingComposer(
+            $db: $db,
+            $table: $db.tags,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$GameTagsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $GameTagsTable> {
+  $$GameTagsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get gamePath =>
+      $composableBuilder(column: $table.gamePath, builder: (column) => column);
+
+  $$TagsTableAnnotationComposer get tagId {
+    final $$TagsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.tagId,
+      referencedTable: $db.tags,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TagsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.tags,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$GameTagsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $GameTagsTable,
+          GameTagRow,
+          $$GameTagsTableFilterComposer,
+          $$GameTagsTableOrderingComposer,
+          $$GameTagsTableAnnotationComposer,
+          $$GameTagsTableCreateCompanionBuilder,
+          $$GameTagsTableUpdateCompanionBuilder,
+          (GameTagRow, $$GameTagsTableReferences),
+          GameTagRow,
+          PrefetchHooks Function({bool tagId})
+        > {
+  $$GameTagsTableTableManager(_$AppDatabase db, $GameTagsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$GameTagsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$GameTagsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$GameTagsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> gamePath = const Value.absent(),
+                Value<String> tagId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => GameTagsCompanion(
+                gamePath: gamePath,
+                tagId: tagId,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String gamePath,
+                required String tagId,
+                Value<int> rowid = const Value.absent(),
+              }) => GameTagsCompanion.insert(
+                gamePath: gamePath,
+                tagId: tagId,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$GameTagsTable, GameTagRow>(table),
+                  $$GameTagsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({tagId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (tagId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.tagId,
+                                referencedTable: $$GameTagsTableReferences
+                                    ._tagIdTable(db),
+                                referencedColumn: $$GameTagsTableReferences
+                                    ._tagIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$GameTagsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $GameTagsTable,
+      GameTagRow,
+      $$GameTagsTableFilterComposer,
+      $$GameTagsTableOrderingComposer,
+      $$GameTagsTableAnnotationComposer,
+      $$GameTagsTableCreateCompanionBuilder,
+      $$GameTagsTableUpdateCompanionBuilder,
+      (GameTagRow, $$GameTagsTableReferences),
+      GameTagRow,
+      PrefetchHooks Function({bool tagId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -6147,4 +7142,7 @@ class $AppDatabaseManager {
       $$PinnedOptionsTableTableManager(_db, _db.pinnedOptions);
   $$OptionHistoryEntriesTableTableManager get optionHistoryEntries =>
       $$OptionHistoryEntriesTableTableManager(_db, _db.optionHistoryEntries);
+  $$TagsTableTableManager get tags => $$TagsTableTableManager(_db, _db.tags);
+  $$GameTagsTableTableManager get gameTags =>
+      $$GameTagsTableTableManager(_db, _db.gameTags);
 }

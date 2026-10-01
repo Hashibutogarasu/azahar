@@ -21,6 +21,8 @@ import 'data/repositories/media_settings_repository.dart';
 import 'data/repositories/option_history_repository.dart';
 import 'data/repositories/permission_repository.dart';
 import 'data/repositories/pinned_options_repository.dart';
+import 'data/repositories/selected_tags_repository.dart';
+import 'data/repositories/tag_repository.dart';
 import 'data/repositories/theme_settings_repository.dart';
 import 'data/repositories/virtual_access_points_repository.dart';
 import 'data/settings/control_bindings_value_store.dart';
@@ -84,6 +86,9 @@ abstract final class AppServices {
       PinnedOptionsRepository(database);
   static final OptionHistoryRepository optionHistoryRepository =
       OptionHistoryRepository(database);
+  static final TagRepository tagRepository = TagRepository(database);
+  static final SelectedTagsRepository selectedTagsRepository =
+      SelectedTagsRepository(database);
 
   static final List<KeyValueRepository> keyValueRepositories = [
     firstLaunchRepository,

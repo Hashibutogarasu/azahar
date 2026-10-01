@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cuid2/cuid2.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/foundation.dart';
@@ -24,6 +25,8 @@ part 'tables/control_bindings.dart';
 part 'tables/input_layout_elements.dart';
 part 'tables/pinned_options.dart';
 part 'tables/option_history_entries.dart';
+part 'tables/tags.dart';
+part 'tables/game_tags.dart';
 
 @DriftDatabase(
   tables: [
@@ -39,6 +42,8 @@ part 'tables/option_history_entries.dart';
     VirtualAccessPoints,
     PinnedOptions,
     OptionHistoryEntries,
+    Tags,
+    GameTags,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -55,10 +60,13 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 11;
+  int get schemaVersion => 12;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
+    beforeOpen: (details) async {
+      await customStatement('PRAGMA foreign_keys = ON');
+    },
     onUpgrade: (Migrator m, int from, int to) async {
       if (from < 2) {
         await m.createTable(controlBindings);
@@ -102,6 +110,10 @@ class AppDatabase extends _$AppDatabase {
             accessibilitySettings.pageTransition,
           );
         }
+      }
+      if (from < 12) {
+        await m.createTable(tags);
+        await m.createTable(gameTags);
       }
     },
   );

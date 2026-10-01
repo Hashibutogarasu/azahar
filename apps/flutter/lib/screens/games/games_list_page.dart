@@ -4,11 +4,14 @@ import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../app_services.dart';
 import '../../data/repositories/game_repository.dart';
+import '../../data/tags/tags_provider.dart';
 import '../../i18n/translations.g.dart';
 import '../../widgets/app_search_bar.dart';
 import 'game_process_provider.dart';
+import 'games_provider.dart';
 import 'widgets/about_game_bottom_sheet.dart';
 import 'widgets/game_card.dart';
+import 'widgets/tag_filter_bar.dart';
 
 class GamesListPage extends ConsumerStatefulWidget {
   const GamesListPage({super.key});
@@ -20,16 +23,15 @@ class GamesListPage extends ConsumerStatefulWidget {
 class _GamesListPageState extends ConsumerState<GamesListPage>
     with WidgetsBindingObserver {
   final GameRepository _gameRepository = AppServices.gameRepository;
-  final _queryController = TextEditingController();
-  List<Game> _games = const [];
-  String _query = '';
+  late final _queryController = TextEditingController(
+    text: ref.read(gameQueryProvider),
+  );
   bool _wasRunning = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _loadCachedThenRescan();
   }
 
   @override
@@ -41,65 +43,32 @@ class _GamesListPageState extends ConsumerState<GamesListPage>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) _rescan();
-  }
-
-  Future<void> _loadCachedThenRescan() async {
-    final cached = await _gameRepository.cachedGames();
-    if (mounted) {
-      setState(() => _games = cached);
+    if (state == AppLifecycleState.resumed) {
+      ref.read(gamesProvider.notifier).rescan();
     }
-    await _rescan();
-  }
-
-  Future<void> _rescan() async {
-    final scanned = await _gameRepository.rescan();
-    if (mounted) {
-      setState(() => _games = scanned);
-    }
-  }
-
-  List<Game> get _filteredGames {
-    if (_query.isEmpty) return _games;
-    final lowerQuery = _query.toLowerCase();
-    return _games
-        .where((game) => game.title.toLowerCase().contains(lowerQuery))
-        .toList();
   }
 
   void _onGameLongPress(Game game) {
-    final t = context.t;
-    if (game.titleId == 0) {
-      showDialog<void>(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: Text(t.games.properties),
-          content: Text(t.games.propertiesNotLoaded),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(MaterialLocalizations.of(context).okButtonLabel),
-            ),
-          ],
-        ),
-      );
-      return;
-    }
     AboutGameBottomSheet.show(
       context,
       game: game,
       onPlay: () => ref.read(gameProcessProvider.notifier).launch(game),
-      onUninstalled: _rescan,
+      onUninstalled: ref.read(gamesProvider.notifier).rescan,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final t = context.t;
-    final games = _filteredGames;
+    final games = ref.watch(filteredGamesProvider);
+    final hasGames = ref.watch(gamesProvider).value?.isNotEmpty ?? false;
+    final tagsState = ref.watch(tagsProvider);
+    final selectedTagIdsState = ref.watch(selectedTagIdsProvider);
     final isRunning = ref.watch(gameProcessProvider);
     if (_wasRunning && !isRunning) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _rescan());
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => ref.read(gamesProvider.notifier).rescan(),
+      );
     }
     _wasRunning = isRunning;
 
@@ -109,11 +78,18 @@ class _GamesListPageState extends ConsumerState<GamesListPage>
           AppSearchBar(
             controller: _queryController,
             hintText: t.games.searchHint,
-            onChanged: (value) => setState(() => _query = value),
+            onChanged: ref.read(gameQueryProvider.notifier).update,
             onClear: () {
               _queryController.clear();
-              setState(() => _query = '');
+              ref.read(gameQueryProvider.notifier).update('');
             },
+          ),
+          TagFilterBar(
+            tags: tagsState.value ?? const [],
+            selectedTagIds: selectedTagIdsState.value ?? const {},
+            enabled: tagsState.hasValue && selectedTagIdsState.hasValue,
+            onToggle: ref.read(selectedTagIdsProvider.notifier).toggle,
+            onSelectAll: ref.read(selectedTagIdsProvider.notifier).clear,
           ),
           Expanded(
             child: IgnorePointer(
@@ -122,14 +98,16 @@ class _GamesListPageState extends ConsumerState<GamesListPage>
                 opacity: isRunning ? 0.5 : 1,
                 duration: const Duration(milliseconds: 200),
                 child: RefreshIndicator(
-                  onRefresh: _rescan,
+                  onRefresh: ref.read(gamesProvider.notifier).rescan,
                   child: games.isEmpty
                       ? ListView(
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(24),
                               child: Text(
-                                t.games.emptyGamelist,
+                                hasGames
+                                    ? t.games.noMatchingGames
+                                    : t.games.emptyGamelist,
                                 textAlign: TextAlign.center,
                               ),
                             ),
