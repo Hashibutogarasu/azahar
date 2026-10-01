@@ -19,6 +19,7 @@ class GameCard extends ConsumerWidget {
     required this.game,
     required this.onTap,
     this.onLongPress,
+    this.onMore,
     this.isValidExtension = true,
     this.outerPadding = 8,
     this.innerPadding = 8,
@@ -27,6 +28,7 @@ class GameCard extends ConsumerWidget {
   final Game game;
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
+  final VoidCallback? onMore;
   final bool isValidExtension;
   final double outerPadding;
   final double innerPadding;
@@ -94,6 +96,12 @@ class GameCard extends ConsumerWidget {
                     ],
                   ),
                 ),
+                if (onMore != null)
+                  IconButton(
+                    tooltip: context.t.games.properties,
+                    icon: const Icon(Icons.more_vert),
+                    onPressed: onMore,
+                  ),
               ],
             ),
           ),

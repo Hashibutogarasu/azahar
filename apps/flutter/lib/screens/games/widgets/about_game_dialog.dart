@@ -1,13 +1,11 @@
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 import 'package:flutter/material.dart';
 
-import '../../../widgets/long_press_menu_sheet.dart';
 import 'about_game_content.dart';
 
-/// Mirrors the Compose client's `AboutGameBottomSheet`: shown on a long press of a game card on
-/// mobile platforms.
-class AboutGameBottomSheet extends StatelessWidget {
-  const AboutGameBottomSheet({
+/// The information dialog of a game, shown on desktop platforms instead of the bottom sheet.
+class AboutGameDialog extends StatelessWidget {
+  const AboutGameDialog({
     super.key,
     required this.game,
     required this.onPlay,
@@ -24,9 +22,9 @@ class AboutGameBottomSheet extends StatelessWidget {
     required VoidCallback onPlay,
     required VoidCallback onUninstalled,
   }) {
-    return LongPressMenuSheet.show(
-      context,
-      builder: (_) => AboutGameBottomSheet(
+    return showDialog<void>(
+      context: context,
+      builder: (_) => AboutGameDialog(
         game: game,
         onPlay: onPlay,
         onUninstalled: onUninstalled,
@@ -36,11 +34,17 @@ class AboutGameBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LongPressMenuSheet(
-      child: AboutGameContent(
-        game: game,
-        onPlay: onPlay,
-        onUninstalled: onUninstalled,
+    return Dialog(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 560),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: AboutGameContent(
+            game: game,
+            onPlay: onPlay,
+            onUninstalled: onUninstalled,
+          ),
+        ),
       ),
     );
   }
