@@ -26,16 +26,21 @@ $OptionSectionCopyWith<OptionSection> get copyWith => _$OptionSectionCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OptionSection&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other.options, options));
+  final _this = this as OptionSection;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OptionSection&&(identical(other.title, _this.title) || other.title == _this.title)&&const DeepCollectionEquality().equals(other.options, _this.options));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,const DeepCollectionEquality().hash(options));
+int get hashCode {
+  final _this = this as OptionSection;
+  return Object.hash(runtimeType,_this.title,const DeepCollectionEquality().hash(_this.options));
+}
 
 @override
 String toString() {
-  return 'OptionSection(title: $title, options: $options)';
+  final _this = this as OptionSection;
+  return 'OptionSection(title: ${_this.title}, options: ${_this.options})';
 }
 
 
@@ -230,16 +235,18 @@ _$OptionSectionCopyWith<_OptionSection> get copyWith => __$OptionSectionCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OptionSection&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other._options, _options));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _OptionSection&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other.options, _options));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,const DeepCollectionEquality().hash(_options));
+int get hashCode {
+    return Object.hash(runtimeType,title,const DeepCollectionEquality().hash(_options));
+}
 
 @override
 String toString() {
-  return 'OptionSection(title: $title, options: $options)';
+    return 'OptionSection(title: $title, options: $options)';
 }
 
 

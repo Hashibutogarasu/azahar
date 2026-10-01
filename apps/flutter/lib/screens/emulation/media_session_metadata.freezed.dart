@@ -26,16 +26,21 @@ $MediaSessionMetadataCopyWith<MediaSessionMetadata> get copyWith => _$MediaSessi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MediaSessionMetadata&&(identical(other.title, title) || other.title == title)&&(identical(other.artworkPath, artworkPath) || other.artworkPath == artworkPath));
+  final _this = this as MediaSessionMetadata;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MediaSessionMetadata&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.artworkPath, _this.artworkPath) || other.artworkPath == _this.artworkPath));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,artworkPath);
+int get hashCode {
+  final _this = this as MediaSessionMetadata;
+  return Object.hash(runtimeType,_this.title,_this.artworkPath);
+}
 
 @override
 String toString() {
-  return 'MediaSessionMetadata(title: $title, artworkPath: $artworkPath)';
+  final _this = this as MediaSessionMetadata;
+  return 'MediaSessionMetadata(title: ${_this.title}, artworkPath: ${_this.artworkPath})';
 }
 
 
@@ -224,16 +229,18 @@ _$MediaSessionMetadataCopyWith<_MediaSessionMetadata> get copyWith => __$MediaSe
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MediaSessionMetadata&&(identical(other.title, title) || other.title == title)&&(identical(other.artworkPath, artworkPath) || other.artworkPath == artworkPath));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MediaSessionMetadata&&(identical(other.title, title) || other.title == title)&&(identical(other.artworkPath, artworkPath) || other.artworkPath == artworkPath));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,artworkPath);
+int get hashCode {
+    return Object.hash(runtimeType,title,artworkPath);
+}
 
 @override
 String toString() {
-  return 'MediaSessionMetadata(title: $title, artworkPath: $artworkPath)';
+    return 'MediaSessionMetadata(title: $title, artworkPath: $artworkPath)';
 }
 
 

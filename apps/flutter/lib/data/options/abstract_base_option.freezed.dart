@@ -26,16 +26,21 @@ $ActionOptionCopyWith<ActionOption> get copyWith => _$ActionOptionCopyWithImpl<A
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActionOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.onTap, onTap) || other.onTap == onTap)&&(identical(other.destructive, destructive) || other.destructive == destructive));
+  final _this = this as ActionOption;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActionOption&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.onTap, _this.onTap) || other.onTap == _this.onTap)&&(identical(other.destructive, _this.destructive) || other.destructive == _this.destructive));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,icon,onTap,destructive);
+int get hashCode {
+  final _this = this as ActionOption;
+  return Object.hash(runtimeType,_this.title,_this.description,_this.icon,_this.onTap,_this.destructive);
+}
 
 @override
 String toString() {
-  return 'ActionOption(title: $title, description: $description, icon: $icon, onTap: $onTap, destructive: $destructive)';
+  final _this = this as ActionOption;
+  return 'ActionOption(title: ${_this.title}, description: ${_this.description}, icon: ${_this.icon}, onTap: ${_this.onTap}, destructive: ${_this.destructive})';
 }
 
 
@@ -230,16 +235,18 @@ _$ActionOptionCopyWith<_ActionOption> get copyWith => __$ActionOptionCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActionOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.onTap, onTap) || other.onTap == onTap)&&(identical(other.destructive, destructive) || other.destructive == destructive));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActionOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.onTap, onTap) || other.onTap == onTap)&&(identical(other.destructive, destructive) || other.destructive == destructive));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,icon,onTap,destructive);
+int get hashCode {
+    return Object.hash(runtimeType,title,description,icon,onTap,destructive);
+}
 
 @override
 String toString() {
-  return 'ActionOption(title: $title, description: $description, icon: $icon, onTap: $onTap, destructive: $destructive)';
+    return 'ActionOption(title: $title, description: $description, icon: $icon, onTap: $onTap, destructive: $destructive)';
 }
 
 
@@ -295,16 +302,21 @@ $BoolOptionCopyWith<BoolOption> get copyWith => _$BoolOptionCopyWithImpl<BoolOpt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BoolOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value));
+  final _this = this as BoolOption;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BoolOption&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.value, _this.value) || other.value == _this.value));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,icon,value);
+int get hashCode {
+  final _this = this as BoolOption;
+  return Object.hash(runtimeType,_this.title,_this.description,_this.icon,_this.value);
+}
 
 @override
 String toString() {
-  return 'BoolOption(title: $title, description: $description, icon: $icon, value: $value)';
+  final _this = this as BoolOption;
+  return 'BoolOption(title: ${_this.title}, description: ${_this.description}, icon: ${_this.icon}, value: ${_this.value})';
 }
 
 
@@ -497,16 +509,18 @@ _$BoolOptionCopyWith<_BoolOption> get copyWith => __$BoolOptionCopyWithImpl<_Boo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BoolOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BoolOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,icon,value);
+int get hashCode {
+    return Object.hash(runtimeType,title,description,icon,value);
+}
 
 @override
 String toString() {
-  return 'BoolOption(title: $title, description: $description, icon: $icon, value: $value)';
+    return 'BoolOption(title: $title, description: $description, icon: $icon, value: $value)';
 }
 
 
@@ -561,16 +575,21 @@ $DateTimeOptionCopyWith<DateTimeOption> get copyWith => _$DateTimeOptionCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DateTimeOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value));
+  final _this = this as DateTimeOption;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DateTimeOption&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.value, _this.value) || other.value == _this.value));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,icon,value);
+int get hashCode {
+  final _this = this as DateTimeOption;
+  return Object.hash(runtimeType,_this.title,_this.description,_this.icon,_this.value);
+}
 
 @override
 String toString() {
-  return 'DateTimeOption(title: $title, description: $description, icon: $icon, value: $value)';
+  final _this = this as DateTimeOption;
+  return 'DateTimeOption(title: ${_this.title}, description: ${_this.description}, icon: ${_this.icon}, value: ${_this.value})';
 }
 
 
@@ -763,16 +782,18 @@ _$DateTimeOptionCopyWith<_DateTimeOption> get copyWith => __$DateTimeOptionCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DateTimeOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _DateTimeOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,icon,value);
+int get hashCode {
+    return Object.hash(runtimeType,title,description,icon,value);
+}
 
 @override
 String toString() {
-  return 'DateTimeOption(title: $title, description: $description, icon: $icon, value: $value)';
+    return 'DateTimeOption(title: $title, description: $description, icon: $icon, value: $value)';
 }
 
 
@@ -827,16 +848,21 @@ $EnumChoiceCopyWith<T, EnumChoice<T>> get copyWith => _$EnumChoiceCopyWithImpl<T
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EnumChoice<T>&&(identical(other.label, label) || other.label == label)&&const DeepCollectionEquality().equals(other.value, value));
+  final _this = this as EnumChoice<T>;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EnumChoice<T>&&(identical(other.label, _this.label) || other.label == _this.label)&&const DeepCollectionEquality().equals(other.value, _this.value));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,label,const DeepCollectionEquality().hash(value));
+int get hashCode {
+  final _this = this as EnumChoice<T>;
+  return Object.hash(runtimeType,_this.label,const DeepCollectionEquality().hash(_this.value));
+}
 
 @override
 String toString() {
-  return 'EnumChoice<$T>(label: $label, value: $value)';
+  final _this = this as EnumChoice<T>;
+  return 'EnumChoice<$T>(label: ${_this.label}, value: ${_this.value})';
 }
 
 
@@ -1025,16 +1051,18 @@ _$EnumChoiceCopyWith<T, _EnumChoice<T>> get copyWith => __$EnumChoiceCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EnumChoice<T>&&(identical(other.label, label) || other.label == label)&&const DeepCollectionEquality().equals(other.value, value));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _EnumChoice<T>&&(identical(other.label, label) || other.label == label)&&const DeepCollectionEquality().equals(other.value, value));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,label,const DeepCollectionEquality().hash(value));
+int get hashCode {
+    return Object.hash(runtimeType,label,const DeepCollectionEquality().hash(value));
+}
 
 @override
 String toString() {
-  return 'EnumChoice<$T>(label: $label, value: $value)';
+    return 'EnumChoice<$T>(label: $label, value: $value)';
 }
 
 
@@ -1087,16 +1115,21 @@ $EnumOptionCopyWith<T, EnumOption<T>> get copyWith => _$EnumOptionCopyWithImpl<T
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EnumOption<T>&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value)&&const DeepCollectionEquality().equals(other.choices, choices));
+  final _this = this as EnumOption<T>;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EnumOption<T>&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.value, _this.value) || other.value == _this.value)&&const DeepCollectionEquality().equals(other.choices, _this.choices));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,icon,value,const DeepCollectionEquality().hash(choices));
+int get hashCode {
+  final _this = this as EnumOption<T>;
+  return Object.hash(runtimeType,_this.title,_this.description,_this.icon,_this.value,const DeepCollectionEquality().hash(_this.choices));
+}
 
 @override
 String toString() {
-  return 'EnumOption<$T>(title: $title, description: $description, icon: $icon, value: $value, choices: $choices)';
+  final _this = this as EnumOption<T>;
+  return 'EnumOption<$T>(title: ${_this.title}, description: ${_this.description}, icon: ${_this.icon}, value: ${_this.value}, choices: ${_this.choices})';
 }
 
 
@@ -1297,16 +1330,18 @@ _$EnumOptionCopyWith<T, _EnumOption<T>> get copyWith => __$EnumOptionCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EnumOption<T>&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value)&&const DeepCollectionEquality().equals(other._choices, _choices));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _EnumOption<T>&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value)&&const DeepCollectionEquality().equals(other.choices, _choices));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,icon,value,const DeepCollectionEquality().hash(_choices));
+int get hashCode {
+    return Object.hash(runtimeType,title,description,icon,value,const DeepCollectionEquality().hash(_choices));
+}
 
 @override
 String toString() {
-  return 'EnumOption<$T>(title: $title, description: $description, icon: $icon, value: $value, choices: $choices)';
+    return 'EnumOption<$T>(title: $title, description: $description, icon: $icon, value: $value, choices: $choices)';
 }
 
 
@@ -1362,16 +1397,21 @@ $InputBindingOptionCopyWith<InputBindingOption> get copyWith => _$InputBindingOp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InputBindingOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value));
+  final _this = this as InputBindingOption;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InputBindingOption&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.value, _this.value) || other.value == _this.value));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,icon,value);
+int get hashCode {
+  final _this = this as InputBindingOption;
+  return Object.hash(runtimeType,_this.title,_this.description,_this.icon,_this.value);
+}
 
 @override
 String toString() {
-  return 'InputBindingOption(title: $title, description: $description, icon: $icon, value: $value)';
+  final _this = this as InputBindingOption;
+  return 'InputBindingOption(title: ${_this.title}, description: ${_this.description}, icon: ${_this.icon}, value: ${_this.value})';
 }
 
 
@@ -1564,16 +1604,18 @@ _$InputBindingOptionCopyWith<_InputBindingOption> get copyWith => __$InputBindin
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InputBindingOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InputBindingOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,icon,value);
+int get hashCode {
+    return Object.hash(runtimeType,title,description,icon,value);
+}
 
 @override
 String toString() {
-  return 'InputBindingOption(title: $title, description: $description, icon: $icon, value: $value)';
+    return 'InputBindingOption(title: $title, description: $description, icon: $icon, value: $value)';
 }
 
 
@@ -1628,16 +1670,21 @@ $IntOptionCopyWith<IntOption> get copyWith => _$IntOptionCopyWithImpl<IntOption>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is IntOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value)&&(identical(other.min, min) || other.min == min)&&(identical(other.max, max) || other.max == max)&&(identical(other.defaultValue, defaultValue) || other.defaultValue == defaultValue)&&(identical(other.units, units) || other.units == units));
+  final _this = this as IntOption;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is IntOption&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.value, _this.value) || other.value == _this.value)&&(identical(other.min, _this.min) || other.min == _this.min)&&(identical(other.max, _this.max) || other.max == _this.max)&&(identical(other.defaultValue, _this.defaultValue) || other.defaultValue == _this.defaultValue)&&(identical(other.units, _this.units) || other.units == _this.units));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,icon,value,min,max,defaultValue,units);
+int get hashCode {
+  final _this = this as IntOption;
+  return Object.hash(runtimeType,_this.title,_this.description,_this.icon,_this.value,_this.min,_this.max,_this.defaultValue,_this.units);
+}
 
 @override
 String toString() {
-  return 'IntOption(title: $title, description: $description, icon: $icon, value: $value, min: $min, max: $max, defaultValue: $defaultValue, units: $units)';
+  final _this = this as IntOption;
+  return 'IntOption(title: ${_this.title}, description: ${_this.description}, icon: ${_this.icon}, value: ${_this.value}, min: ${_this.min}, max: ${_this.max}, defaultValue: ${_this.defaultValue}, units: ${_this.units})';
 }
 
 
@@ -1838,16 +1885,18 @@ _$IntOptionCopyWith<_IntOption> get copyWith => __$IntOptionCopyWithImpl<_IntOpt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _IntOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value)&&(identical(other.min, min) || other.min == min)&&(identical(other.max, max) || other.max == max)&&(identical(other.defaultValue, defaultValue) || other.defaultValue == defaultValue)&&(identical(other.units, units) || other.units == units));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _IntOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value)&&(identical(other.min, min) || other.min == min)&&(identical(other.max, max) || other.max == max)&&(identical(other.defaultValue, defaultValue) || other.defaultValue == defaultValue)&&(identical(other.units, units) || other.units == units));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,icon,value,min,max,defaultValue,units);
+int get hashCode {
+    return Object.hash(runtimeType,title,description,icon,value,min,max,defaultValue,units);
+}
 
 @override
 String toString() {
-  return 'IntOption(title: $title, description: $description, icon: $icon, value: $value, min: $min, max: $max, defaultValue: $defaultValue, units: $units)';
+    return 'IntOption(title: $title, description: $description, icon: $icon, value: $value, min: $min, max: $max, defaultValue: $defaultValue, units: $units)';
 }
 
 
@@ -1906,16 +1955,21 @@ $NestedOptionCopyWith<NestedOption> get copyWith => _$NestedOptionCopyWithImpl<N
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NestedOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.destination, destination) || other.destination == destination));
+  final _this = this as NestedOption;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NestedOption&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.destination, _this.destination) || other.destination == _this.destination));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,icon,destination);
+int get hashCode {
+  final _this = this as NestedOption;
+  return Object.hash(runtimeType,_this.title,_this.description,_this.icon,_this.destination);
+}
 
 @override
 String toString() {
-  return 'NestedOption(title: $title, description: $description, icon: $icon, destination: $destination)';
+  final _this = this as NestedOption;
+  return 'NestedOption(title: ${_this.title}, description: ${_this.description}, icon: ${_this.icon}, destination: ${_this.destination})';
 }
 
 
@@ -2108,16 +2162,18 @@ _$NestedOptionCopyWith<_NestedOption> get copyWith => __$NestedOptionCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NestedOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.destination, destination) || other.destination == destination));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NestedOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.destination, destination) || other.destination == destination));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,icon,destination);
+int get hashCode {
+    return Object.hash(runtimeType,title,description,icon,destination);
+}
 
 @override
 String toString() {
-  return 'NestedOption(title: $title, description: $description, icon: $icon, destination: $destination)';
+    return 'NestedOption(title: $title, description: $description, icon: $icon, destination: $destination)';
 }
 
 
@@ -2172,16 +2228,21 @@ $StringOptionCopyWith<StringOption> get copyWith => _$StringOptionCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is StringOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value)&&(identical(other.maxLength, maxLength) || other.maxLength == maxLength));
+  final _this = this as StringOption;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is StringOption&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.value, _this.value) || other.value == _this.value)&&(identical(other.maxLength, _this.maxLength) || other.maxLength == _this.maxLength));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,icon,value,maxLength);
+int get hashCode {
+  final _this = this as StringOption;
+  return Object.hash(runtimeType,_this.title,_this.description,_this.icon,_this.value,_this.maxLength);
+}
 
 @override
 String toString() {
-  return 'StringOption(title: $title, description: $description, icon: $icon, value: $value, maxLength: $maxLength)';
+  final _this = this as StringOption;
+  return 'StringOption(title: ${_this.title}, description: ${_this.description}, icon: ${_this.icon}, value: ${_this.value}, maxLength: ${_this.maxLength})';
 }
 
 
@@ -2376,16 +2437,18 @@ _$StringOptionCopyWith<_StringOption> get copyWith => __$StringOptionCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _StringOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value)&&(identical(other.maxLength, maxLength) || other.maxLength == maxLength));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _StringOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value)&&(identical(other.maxLength, maxLength) || other.maxLength == maxLength));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,icon,value,maxLength);
+int get hashCode {
+    return Object.hash(runtimeType,title,description,icon,value,maxLength);
+}
 
 @override
 String toString() {
-  return 'StringOption(title: $title, description: $description, icon: $icon, value: $value, maxLength: $maxLength)';
+    return 'StringOption(title: $title, description: $description, icon: $icon, value: $value, maxLength: $maxLength)';
 }
 
 
