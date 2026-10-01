@@ -16,6 +16,7 @@ finish-args:
 modules:
   - name: azahar
     buildsystem: cmake-ninja
+    builddir: true
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
       - -DENABLE_QT_TRANSLATION=ON
