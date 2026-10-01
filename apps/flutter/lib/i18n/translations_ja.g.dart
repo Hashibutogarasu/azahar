@@ -60,6 +60,14 @@ class TranslationsJa extends Translations
   @override
   late final _Translations$common$ja common = _Translations$common$ja._(_root);
   @override
+  Map<String, String> get tags => {
+    'all': 'すべて',
+    'system': 'システム',
+    'userInstalled': 'ユーザー',
+    'hidden': '非表示',
+    'modded': '改造済み',
+  };
+  @override
   late final _Translations$setup$ja setup = _Translations$setup$ja._(_root);
   @override
   late final _Translations$home$ja home = _Translations$home$ja._(_root);
@@ -189,6 +197,8 @@ class _Translations$games$ja extends Translations$games$en {
   String get searchHint => 'アプリケーションを検索';
   @override
   String get emptyGamelist => 'ファイルが見つからないか、ゲームディレクトリがまだ選択されていません。';
+  @override
+  String get noMatchingGames => '検索条件とタグに一致するアプリケーションがありません。';
   @override
   String get properties => 'プロパティ';
   @override
@@ -2195,6 +2205,11 @@ extension on TranslationsJa {
           'appName' => 'Azahar',
           'common.cancel' => 'キャンセル',
           'common.save' => '保存',
+          'tags.all' => 'すべて',
+          'tags.system' => 'システム',
+          'tags.userInstalled' => 'ユーザー',
+          'tags.hidden' => '非表示',
+          'tags.modded' => '改造済み',
           'setup.next' => '次へ',
           'setup.back' => '戻る',
           'setup.stepComplete' => '完了！',
@@ -2249,6 +2264,7 @@ extension on TranslationsJa {
           'home.options' => 'オプション',
           'games.searchHint' => 'アプリケーションを検索',
           'games.emptyGamelist' => 'ファイルが見つからないか、ゲームディレクトリがまだ選択されていません。',
+          'games.noMatchingGames' => '検索条件とタグに一致するアプリケーションがありません。',
           'games.properties' => 'プロパティ',
           'games.propertiesNotLoaded' =>
             'このアプリケーションのプロパティはまだ利用できません。アプリケーション一覧の読み込みが完了するまでお待ちください。',
@@ -2768,15 +2784,15 @@ extension on TranslationsJa {
           'settings.system.countries.gibraltar' => 'ジブラルタル',
           'settings.system.countries.guernsey' => 'ガーンジー',
           'settings.system.countries.isleOfMan' => 'マン島',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.system.countries.jersey' => 'ジャージー',
           'settings.system.countries.monaco' => 'モナコ',
           'settings.system.countries.taiwan' => '台湾',
           'settings.system.countries.southKorea' => '韓国',
           'settings.system.countries.hongKong' => '香港',
           'settings.system.countries.macau' => 'マカオ',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.system.countries.indonesia' => 'インドネシア',
           'settings.system.countries.singapore' => 'シンガポール',
           'settings.system.countries.thailand' => 'タイ',

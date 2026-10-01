@@ -13,6 +13,7 @@ dependencies:
     path: ../../packages/native
   babstrap_settings_screen:
     path: packages/babstrap_settings_screen
+  cuid2: ^4.1.0
   desktop_multi_window: ^0.3.1
   drift: ^2.35.0
   dynamic_color: ^1.9.0

@@ -4,6 +4,13 @@
     "cancel": "Cancel",
     "save": "Save"
   },
+  "tags": {
+    "all": "All",
+    "system": "System",
+    "userInstalled": "User",
+    "hidden": "Hidden",
+    "modded": "Modded"
+  },
   "setup": {
     "next": "Next",
     "back": "Back",
@@ -73,6 +80,7 @@
   "games": {
     "searchHint": "Search Applications",
     "emptyGamelist": "No files were found or no game directory has been selected yet.",
+    "noMatchingGames": "No applications match the current search and tags.",
     "properties": "Properties",
     "propertiesNotLoaded": "This application's properties are not yet available. Please wait for the application list to finish loading and try again.",
     "play": "Play",

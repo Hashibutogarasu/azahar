@@ -61,6 +61,13 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$common$en common = Translations$common$en.internal(
     _root,
   );
+  Map<String, String> get tags => {
+    'all': 'All',
+    'system': 'System',
+    'userInstalled': 'User',
+    'hidden': 'Hidden',
+    'modded': 'Modded',
+  };
   late final Translations$setup$en setup = Translations$setup$en.internal(
     _root,
   );
@@ -182,6 +189,10 @@ class Translations$games$en {
   /// en: 'No files were found or no game directory has been selected yet.'
   String get emptyGamelist =>
       'No files were found or no game directory has been selected yet.';
+
+  /// en: 'No applications match the current search and tags.'
+  String get noMatchingGames =>
+      'No applications match the current search and tags.';
 
   /// en: 'Properties'
   String get properties => 'Properties';
@@ -2797,6 +2808,11 @@ extension on Translations {
           'appName' => 'Azahar',
           'common.cancel' => 'Cancel',
           'common.save' => 'Save',
+          'tags.all' => 'All',
+          'tags.system' => 'System',
+          'tags.userInstalled' => 'User',
+          'tags.hidden' => 'Hidden',
+          'tags.modded' => 'Modded',
           'setup.next' => 'Next',
           'setup.back' => 'Back',
           'setup.stepComplete' => 'Complete!',
@@ -2860,6 +2876,8 @@ extension on Translations {
           'games.searchHint' => 'Search Applications',
           'games.emptyGamelist' =>
             'No files were found or no game directory has been selected yet.',
+          'games.noMatchingGames' =>
+            'No applications match the current search and tags.',
           'games.properties' => 'Properties',
           'games.propertiesNotLoaded' =>
             'This application\'s properties are not yet available. Please wait for the application list to finish loading and try again.',
@@ -3413,15 +3431,15 @@ extension on Translations {
           'settings.system.countries.somalia' => 'Somalia',
           'settings.system.countries.andorra' => 'Andorra',
           'settings.system.countries.gibraltar' => 'Gibraltar',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.system.countries.guernsey' => 'Guernsey',
           'settings.system.countries.isleOfMan' => 'Isle of Man',
           'settings.system.countries.jersey' => 'Jersey',
           'settings.system.countries.monaco' => 'Monaco',
           'settings.system.countries.taiwan' => 'Taiwan',
           'settings.system.countries.southKorea' => 'South Korea',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.system.countries.hongKong' => 'Hong Kong',
           'settings.system.countries.macau' => 'Macau',
           'settings.system.countries.indonesia' => 'Indonesia',

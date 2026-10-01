@@ -9,6 +9,7 @@ import 'create_shortcut_dialog.dart';
 import 'delete_shader_cache_dialog.dart';
 import 'game_icon.dart';
 import 'game_regions_translator.dart';
+import 'game_tag_selector.dart';
 import 'open_folder_menu_button.dart';
 import 'uninstall_menu_button.dart';
 
@@ -121,6 +122,8 @@ class _AboutGameBottomSheetState extends State<AboutGameBottomSheet> {
               ),
             ],
           ),
+          const SizedBox(height: 12),
+          GameTagSelector(game: game),
           const SizedBox(height: 16),
           FutureBuilder<GameFolderStatus>(
             future: _folderStatus,
