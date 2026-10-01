@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 
-/// A panel drawn as Liquid Glass, or as a flat [Material] when [blurSigma] is zero (Legacy theme).
+/// A panel drawn as Liquid Glass, or as a flat [Material] when [blurSigma] is zero (Legacy theme)
+/// or [backdropBlur] is false.
 ///
 /// Set [refract] for floating chrome to use a refracting [LiquidGlass]; otherwise the
-/// shader-free [FakeGlass] is used, which is safe inside scrollables.
+/// shader-free [FakeGlass] is used. [FakeGlass] still blurs the backdrop with a `BackdropFilter`,
+/// which is costly for every item of a scrollable, so set [backdropBlur] to false there.
 class AppLiquidGlass extends StatelessWidget {
   const AppLiquidGlass({
     super.key,
@@ -14,6 +16,7 @@ class AppLiquidGlass extends StatelessWidget {
     required this.borderColor,
     required this.child,
     this.refract = false,
+    this.backdropBlur = true,
     this.shadow = const [],
   });
 
@@ -22,6 +25,7 @@ class AppLiquidGlass extends StatelessWidget {
   final Color fillColor;
   final Color borderColor;
   final bool refract;
+  final bool backdropBlur;
   final List<BoxShadow> shadow;
   final Widget child;
 
@@ -34,12 +38,15 @@ class AppLiquidGlass extends StatelessWidget {
       boxShadow: shadow,
     );
 
-    if (blurSigma <= 0) {
+    if (blurSigma <= 0 || !backdropBlur) {
       return DecoratedBox(
         decoration: decoration,
         child: Material(
           color: fillColor,
-          borderRadius: borderRadius,
+          shape: RoundedRectangleBorder(
+            borderRadius: borderRadius,
+            side: BorderSide(color: borderColor),
+          ),
           clipBehavior: Clip.antiAlias,
           child: child,
         ),
@@ -69,11 +76,7 @@ class AppLiquidGlass extends StatelessWidget {
               settings: settings.copyWith(thickness: 24),
               child: content,
             )
-          : FakeGlass(
-              shape: shape,
-              settings: settings,
-              child: content,
-            ),
+          : FakeGlass(shape: shape, settings: settings, child: content),
     );
   }
 }

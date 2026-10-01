@@ -191,6 +191,8 @@
     "accessibilityDescription": "Motion and other accessibility settings",
     "advanced": "Advanced Settings",
     "advancedDescription": "Configure more advanced options",
+    "featureFlags": "Feature Flags",
+    "featureFlagsDescription": "Turn on features that are still in development",
     "about": "About",
     "aboutDescription": "Build version, credits, and more",
     "general": "Profile",
@@ -792,6 +794,12 @@
         "normal": "Normal",
         "slow": "Slow"
       }
+    },
+    "featureFlags": {
+      "title": "Feature Flags",
+      "experimental": "Experimental",
+      "performanceImprovements": "Performance Improvements",
+      "performanceImprovementsDescription": "Reduces rendering and processing load. Some visuals are simplified."
     },
     "language": {
       "title": "Language",

@@ -14,8 +14,9 @@ extension OptionCommit on WidgetRef {
     T newValue,
     VoidCallback onAccessed,
   ) async {
+    final revision = read(optionValuesRevisionProvider.notifier);
     await value.write(context, this, newValue);
-    read(optionValuesRevisionProvider.notifier).bump();
+    revision.bump();
     onAccessed();
   }
 }

@@ -516,6 +516,13 @@ class Translations$options$en {
   /// en: 'Configure more advanced options'
   String get advancedDescription => 'Configure more advanced options';
 
+  /// en: 'Feature Flags'
+  String get featureFlags => 'Feature Flags';
+
+  /// en: 'Turn on features that are still in development'
+  String get featureFlagsDescription =>
+      'Turn on features that are still in development';
+
   /// en: 'About'
   String get about => 'About';
 
@@ -784,6 +791,8 @@ class Translations$settings$en {
       Translations$settings$accessibility$en.internal(_root);
   late final Translations$settings$advanced$en advanced =
       Translations$settings$advanced$en.internal(_root);
+  late final Translations$settings$featureFlags$en featureFlags =
+      Translations$settings$featureFlags$en.internal(_root);
   late final Translations$settings$language$en language =
       Translations$settings$language$en.internal(_root);
 }
@@ -2323,6 +2332,28 @@ class Translations$settings$advanced$en {
       Translations$settings$advanced$animationSpeed$en.internal(_root);
 }
 
+// Path: settings.featureFlags
+class Translations$settings$featureFlags$en {
+  Translations$settings$featureFlags$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Feature Flags'
+  String get title => 'Feature Flags';
+
+  /// en: 'Experimental'
+  String get experimental => 'Experimental';
+
+  /// en: 'Performance Improvements'
+  String get performanceImprovements => 'Performance Improvements';
+
+  /// en: 'Reduces rendering and processing load. Some visuals are simplified.'
+  String get performanceImprovementsDescription =>
+      'Reduces rendering and processing load. Some visuals are simplified.';
+}
+
 // Path: settings.language
 class Translations$settings$language$en {
   Translations$settings$language$en.internal(this._root);
@@ -2998,6 +3029,9 @@ extension on Translations {
             'Motion and other accessibility settings',
           'options.advanced' => 'Advanced Settings',
           'options.advancedDescription' => 'Configure more advanced options',
+          'options.featureFlags' => 'Feature Flags',
+          'options.featureFlagsDescription' =>
+            'Turn on features that are still in development',
           'options.about' => 'About',
           'options.aboutDescription' => 'Build version, credits, and more',
           'options.general' => 'Profile',
@@ -3432,11 +3466,11 @@ extension on Translations {
           'settings.system.countries.sudan' => 'Sudan',
           'settings.system.countries.eritrea' => 'Eritrea',
           'settings.system.countries.djibouti' => 'Djibouti',
-          'settings.system.countries.somalia' => 'Somalia',
-          'settings.system.countries.andorra' => 'Andorra',
           _ => null,
         } ??
         switch (path) {
+          'settings.system.countries.somalia' => 'Somalia',
+          'settings.system.countries.andorra' => 'Andorra',
           'settings.system.countries.gibraltar' => 'Gibraltar',
           'settings.system.countries.guernsey' => 'Guernsey',
           'settings.system.countries.isleOfMan' => 'Isle of Man',
@@ -3667,6 +3701,12 @@ extension on Translations {
           'settings.advanced.animationSpeed.fast' => 'Fast',
           'settings.advanced.animationSpeed.normal' => 'Normal',
           'settings.advanced.animationSpeed.slow' => 'Slow',
+          'settings.featureFlags.title' => 'Feature Flags',
+          'settings.featureFlags.experimental' => 'Experimental',
+          'settings.featureFlags.performanceImprovements' =>
+            'Performance Improvements',
+          'settings.featureFlags.performanceImprovementsDescription' =>
+            'Reduces rendering and processing load. Some visuals are simplified.',
           'settings.language.title' => 'Language',
           'settings.language.systemDefault' => 'System default',
           'settings.language.english' => 'English',

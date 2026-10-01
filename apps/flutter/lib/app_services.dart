@@ -8,6 +8,7 @@ import 'data/repositories/artic_base_address_repository.dart';
 import 'data/repositories/citra_directory_repository.dart';
 import 'data/repositories/control_bindings_repository.dart';
 import 'data/repositories/debug_settings_repository.dart';
+import 'data/repositories/feature_flags_repository.dart';
 import 'data/repositories/first_launch_repository.dart';
 import 'data/repositories/game_repository.dart';
 import 'data/repositories/games_directory_repository.dart';
@@ -92,6 +93,8 @@ abstract final class AppServices {
       UserGameInfoRepository(database);
   static final SelectedTagsRepository selectedTagsRepository =
       SelectedTagsRepository(database);
+  static final FeatureFlagsRepository featureFlagsRepository =
+      FeatureFlagsRepository(database);
 
   static final List<KeyValueRepository> keyValueRepositories = [
     firstLaunchRepository,
@@ -115,6 +118,7 @@ abstract final class AppServices {
     controlBindingsValueStore,
     languageCodeRepository,
     legacySettingsUiRepository,
+    featureFlagsRepository,
   ];
 
   static Future<void> loadAll() async {
