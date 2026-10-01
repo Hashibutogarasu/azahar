@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
+import '../../../data/games/game_title_provider.dart';
 import '../../../i18n/translations.g.dart';
 import '../../../theme/extensions/game_card_theme.dart';
 import '../../../theme/extensions/glass_surface_theme.dart';
@@ -11,7 +13,7 @@ import 'game_regions_translator.dart';
 /// A games/applications list row. Its panel and icon-box styling come entirely from
 /// [GlassSurfaceTheme] and [GameCardTheme], so this single widget renders both the Azahar and
 /// Legacy looks.
-class GameCard extends StatelessWidget {
+class GameCard extends ConsumerWidget {
   const GameCard({
     super.key,
     required this.game,
@@ -30,7 +32,8 @@ class GameCard extends StatelessWidget {
   final double innerPadding;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final title = ref.watch(gameTitleProvider(game.path));
     final surfaceTheme = Theme.of(context).extension<GlassSurfaceTheme>()!;
     final cardTheme = Theme.of(context).extension<GameCardTheme>()!;
     return Padding(
@@ -68,9 +71,9 @@ class GameCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (game.title.isNotEmpty)
+                      if (title.isNotEmpty)
                         Text(
-                          game.title,
+                          title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: cardTheme.titleStyle,

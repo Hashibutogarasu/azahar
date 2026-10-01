@@ -27,6 +27,7 @@ part 'tables/pinned_options.dart';
 part 'tables/option_history_entries.dart';
 part 'tables/tags.dart';
 part 'tables/game_tags.dart';
+part 'tables/user_game_infos.dart';
 
 @DriftDatabase(
   tables: [
@@ -44,6 +45,7 @@ part 'tables/game_tags.dart';
     OptionHistoryEntries,
     Tags,
     GameTags,
+    UserGameInfos,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -60,7 +62,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 12;
+  int get schemaVersion => 13;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -114,6 +116,9 @@ class AppDatabase extends _$AppDatabase {
       if (from < 12) {
         await m.createTable(tags);
         await m.createTable(gameTags);
+      }
+      if (from < 13) {
+        await m.createTable(userGameInfos);
       }
     },
   );

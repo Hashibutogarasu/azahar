@@ -7,6 +7,7 @@ import '../../data/repositories/game_repository.dart';
 import '../../data/tags/tags_provider.dart';
 import '../../i18n/translations.g.dart';
 import '../../widgets/app_search_bar.dart';
+import 'filtered_games_provider.dart';
 import 'game_process_provider.dart';
 import 'games_provider.dart';
 import 'widgets/about_game_bottom_sheet.dart';

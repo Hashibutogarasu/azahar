@@ -80,6 +80,7 @@
   "games": {
     "searchHint": "Search Applications",
     "emptyGamelist": "No files were found or no game directory has been selected yet.",
+    "resetTitle": "Restore the default name",
     "noMatchingGames": "No applications match the current search and tags.",
     "properties": "Properties",
     "propertiesNotLoaded": "This application's properties are not yet available. Please wait for the application list to finish loading and try again.",

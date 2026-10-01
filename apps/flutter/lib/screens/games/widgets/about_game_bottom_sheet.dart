@@ -7,6 +7,7 @@ import '../../../widgets/long_press_menu_sheet.dart';
 import '../../setup/dialogs/message_dialog.dart';
 import 'create_shortcut_dialog.dart';
 import 'delete_shader_cache_dialog.dart';
+import 'editable_game_title.dart';
 import 'game_icon.dart';
 import 'game_regions_translator.dart';
 import 'game_tag_selector.dart';
@@ -77,6 +78,8 @@ class _AboutGameBottomSheetState extends State<AboutGameBottomSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          EditableGameTitle(game: game),
+          const SizedBox(height: 8),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -93,12 +96,6 @@ class _AboutGameBottomSheetState extends State<AboutGameBottomSheet> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      game.title,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
                     Text(game.company, style: theme.textTheme.bodyMedium),
                     Text(
                       translateGameRegions(t, game.regions),

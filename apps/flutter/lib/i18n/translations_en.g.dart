@@ -190,6 +190,9 @@ class Translations$games$en {
   String get emptyGamelist =>
       'No files were found or no game directory has been selected yet.';
 
+  /// en: 'Restore the default name'
+  String get resetTitle => 'Restore the default name';
+
   /// en: 'No applications match the current search and tags.'
   String get noMatchingGames =>
       'No applications match the current search and tags.';
@@ -2876,6 +2879,7 @@ extension on Translations {
           'games.searchHint' => 'Search Applications',
           'games.emptyGamelist' =>
             'No files were found or no game directory has been selected yet.',
+          'games.resetTitle' => 'Restore the default name',
           'games.noMatchingGames' =>
             'No applications match the current search and tags.',
           'games.properties' => 'Properties',
@@ -3430,10 +3434,10 @@ extension on Translations {
           'settings.system.countries.djibouti' => 'Djibouti',
           'settings.system.countries.somalia' => 'Somalia',
           'settings.system.countries.andorra' => 'Andorra',
-          'settings.system.countries.gibraltar' => 'Gibraltar',
           _ => null,
         } ??
         switch (path) {
+          'settings.system.countries.gibraltar' => 'Gibraltar',
           'settings.system.countries.guernsey' => 'Guernsey',
           'settings.system.countries.isleOfMan' => 'Isle of Man',
           'settings.system.countries.jersey' => 'Jersey',
