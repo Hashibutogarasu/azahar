@@ -63,7 +63,7 @@ internal class MainEngineSession(
         ActivityResultContracts.OpenDocumentTree()
     ) { uri -> directoryController.onGamesDirectoryPicked(uri) }
 
-    private val directoryController = DirectoryController(
+    private val directoryController: DirectoryController = DirectoryController(
         activity,
         activity.contentResolver,
         openUserDirectoryLauncher,
