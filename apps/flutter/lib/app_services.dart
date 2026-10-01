@@ -24,6 +24,7 @@ import 'data/repositories/pinned_options_repository.dart';
 import 'data/repositories/selected_tags_repository.dart';
 import 'data/repositories/tag_repository.dart';
 import 'data/repositories/theme_settings_repository.dart';
+import 'data/repositories/user_game_info_repository.dart';
 import 'data/repositories/virtual_access_points_repository.dart';
 import 'data/settings/control_bindings_value_store.dart';
 import 'data/settings/emulator_settings_repository.dart';
@@ -87,6 +88,8 @@ abstract final class AppServices {
   static final OptionHistoryRepository optionHistoryRepository =
       OptionHistoryRepository(database);
   static final TagRepository tagRepository = TagRepository(database);
+  static final UserGameInfoRepository userGameInfoRepository =
+      UserGameInfoRepository(database);
   static final SelectedTagsRepository selectedTagsRepository =
       SelectedTagsRepository(database);
 

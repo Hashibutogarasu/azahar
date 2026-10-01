@@ -26,16 +26,21 @@ $OptionCategoryCopyWith<OptionCategory> get copyWith => _$OptionCategoryCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OptionCategory&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other.sections, sections));
+  final _this = this as OptionCategory;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OptionCategory&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&const DeepCollectionEquality().equals(other.sections, _this.sections));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,const DeepCollectionEquality().hash(sections));
+int get hashCode {
+  final _this = this as OptionCategory;
+  return Object.hash(runtimeType,_this.id,_this.title,const DeepCollectionEquality().hash(_this.sections));
+}
 
 @override
 String toString() {
-  return 'OptionCategory(id: $id, title: $title, sections: $sections)';
+  final _this = this as OptionCategory;
+  return 'OptionCategory(id: ${_this.id}, title: ${_this.title}, sections: ${_this.sections})';
 }
 
 
@@ -232,16 +237,18 @@ _$OptionCategoryCopyWith<_OptionCategory> get copyWith => __$OptionCategoryCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OptionCategory&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other._sections, _sections));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _OptionCategory&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other.sections, _sections));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,const DeepCollectionEquality().hash(_sections));
+int get hashCode {
+    return Object.hash(runtimeType,id,title,const DeepCollectionEquality().hash(_sections));
+}
 
 @override
 String toString() {
-  return 'OptionCategory(id: $id, title: $title, sections: $sections)';
+    return 'OptionCategory(id: $id, title: $title, sections: $sections)';
 }
 
 

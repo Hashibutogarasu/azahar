@@ -26,16 +26,21 @@ $SettingsItemCopyWith<SettingsItem> get copyWith => _$SettingsItemCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description));
+  final _this = this as SettingsItem;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsItem&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description);
+int get hashCode {
+  final _this = this as SettingsItem;
+  return Object.hash(runtimeType,_this.title,_this.description);
+}
 
 @override
 String toString() {
-  return 'SettingsItem(title: $title, description: $description)';
+  final _this = this as SettingsItem;
+  return 'SettingsItem(title: ${_this.title}, description: ${_this.description})';
 }
 
 
@@ -278,16 +283,18 @@ $SettingsHeaderItemCopyWith<SettingsHeaderItem> get copyWith => _$SettingsHeader
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsHeaderItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsHeaderItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description);
+int get hashCode {
+    return Object.hash(runtimeType,title,description);
+}
 
 @override
 String toString() {
-  return 'SettingsItem.header(title: $title, description: $description)';
+    return 'SettingsItem.header(title: $title, description: $description)';
 }
 
 
@@ -348,16 +355,18 @@ $SettingsSwitchItemCopyWith<SettingsSwitchItem> get copyWith => _$SettingsSwitch
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsSwitchItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.store, store) || other.store == store));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsSwitchItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.store, store) || other.store == store));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,setting,store);
+int get hashCode {
+    return Object.hash(runtimeType,title,description,setting,store);
+}
 
 @override
 String toString() {
-  return 'SettingsItem.switch_(title: $title, description: $description, setting: $setting, store: $store)';
+    return 'SettingsItem.switch_(title: $title, description: $description, setting: $setting, store: $store)';
 }
 
 
@@ -423,16 +432,18 @@ $SettingsSliderItemCopyWith<SettingsSliderItem> get copyWith => _$SettingsSlider
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsSliderItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.min, min) || other.min == min)&&(identical(other.max, max) || other.max == max)&&(identical(other.units, units) || other.units == units)&&(identical(other.store, store) || other.store == store));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsSliderItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.min, min) || other.min == min)&&(identical(other.max, max) || other.max == max)&&(identical(other.units, units) || other.units == units)&&(identical(other.store, store) || other.store == store));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,setting,min,max,units,store);
+int get hashCode {
+    return Object.hash(runtimeType,title,description,setting,min,max,units,store);
+}
 
 @override
 String toString() {
-  return 'SettingsItem.slider(title: $title, description: $description, setting: $setting, min: $min, max: $max, units: $units, store: $store)';
+    return 'SettingsItem.slider(title: $title, description: $description, setting: $setting, min: $min, max: $max, units: $units, store: $store)';
 }
 
 
@@ -512,16 +523,18 @@ $SettingsSingleChoiceItemCopyWith<SettingsSingleChoiceItem> get copyWith => _$Se
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsSingleChoiceItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&const DeepCollectionEquality().equals(other._choiceLabels, _choiceLabels)&&const DeepCollectionEquality().equals(other._choiceValues, _choiceValues)&&(identical(other.store, store) || other.store == store));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsSingleChoiceItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&const DeepCollectionEquality().equals(other.choiceLabels, _choiceLabels)&&const DeepCollectionEquality().equals(other.choiceValues, _choiceValues)&&(identical(other.store, store) || other.store == store));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,setting,const DeepCollectionEquality().hash(_choiceLabels),const DeepCollectionEquality().hash(_choiceValues),store);
+int get hashCode {
+    return Object.hash(runtimeType,title,description,setting,const DeepCollectionEquality().hash(_choiceLabels),const DeepCollectionEquality().hash(_choiceValues),store);
+}
 
 @override
 String toString() {
-  return 'SettingsItem.singleChoice(title: $title, description: $description, setting: $setting, choiceLabels: $choiceLabels, choiceValues: $choiceValues, store: $store)';
+    return 'SettingsItem.singleChoice(title: $title, description: $description, setting: $setting, choiceLabels: $choiceLabels, choiceValues: $choiceValues, store: $store)';
 }
 
 
@@ -589,16 +602,18 @@ $SettingsFloatSliderItemCopyWith<SettingsFloatSliderItem> get copyWith => _$Sett
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsFloatSliderItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.min, min) || other.min == min)&&(identical(other.max, max) || other.max == max)&&(identical(other.units, units) || other.units == units)&&(identical(other.store, store) || other.store == store));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsFloatSliderItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.min, min) || other.min == min)&&(identical(other.max, max) || other.max == max)&&(identical(other.units, units) || other.units == units)&&(identical(other.store, store) || other.store == store));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,setting,min,max,units,store);
+int get hashCode {
+    return Object.hash(runtimeType,title,description,setting,min,max,units,store);
+}
 
 @override
 String toString() {
-  return 'SettingsItem.floatSlider(title: $title, description: $description, setting: $setting, min: $min, max: $max, units: $units, store: $store)';
+    return 'SettingsItem.floatSlider(title: $title, description: $description, setting: $setting, min: $min, max: $max, units: $units, store: $store)';
 }
 
 
@@ -678,16 +693,18 @@ $SettingsStringSingleChoiceItemCopyWith<SettingsStringSingleChoiceItem> get copy
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsStringSingleChoiceItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&const DeepCollectionEquality().equals(other._choiceLabels, _choiceLabels)&&const DeepCollectionEquality().equals(other._choiceValues, _choiceValues)&&(identical(other.store, store) || other.store == store));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsStringSingleChoiceItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&const DeepCollectionEquality().equals(other.choiceLabels, _choiceLabels)&&const DeepCollectionEquality().equals(other.choiceValues, _choiceValues)&&(identical(other.store, store) || other.store == store));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,setting,const DeepCollectionEquality().hash(_choiceLabels),const DeepCollectionEquality().hash(_choiceValues),store);
+int get hashCode {
+    return Object.hash(runtimeType,title,description,setting,const DeepCollectionEquality().hash(_choiceLabels),const DeepCollectionEquality().hash(_choiceValues),store);
+}
 
 @override
 String toString() {
-  return 'SettingsItem.stringSingleChoice(title: $title, description: $description, setting: $setting, choiceLabels: $choiceLabels, choiceValues: $choiceValues, store: $store)';
+    return 'SettingsItem.stringSingleChoice(title: $title, description: $description, setting: $setting, choiceLabels: $choiceLabels, choiceValues: $choiceValues, store: $store)';
 }
 
 
@@ -753,16 +770,18 @@ $SettingsStringInputItemCopyWith<SettingsStringInputItem> get copyWith => _$Sett
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsStringInputItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.maxLength, maxLength) || other.maxLength == maxLength)&&(identical(other.store, store) || other.store == store));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsStringInputItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.maxLength, maxLength) || other.maxLength == maxLength)&&(identical(other.store, store) || other.store == store));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,setting,maxLength,store);
+int get hashCode {
+    return Object.hash(runtimeType,title,description,setting,maxLength,store);
+}
 
 @override
 String toString() {
-  return 'SettingsItem.stringInput(title: $title, description: $description, setting: $setting, maxLength: $maxLength, store: $store)';
+    return 'SettingsItem.stringInput(title: $title, description: $description, setting: $setting, maxLength: $maxLength, store: $store)';
 }
 
 
@@ -826,16 +845,18 @@ $SettingsDateTimeItemCopyWith<SettingsDateTimeItem> get copyWith => _$SettingsDa
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsDateTimeItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.store, store) || other.store == store));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsDateTimeItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.store, store) || other.store == store));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,setting,store);
+int get hashCode {
+    return Object.hash(runtimeType,title,description,setting,store);
+}
 
 @override
 String toString() {
-  return 'SettingsItem.dateTime(title: $title, description: $description, setting: $setting, store: $store)';
+    return 'SettingsItem.dateTime(title: $title, description: $description, setting: $setting, store: $store)';
 }
 
 
@@ -898,16 +919,18 @@ $SettingsInputBindingItemCopyWith<SettingsInputBindingItem> get copyWith => _$Se
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsInputBindingItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.store, store) || other.store == store));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsInputBindingItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.setting, setting) || other.setting == setting)&&(identical(other.store, store) || other.store == store));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,setting,store);
+int get hashCode {
+    return Object.hash(runtimeType,title,description,setting,store);
+}
 
 @override
 String toString() {
-  return 'SettingsItem.inputBinding(title: $title, description: $description, setting: $setting, store: $store)';
+    return 'SettingsItem.inputBinding(title: $title, description: $description, setting: $setting, store: $store)';
 }
 
 
@@ -970,16 +993,18 @@ $SettingsActionItemCopyWith<SettingsActionItem> get copyWith => _$SettingsAction
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsActionItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.onTap, onTap) || other.onTap == onTap));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsActionItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.onTap, onTap) || other.onTap == onTap));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,icon,onTap);
+int get hashCode {
+    return Object.hash(runtimeType,title,description,icon,onTap);
+}
 
 @override
 String toString() {
-  return 'SettingsItem.action(title: $title, description: $description, icon: $icon, onTap: $onTap)';
+    return 'SettingsItem.action(title: $title, description: $description, icon: $icon, onTap: $onTap)';
 }
 
 
@@ -1042,16 +1067,18 @@ $SettingsSubmenuItemCopyWith<SettingsSubmenuItem> get copyWith => _$SettingsSubm
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsSubmenuItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.onTap, onTap) || other.onTap == onTap));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsSubmenuItem&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.onTap, onTap) || other.onTap == onTap));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,description,icon,onTap);
+int get hashCode {
+    return Object.hash(runtimeType,title,description,icon,onTap);
+}
 
 @override
 String toString() {
-  return 'SettingsItem.submenu(title: $title, description: $description, icon: $icon, onTap: $onTap)';
+    return 'SettingsItem.submenu(title: $title, description: $description, icon: $icon, onTap: $onTap)';
 }
 
 

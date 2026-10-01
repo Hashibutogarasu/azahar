@@ -4211,6 +4211,221 @@ class GameTagsCompanion extends UpdateCompanion<GameTagRow> {
   }
 }
 
+class $UserGameInfosTable extends UserGameInfos
+    with TableInfo<$UserGameInfosTable, UserGameInfoRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $UserGameInfosTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _gameIdMeta = const VerificationMeta('gameId');
+  @override
+  late final GeneratedColumn<String> gameId = GeneratedColumn<String>(
+    'game_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [gameId, name];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'user_game_infos';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<UserGameInfoRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('game_id')) {
+      context.handle(
+        _gameIdMeta,
+        gameId.isAcceptableOrUnknown(data['game_id']!, _gameIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_gameIdMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {gameId};
+  @override
+  UserGameInfoRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return UserGameInfoRow(
+      gameId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}game_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      ),
+    );
+  }
+
+  @override
+  $UserGameInfosTable createAlias(String alias) {
+    return $UserGameInfosTable(attachedDatabase, alias);
+  }
+}
+
+class UserGameInfoRow extends DataClass implements Insertable<UserGameInfoRow> {
+  final String gameId;
+  final String? name;
+  const UserGameInfoRow({required this.gameId, this.name});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['game_id'] = Variable<String>(gameId);
+    if (!nullToAbsent || name != null) {
+      map['name'] = Variable<String>(name);
+    }
+    return map;
+  }
+
+  UserGameInfosCompanion toCompanion(bool nullToAbsent) {
+    return UserGameInfosCompanion(
+      gameId: Value(gameId),
+      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+    );
+  }
+
+  factory UserGameInfoRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return UserGameInfoRow(
+      gameId: serializer.fromJson<String>(json['gameId']),
+      name: serializer.fromJson<String?>(json['name']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'gameId': serializer.toJson<String>(gameId),
+      'name': serializer.toJson<String?>(name),
+    };
+  }
+
+  UserGameInfoRow copyWith({
+    String? gameId,
+    Value<String?> name = const Value.absent(),
+  }) => UserGameInfoRow(
+    gameId: gameId ?? this.gameId,
+    name: name.present ? name.value : this.name,
+  );
+  UserGameInfoRow copyWithCompanion(UserGameInfosCompanion data) {
+    return UserGameInfoRow(
+      gameId: data.gameId.present ? data.gameId.value : this.gameId,
+      name: data.name.present ? data.name.value : this.name,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserGameInfoRow(')
+          ..write('gameId: $gameId, ')
+          ..write('name: $name')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(gameId, name);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is UserGameInfoRow &&
+          other.gameId == this.gameId &&
+          other.name == this.name);
+}
+
+class UserGameInfosCompanion extends UpdateCompanion<UserGameInfoRow> {
+  final Value<String> gameId;
+  final Value<String?> name;
+  final Value<int> rowid;
+  const UserGameInfosCompanion({
+    this.gameId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  UserGameInfosCompanion.insert({
+    required String gameId,
+    this.name = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : gameId = Value(gameId);
+  static Insertable<UserGameInfoRow> custom({
+    Expression<String>? gameId,
+    Expression<String>? name,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (gameId != null) 'game_id': gameId,
+      if (name != null) 'name': name,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  UserGameInfosCompanion copyWith({
+    Value<String>? gameId,
+    Value<String?>? name,
+    Value<int>? rowid,
+  }) {
+    return UserGameInfosCompanion(
+      gameId: gameId ?? this.gameId,
+      name: name ?? this.name,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (gameId.present) {
+      map['game_id'] = Variable<String>(gameId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserGameInfosCompanion(')
+          ..write('gameId: $gameId, ')
+          ..write('name: $name, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4236,6 +4451,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $OptionHistoryEntriesTable(this);
   late final $TagsTable tags = $TagsTable(this);
   late final $GameTagsTable gameTags = $GameTagsTable(this);
+  late final $UserGameInfosTable userGameInfos = $UserGameInfosTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4255,6 +4471,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     optionHistoryEntries,
     tags,
     gameTags,
+    userGameInfos,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -7114,6 +7331,158 @@ typedef $$GameTagsTableProcessedTableManager =
       GameTagRow,
       PrefetchHooks Function({bool tagId})
     >;
+typedef $$UserGameInfosTableCreateCompanionBuilder =
+    UserGameInfosCompanion Function({
+      required String gameId,
+      Value<String?> name,
+      Value<int> rowid,
+    });
+typedef $$UserGameInfosTableUpdateCompanionBuilder =
+    UserGameInfosCompanion Function({
+      Value<String> gameId,
+      Value<String?> name,
+      Value<int> rowid,
+    });
+
+class $$UserGameInfosTableFilterComposer
+    extends Composer<_$AppDatabase, $UserGameInfosTable> {
+  $$UserGameInfosTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get gameId => $composableBuilder(
+    column: $table.gameId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$UserGameInfosTableOrderingComposer
+    extends Composer<_$AppDatabase, $UserGameInfosTable> {
+  $$UserGameInfosTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get gameId => $composableBuilder(
+    column: $table.gameId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$UserGameInfosTableAnnotationComposer
+    extends Composer<_$AppDatabase, $UserGameInfosTable> {
+  $$UserGameInfosTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get gameId =>
+      $composableBuilder(column: $table.gameId, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+}
+
+class $$UserGameInfosTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $UserGameInfosTable,
+          UserGameInfoRow,
+          $$UserGameInfosTableFilterComposer,
+          $$UserGameInfosTableOrderingComposer,
+          $$UserGameInfosTableAnnotationComposer,
+          $$UserGameInfosTableCreateCompanionBuilder,
+          $$UserGameInfosTableUpdateCompanionBuilder,
+          (
+            UserGameInfoRow,
+            BaseReferences<_$AppDatabase, $UserGameInfosTable, UserGameInfoRow>,
+          ),
+          UserGameInfoRow,
+          PrefetchHooks Function()
+        > {
+  $$UserGameInfosTableTableManager(_$AppDatabase db, $UserGameInfosTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$UserGameInfosTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$UserGameInfosTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$UserGameInfosTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> gameId = const Value.absent(),
+                Value<String?> name = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => UserGameInfosCompanion(
+                gameId: gameId,
+                name: name,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String gameId,
+                Value<String?> name = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => UserGameInfosCompanion.insert(
+                gameId: gameId,
+                name: name,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$UserGameInfosTable, UserGameInfoRow>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $UserGameInfosTable,
+                    UserGameInfoRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$UserGameInfosTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $UserGameInfosTable,
+      UserGameInfoRow,
+      $$UserGameInfosTableFilterComposer,
+      $$UserGameInfosTableOrderingComposer,
+      $$UserGameInfosTableAnnotationComposer,
+      $$UserGameInfosTableCreateCompanionBuilder,
+      $$UserGameInfosTableUpdateCompanionBuilder,
+      (
+        UserGameInfoRow,
+        BaseReferences<_$AppDatabase, $UserGameInfosTable, UserGameInfoRow>,
+      ),
+      UserGameInfoRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -7145,4 +7514,6 @@ class $AppDatabaseManager {
   $$TagsTableTableManager get tags => $$TagsTableTableManager(_db, _db.tags);
   $$GameTagsTableTableManager get gameTags =>
       $$GameTagsTableTableManager(_db, _db.gameTags);
+  $$UserGameInfosTableTableManager get userGameInfos =>
+      $$UserGameInfosTableTableManager(_db, _db.userGameInfos);
 }

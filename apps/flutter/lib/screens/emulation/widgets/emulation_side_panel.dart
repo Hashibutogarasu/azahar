@@ -1,4 +1,3 @@
-import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 import 'package:flutter/material.dart';
 
 import 'emulation_menu_actions.dart';
@@ -10,12 +9,12 @@ import 'game_title.dart';
 class EmulationSidePanel extends StatefulWidget {
   const EmulationSidePanel({
     super.key,
-    required this.game,
+    required this.gamePath,
     required this.isPaused,
     required this.actions,
   });
 
-  final Game? game;
+  final String gamePath;
   final bool isPaused;
   final EmulationMenuActions actions;
 
@@ -54,7 +53,7 @@ class _EmulationSidePanelState extends State<EmulationSidePanel> {
                   children: [
                     Expanded(
                       child: GameTitle(
-                        game: widget.game,
+                        gamePath: widget.gamePath,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.titleLarge,

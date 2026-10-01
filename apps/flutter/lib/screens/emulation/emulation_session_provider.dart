@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../app_services.dart';
+import '../../data/games/game_title_provider.dart';
 import '../../data/settings/media_volume_provider.dart';
 import '../../data/settings/sections/media_settings.dart';
 import 'emulation_screens_layout.dart';
@@ -101,7 +102,10 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
     if (!_treatAsMediaSession) return;
     _mediaSessionActivated = true;
     await _mediaSession.activate(
-      MediaSessionMetadata(title: game.title, artworkPath: game.iconPath),
+      MediaSessionMetadata(
+        title: ref.read(gameTitleProvider(game.path)),
+        artworkPath: game.iconPath,
+      ),
       isPlaying: !state.isPaused,
       onStop: () => unawaited(terminate()),
       onPlay: () {

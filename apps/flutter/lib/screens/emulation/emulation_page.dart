@@ -195,6 +195,7 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
           if (!state.emulationStarted || state.isTerminating)
             Center(
               child: EmulationLoadingCard(
+                gamePath: widget.gamePath,
                 game: widget.game,
                 progress: state.shaderProgress,
                 isTerminating: state.isTerminating,
@@ -215,6 +216,7 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
         drawerEnableOpenDragGesture: false,
         drawer: !isDesktop && state.emulationStarted
             ? EmulationDrawer(
+                gamePath: widget.gamePath,
                 game: widget.game,
                 isPaused: state.isPaused,
                 actions: actions,
@@ -229,7 +231,7 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
                     bottom: 0,
                     left: 0,
                     child: EmulationSidePanel(
-                      game: widget.game,
+                      gamePath: widget.gamePath,
                       isPaused: state.isPaused,
                       actions: actions,
                     ),

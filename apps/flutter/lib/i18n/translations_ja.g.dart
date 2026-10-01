@@ -198,6 +198,8 @@ class _Translations$games$ja extends Translations$games$en {
   @override
   String get emptyGamelist => 'ファイルが見つからないか、ゲームディレクトリがまだ選択されていません。';
   @override
+  String get resetTitle => 'デフォルトの名前に戻す';
+  @override
   String get noMatchingGames => '検索条件とタグに一致するアプリケーションがありません。';
   @override
   String get properties => 'プロパティ';
@@ -2264,6 +2266,7 @@ extension on TranslationsJa {
           'home.options' => 'オプション',
           'games.searchHint' => 'アプリケーションを検索',
           'games.emptyGamelist' => 'ファイルが見つからないか、ゲームディレクトリがまだ選択されていません。',
+          'games.resetTitle' => 'デフォルトの名前に戻す',
           'games.noMatchingGames' => '検索条件とタグに一致するアプリケーションがありません。',
           'games.properties' => 'プロパティ',
           'games.propertiesNotLoaded' =>
@@ -2783,10 +2786,10 @@ extension on TranslationsJa {
           'settings.system.countries.andorra' => 'アンドラ',
           'settings.system.countries.gibraltar' => 'ジブラルタル',
           'settings.system.countries.guernsey' => 'ガーンジー',
-          'settings.system.countries.isleOfMan' => 'マン島',
           _ => null,
         } ??
         switch (path) {
+          'settings.system.countries.isleOfMan' => 'マン島',
           'settings.system.countries.jersey' => 'ジャージー',
           'settings.system.countries.monaco' => 'モナコ',
           'settings.system.countries.taiwan' => '台湾',

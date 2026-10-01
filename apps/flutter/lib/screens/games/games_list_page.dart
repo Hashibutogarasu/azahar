@@ -3,13 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../app_services.dart';
+import '../../data/platform_provider.dart';
 import '../../data/repositories/game_repository.dart';
 import '../../data/tags/tags_provider.dart';
 import '../../i18n/translations.g.dart';
 import '../../widgets/app_search_bar.dart';
+import 'filtered_games_provider.dart';
 import 'game_process_provider.dart';
 import 'games_provider.dart';
 import 'widgets/about_game_bottom_sheet.dart';
+import 'widgets/about_game_dialog.dart';
 import 'widgets/game_card.dart';
 import 'widgets/tag_filter_bar.dart';
 
@@ -32,6 +35,7 @@ class _GamesListPageState extends ConsumerState<GamesListPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    ref.read(gamesProvider.notifier).rescan();
   }
 
   @override
@@ -48,8 +52,11 @@ class _GamesListPageState extends ConsumerState<GamesListPage>
     }
   }
 
-  void _onGameLongPress(Game game) {
-    AboutGameBottomSheet.show(
+  void _showGameInfo(Game game) {
+    final show = ref.read(isDesktopPlatformProvider)
+        ? AboutGameDialog.show
+        : AboutGameBottomSheet.show;
+    show(
       context,
       game: game,
       onPlay: () => ref.read(gameProcessProvider.notifier).launch(game),
@@ -65,6 +72,7 @@ class _GamesListPageState extends ConsumerState<GamesListPage>
     final tagsState = ref.watch(tagsProvider);
     final selectedTagIdsState = ref.watch(selectedTagIdsProvider);
     final isRunning = ref.watch(gameProcessProvider);
+    final isDesktop = ref.watch(isDesktopPlatformProvider);
     if (_wasRunning && !isRunning) {
       WidgetsBinding.instance.addPostFrameCallback(
         (_) => ref.read(gamesProvider.notifier).rescan(),
@@ -125,7 +133,8 @@ class _GamesListPageState extends ConsumerState<GamesListPage>
                               onTap: () => ref
                                   .read(gameProcessProvider.notifier)
                                   .launch(game),
-                              onLongPress: () => _onGameLongPress(game),
+                              onInfo: () => _showGameInfo(game),
+                              showInfoButton: isDesktop,
                             );
                           },
                         ),
