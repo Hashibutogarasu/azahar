@@ -24,6 +24,9 @@ pub enum AzaharError {
     /// The requested 3DS address range is not mapped.
     #[error("the 3DS memory range {address:#010x}+{len} is not mapped")]
     InvalidAddress { address: u32, len: u32 },
+    /// The core library could not be loaded or initialized.
+    #[error("the core library could not be loaded: {0}")]
+    LibraryLoad(String),
     /// The audio output could not be opened.
     #[error("audio output failed: {0}")]
     Audio(String),

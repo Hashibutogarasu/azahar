@@ -26,9 +26,7 @@ impl<'a> Memory3ds<'a> {
 
     /// Copies `len` bytes starting at the 3DS virtual address `address`.
     pub fn read_block(&self, address: u32, len: usize) -> Result<Vec<u8>> {
-        let mut buffer = vec![0u8; len];
-        self.handle.read_memory(address, &mut buffer)?;
-        Ok(buffer)
+        self.handle.read_memory(address, len)
     }
 
     pub fn read_u8(&self, address: u32) -> Result<u8> {
@@ -53,16 +51,20 @@ impl<'a> Memory3ds<'a> {
         if size == 0 {
             return Err(AzaharError::InvalidState);
         }
-        let mut dump = vec![0u8; size];
-        for (index, chunk) in dump.chunks_mut(DUMP_CHUNK).enumerate() {
-            self.handle.read_fcram(index * DUMP_CHUNK, chunk)?;
+        let mut dump = Vec::with_capacity(size);
+        let mut offset = 0;
+        while offset < size {
+            let len = DUMP_CHUNK.min(size - offset);
+            dump.extend_from_slice(&self.handle.read_fcram(offset, len)?);
+            offset += len;
         }
         Ok(dump)
     }
 
     fn read_array<const N: usize>(&self, address: u32) -> Result<[u8; N]> {
-        let mut bytes = [0u8; N];
-        self.handle.read_memory(address, &mut bytes)?;
-        Ok(bytes)
+        let bytes = self.handle.read_memory(address, N)?;
+        Ok(bytes
+            .try_into()
+            .expect("the core returns as many bytes as were asked for"))
     }
 }

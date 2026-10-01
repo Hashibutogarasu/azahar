@@ -46,6 +46,7 @@ class AzaharForFlutterPlugin : FlutterPlugin, ActivityAware {
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         Class.forName(NativeLibrary::class.java.name)
+        NativeLibrary.setApplicationContext(flutterPluginBinding.applicationContext)
         flutterBinding = flutterPluginBinding
     }
 

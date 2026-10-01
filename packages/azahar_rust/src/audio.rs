@@ -4,6 +4,7 @@
 //! ring buffer. A dedicated thread owns the `cpal` stream (which is not
 //! `Send`) and is joined when the [`AudioOutput`] is dropped.
 
+use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 use std::sync::mpsc::{self, Sender};
 use std::sync::{Arc, Mutex};
@@ -43,6 +44,7 @@ pub struct AudioOutput {
 impl AudioOutput {
     /// Opens the default output device and starts playback.
     pub fn new() -> Result<Self> {
+        prepare_platform();
         let ring = HeapRb::<i16>::new(BUFFER_FRAMES * CHANNELS);
         let (producer, consumer) = ring.split();
         let shared = Arc::new(Shared {
@@ -57,13 +59,20 @@ impl AudioOutput {
         let thread = std::thread::Builder::new()
             .name("azahar-audio".into())
             .spawn(move || {
-                let stream = match build_stream(consumer, thread_shared) {
-                    Ok(stream) => {
+                let built = catch_unwind(AssertUnwindSafe(|| {
+                    build_stream(consumer, thread_shared)
+                }));
+                let stream = match built {
+                    Ok(Ok(stream)) => {
                         let _ = ready_tx.send(Ok(()));
                         stream
                     }
-                    Err(error) => {
+                    Ok(Err(error)) => {
                         let _ = ready_tx.send(Err(error));
+                        return;
+                    }
+                    Err(payload) => {
+                        let _ = ready_tx.send(Err(panic_message(payload.as_ref())));
                         return;
                     }
                 };
@@ -135,6 +144,41 @@ impl Drop for AudioOutput {
         }
     }
 }
+
+fn panic_message(payload: &(dyn std::any::Any + Send)) -> String {
+    if let Some(message) = payload.downcast_ref::<&str>() {
+        return format!("the audio backend panicked: {message}");
+    }
+    if let Some(message) = payload.downcast_ref::<String>() {
+        return format!("the audio backend panicked: {message}");
+    }
+    "the audio backend panicked".into()
+}
+
+/// Makes the Android context known to the audio backend, which queries the audio system through
+/// it. There is nothing to prepare elsewhere.
+#[cfg(target_os = "android")]
+fn prepare_platform() {
+    use std::ffi::c_void;
+    use std::sync::Once;
+
+    unsafe extern "C" {
+        fn azahar_host_java_vm() -> *mut c_void;
+        fn azahar_host_application_context() -> *mut c_void;
+    }
+
+    static INITIALIZED: Once = Once::new();
+    INITIALIZED.call_once(|| unsafe {
+        let java_vm = azahar_host_java_vm();
+        let context = azahar_host_application_context();
+        if !java_vm.is_null() && !context.is_null() {
+            ndk_context::initialize_android_context(java_vm, context);
+        }
+    });
+}
+
+#[cfg(not(target_os = "android"))]
+fn prepare_platform() {}
 
 fn build_stream(
     consumer: HeapCons<i16>,

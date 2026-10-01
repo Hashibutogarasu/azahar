@@ -452,6 +452,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           len: dco_decode_u_32(raw[2]),
         );
       case 7:
+        return AzaharError_LibraryLoad(dco_decode_String(raw[1]));
+      case 8:
         return AzaharError_Audio(dco_decode_String(raw[1]));
       default:
         throw Exception("unreachable");
@@ -617,6 +619,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         var var_len = sse_decode_u_32(deserializer);
         return AzaharError_InvalidAddress(address: var_address, len: var_len);
       case 7:
+        var var_field0 = sse_decode_String(deserializer);
+        return AzaharError_LibraryLoad(var_field0);
+      case 8:
         var var_field0 = sse_decode_String(deserializer);
         return AzaharError_Audio(var_field0);
       default:
@@ -803,8 +808,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_i_32(6, serializer);
         sse_encode_u_32(address, serializer);
         sse_encode_u_32(len, serializer);
-      case AzaharError_Audio(field0: final field0):
+      case AzaharError_LibraryLoad(field0: final field0):
         sse_encode_i_32(7, serializer);
+        sse_encode_String(field0, serializer);
+      case AzaharError_Audio(field0: final field0):
+        sse_encode_i_32(8, serializer);
         sse_encode_String(field0, serializer);
     }
   }

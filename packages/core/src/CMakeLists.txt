@@ -203,6 +203,7 @@ endif()
 if (ANDROID)
     add_subdirectory(${AZAHAR_APPS_DIR}/android/app/src/main/jni ${PROJECT_BINARY_DIR}/apps/android/jni)
     target_include_directories(citra-android PRIVATE ${AZAHAR_APPS_DIR}/android/app/src/main)
+    target_include_directories(azahar-session PRIVATE ${AZAHAR_APPS_DIR}/android/app/src/main)
 endif()
 
 if (ENABLE_WEB_SERVICE)

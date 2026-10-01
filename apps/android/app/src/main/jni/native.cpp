@@ -6,9 +6,11 @@
 #include <array>
 #include <atomic>
 #include <charconv>
+#include <chrono>
 #include <codecvt>
 #include <cstdio>
 #include <cstring>
+#include <exception>
 #include <mutex>
 #include <optional>
 #include <string>
@@ -17,6 +19,7 @@
 #include <dlfcn.h>
 
 #include <android/api-level.h>
+#include <android/log.h>
 #include <android/native_window_jni.h>
 #include <core/hw/aes/key.h>
 #include <core/loader/smdh.h>
@@ -96,6 +99,19 @@ std::atomic<bool> advance_frame_requested{false};
 std::mutex paused_mutex;
 std::mutex running_mutex;
 std::condition_variable running_cv;
+
+/// The initialization the application did on this library, kept so it can be replayed on the
+/// library a session loads for itself.
+struct HostState {
+    std::mutex mutex;
+    bool gpu_driver_initialized{};
+    std::string hook_lib_dir;
+    std::string custom_driver_dir;
+    std::string custom_driver_name;
+    std::string file_redirect_dir;
+};
+
+HostState g_host_state;
 
 } // Anonymous namespace
 
@@ -285,6 +301,8 @@ static Core::System::ResultStatus RunCitra(const std::string& filepath) {
 
     Core::System& system{Core::System::GetInstance()};
 
+    Config{};
+
     const auto graphics_api = Settings::values.graphics_api.GetValue();
     switch (graphics_api) {
 #ifdef ENABLE_OPENGL
@@ -330,8 +348,6 @@ static Core::System::ResultStatus RunCitra(const std::string& filepath) {
         break;
     }
 
-    // Forces a config reload on game boot, if the user changed settings in the UI
-    Config{};
     // Replace with game-specific settings
     u64 program_id{};
     FileUtil::SetCurrentRomPath(filepath);
@@ -560,8 +576,19 @@ void Java_org_citra_citra_1emu_NativeLibrary_setGyroInvert(
 void JNICALL Java_org_citra_citra_1emu_NativeLibrary_initializeGpuDriver(
     JNIEnv* env, jobject obj, jstring hook_lib_dir, jstring custom_driver_dir,
     jstring custom_driver_name, jstring file_redirect_dir) {
-    InitializeGpuDriver(GetJString(env, hook_lib_dir), GetJString(env, custom_driver_dir),
-                        GetJString(env, custom_driver_name), GetJString(env, file_redirect_dir));
+    std::string hook = GetJString(env, hook_lib_dir);
+    std::string custom_dir = GetJString(env, custom_driver_dir);
+    std::string custom_name = GetJString(env, custom_driver_name);
+    std::string redirect_dir = GetJString(env, file_redirect_dir);
+    {
+        std::lock_guard lock{g_host_state.mutex};
+        g_host_state.gpu_driver_initialized = true;
+        g_host_state.hook_lib_dir = hook;
+        g_host_state.custom_driver_dir = custom_dir;
+        g_host_state.custom_driver_name = custom_name;
+        g_host_state.file_redirect_dir = redirect_dir;
+    }
+    InitializeGpuDriver(hook, custom_dir, custom_name, redirect_dir);
 }
 
 void Java_org_citra_citra_1emu_NativeLibrary_notifyOrientationChange([[maybe_unused]] JNIEnv* env,
@@ -1102,6 +1129,15 @@ void ReportSessionError(const AzaharSessionCallbacks& callbacks, const std::stri
     }
 }
 
+/**
+ * Asks the application for a screen texture and hands its surface to the emulation.
+ *
+ * The id of the texture is reported first, because the application shows the texture as soon as
+ * it knows the id, and that is what makes Flutter hand out a surface. The renderer creates what
+ * it draws into from that surface, so this waits until Flutter has made one available.
+ *
+ * @return false when the texture could not be created or no surface became available in time.
+ */
 bool CreateSessionTexture(const AzaharSession& session, int width, int height, bool secondary) {
     JNIEnv* env = IDCache::GetEnvForThread();
     const jlong texture_id = env->CallStaticLongMethod(
@@ -1114,11 +1150,38 @@ bool CreateSessionTexture(const AzaharSession& session, int width, int height, b
     if (texture_id < 0) {
         return false;
     }
+
     if (session.callbacks.on_texture) {
         session.callbacks.on_texture(session.callbacks.user, static_cast<int64_t>(texture_id),
                                      secondary ? 1 : 0);
     }
-    return true;
+
+    constexpr auto surface_timeout = std::chrono::seconds(10);
+    constexpr auto surface_poll_interval = std::chrono::milliseconds(20);
+    const auto deadline = std::chrono::steady_clock::now() + surface_timeout;
+    while (true) {
+        const jobject surface = env->CallStaticObjectMethod(IDCache::GetNativeLibraryClass(),
+                                                            IDCache::GetGetSessionSurface(),
+                                                            static_cast<jboolean>(secondary));
+        if (env->ExceptionCheck()) {
+            env->ExceptionClear();
+            return false;
+        }
+        if (surface != nullptr) {
+            if (secondary) {
+                Java_org_citra_citra_1emu_NativeLibrary_surfaceChangedSecondary(env, nullptr,
+                                                                                surface);
+            } else {
+                Java_org_citra_citra_1emu_NativeLibrary_surfaceChanged(env, nullptr, surface);
+            }
+            env->DeleteLocalRef(surface);
+            return true;
+        }
+        if (std::chrono::steady_clock::now() >= deadline) {
+            return false;
+        }
+        std::this_thread::sleep_for(surface_poll_interval);
+    }
 }
 
 void ReleaseSessionTextures() {
@@ -1134,8 +1197,9 @@ void ReleaseSessionTextures() {
 
 extern "C" {
 
-AzaharSession* azahar_session_create(const char* game_path, const AzaharSessionOptions* options,
-                                     const AzaharSessionCallbacks* callbacks) {
+static AzaharSession* CreateSessionUnguarded(const char* game_path,
+                                             const AzaharSessionOptions* options,
+                                             const AzaharSessionCallbacks* callbacks) {
     if (game_path == nullptr || options == nullptr || callbacks == nullptr) {
         return nullptr;
     }
@@ -1152,19 +1216,21 @@ AzaharSession* azahar_session_create(const char* game_path, const AzaharSessionO
     return session;
 }
 
-int32_t azahar_session_start(AzaharSession* session) {
+static int32_t StartSessionUnguarded(AzaharSession* session) {
     if (session == nullptr) {
         return AZAHAR_STATUS_INVALID_ARGUMENT;
     }
 
     if (!CreateSessionTexture(*session, session->options.primary_width,
-                              session->options.primary_height, false)) {
+                              session->options.primary_height, false) ||
+        s_surf == nullptr) {
         ReportSessionError(session->callbacks, "Failed to create the top screen texture");
         return AZAHAR_STATUS_LOAD_FAILED;
     }
     if (session->options.dual_screen != 0 &&
-        !CreateSessionTexture(*session, session->options.secondary_width,
-                              session->options.secondary_height, true)) {
+        (!CreateSessionTexture(*session, session->options.secondary_width,
+                               session->options.secondary_height, true) ||
+         s_surf_secondary == nullptr)) {
         ReportSessionError(session->callbacks, "Failed to create the bottom screen texture");
         return AZAHAR_STATUS_LOAD_FAILED;
     }
@@ -1183,7 +1249,15 @@ int32_t azahar_session_start(AzaharSession* session) {
         });
 
     session->emulation_thread = std::thread([session] {
-        const Core::System::ResultStatus result = RunCitra(session->path);
+        Core::System::ResultStatus result = Core::System::ResultStatus::ErrorUnknown;
+        try {
+            result = RunCitra(session->path);
+        } catch (const std::exception& exception) {
+            ReportSessionError(session->callbacks,
+                               std::string{"The emulation threw: "} + exception.what());
+        } catch (...) {
+            ReportSessionError(session->callbacks, "The emulation threw an unknown exception");
+        }
         stop_run = true;
         if (result != Core::System::ResultStatus::Success &&
             result != Core::System::ResultStatus::ShutdownRequested) {
@@ -1271,7 +1345,7 @@ int32_t azahar_session_read_fcram(AzaharSession* session, size_t offset, uint8_t
     return AZAHAR_STATUS_OK;
 }
 
-void azahar_session_destroy(AzaharSession* session) {
+static void DestroySessionUnguarded(AzaharSession* session) {
     if (session == nullptr) {
         return;
     }
@@ -1295,6 +1369,9 @@ void azahar_session_destroy(AzaharSession* session) {
         std::lock_guard lock{g_session_callbacks_mutex};
         g_session_callbacks.reset();
     }
+    JNIEnv* env = IDCache::GetEnvForThread();
+    Java_org_citra_citra_1emu_NativeLibrary_surfaceDestroyed(env, nullptr);
+    Java_org_citra_citra_1emu_NativeLibrary_surfaceDestroyedSecondary(env, nullptr);
     ReleaseSessionTextures();
 
     {
@@ -1302,6 +1379,286 @@ void azahar_session_destroy(AzaharSession* session) {
         g_active_session = nullptr;
     }
     delete session;
+}
+
+} // extern "C"
+
+namespace {
+
+/// The JNI methods of `NativeLibrary` that act on a running emulation. While a session runs in
+/// a library of its own, these are bound to that library instead of the one `System.loadLibrary`
+/// loaded.
+struct SessionNative {
+    const char* name;
+    const char* signature;
+};
+
+constexpr SessionNative kSessionNatives[] = {
+    {"onGamePadEvent", "(Ljava/lang/String;II)Z"},
+    {"onGamePadMoveEvent", "(Ljava/lang/String;IFF)Z"},
+    {"onGamePadAxisEvent", "(Ljava/lang/String;IF)Z"},
+    {"setVirtualButton", "(IZ)V"},
+    {"setVirtualStick", "(IFF)V"},
+    {"clearVirtualControllerInputs", "()V"},
+    {"setGyroPreferExternalController", "(Z)V"},
+    {"setGyroSensitivity", "(FF)V"},
+    {"setGyroInvert", "(ZZ)V"},
+    {"setMotion", "(FFFFFF)V"},
+    {"onTouchEvent", "(FFZ)Z"},
+    {"onTouchMoved", "(FF)V"},
+    {"reloadSettings", "()V"},
+    {"surfaceChanged", "(Landroid/view/Surface;)V"},
+    {"surfaceDestroyed", "()V"},
+    {"doFrame", "()V"},
+    {"surfaceChangedSecondary", "(Landroid/view/Surface;)V"},
+    {"surfaceDestroyedSecondary", "()V"},
+    {"doFrameSecondary", "()V"},
+    {"initGameControllerManager", "(Landroid/content/Context;)V"},
+    {"shutdownGameControllerManager", "()V"},
+    {"updateGameControllers", "(ZZ)V"},
+    {"onGameControllerKeyEvent", "(Landroid/view/KeyEvent;)Z"},
+    {"onGameControllerMotionEvent", "(Landroid/view/MotionEvent;)Z"},
+    {"unPauseEmulation", "()V"},
+    {"pauseEmulation", "()V"},
+    {"stopEmulation", "()V"},
+    {"advanceFrame", "()V"},
+    {"dumpCurrentMemory", "()[B"},
+    {"startMemoryRecording", "(Ljava/lang/String;I)V"},
+    {"stopMemoryRecording", "()I"},
+    {"isRunning", "()Z"},
+    {"getRunningTitleId", "()J"},
+    {"getPerfStats", "()[D"},
+    {"updateFramebuffer", "(Z)V"},
+    {"swapScreens", "(ZI)V"},
+    {"notifyOrientationChange", "(IIZ)V"},
+    {"reloadCameraDevices", "()V"},
+    {"loadAmiibo", "(Ljava/lang/String;)Z"},
+    {"removeAmiibo", "()V"},
+    {"getSavestateInfo", "()[Lorg/citra/citra_emu/NativeLibrary$SaveStateInfo;"},
+    {"saveState", "(I)V"},
+    {"loadState", "(I)V"},
+};
+
+} // Anonymous namespace
+
+extern "C" {
+
+/**
+ * Describes the initialization the application did on the library that `System.loadLibrary`
+ * loaded, in a form the library of a session can replay.
+ */
+struct AzaharHostState {
+    int32_t logging_started;
+    int32_t console_log_enabled;
+    int32_t gpu_driver_initialized;
+    const char* hook_lib_dir;
+    const char* custom_driver_dir;
+    const char* custom_driver_name;
+    const char* file_redirect_dir;
+};
+
+static jobject g_application_context{};
+
+void Java_org_citra_citra_1emu_NativeLibrary_setApplicationContext([[maybe_unused]] JNIEnv* env,
+                                                                   [[maybe_unused]] jobject obj,
+                                                                   jobject context) {
+    if (g_application_context != nullptr) {
+        env->DeleteGlobalRef(g_application_context);
+    }
+    g_application_context = env->NewGlobalRef(context);
+}
+
+void* azahar_host_java_vm() {
+    return IDCache::GetJavaVM();
+}
+
+void* azahar_host_application_context() {
+    return g_application_context;
+}
+
+void* azahar_host_class_loader() {
+    return IDCache::GetAppClassLoader();
+}
+
+const AzaharHostState* azahar_host_state() {
+    static AzaharHostState state;
+    std::lock_guard lock{g_host_state.mutex};
+    state.logging_started = logging_started ? 1 : 0;
+    state.console_log_enabled = console_log_enabled ? 1 : 0;
+    state.gpu_driver_initialized = g_host_state.gpu_driver_initialized ? 1 : 0;
+    state.hook_lib_dir = g_host_state.hook_lib_dir.c_str();
+    state.custom_driver_dir = g_host_state.custom_driver_dir.c_str();
+    state.custom_driver_name = g_host_state.custom_driver_name.c_str();
+    state.file_redirect_dir = g_host_state.file_redirect_dir.c_str();
+    return &state;
+}
+
+/**
+ * Binds the emulation methods of `NativeLibrary` to the library of a session.
+ *
+ * @param session_library the handle `dlopen` returned for that library.
+ */
+static void BindNativesUnguarded(void* session_library) {
+    static constexpr std::string_view prefix = "Java_org_citra_citra_1emu_NativeLibrary_";
+    JNIEnv* env = IDCache::GetEnvForThread();
+    const jclass native_library = IDCache::GetNativeLibraryClass();
+    for (const SessionNative& native : kSessionNatives) {
+        const std::string symbol = std::string{prefix} + native.name;
+        void* function = dlsym(session_library, symbol.c_str());
+        if (function == nullptr) {
+            LOG_WARNING(Frontend, "The session library has no {}", symbol);
+            continue;
+        }
+        const JNINativeMethod method{const_cast<char*>(native.name),
+                                     const_cast<char*>(native.signature), function};
+        if (env->RegisterNatives(native_library, &method, 1) != JNI_OK) {
+            env->ExceptionClear();
+            LOG_WARNING(Frontend, "Failed to bind {}", symbol);
+        }
+    }
+}
+
+/**
+ * Binds the methods of `NativeLibrary` back to the library `System.loadLibrary` loaded.
+ */
+void azahar_host_unbind_natives() {
+    JNIEnv* env = IDCache::GetEnvForThread();
+    env->UnregisterNatives(IDCache::GetNativeLibraryClass());
+}
+
+/**
+ * Initializes a library that a session loaded with `dlopen`, for which `JNI_OnLoad` did not run.
+ */
+static std::string g_session_library_error;
+
+/**
+ * Why the last call of [azahar_session_lib_init] failed, or an empty string.
+ */
+const char* azahar_session_lib_last_error() {
+    return g_session_library_error.c_str();
+}
+
+static int32_t InitSessionLibraryUnguarded(void* java_vm, void* app_class_loader,
+                                           const AzaharHostState* host_state) {
+    g_session_library_error.clear();
+    const char* step = "the cache of Java classes";
+    try {
+        if (!IDCache::InitializeForSession(static_cast<JavaVM*>(java_vm),
+                                           static_cast<jobject>(app_class_loader))) {
+            g_session_library_error = "the cache of Java classes could not be initialized";
+            return AZAHAR_STATUS_LOAD_FAILED;
+        }
+        JNIEnv* env = IDCache::GetEnvForThread();
+        step = "the logging";
+        if (host_state != nullptr) {
+            console_log_enabled = host_state->console_log_enabled != 0;
+        }
+        if (host_state != nullptr && host_state->logging_started != 0) {
+            Java_org_citra_citra_1emu_NativeLibrary_startLogging(env, nullptr);
+        } else {
+            Common::Log::Initialize();
+        }
+        step = "the settings";
+        Config{};
+        if (host_state != nullptr) {
+            if (host_state->gpu_driver_initialized != 0) {
+                step = "the GPU driver";
+                InitializeGpuDriver(host_state->hook_lib_dir, host_state->custom_driver_dir,
+                                    host_state->custom_driver_name,
+                                    host_state->file_redirect_dir);
+            }
+        }
+    } catch (const std::exception& exception) {
+        g_session_library_error =
+            std::string{"initializing "} + step + " threw " + exception.what();
+        return AZAHAR_STATUS_LOAD_FAILED;
+    } catch (...) {
+        g_session_library_error =
+            std::string{"initializing "} + step + " threw an unknown exception";
+        return AZAHAR_STATUS_LOAD_FAILED;
+    }
+    return AZAHAR_STATUS_OK;
+}
+
+/**
+ * Stops everything the library started on its own and releases its references, so it can be
+ * unloaded.
+ */
+static void ShutdownSessionLibraryUnguarded() {
+    if (logging_started) {
+        Common::Log::Stop();
+        logging_started = false;
+    }
+    IDCache::ReleaseForSession();
+}
+
+} // extern "C"
+
+namespace {
+
+/// An exception must never leave the library through the C ABI, because the caller is Rust and
+/// cannot unwind it.
+void ReportNativeException(const char* where, const std::exception* exception) {
+    __android_log_print(ANDROID_LOG_ERROR, "azahar-session", "%s threw %s", where,
+                        exception != nullptr ? exception->what() : "an unknown exception");
+}
+
+template <typename Result, typename Function>
+Result Guarded(const char* where, Result fallback, Function&& function) {
+    try {
+        return function();
+    } catch (const std::exception& exception) {
+        ReportNativeException(where, &exception);
+    } catch (...) {
+        ReportNativeException(where, nullptr);
+    }
+    return fallback;
+}
+
+template <typename Function>
+void GuardedVoid(const char* where, Function&& function) {
+    try {
+        function();
+    } catch (const std::exception& exception) {
+        ReportNativeException(where, &exception);
+    } catch (...) {
+        ReportNativeException(where, nullptr);
+    }
+}
+
+} // Anonymous namespace
+
+extern "C" {
+
+AzaharSession* azahar_session_create(const char* game_path, const AzaharSessionOptions* options,
+                                     const AzaharSessionCallbacks* callbacks) {
+    return Guarded<AzaharSession*>("azahar_session_create", nullptr, [&] {
+        return CreateSessionUnguarded(game_path, options, callbacks);
+    });
+}
+
+int32_t azahar_session_start(AzaharSession* session) {
+    return Guarded<int32_t>("azahar_session_start", AZAHAR_STATUS_LOAD_FAILED,
+                            [&] { return StartSessionUnguarded(session); });
+}
+
+void azahar_session_destroy(AzaharSession* session) {
+    GuardedVoid("azahar_session_destroy", [&] { DestroySessionUnguarded(session); });
+}
+
+void azahar_host_bind_natives(void* session_library) {
+    GuardedVoid("azahar_host_bind_natives", [&] { BindNativesUnguarded(session_library); });
+}
+
+int32_t azahar_session_lib_init(void* java_vm, void* app_class_loader,
+                                const AzaharHostState* host_state) {
+    return Guarded<int32_t>("azahar_session_lib_init", AZAHAR_STATUS_LOAD_FAILED, [&] {
+        return InitSessionLibraryUnguarded(java_vm, app_class_loader, host_state);
+    });
+}
+
+void azahar_session_lib_shutdown() {
+    GuardedVoid("azahar_session_lib_shutdown", [] { ShutdownSessionLibraryUnguarded(); });
 }
 
 } // extern "C"

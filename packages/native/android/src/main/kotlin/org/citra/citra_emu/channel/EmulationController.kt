@@ -3,6 +3,7 @@ package org.citra.citra_emu.channel
 import android.os.Handler
 import android.os.Looper
 import android.view.Choreographer
+import android.view.Surface
 import androidx.preference.PreferenceManager
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -65,14 +66,13 @@ class EmulationController(private val textureRegistry: TextureRegistry) {
             screensSwapped = false
             val producer = textureRegistry.createSurfaceProducer()
             producer.setSize(width, height)
+            producer.setCallback(surfaceCallback(secondary))
             if (secondary) {
                 secondarySurfaceProducer?.release()
                 secondarySurfaceProducer = producer
-                NativeLibrary.surfaceChangedSecondary(producer.surface)
             } else {
                 surfaceProducer?.release()
                 surfaceProducer = producer
-                NativeLibrary.surfaceChanged(producer.surface)
             }
             startPresentingFrames()
             producer.id()
@@ -80,14 +80,57 @@ class EmulationController(private val textureRegistry: TextureRegistry) {
     }
 
     /**
-     * Detaches and releases the textures created by [createSessionTexture]. Blocks the calling
-     * thread until the platform thread has released them.
+     * The surface of a texture created by [createSessionTexture], for the native side to render
+     * into, or null while Flutter has not made one available yet. Blocks the calling thread until
+     * the platform thread has answered.
+     */
+    fun sessionSurface(secondary: Boolean): Surface? {
+        return runOnPlatformThread(null) {
+            (if (secondary) secondarySurfaceProducer else surfaceProducer)?.surface
+                ?.takeIf { it.isValid }
+        }
+    }
+
+    /**
+     * Tells the emulation when Flutter makes the surface of a texture available again or takes
+     * it away, so the renderer creates or drops what it draws into. Flutter does this when the
+     * app moves to the background and back, and when the texture is shown for the first time.
+     */
+    private fun surfaceCallback(secondary: Boolean) =
+        object : TextureRegistry.SurfaceProducer.Callback {
+            override fun onSurfaceAvailable() {
+                val producer = if (secondary) secondarySurfaceProducer else surfaceProducer
+                val surface = producer?.surface?.takeIf { it.isValid } ?: return
+                if (secondary) {
+                    NativeLibrary.surfaceChangedSecondary(surface)
+                } else {
+                    NativeLibrary.surfaceChanged(surface)
+                }
+            }
+
+            override fun onSurfaceCleanup() {
+                if (secondary) {
+                    NativeLibrary.surfaceDestroyedSecondary()
+                } else {
+                    NativeLibrary.surfaceDestroyed()
+                }
+            }
+        }
+
+    /**
+     * Releases the textures created by [createSessionTexture]. The native side has stopped using
+     * their surfaces by then. Blocks the calling thread until the platform thread has released
+     * them.
      */
     fun releaseSessionTextures() {
         runOnPlatformThread(Unit) {
             stopPresentingFrames()
-            NativeLibrary.surfaceDestroyed()
-            NativeLibrary.surfaceDestroyedSecondary()
+            val ignoreSurface = object : TextureRegistry.SurfaceProducer.Callback {
+                override fun onSurfaceAvailable() = Unit
+                override fun onSurfaceCleanup() = Unit
+            }
+            surfaceProducer?.setCallback(ignoreSurface)
+            secondarySurfaceProducer?.setCallback(ignoreSurface)
             surfaceProducer?.release()
             surfaceProducer = null
             secondarySurfaceProducer?.release()

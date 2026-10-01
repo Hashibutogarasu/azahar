@@ -33,7 +33,7 @@ static jobject ToJavaKeyboardConfig(const Frontend::KeyboardConfig& config) {
                         env->GetFieldID(s_keyboard_config_class, "hintText", "Ljava/lang/String;"),
                         ToJString(env, config.hint_text));
 
-    const jclass string_class = reinterpret_cast<jclass>(env->FindClass("java/lang/String"));
+    const jclass string_class = reinterpret_cast<jclass>(IDCache::FindClass(env,"java/lang/String"));
     const jobjectArray array =
         env->NewObjectArray(static_cast<jsize>(config.button_text.size()), string_class,
                             ToJString(env, config.button_text[0]));
@@ -75,13 +75,13 @@ void AndroidKeyboard::ShowError(const std::string& error) {
 
 void InitJNI(JNIEnv* env) {
     s_software_keyboard_class = reinterpret_cast<jclass>(
-        env->NewGlobalRef(env->FindClass("org/citra/citra_emu/applets/SoftwareKeyboard")));
+        env->NewGlobalRef(IDCache::FindClass(env,"org/citra/citra_emu/applets/SoftwareKeyboard")));
     s_keyboard_config_class = reinterpret_cast<jclass>(env->NewGlobalRef(
-        env->FindClass("org/citra/citra_emu/applets/SoftwareKeyboard$KeyboardConfig")));
+        IDCache::FindClass(env,"org/citra/citra_emu/applets/SoftwareKeyboard$KeyboardConfig")));
     s_keyboard_data_class = reinterpret_cast<jclass>(env->NewGlobalRef(
-        env->FindClass("org/citra/citra_emu/applets/SoftwareKeyboard$KeyboardData")));
+        IDCache::FindClass(env,"org/citra/citra_emu/applets/SoftwareKeyboard$KeyboardData")));
     s_validation_error_class = reinterpret_cast<jclass>(env->NewGlobalRef(
-        env->FindClass("org/citra/citra_emu/applets/SoftwareKeyboard$ValidationError")));
+        IDCache::FindClass(env,"org/citra/citra_emu/applets/SoftwareKeyboard$ValidationError")));
 
     s_swkbd_execute = env->GetStaticMethodID(
         s_software_keyboard_class, "Execute",

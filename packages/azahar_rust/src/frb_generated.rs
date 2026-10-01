@@ -443,6 +443,10 @@ impl SseDecode for crate::error::AzaharError {
             }
             7 => {
                 let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::error::AzaharError::LibraryLoad(var_field0);
+            }
+            8 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
                 return crate::error::AzaharError::Audio(var_field0);
             }
             _ => {
@@ -658,8 +662,11 @@ impl flutter_rust_bridge::IntoDart for crate::error::AzaharError {
                 len.into_into_dart().into_dart(),
             ]
             .into_dart(),
-            crate::error::AzaharError::Audio(field0) => {
+            crate::error::AzaharError::LibraryLoad(field0) => {
                 [7.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::error::AzaharError::Audio(field0) => {
+                [8.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
             _ => {
                 unimplemented!("");
@@ -832,8 +839,12 @@ impl SseEncode for crate::error::AzaharError {
                 <u32>::sse_encode(address, serializer);
                 <u32>::sse_encode(len, serializer);
             }
-            crate::error::AzaharError::Audio(field0) => {
+            crate::error::AzaharError::LibraryLoad(field0) => {
                 <i32>::sse_encode(7, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::error::AzaharError::Audio(field0) => {
+                <i32>::sse_encode(8, serializer);
                 <String>::sse_encode(field0, serializer);
             }
             _ => {

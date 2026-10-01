@@ -1,62 +1,18 @@
-//! The only module that touches the C ABI of the C++ core.
+//! The only module that calls into the C++ core.
+//!
+//! Every call runs on one dedicated thread that belongs to the session. The thread loads the
+//! core, creates the session, runs every operation and, when the session is dropped, destroys it
+//! and unloads the core before it ends. Nothing that belongs to the core outlives that thread.
 
 use std::ffi::{CStr, CString, c_char, c_void};
-use std::ptr::NonNull;
 use std::sync::Arc;
+use std::sync::mpsc::{Sender, SyncSender, channel, sync_channel};
+use std::thread::JoinHandle;
 
 use crate::error::{AzaharError, Result};
+use crate::library::{CoreLibrary, close};
+use crate::raw::{RawCallbacks, RawOptions, RawSession, STATUS_INVALID_ADDRESS, STATUS_OK};
 use crate::session::{SessionEvent, SessionOptions, ShaderStage};
-
-const STATUS_OK: i32 = 0;
-const STATUS_INVALID_ADDRESS: i32 = 4;
-
-#[repr(C)]
-struct RawSession {
-    _private: [u8; 0],
-}
-
-#[repr(C)]
-struct RawCallbacks {
-    user: *mut c_void,
-    on_shader_progress: Option<unsafe extern "C" fn(*mut c_void, i32, u64, u64)>,
-    on_texture: Option<unsafe extern "C" fn(*mut c_void, i64, i32)>,
-    on_error: Option<unsafe extern "C" fn(*mut c_void, *const c_char)>,
-    on_audio: Option<unsafe extern "C" fn(*mut c_void, *const i16, usize)>,
-}
-
-#[repr(C)]
-struct RawOptions {
-    primary_width: i32,
-    primary_height: i32,
-    secondary_width: i32,
-    secondary_height: i32,
-    dual_screen: i32,
-}
-
-unsafe extern "C" {
-    fn azahar_session_create(
-        game_path: *const c_char,
-        options: *const RawOptions,
-        callbacks: *const RawCallbacks,
-    ) -> *mut RawSession;
-    fn azahar_session_start(session: *mut RawSession) -> i32;
-    fn azahar_session_pause(session: *mut RawSession) -> i32;
-    fn azahar_session_resume(session: *mut RawSession) -> i32;
-    fn azahar_session_fcram_size(session: *const RawSession) -> usize;
-    fn azahar_session_read_memory(
-        session: *mut RawSession,
-        address: u32,
-        out: *mut u8,
-        len: usize,
-    ) -> i32;
-    fn azahar_session_read_fcram(
-        session: *mut RawSession,
-        offset: usize,
-        out: *mut u8,
-        len: usize,
-    ) -> i32;
-    fn azahar_session_destroy(session: *mut RawSession);
-}
 
 /// Receiver of everything the core reports from its own threads.
 pub trait CoreListener: Send + Sync {
@@ -132,18 +88,95 @@ unsafe extern "C" fn trampoline_audio(user: *mut c_void, frames: *const i16, fra
     unsafe { context(user) }.listener.on_audio(samples);
 }
 
-/// Owning handle to one core session.
+type Job = Box<dyn FnOnce(&CoreLibrary) + Send>;
+
+/// The thread that owns the core library and runs every call into it.
 ///
-/// Dropping it calls `azahar_session_destroy`, which joins every core thread
-/// and frees the emulated 3DS memory before returning.
-pub struct SessionHandle {
-    raw: NonNull<RawSession>,
+/// The thread ends with the library detached, and the library is unloaded after the thread was
+/// joined.
+struct Worker {
+    sender: Option<Sender<Job>>,
+    thread: Option<JoinHandle<usize>>,
 }
 
-unsafe impl Send for SessionHandle {}
+impl Worker {
+    fn spawn() -> Result<Self> {
+        let (sender, receiver) = channel::<Job>();
+        let (ready_sender, ready) = sync_channel::<Result<()>>(1);
+        let thread = std::thread::Builder::new()
+            .name("azahar-core".into())
+            .spawn(move || {
+                let library = match CoreLibrary::open() {
+                    Ok(library) => {
+                        let _ = ready_sender.send(Ok(()));
+                        library
+                    }
+                    Err(failure) => {
+                        let _ = ready_sender.send(Err(failure.error));
+                        return failure.handle;
+                    }
+                };
+                while let Ok(job) = receiver.recv() {
+                    job(&library);
+                }
+                library.handle()
+            })
+            .map_err(|error| AzaharError::LibraryLoad(error.to_string()))?;
+
+        match ready.recv() {
+            Ok(Ok(())) => Ok(Self {
+                sender: Some(sender),
+                thread: Some(thread),
+            }),
+            Ok(Err(error)) => {
+                let handle = thread.join().unwrap_or(0);
+                close(handle);
+                Err(error)
+            }
+            Err(_) => {
+                let handle = thread.join().unwrap_or(0);
+                close(handle);
+                Err(AzaharError::LibraryLoad(
+                    "the core thread ended early".into(),
+                ))
+            }
+        }
+    }
+
+    /// Runs `job` on the core thread and returns what it returned.
+    fn call<R: Send + 'static>(&self, job: impl FnOnce(&CoreLibrary) -> R + Send + 'static) -> R {
+        let (result_sender, result): (SyncSender<R>, _) = sync_channel(1);
+        let sender = self.sender.as_ref().expect("the core thread is running");
+        sender
+            .send(Box::new(move |library| {
+                let _ = result_sender.send(job(library));
+            }))
+            .expect("the core thread is running");
+        result.recv().expect("the core thread answers")
+    }
+}
+
+impl Drop for Worker {
+    fn drop(&mut self) {
+        self.sender.take();
+        if let Some(thread) = self.thread.take() {
+            let handle = thread.join().unwrap_or(0);
+            close(handle);
+        }
+    }
+}
+
+/// Owning handle to one core session.
+///
+/// Dropping it destroys the session, which joins every core thread and frees the emulated 3DS
+/// memory, and then unloads the core before returning.
+pub struct SessionHandle {
+    worker: Worker,
+    raw: usize,
+}
 
 impl SessionHandle {
-    /// Creates a core session that reports through `context`.
+    /// Loads the core and creates a session that reports through `context`.
     ///
     /// The caller keeps `context` alive for at least as long as the handle.
     pub fn create(
@@ -159,58 +192,95 @@ impl SessionHandle {
             secondary_height: options.secondary_height,
             dual_screen: options.dual_screen as i32,
         };
-        let callbacks = RawCallbacks {
-            user: context as *const CallbackContext as *mut c_void,
-            on_shader_progress: Some(trampoline_shader_progress),
-            on_texture: Some(trampoline_texture),
-            on_error: Some(trampoline_error),
-            on_audio: Some(trampoline_audio),
-        };
-        let raw = unsafe { azahar_session_create(path.as_ptr(), &raw_options, &callbacks) };
-        NonNull::new(raw)
-            .map(|raw| Self { raw })
-            .ok_or(AzaharError::CreateFailed)
+        let user = context as *const CallbackContext as usize;
+
+        let worker = Worker::spawn()?;
+        let raw = worker.call(move |library| {
+            let callbacks = RawCallbacks {
+                user: user as *mut c_void,
+                on_shader_progress: Some(trampoline_shader_progress),
+                on_texture: Some(trampoline_texture),
+                on_error: Some(trampoline_error),
+                on_audio: Some(trampoline_audio),
+            };
+            unsafe { (library.api.create)(path.as_ptr(), &raw_options, &callbacks) as usize }
+        });
+        if raw == 0 {
+            return Err(AzaharError::CreateFailed);
+        }
+        Ok(Self { worker, raw })
     }
 
     pub fn start(&self) -> Result<()> {
-        check(unsafe { azahar_session_start(self.raw.as_ptr()) })
+        let raw = self.raw;
+        check(
+            self.worker
+                .call(move |library| unsafe { (library.api.start)(raw as *mut RawSession) }),
+        )
     }
 
     pub fn pause(&self) -> Result<()> {
-        check(unsafe { azahar_session_pause(self.raw.as_ptr()) })
+        let raw = self.raw;
+        check(
+            self.worker
+                .call(move |library| unsafe { (library.api.pause)(raw as *mut RawSession) }),
+        )
     }
 
     pub fn resume(&self) -> Result<()> {
-        check(unsafe { azahar_session_resume(self.raw.as_ptr()) })
+        let raw = self.raw;
+        check(
+            self.worker
+                .call(move |library| unsafe { (library.api.resume)(raw as *mut RawSession) }),
+        )
     }
 
     pub fn fcram_size(&self) -> usize {
-        unsafe { azahar_session_fcram_size(self.raw.as_ptr()) }
+        let raw = self.raw;
+        self.worker
+            .call(move |library| unsafe { (library.api.fcram_size)(raw as *const RawSession) })
     }
 
-    pub fn read_memory(&self, address: u32, out: &mut [u8]) -> Result<()> {
-        let status = unsafe {
-            azahar_session_read_memory(self.raw.as_ptr(), address, out.as_mut_ptr(), out.len())
-        };
-        if status == STATUS_INVALID_ADDRESS {
-            return Err(AzaharError::InvalidAddress {
-                address,
-                len: out.len() as u32,
-            });
-        }
-        check(status)
+    pub fn read_memory(&self, address: u32, len: usize) -> Result<Vec<u8>> {
+        let raw = self.raw;
+        self.worker.call(move |library| {
+            let mut buffer = vec![0u8; len];
+            let status = unsafe {
+                (library.api.read_memory)(
+                    raw as *mut RawSession,
+                    address,
+                    buffer.as_mut_ptr(),
+                    len,
+                )
+            };
+            if status == STATUS_INVALID_ADDRESS {
+                return Err(AzaharError::InvalidAddress {
+                    address,
+                    len: len as u32,
+                });
+            }
+            check(status).map(|()| buffer)
+        })
     }
 
-    pub fn read_fcram(&self, offset: usize, out: &mut [u8]) -> Result<()> {
-        check(unsafe {
-            azahar_session_read_fcram(self.raw.as_ptr(), offset, out.as_mut_ptr(), out.len())
+    pub fn read_fcram(&self, offset: usize, len: usize) -> Result<Vec<u8>> {
+        let raw = self.raw;
+        self.worker.call(move |library| {
+            let mut buffer = vec![0u8; len];
+            let status = unsafe {
+                (library.api.read_fcram)(raw as *mut RawSession, offset, buffer.as_mut_ptr(), len)
+            };
+            check(status).map(|()| buffer)
         })
     }
 }
 
 impl Drop for SessionHandle {
     fn drop(&mut self) {
-        unsafe { azahar_session_destroy(self.raw.as_ptr()) };
+        let raw = self.raw;
+        self.worker.call(move |library| unsafe {
+            (library.api.destroy)(raw as *mut RawSession);
+        });
     }
 }
 

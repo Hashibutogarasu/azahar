@@ -155,6 +155,12 @@ object NativeLibrary {
      * If not set, it auto-detects a location
      */
     external fun setUserDirectory(directory: String)
+
+    /**
+     * Gives the native side the context of the application, for the audio output of a session
+     * to query the audio system with.
+     */
+    external fun setApplicationContext(context: Context)
     external fun getInstalledGamePaths(roots: Array<String>, paths: Array<String>): Array<String?>
 
     // Create the config.ini file.
@@ -749,6 +755,17 @@ object NativeLibrary {
     @JvmStatic
     fun createSessionTexture(width: Int, height: Int, secondary: Boolean): Long {
         return EmulationController.current?.createSessionTexture(width, height, secondary) ?: -1L
+    }
+
+    /**
+     * Called from native code to get the surface of a screen texture of a session.
+     *
+     * @return The surface, or null when no engine or no texture is available.
+     */
+    @Keep
+    @JvmStatic
+    fun getSessionSurface(secondary: Boolean): Surface? {
+        return EmulationController.current?.sessionSurface(secondary)
     }
 
     /**

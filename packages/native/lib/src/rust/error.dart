@@ -37,6 +37,10 @@ sealed class AzaharError with _$AzaharError implements FrbException {
     required int len,
   }) = AzaharError_InvalidAddress;
 
+  /// The core library could not be loaded or initialized.
+  const factory AzaharError.libraryLoad(String field0) =
+      AzaharError_LibraryLoad;
+
   /// The audio output could not be opened.
   const factory AzaharError.audio(String field0) = AzaharError_Audio;
 }

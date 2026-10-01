@@ -8,6 +8,8 @@ pub mod audio;
 pub mod error;
 mod ffi;
 mod frb_generated;
+mod library;
 pub mod memory;
+mod raw;
 pub mod registry;
 pub mod session;
