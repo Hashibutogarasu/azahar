@@ -113,7 +113,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: azahar-flutter-android-apk
+          name: flutter-android-apk
           path: apps/flutter/build/app/outputs/flutter-apk/*.apk
       - name: Save build cache
         if: always()
@@ -177,7 +177,7 @@ jobs:
       - name: Upload bundle
         uses: actions/upload-artifact@v4
         with:
-          name: azahar-flutter-linux
+          name: flutter-linux
           path: apps/flutter/build/linux/x64/release/bundle
       - name: Save build cache
         if: always()
@@ -231,7 +231,7 @@ jobs:
       - name: Upload bundle
         uses: actions/upload-artifact@v4
         with:
-          name: azahar-flatpak
+          name: flatpak
           path: azahar.flatpak
       - name: Save build cache
         if: always()
@@ -286,7 +286,7 @@ jobs:
       - name: Upload package
         uses: actions/upload-artifact@v4
         with:
-          name: azahar-deb
+          name: deb
           path: build/*.deb
       - name: Save build cache
         if: always()
