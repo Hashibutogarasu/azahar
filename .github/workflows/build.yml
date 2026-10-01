@@ -50,6 +50,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Free disk space
+        uses: ./.github/actions/free-disk-space
+        with:
+          keep-android: "true"
       - name: Restore build cache
         uses: actions/cache/restore@v4
         with:
@@ -121,6 +125,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Free disk space
+        uses: ./.github/actions/free-disk-space
       - name: Restore build cache
         uses: actions/cache/restore@v4
         with:
@@ -173,13 +179,12 @@ jobs:
 
   flatpak:
     runs-on: ubuntu-latest
-    container:
-      image: bilelmoussaoui/flatpak-github-actions:kde-6.7
-      options: --privileged
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Free disk space
+        uses: ./.github/actions/free-disk-space
       - name: Restore build cache
         uses: actions/cache/restore@v4
         with:
@@ -187,11 +192,15 @@ jobs:
           key: ${{ runner.os }}-flatpak-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
             ${{ runner.os }}-flatpak-
-      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
-        with:
-          bundle: azahar.flatpak
-          manifest-path: apps/qt-desktop/dist/flatpak/org.azahar_emu.Azahar.yml
-          cache: false
+      - name: Build
+        run: |
+          docker run --rm --privileged \
+            -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" \
+            bilelmoussaoui/flatpak-github-actions:kde-6.7 \
+            ./.ci/flatpak.sh
+      - name: Take ownership of the build output
+        if: always()
+        run: sudo chown -R "$(id -u):$(id -g)" "$GITHUB_WORKSPACE"
       - name: Report
         run: |
           {
@@ -215,9 +224,6 @@ jobs:
 
   deb:
     runs-on: ubuntu-latest
-    container:
-      image: opensauce04/azahar-build-environment:latest
-      options: -u 1001
     env:
       CCACHE_DIR: ${{ github.workspace }}/.ccache
       CCACHE_COMPILERCHECK: content
@@ -226,6 +232,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Free disk space
+        uses: ./.github/actions/free-disk-space
       - name: Restore build cache
         uses: actions/cache/restore@v4
         with:
@@ -234,7 +242,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-deb-
       - name: Build
-        run: ./.ci/deb.sh
+        run: |
+          docker run --rm -u "$(id -u):$(id -g)" \
+            -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" \
+            -e CCACHE_DIR -e CCACHE_COMPILERCHECK -e CCACHE_SLOPPINESS \
+            -e GITHUB_REF_TYPE -e GITHUB_REF_NAME \
+            opensauce04/azahar-build-environment:latest \
+            ./.ci/deb.sh
       - name: Report
         run: |
           {
