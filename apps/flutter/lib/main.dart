@@ -18,6 +18,7 @@ import 'i18n/translations.g.dart';
 import 'routing/app_routes.dart';
 import 'screens/settings/settings_routes.dart' as legacy_settings;
 import 'theme/app_theme.dart';
+import 'theme/no_overscroll_indicator_behavior.dart';
 import 'theme/theme_settings_provider.dart';
 
 final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
@@ -143,6 +144,7 @@ class AzaharApp extends ConsumerWidget {
                   materialYou: themeSettings.materialYou,
                   dynamicScheme: darkDynamic,
                 ),
+                scrollBehavior: const NoOverscrollIndicatorBehavior(),
                 routerConfig: _router,
                 scaffoldMessengerKey: _scaffoldMessengerKey,
               );
