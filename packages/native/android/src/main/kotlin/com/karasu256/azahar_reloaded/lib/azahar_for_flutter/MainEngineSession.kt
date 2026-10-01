@@ -51,12 +51,24 @@ internal class MainEngineSession(
     private val lifecycle: Lifecycle = activity.lifecycle
     private val messenger = binding.binaryMessenger
     private val pickImageLauncher = activity.activityResultRegistry.register(
-        PICK_IMAGE_REGISTRY_KEY,
+        "azahar_for_flutter.pick_image",
         ActivityResultContracts.PickVisualMedia()
     ) { uri -> StillImageCameraHelper.OnFilePickerResult(uri?.toString()) }
+    private val openUserDirectoryLauncher = activity.activityResultRegistry.register(
+        "azahar_for_flutter.open_user_directory",
+        ActivityResultContracts.OpenDocumentTree()
+    ) { uri -> directoryController.onUserDirectoryPicked(uri) }
+    private val openGamesDirectoryLauncher = activity.activityResultRegistry.register(
+        "azahar_for_flutter.open_games_directory",
+        ActivityResultContracts.OpenDocumentTree()
+    ) { uri -> directoryController.onGamesDirectoryPicked(uri) }
 
-    private val directoryController =
-        DirectoryController(activity, activity.contentResolver)
+    private val directoryController = DirectoryController(
+        activity,
+        activity.contentResolver,
+        openUserDirectoryLauncher,
+        openGamesDirectoryLauncher
+    )
     private val gamesController = GamesController(activity, activity.cacheDir)
     private val gameActionsController = GameActionsController(activity)
     private val settingsController = SettingsController()
@@ -193,6 +205,8 @@ internal class MainEngineSession(
         lifecycle.removeObserver(lifecycleObserver)
         lifecycleObserver.onPause(activity)
         pickImageLauncher.unregister()
+        openUserDirectoryLauncher.unregister()
+        openGamesDirectoryLauncher.unregister()
         methodChannel.setMethodCallHandler(null)
         eventChannels.forEach { it.setStreamHandler(null) }
         eventChannels.clear()
@@ -218,7 +232,6 @@ internal class MainEngineSession(
     }
 
     private companion object {
-        const val PICK_IMAGE_REGISTRY_KEY = "azahar_for_flutter.pick_image"
         const val CHANNEL = "org.citra.citra_emu/azahar_bridge"
         const val APPLET_CHANNEL = "org.citra.citra_emu/azahar_bridge/applet"
         const val COPY_PROGRESS_CHANNEL = "org.citra.citra_emu/azahar_bridge/copy_progress"

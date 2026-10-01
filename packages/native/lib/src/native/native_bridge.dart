@@ -103,6 +103,14 @@ class NativeBridge {
     );
   }
 
+  Future<String?> openUserDirectory() {
+    return _channel.invokeMethod<String>('openUserDirectory');
+  }
+
+  Future<String?> openGamesDirectory() {
+    return _channel.invokeMethod<String>('openGamesDirectory');
+  }
+
   Future<void> confirmUserDirectory({
     required String uri,
     String? previousUri,
