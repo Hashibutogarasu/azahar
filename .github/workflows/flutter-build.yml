@@ -24,6 +24,8 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
+            ~/.cargo/registry
+            packages/azahar_rust/target
             ${{ env.CCACHE_DIR }}
           key: ${{ runner.os }}-flutter-android-${{ github.sha }}
           restore-keys: |
@@ -33,10 +35,16 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+      - name: Read Flutter version
+        id: fvm
+        run: echo "version=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: ${{ steps.fvm.outputs.version }}
+      - name: Set up Rust
+        run: rustup target add aarch64-linux-android x86_64-linux-android
       - name: Install ccache
         run: |
           sudo apt-get update -y
@@ -45,7 +53,7 @@ jobs:
         run: ./.ci/flutter-android.sh
       - name: Report
         run: |
-          apk_path=$(find src/flutter/build/app/outputs/flutter-apk -maxdepth 1 -name "*.apk" | head -n1)
+          apk_path=$(find apps/flutter/build/app/outputs/flutter-apk -maxdepth 1 -name "*.apk" | head -n1)
           {
             echo "## Flutter Android APK"
             echo
@@ -57,4 +65,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: azahar-flutter-android-apk
-          path: src/flutter/build/app/outputs/flutter-apk/*.apk
+          path: apps/flutter/build/app/outputs/flutter-apk/*.apk

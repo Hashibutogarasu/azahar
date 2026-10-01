@@ -20,7 +20,7 @@ jobs:
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
           bundle: azahar.flatpak
-          manifest-path: dist/flatpak/org.azahar_emu.Azahar.yml
+          manifest-path: apps/qt-desktop/dist/flatpak/org.azahar_emu.Azahar.yml
           cache-key: flatpak-builder-${{ github.sha }}
       - name: Report
         run: |

@@ -4,7 +4,7 @@ PACKAGE_VERSION="${GITHUB_REF_TYPE:+$GITHUB_REF_NAME}"
 PACKAGE_VERSION="${PACKAGE_VERSION:-0.0.0-$(git rev-parse --short HEAD)}"
 
 mkdir build && cd build
-cmake .. -G Ninja \
+cmake ../packages/core -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_C_COMPILER_LAUNCHER=ccache \
     -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \

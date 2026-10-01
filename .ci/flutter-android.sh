@@ -2,8 +2,9 @@
 
 export NDK_CCACHE=$(which ccache)
 
-cd src/flutter
+cd apps/flutter
 flutter pub get
+dart run build_runner build -d
 flutter build apk --release
 
 ccache -s -v

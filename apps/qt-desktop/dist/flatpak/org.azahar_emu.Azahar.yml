@@ -24,4 +24,5 @@ modules:
       - -DUSE_SYSTEM_BOOST=OFF
     sources:
       - type: dir
-        path: ../..
+        path: ../../../..
+    subdir: packages/core
