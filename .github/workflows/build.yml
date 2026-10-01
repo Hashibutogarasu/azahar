@@ -7,10 +7,6 @@ on:
   pull_request:
     branches: [ main ]
 
-# Every build job restores the cache of its last run first and saves it again
-# in its last step, even when the build failed, so the next run only rebuilds
-# what changed. The keys carry the run id because a cache entry cannot be
-# overwritten; the restore keys pick the newest entry of the job.
 jobs:
   flutter-setup:
     runs-on: ubuntu-latest
