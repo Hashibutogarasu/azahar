@@ -285,7 +285,9 @@ if (ENABLE_QT)
 
     find_package(Qt6 REQUIRED COMPONENTS Widgets Multimedia Concurrent)
 
-    if (NOT WIN32)
+    # Qt 6.9 moved the private Gui module into its own package. Older versions
+    # define Qt6::GuiPrivate in the Gui package that Widgets already found.
+    if (NOT WIN32 AND Qt6_VERSION VERSION_GREATER_EQUAL 6.9)
         find_package(Qt6 REQUIRED COMPONENTS GuiPrivate)
     endif()
 
