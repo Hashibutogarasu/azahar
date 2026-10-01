@@ -13,13 +13,16 @@ import 'game_regions_translator.dart';
 /// A games/applications list row. Its panel and icon-box styling come entirely from
 /// [GlassSurfaceTheme] and [GameCardTheme], so this single widget renders both the Azahar and
 /// Legacy looks.
+///
+/// [onInfo] is called by a long press on the row and by the three-dot button, which is shown when
+/// [showInfoButton] is true. The button sits beside the tappable area, not inside it.
 class GameCard extends ConsumerWidget {
   const GameCard({
     super.key,
     required this.game,
     required this.onTap,
-    this.onLongPress,
-    this.onMore,
+    this.onInfo,
+    this.showInfoButton = false,
     this.isValidExtension = true,
     this.outerPadding = 8,
     this.innerPadding = 8,
@@ -27,8 +30,8 @@ class GameCard extends ConsumerWidget {
 
   final Game game;
   final VoidCallback onTap;
-  final VoidCallback? onLongPress;
-  final VoidCallback? onMore;
+  final VoidCallback? onInfo;
+  final bool showInfoButton;
   final bool isValidExtension;
   final double outerPadding;
   final double innerPadding;
@@ -48,63 +51,71 @@ class GameCard extends ConsumerWidget {
             : cardTheme.invalidExtensionColor,
         borderColor: surfaceTheme.borderColor,
         shadow: surfaceTheme.shadow,
-        child: InkWell(
-          onTap: onTap,
-          onLongPress: onLongPress,
-          borderRadius: surfaceTheme.borderRadius,
-          child: Container(
-            padding: EdgeInsets.all(innerPadding),
-            child: Row(
-              children: [
-                Container(
-                  width: cardTheme.iconBoxSize,
-                  height: cardTheme.iconBoxSize,
-                  decoration: BoxDecoration(
-                    color: cardTheme.iconBoxFillColor,
-                    borderRadius: cardTheme.iconBoxRadius,
-                    border: Border.all(color: cardTheme.iconBoxBorderColor),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: GameIcon(iconPath: game.iconPath),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          children: [
+            Expanded(
+              child: InkWell(
+                onTap: onTap,
+                onLongPress: onInfo,
+                borderRadius: surfaceTheme.borderRadius,
+                child: Container(
+                  padding: EdgeInsets.all(innerPadding),
+                  child: Row(
                     children: [
-                      if (title.isNotEmpty)
-                        Text(
-                          title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: cardTheme.titleStyle,
+                      Container(
+                        width: cardTheme.iconBoxSize,
+                        height: cardTheme.iconBoxSize,
+                        decoration: BoxDecoration(
+                          color: cardTheme.iconBoxFillColor,
+                          borderRadius: cardTheme.iconBoxRadius,
+                          border: Border.all(
+                            color: cardTheme.iconBoxBorderColor,
+                          ),
                         ),
-                      if (game.company.isNotEmpty)
-                        Text(
-                          game.company,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: cardTheme.subtitleStyle,
+                        clipBehavior: Clip.antiAlias,
+                        child: GameIcon(iconPath: game.iconPath),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (title.isNotEmpty)
+                              Text(
+                                title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: cardTheme.titleStyle,
+                              ),
+                            if (game.company.isNotEmpty)
+                              Text(
+                                game.company,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: cardTheme.subtitleStyle,
+                              ),
+                            Text(
+                              translateGameRegions(context.t, game.regions),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: cardTheme.subtitleStyle,
+                            ),
+                          ],
                         ),
-                      Text(
-                        translateGameRegions(context.t, game.regions),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: cardTheme.subtitleStyle,
                       ),
                     ],
                   ),
                 ),
-                if (onMore != null)
-                  IconButton(
-                    tooltip: context.t.games.properties,
-                    icon: const Icon(Icons.more_vert),
-                    onPressed: onMore,
-                  ),
-              ],
+              ),
             ),
-          ),
+            if (showInfoButton)
+              IconButton(
+                tooltip: context.t.games.properties,
+                icon: const Icon(Icons.more_vert),
+                onPressed: onInfo,
+              ),
+          ],
         ),
       ),
     );

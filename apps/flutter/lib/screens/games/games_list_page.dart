@@ -133,10 +133,8 @@ class _GamesListPageState extends ConsumerState<GamesListPage>
                               onTap: () => ref
                                   .read(gameProcessProvider.notifier)
                                   .launch(game),
-                              onLongPress: () => _showGameInfo(game),
-                              onMore: isDesktop
-                                  ? () => _showGameInfo(game)
-                                  : null,
+                              onInfo: () => _showGameInfo(game),
+                              showInfoButton: isDesktop,
                             );
                           },
                         ),
