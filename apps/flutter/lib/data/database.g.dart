@@ -4426,6 +4426,221 @@ class UserGameInfosCompanion extends UpdateCompanion<UserGameInfoRow> {
   }
 }
 
+class $FeatureFlagsTable extends FeatureFlags
+    with TableInfo<$FeatureFlagsTable, FeatureFlag> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FeatureFlagsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _performanceImprovementsMeta =
+      const VerificationMeta('performanceImprovements');
+  @override
+  late final GeneratedColumn<bool> performanceImprovements =
+      GeneratedColumn<bool>(
+        'performance_improvements',
+        aliasedName,
+        false,
+        type: DriftSqlType.bool,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("performance_improvements" IN (0, 1))',
+        ),
+        defaultValue: const Constant(false),
+      );
+  @override
+  List<GeneratedColumn> get $columns => [id, performanceImprovements];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'feature_flags';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<FeatureFlag> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('performance_improvements')) {
+      context.handle(
+        _performanceImprovementsMeta,
+        performanceImprovements.isAcceptableOrUnknown(
+          data['performance_improvements']!,
+          _performanceImprovementsMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  FeatureFlag map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FeatureFlag(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      performanceImprovements: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}performance_improvements'],
+      )!,
+    );
+  }
+
+  @override
+  $FeatureFlagsTable createAlias(String alias) {
+    return $FeatureFlagsTable(attachedDatabase, alias);
+  }
+}
+
+class FeatureFlag extends DataClass implements Insertable<FeatureFlag> {
+  final int id;
+  final bool performanceImprovements;
+  const FeatureFlag({required this.id, required this.performanceImprovements});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['performance_improvements'] = Variable<bool>(performanceImprovements);
+    return map;
+  }
+
+  FeatureFlagsCompanion toCompanion(bool nullToAbsent) {
+    return FeatureFlagsCompanion(
+      id: Value(id),
+      performanceImprovements: Value(performanceImprovements),
+    );
+  }
+
+  factory FeatureFlag.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FeatureFlag(
+      id: serializer.fromJson<int>(json['id']),
+      performanceImprovements: serializer.fromJson<bool>(
+        json['performanceImprovements'],
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'performanceImprovements': serializer.toJson<bool>(
+        performanceImprovements,
+      ),
+    };
+  }
+
+  FeatureFlag copyWith({int? id, bool? performanceImprovements}) => FeatureFlag(
+    id: id ?? this.id,
+    performanceImprovements:
+        performanceImprovements ?? this.performanceImprovements,
+  );
+  FeatureFlag copyWithCompanion(FeatureFlagsCompanion data) {
+    return FeatureFlag(
+      id: data.id.present ? data.id.value : this.id,
+      performanceImprovements: data.performanceImprovements.present
+          ? data.performanceImprovements.value
+          : this.performanceImprovements,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FeatureFlag(')
+          ..write('id: $id, ')
+          ..write('performanceImprovements: $performanceImprovements')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, performanceImprovements);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FeatureFlag &&
+          other.id == this.id &&
+          other.performanceImprovements == this.performanceImprovements);
+}
+
+class FeatureFlagsCompanion extends UpdateCompanion<FeatureFlag> {
+  final Value<int> id;
+  final Value<bool> performanceImprovements;
+  const FeatureFlagsCompanion({
+    this.id = const Value.absent(),
+    this.performanceImprovements = const Value.absent(),
+  });
+  FeatureFlagsCompanion.insert({
+    this.id = const Value.absent(),
+    this.performanceImprovements = const Value.absent(),
+  });
+  static Insertable<FeatureFlag> custom({
+    Expression<int>? id,
+    Expression<bool>? performanceImprovements,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (performanceImprovements != null)
+        'performance_improvements': performanceImprovements,
+    });
+  }
+
+  FeatureFlagsCompanion copyWith({
+    Value<int>? id,
+    Value<bool>? performanceImprovements,
+  }) {
+    return FeatureFlagsCompanion(
+      id: id ?? this.id,
+      performanceImprovements:
+          performanceImprovements ?? this.performanceImprovements,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (performanceImprovements.present) {
+      map['performance_improvements'] = Variable<bool>(
+        performanceImprovements.value,
+      );
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FeatureFlagsCompanion(')
+          ..write('id: $id, ')
+          ..write('performanceImprovements: $performanceImprovements')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4452,6 +4667,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $TagsTable tags = $TagsTable(this);
   late final $GameTagsTable gameTags = $GameTagsTable(this);
   late final $UserGameInfosTable userGameInfos = $UserGameInfosTable(this);
+  late final $FeatureFlagsTable featureFlags = $FeatureFlagsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4472,6 +4688,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     tags,
     gameTags,
     userGameInfos,
+    featureFlags,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -7483,6 +7700,154 @@ typedef $$UserGameInfosTableProcessedTableManager =
       UserGameInfoRow,
       PrefetchHooks Function()
     >;
+typedef $$FeatureFlagsTableCreateCompanionBuilder =
+    FeatureFlagsCompanion Function({
+      Value<int> id,
+      Value<bool> performanceImprovements,
+    });
+typedef $$FeatureFlagsTableUpdateCompanionBuilder =
+    FeatureFlagsCompanion Function({
+      Value<int> id,
+      Value<bool> performanceImprovements,
+    });
+
+class $$FeatureFlagsTableFilterComposer
+    extends Composer<_$AppDatabase, $FeatureFlagsTable> {
+  $$FeatureFlagsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get performanceImprovements => $composableBuilder(
+    column: $table.performanceImprovements,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$FeatureFlagsTableOrderingComposer
+    extends Composer<_$AppDatabase, $FeatureFlagsTable> {
+  $$FeatureFlagsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get performanceImprovements => $composableBuilder(
+    column: $table.performanceImprovements,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$FeatureFlagsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $FeatureFlagsTable> {
+  $$FeatureFlagsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<bool> get performanceImprovements => $composableBuilder(
+    column: $table.performanceImprovements,
+    builder: (column) => column,
+  );
+}
+
+class $$FeatureFlagsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $FeatureFlagsTable,
+          FeatureFlag,
+          $$FeatureFlagsTableFilterComposer,
+          $$FeatureFlagsTableOrderingComposer,
+          $$FeatureFlagsTableAnnotationComposer,
+          $$FeatureFlagsTableCreateCompanionBuilder,
+          $$FeatureFlagsTableUpdateCompanionBuilder,
+          (
+            FeatureFlag,
+            BaseReferences<_$AppDatabase, $FeatureFlagsTable, FeatureFlag>,
+          ),
+          FeatureFlag,
+          PrefetchHooks Function()
+        > {
+  $$FeatureFlagsTableTableManager(_$AppDatabase db, $FeatureFlagsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$FeatureFlagsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$FeatureFlagsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$FeatureFlagsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<bool> performanceImprovements = const Value.absent(),
+              }) => FeatureFlagsCompanion(
+                id: id,
+                performanceImprovements: performanceImprovements,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<bool> performanceImprovements = const Value.absent(),
+              }) => FeatureFlagsCompanion.insert(
+                id: id,
+                performanceImprovements: performanceImprovements,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$FeatureFlagsTable, FeatureFlag>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $FeatureFlagsTable,
+                    FeatureFlag
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$FeatureFlagsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $FeatureFlagsTable,
+      FeatureFlag,
+      $$FeatureFlagsTableFilterComposer,
+      $$FeatureFlagsTableOrderingComposer,
+      $$FeatureFlagsTableAnnotationComposer,
+      $$FeatureFlagsTableCreateCompanionBuilder,
+      $$FeatureFlagsTableUpdateCompanionBuilder,
+      (
+        FeatureFlag,
+        BaseReferences<_$AppDatabase, $FeatureFlagsTable, FeatureFlag>,
+      ),
+      FeatureFlag,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -7516,4 +7881,6 @@ class $AppDatabaseManager {
       $$GameTagsTableTableManager(_db, _db.gameTags);
   $$UserGameInfosTableTableManager get userGameInfos =>
       $$UserGameInfosTableTableManager(_db, _db.userGameInfos);
+  $$FeatureFlagsTableTableManager get featureFlags =>
+      $$FeatureFlagsTableTableManager(_db, _db.featureFlags);
 }

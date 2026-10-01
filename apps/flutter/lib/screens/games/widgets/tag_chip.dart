@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../data/settings/feature_flags_provider.dart';
 import '../../../theme/extensions/glass_surface_theme.dart';
 import '../../../widgets/app_liquid_glass.dart';
 import 'tag_color_dot.dart';
 
 /// A single glass chip showing the tag [color] as a dot. When [selected] it is highlighted with the
 /// theme's primary color, the same for every tag. It cannot be tapped while [onTap] is null.
-class TagChip extends StatelessWidget {
+class TagChip extends ConsumerWidget {
   const TagChip({
     super.key,
     required this.label,
@@ -21,7 +23,7 @@ class TagChip extends StatelessWidget {
   final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final surfaceTheme = Theme.of(context).extension<GlassSurfaceTheme>()!;
     final highlight = Theme.of(context).colorScheme.primary;
     final radius = BorderRadius.circular(20);
@@ -34,6 +36,7 @@ class TagChip extends StatelessWidget {
             ? highlight.withValues(alpha: 0.35)
             : surfaceTheme.fillColor,
         borderColor: selected ? highlight : surfaceTheme.borderColor,
+        backdropBlur: !ref.watch(performanceImprovementsProvider),
         child: InkWell(
           onTap: onTap,
           borderRadius: radius,

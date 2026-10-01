@@ -18,6 +18,7 @@ import '../screens/settings/sections/advanced_settings_page.dart';
 import '../screens/settings/sections/camera_settings_page.dart';
 import '../screens/settings/sections/controls_settings_page.dart';
 import '../screens/settings/sections/debug_settings_page.dart';
+import '../screens/settings/sections/feature_flags_page.dart';
 import '../screens/settings/sections/general_settings_page.dart';
 import '../screens/settings/sections/graphics_settings_page.dart';
 import '../screens/settings/sections/language_settings_page.dart';

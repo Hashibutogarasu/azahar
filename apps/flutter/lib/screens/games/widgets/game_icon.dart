@@ -3,9 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class GameIcon extends StatelessWidget {
-  const GameIcon({super.key, required this.iconPath});
+  const GameIcon({super.key, required this.iconPath, this.cacheSize});
 
   final String? iconPath;
+  final double? cacheSize;
 
   static const _placeholderAsset = 'assets/images/no_icon.png';
   static const _placeholderAssetDark = 'assets/images/no_icon_dark.png';
@@ -25,8 +26,13 @@ class GameIcon extends StatelessWidget {
     if (path == null) {
       return _placeholder(context);
     }
+    final cachePixels = cacheSize == null
+        ? null
+        : (cacheSize! * MediaQuery.devicePixelRatioOf(context)).round();
     return Image.file(
       File(path),
+      cacheWidth: cachePixels,
+      cacheHeight: cachePixels,
       fit: BoxFit.cover,
       errorBuilder: (context, error, stackTrace) => _placeholder(context),
     );

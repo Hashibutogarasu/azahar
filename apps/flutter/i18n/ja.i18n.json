@@ -189,6 +189,8 @@
     "accessibilityDescription": "モーションなどのアクセシビリティ設定",
     "advanced": "詳細設定",
     "advancedDescription": "より詳細なオプションを設定します",
+    "featureFlags": "機能フラグ",
+    "featureFlagsDescription": "開発中の機能を有効にします",
     "about": "このアプリについて",
     "aboutDescription": "ビルドバージョン、クレジットなど",
     "general": "プロフィール",
@@ -790,6 +792,12 @@
         "normal": "普通",
         "slow": "遅い"
       }
+    },
+    "featureFlags": {
+      "title": "機能フラグ",
+      "experimental": "実験的",
+      "performanceImprovements": "パフォーマンス改善",
+      "performanceImprovementsDescription": "描画や処理の負荷を軽減します。一部の見た目が簡略化されます。"
     },
     "language": {
       "title": "言語",

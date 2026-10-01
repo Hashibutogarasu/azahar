@@ -40,6 +40,12 @@ final otherOptionsProvider = Provider<OptionCategory>(
             destination: const OptionsAdvancedSettingsRoute(),
           ),
           NestedOption(
+            title: (t) => t.options.featureFlags,
+            description: (t) => t.options.featureFlagsDescription,
+            icon: Icons.science_outlined,
+            destination: const OptionsFeatureFlagsRoute(),
+          ),
+          NestedOption(
             title: (t) => t.options.about,
             description: (t) => t.options.aboutDescription,
             icon: Icons.info_outline,

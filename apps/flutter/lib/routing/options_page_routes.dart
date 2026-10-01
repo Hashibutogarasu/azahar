@@ -159,3 +159,14 @@ class OptionsAdvancedSettingsRoute extends AppRouteData
     return const AdvancedSettingsPage();
   }
 }
+
+@TypedGoRoute<OptionsFeatureFlagsRoute>(path: '/options/feature-flags')
+class OptionsFeatureFlagsRoute extends AppRouteData
+    with $OptionsFeatureFlagsRoute {
+  const OptionsFeatureFlagsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const FeatureFlagsPage();
+  }
+}

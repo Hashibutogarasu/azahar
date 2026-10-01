@@ -423,6 +423,10 @@ class _Translations$options$ja extends Translations$options$en {
   @override
   String get advancedDescription => 'より詳細なオプションを設定します';
   @override
+  String get featureFlags => '機能フラグ';
+  @override
+  String get featureFlagsDescription => '開発中の機能を有効にします';
+  @override
   String get about => 'このアプリについて';
   @override
   String get aboutDescription => 'ビルドバージョン、クレジットなど';
@@ -657,6 +661,9 @@ class _Translations$settings$ja extends Translations$settings$en {
   @override
   late final _Translations$settings$advanced$ja advanced =
       _Translations$settings$advanced$ja._(_root);
+  @override
+  late final _Translations$settings$featureFlags$ja featureFlags =
+      _Translations$settings$featureFlags$ja._(_root);
   @override
   late final _Translations$settings$language$ja language =
       _Translations$settings$language$ja._(_root);
@@ -1854,6 +1861,27 @@ class _Translations$settings$advanced$ja
       _Translations$settings$advanced$animationSpeed$ja._(_root);
 }
 
+// Path: settings.featureFlags
+class _Translations$settings$featureFlags$ja
+    extends Translations$settings$featureFlags$en {
+  _Translations$settings$featureFlags$ja._(TranslationsJa root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsJa _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => '機能フラグ';
+  @override
+  String get experimental => '実験的';
+  @override
+  String get performanceImprovements => 'パフォーマンス改善';
+  @override
+  String get performanceImprovementsDescription =>
+      '描画や処理の負荷を軽減します。一部の見た目が簡略化されます。';
+}
+
 // Path: settings.language
 class _Translations$settings$language$ja
     extends Translations$settings$language$en {
@@ -2376,6 +2404,8 @@ extension on TranslationsJa {
           'options.accessibilityDescription' => 'モーションなどのアクセシビリティ設定',
           'options.advanced' => '詳細設定',
           'options.advancedDescription' => 'より詳細なオプションを設定します',
+          'options.featureFlags' => '機能フラグ',
+          'options.featureFlagsDescription' => '開発中の機能を有効にします',
           'options.about' => 'このアプリについて',
           'options.aboutDescription' => 'ビルドバージョン、クレジットなど',
           'options.general' => 'プロフィール',
@@ -2784,11 +2814,11 @@ extension on TranslationsJa {
           'settings.system.countries.djibouti' => 'ジブチ',
           'settings.system.countries.somalia' => 'ソマリア',
           'settings.system.countries.andorra' => 'アンドラ',
-          'settings.system.countries.gibraltar' => 'ジブラルタル',
-          'settings.system.countries.guernsey' => 'ガーンジー',
           _ => null,
         } ??
         switch (path) {
+          'settings.system.countries.gibraltar' => 'ジブラルタル',
+          'settings.system.countries.guernsey' => 'ガーンジー',
           'settings.system.countries.isleOfMan' => 'マン島',
           'settings.system.countries.jersey' => 'ジャージー',
           'settings.system.countries.monaco' => 'モナコ',
@@ -3008,6 +3038,11 @@ extension on TranslationsJa {
           'settings.advanced.animationSpeed.fast' => '速い',
           'settings.advanced.animationSpeed.normal' => '普通',
           'settings.advanced.animationSpeed.slow' => '遅い',
+          'settings.featureFlags.title' => '機能フラグ',
+          'settings.featureFlags.experimental' => '実験的',
+          'settings.featureFlags.performanceImprovements' => 'パフォーマンス改善',
+          'settings.featureFlags.performanceImprovementsDescription' =>
+            '描画や処理の負荷を軽減します。一部の見た目が簡略化されます。',
           'settings.language.title' => '言語',
           'settings.language.systemDefault' => 'システムのデフォルト',
           'settings.language.english' => '英語 (English)',

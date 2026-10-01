@@ -28,6 +28,7 @@ part 'tables/option_history_entries.dart';
 part 'tables/tags.dart';
 part 'tables/game_tags.dart';
 part 'tables/user_game_infos.dart';
+part 'tables/feature_flags.dart';
 
 @DriftDatabase(
   tables: [
@@ -46,6 +47,7 @@ part 'tables/user_game_infos.dart';
     Tags,
     GameTags,
     UserGameInfos,
+    FeatureFlags,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -62,7 +64,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 13;
+  int get schemaVersion => 14;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -119,6 +121,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 13) {
         await m.createTable(userGameInfos);
+      }
+      if (from < 14) {
+        await m.createTable(featureFlags);
       }
     },
   );
