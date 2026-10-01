@@ -42,6 +42,7 @@ jobs:
   android-apk:
     needs: flutter-setup
     runs-on: ubuntu-latest
+    timeout-minutes: 180
     env:
       CCACHE_DIR: ${{ github.workspace }}/.ccache
       CCACHE_COMPILERCHECK: content
@@ -62,8 +63,6 @@ jobs:
             ~/.gradle/wrapper
             ${{ env.CCACHE_DIR }}
             packages/azahar_rust/target
-            packages/native/android/.cxx
-            apps/flutter/build
           key: ${{ runner.os }}-flutter-android-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
             ${{ runner.os }}-flutter-android-
@@ -110,13 +109,12 @@ jobs:
             ~/.gradle/wrapper
             ${{ env.CCACHE_DIR }}
             packages/azahar_rust/target
-            packages/native/android/.cxx
-            apps/flutter/build
           key: ${{ runner.os }}-flutter-android-${{ github.run_id }}-${{ github.run_attempt }}
 
   linux:
     needs: flutter-setup
     runs-on: ubuntu-latest
+    timeout-minutes: 180
     env:
       CCACHE_DIR: ${{ github.workspace }}/.ccache
       CCACHE_COMPILERCHECK: content
@@ -179,6 +177,7 @@ jobs:
 
   flatpak:
     runs-on: ubuntu-latest
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
         with:
@@ -224,6 +223,7 @@ jobs:
 
   deb:
     runs-on: ubuntu-latest
+    timeout-minutes: 180
     env:
       CCACHE_DIR: ${{ github.workspace }}/.ccache
       CCACHE_COMPILERCHECK: content

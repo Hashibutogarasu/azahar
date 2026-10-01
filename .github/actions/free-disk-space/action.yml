@@ -5,6 +5,9 @@ inputs:
   keep-android:
     description: Keep the preinstalled Android SDK.
     default: "false"
+  android-ndk:
+    description: The NDK version to keep when the Android SDK is kept.
+    default: "28.2.13676358"
 
 runs:
   using: composite
@@ -23,9 +26,22 @@ runs:
           /usr/local/share/chromium \
           /usr/local/lib/node_modules \
           /opt/hostedtoolcache/CodeQL \
+          /opt/hostedtoolcache/go \
+          /opt/hostedtoolcache/node \
+          /opt/hostedtoolcache/PyPy \
+          /opt/hostedtoolcache/Python \
+          /opt/hostedtoolcache/Ruby \
           /opt/microsoft \
           /opt/google
-        if [ "${{ inputs.keep-android }}" != "true" ]; then
+        android_sdk=/usr/local/lib/android/sdk
+        if [ "${{ inputs.keep-android }}" = "true" ]; then
+          for ndk in "$android_sdk"/ndk/*; do
+            if [ "$(basename "$ndk")" != "${{ inputs.android-ndk }}" ]; then
+              sudo rm -rf "$ndk"
+            fi
+          done
+          sudo rm -rf "$android_sdk/ndk-bundle" "$android_sdk/emulator" "$android_sdk/system-images"
+        else
           sudo rm -rf /usr/local/lib/android
         fi
         sudo docker image prune --all --force
