@@ -6,6 +6,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "audio_core/external_sink.h"
 #include "audio_core/null_sink.h"
 #include "audio_core/sink_details.h"
 #ifdef HAVE_SDL2
@@ -44,6 +45,11 @@ constexpr std::array sink_details = {
                 },
                 &ListSDL2SinkDevices},
 #endif
+    SinkDetails{SinkType::External, "External",
+                [](std::string_view device_id) -> std::unique_ptr<Sink> {
+                    return std::make_unique<ExternalSink>(device_id);
+                },
+                [] { return std::vector<std::string>{"External"}; }},
     SinkDetails{SinkType::Null, "None",
                 [](std::string_view device_id) -> std::unique_ptr<Sink> {
                     return std::make_unique<NullSink>(device_id);
