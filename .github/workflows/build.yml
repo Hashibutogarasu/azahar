@@ -1,0 +1,263 @@
+name: azahar-build
+
+on:
+  push:
+    branches: [ "*" ]
+    tags: [ "*" ]
+  pull_request:
+    branches: [ main ]
+
+# Every build job restores the cache of its last run first and saves it again
+# in its last step, even when the build failed, so the next run only rebuilds
+# what changed. The keys carry the run id because a cache entry cannot be
+# overwritten; the restore keys pick the newest entry of the job.
+jobs:
+  flutter-setup:
+    runs-on: ubuntu-latest
+    outputs:
+      flutter-version: ${{ steps.fvm.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch the Dart package submodules
+        run: |
+          git -c url."https://github.com/".insteadOf="git@github.com:" submodule update --init \
+            apps/flutter/packages/babstrap_settings_screen \
+            apps/flutter/packages/glass_bottom_navigation \
+            packages/externals/flutter_liquid_glass
+      - name: Read Flutter version
+        id: fvm
+        run: echo "version=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ steps.fvm.outputs.version }}
+          cache: true
+      - name: Resolve packages
+        working-directory: apps/flutter
+        run: flutter pub get
+      - name: Generate code
+        working-directory: apps/flutter
+        run: dart run build_runner build -d
+      - name: Analyze
+        working-directory: apps/flutter
+        run: flutter analyze
+
+  android-apk:
+    needs: flutter-setup
+    runs-on: ubuntu-latest
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+      CCACHE_COMPILERCHECK: content
+      CCACHE_SLOPPINESS: time_macros
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Restore build cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ${{ env.CCACHE_DIR }}
+            packages/azahar_rust/target
+            packages/native/android/.cxx
+            apps/flutter/build
+          key: ${{ runner.os }}-flutter-android-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-android-
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ needs.flutter-setup.outputs.flutter-version }}
+          cache: true
+      - name: Set up Rust
+        run: rustup target add aarch64-linux-android x86_64-linux-android
+      - name: Install ccache
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y ccache
+      - name: Build APK
+        run: ./.ci/flutter-android.sh
+      - name: Report
+        run: |
+          apk_path=$(find apps/flutter/build/app/outputs/flutter-apk -maxdepth 1 -name "*.apk" | head -n1)
+          {
+            echo "## Flutter Android APK"
+            echo
+            echo "| File | Size |"
+            echo "| --- | --- |"
+            echo "| \`$(basename "$apk_path")\` | $(du -h "$apk_path" | cut -f1) |"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: azahar-flutter-android-apk
+          path: apps/flutter/build/app/outputs/flutter-apk/*.apk
+      - name: Save build cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ${{ env.CCACHE_DIR }}
+            packages/azahar_rust/target
+            packages/native/android/.cxx
+            apps/flutter/build
+          key: ${{ runner.os }}-flutter-android-${{ github.run_id }}-${{ github.run_attempt }}
+
+  linux:
+    needs: flutter-setup
+    runs-on: ubuntu-latest
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+      CCACHE_COMPILERCHECK: content
+      CCACHE_SLOPPINESS: time_macros
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Restore build cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ${{ env.CCACHE_DIR }}
+            build
+            packages/azahar_rust/target
+            apps/flutter/build
+          key: ${{ runner.os }}-flutter-linux-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-linux-
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ needs.flutter-setup.outputs.flutter-version }}
+          cache: true
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y ccache ninja-build clang pkg-config \
+            libgtk-3-dev libevdev-dev libasound2-dev liblzma-dev
+      - name: Build Linux app
+        run: ./.ci/flutter-linux.sh
+      - name: Report
+        run: |
+          bundle_dir=apps/flutter/build/linux/x64/release/bundle
+          {
+            echo "## Flutter Linux bundle"
+            echo
+            echo "| Directory | Size |"
+            echo "| --- | --- |"
+            echo "| \`bundle\` | $(du -sh "$bundle_dir" | cut -f1) |"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: azahar-flutter-linux
+          path: apps/flutter/build/linux/x64/release/bundle
+      - name: Save build cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ${{ env.CCACHE_DIR }}
+            build
+            packages/azahar_rust/target
+            apps/flutter/build
+          key: ${{ runner.os }}-flutter-linux-${{ github.run_id }}-${{ github.run_attempt }}
+
+  flatpak:
+    runs-on: ubuntu-latest
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:kde-6.7
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Restore build cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .flatpak-builder
+          key: ${{ runner.os }}-flatpak-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            ${{ runner.os }}-flatpak-
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: azahar.flatpak
+          manifest-path: apps/qt-desktop/dist/flatpak/org.azahar_emu.Azahar.yml
+          cache: false
+      - name: Report
+        run: |
+          {
+            echo "## Flatpak bundle"
+            echo
+            echo "| File | Size |"
+            echo "| --- | --- |"
+            echo "| \`azahar.flatpak\` | $(du -h azahar.flatpak | cut -f1) |"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: azahar-flatpak
+          path: azahar.flatpak
+      - name: Save build cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .flatpak-builder
+          key: ${{ runner.os }}-flatpak-${{ github.run_id }}-${{ github.run_attempt }}
+
+  deb:
+    runs-on: ubuntu-latest
+    container:
+      image: opensauce04/azahar-build-environment:latest
+      options: -u 1001
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+      CCACHE_COMPILERCHECK: content
+      CCACHE_SLOPPINESS: time_macros
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Restore build cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ runner.os }}-deb-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            ${{ runner.os }}-deb-
+      - name: Build
+        run: ./.ci/deb.sh
+      - name: Report
+        run: |
+          {
+            echo "## Debian package"
+            echo
+            echo "| File | Size |"
+            echo "| --- | --- |"
+            for f in build/*.deb; do
+              echo "| \`$(basename "$f")\` | $(du -h "$f" | cut -f1) |"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: azahar-deb
+          path: build/*.deb
+      - name: Save build cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ runner.os }}-deb-${{ github.run_id }}-${{ github.run_attempt }}
