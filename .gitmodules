@@ -103,3 +103,6 @@
 [submodule "src/flutter/packages/glass_bottom_navigation"]
 	path = apps/flutter/packages/glass_bottom_navigation
 	url = git@github.com:Hashibutogarasu/glass_bottom_navigation.git
+[submodule "packages/externals/flutter_liquid_glass"]
+	path = packages/externals/flutter_liquid_glass
+	url = git@github.com:Hashibutogarasu/flutter_liquid_glass.git
