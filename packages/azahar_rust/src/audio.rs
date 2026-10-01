@@ -238,7 +238,7 @@ where
                     }
                 }
             },
-            |error| eprintln!("audio stream error: {error}"),
+            |_error| {},
             None,
         )
         .map_err(|error| error.to_string())

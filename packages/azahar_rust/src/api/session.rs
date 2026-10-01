@@ -8,7 +8,7 @@ pub use crate::session::{SessionEvent, SessionOptions, SessionState, ShaderStage
 
 #[frb(init)]
 pub fn init_app() {
-    flutter_rust_bridge::setup_default_user_utils();
+    flutter_rust_bridge::setup_backtrace();
 }
 
 /// Starts a game and streams its events (shader progress, textures, state
