@@ -13,6 +13,7 @@ list(APPEND PLUGIN_SOURCES
   "native_bridge/emulator_config.cc"
   "native_bridge/cia_install.cc"
   "native_bridge/emulation.cc"
+  "native_bridge/session_c_api.cc"
   "native_bridge/system_files.cc"
   "native_bridge/game_actions.cc"
   "native_bridge/wifi.cc"
@@ -107,6 +108,31 @@ target_link_libraries(${PLUGIN_NAME} PUBLIC
 )
 find_package(Threads REQUIRED)
 target_link_libraries(${PLUGIN_NAME} PUBLIC Threads::Threads)
+
+# The Rust crate owns the game session and the audio output. It is linked into the executable as
+# a static library and its symbols are exported, so the Dart side finds them in the process.
+set(AZAHAR_RUST_DIR "${AZAHAR_ROOT}/packages/azahar_rust")
+set(AZAHAR_RUST_LIB "${AZAHAR_RUST_DIR}/target/release/libazahar_rust.a")
+find_program(CARGO_EXECUTABLE cargo REQUIRED)
+add_custom_target(azahar_rust_lib
+  COMMAND "${CARGO_EXECUTABLE}" rustc --release --lib --crate-type staticlib
+  WORKING_DIRECTORY "${AZAHAR_RUST_DIR}"
+  BYPRODUCTS "${AZAHAR_RUST_LIB}"
+  COMMENT "Building azahar_rust (${AZAHAR_RUST_DIR})"
+)
+add_dependencies(${PLUGIN_NAME} azahar_rust_lib)
+target_include_directories(${PLUGIN_NAME} PRIVATE "${AZAHAR_RUST_DIR}/include")
+
+pkg_check_modules(ALSA REQUIRED IMPORTED_TARGET alsa)
+target_link_libraries(${PLUGIN_NAME} PUBLIC
+  -Wl,--whole-archive
+  "${AZAHAR_RUST_LIB}"
+  -Wl,--no-whole-archive
+  PkgConfig::ALSA
+  ${CMAKE_DL_LIBS}
+  m
+)
+target_link_options(${PLUGIN_NAME} PUBLIC -Wl,--export-dynamic -Wl,-u,azahar_session_create)
 
 pkg_check_modules(DBUS REQUIRED IMPORTED_TARGET dbus-1)
 target_link_libraries(${PLUGIN_NAME} PUBLIC PkgConfig::DBUS)

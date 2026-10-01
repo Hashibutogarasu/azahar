@@ -313,14 +313,7 @@ FlMethodResponse* HandleShowNotification(GtkWindow* window, FlValue* args) {
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
 }
 
-gboolean ExitProcessOnIdle(gpointer user_data) {
-  _exit(0);
-  return G_SOURCE_REMOVE;
-}
-
-FlMethodResponse* HandleTerminateProcess(GtkWindow* window, FlValue* args) {
-  gtk_widget_hide(GTK_WIDGET(window));
-  g_idle_add(ExitProcessOnIdle, nullptr);
+FlMethodResponse* HandleTakePendingLaunch(GtkWindow* window, FlValue* args) {
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
 }
 
@@ -542,46 +535,6 @@ FlMethodResponse* HandleRequestPermission(GtkWindow* window, FlValue* args) {
   return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
 }
 
-FlTextureRegistrar* TextureRegistrarForWindow(GtkWindow* window) {
-  FlView* view = FL_VIEW(gtk_bin_get_child(GTK_BIN(window)));
-  return fl_engine_get_texture_registrar(fl_view_get_engine(view));
-}
-
-FlMethodResponse* HandleCreateEmulationTexture(GtkWindow* window, FlValue* args) {
-  FlValue* width_value = fl_value_lookup_string(args, "width");
-  FlValue* height_value = fl_value_lookup_string(args, "height");
-  FlValue* secondary_value = fl_value_lookup_string(args, "secondary");
-  const int width =
-      width_value != nullptr && fl_value_get_type(width_value) == FL_VALUE_TYPE_INT
-          ? static_cast<int>(fl_value_get_int(width_value))
-          : 1;
-  const int height =
-      height_value != nullptr && fl_value_get_type(height_value) == FL_VALUE_TYPE_INT
-          ? static_cast<int>(fl_value_get_int(height_value))
-          : 1;
-  const bool secondary = secondary_value != nullptr &&
-                         fl_value_get_type(secondary_value) == FL_VALUE_TYPE_BOOL &&
-                         fl_value_get_bool(secondary_value);
-  g_autoptr(FlValue) result = fl_value_new_int(
-      Emulation::CreateTexture(TextureRegistrarForWindow(window), width, height, secondary));
-  return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
-}
-
-FlMethodResponse* HandleStartEmulation(GtkWindow* window, FlValue* args) {
-  Emulation::StartEmulation(StringArgument(args, "path"));
-  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
-}
-
-FlMethodResponse* HandlePauseEmulation(GtkWindow* window, FlValue* args) {
-  Emulation::PauseEmulation();
-  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
-}
-
-FlMethodResponse* HandleResumeEmulation(GtkWindow* window, FlValue* args) {
-  Emulation::ResumeEmulation();
-  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
-}
-
 FlMethodResponse* HandleAdvanceFrame(GtkWindow* window, FlValue* args) {
   Emulation::AdvanceFrame();
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
@@ -643,23 +596,6 @@ FlMethodResponse* HandleResumeRendering(GtkWindow* window, FlValue* args) {
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
 }
 
-gboolean RespondToStopEmulation(gpointer user_data) {
-  FlMethodCall* method_call = FL_METHOD_CALL(user_data);
-  g_autoptr(FlMethodResponse) response =
-      FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
-  fl_method_call_respond(method_call, response, nullptr);
-  g_object_unref(method_call);
-  return G_SOURCE_REMOVE;
-}
-
-void HandleStopEmulationAsync(FlMethodCall* method_call) {
-  FlMethodCall* call_ref = FL_METHOD_CALL(g_object_ref(method_call));
-  std::thread([call_ref] {
-    Emulation::StopAndWait();
-    g_idle_add(RespondToStopEmulation, call_ref);
-  }).detach();
-}
-
 double DoubleArgument(FlValue* args, const char* key) {
   FlValue* value = fl_value_lookup_string(args, key);
   if (value == nullptr) {
@@ -718,7 +654,7 @@ const std::unordered_map<std::string, BridgeMethodHandler>& BridgeMethodHandlers
       {"getCountryCompatibility", HandleGetCountryCompatibility},
       {"installCiaFiles", HandleInstallCiaFiles},
       {"showNotification", HandleShowNotification},
-      {"terminateProcess", HandleTerminateProcess},
+      {"takePendingLaunch", HandleTakePendingLaunch},
       {"setConsoleLogEnabled", HandleSetConsoleLogEnabled},
       {"isFullConsoleLinked", HandleIsFullConsoleLinked},
       {"unlinkConsole", HandleUnlinkConsole},
@@ -741,10 +677,6 @@ const std::unordered_map<std::string, BridgeMethodHandler>& BridgeMethodHandlers
       {"selectGpuDriver", HandleSelectGpuDriver},
       {"hasPermission", HandleHasPermission},
       {"requestPermission", HandleRequestPermission},
-      {"createEmulationTexture", HandleCreateEmulationTexture},
-      {"startEmulation", HandleStartEmulation},
-      {"pauseEmulation", HandlePauseEmulation},
-      {"resumeEmulation", HandleResumeEmulation},
       {"advanceFrame", HandleAdvanceFrame},
       {"loadCheatFile", HandleLoadCheatFile},
       {"saveCheatFile", HandleSaveCheatFile},
@@ -769,11 +701,6 @@ void HandleBridgeMethodCall(FlMethodChannel* channel,
   const std::string name = fl_method_call_get_name(method_call);
   FlValue* args = fl_method_call_get_args(method_call);
 
-  if (name == "stopEmulation") {
-    HandleStopEmulationAsync(method_call);
-    return;
-  }
-
   const auto& handlers = BridgeMethodHandlers();
   const auto it = handlers.find(name);
   g_autoptr(FlMethodResponse) response = nullptr;
@@ -792,17 +719,6 @@ void HandleBridgeMethodCall(FlMethodChannel* channel,
   }
 
   fl_method_call_respond(method_call, response, nullptr);
-}
-FlMethodErrorResponse* HandleShaderProgressListen(FlEventChannel* channel, FlValue* args,
-                                                  gpointer user_data) {
-  Emulation::SetShaderProgressChannel(channel);
-  return nullptr;
-}
-
-FlMethodErrorResponse* HandleShaderProgressCancel(FlEventChannel* channel, FlValue* args,
-                                                  gpointer user_data) {
-  Emulation::SetShaderProgressChannel(nullptr);
-  return nullptr;
 }
 
 FlMethodErrorResponse* HandleLogLinesListen(FlEventChannel* channel, FlValue* args,
@@ -841,14 +757,6 @@ gboolean HandleWindowDeleteEvent(GtkWidget* widget, GdkEvent* event, gpointer us
   return TRUE;
 }
 
-void RegisterShaderProgressChannel(FlBinaryMessenger* messenger) {
-  g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
-  FlEventChannel* channel = fl_event_channel_new(
-      messenger, "org.citra.citra_emu/azahar_bridge/shader_progress", FL_METHOD_CODEC(codec));
-  fl_event_channel_set_stream_handlers(channel, HandleShaderProgressListen,
-                                       HandleShaderProgressCancel, nullptr, nullptr);
-}
-
 void RegisterLogLinesChannel(FlBinaryMessenger* messenger) {
   g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
   FlEventChannel* channel = fl_event_channel_new(
@@ -880,7 +788,7 @@ void azahar_for_flutter_plugin_register_with_registrar(FlPluginRegistrar* regist
       fl_method_channel_new(messenger, kBridgeChannel, FL_METHOD_CODEC(codec));
   fl_method_channel_set_method_call_handler(bridge_channel, HandleBridgeMethodCall, window,
                                             nullptr);
-  RegisterShaderProgressChannel(messenger);
+  Emulation::SetTextureRegistrar(fl_engine_get_texture_registrar(fl_view_get_engine(view)));
   RegisterLogLinesChannel(messenger);
   RegisterGamePadChannel(messenger);
   g_object_set_data(G_OBJECT(window), "bridge_channel", bridge_channel);

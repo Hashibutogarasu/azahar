@@ -10,6 +10,7 @@ class EmulationSessionState {
     this.isScreensSwapped = false,
     this.isTerminating = false,
     this.isClosingWindow = false,
+    this.isFinished = false,
     this.topTextureId,
     this.bottomTextureId,
     this.bottomTextureSize,
@@ -23,6 +24,8 @@ class EmulationSessionState {
   final bool isScreensSwapped;
   final bool isTerminating;
   final bool isClosingWindow;
+
+  final bool isFinished;
   final int? topTextureId;
   final int? bottomTextureId;
   final Size? bottomTextureSize;
@@ -36,6 +39,7 @@ class EmulationSessionState {
     bool? isScreensSwapped,
     bool? isTerminating,
     bool? isClosingWindow,
+    bool? isFinished,
     int? topTextureId,
     int? bottomTextureId,
     Size? bottomTextureSize,
@@ -49,6 +53,7 @@ class EmulationSessionState {
       isScreensSwapped: isScreensSwapped ?? this.isScreensSwapped,
       isTerminating: isTerminating ?? this.isTerminating,
       isClosingWindow: isClosingWindow ?? this.isClosingWindow,
+      isFinished: isFinished ?? this.isFinished,
       topTextureId: topTextureId ?? this.topTextureId,
       bottomTextureId: bottomTextureId ?? this.bottomTextureId,
       bottomTextureSize: bottomTextureSize ?? this.bottomTextureSize,

@@ -14,11 +14,16 @@
 #include "jni/camera/still_image_camera.h"
 #include "jni/id_cache.h"
 
+#include <algorithm>
+#include <string>
+#include <unordered_map>
+
 #include <jni.h>
 
 static constexpr jint JNI_VERSION = JNI_VERSION_1_6;
 
 static JavaVM* s_java_vm;
+static jobject s_app_class_loader;
 
 static jclass s_core_error_class;
 static jclass s_savestate_info_class;
@@ -33,6 +38,9 @@ static jmethodID s_request_camera_permission;
 static jmethodID s_request_mic_permission;
 static jmethodID s_request_wifi_permission;
 static jmethodID s_scan_wifi_access_points;
+static jmethodID s_create_session_texture;
+static jmethodID s_get_session_surface;
+static jmethodID s_release_session_textures;
 
 static jclass s_cheat_class;
 static jfieldID s_cheat_pointer;
@@ -67,6 +75,36 @@ JNIEnv* GetEnvForThread() {
         JNIEnv* env = nullptr;
     } owned;
     return owned.env;
+}
+
+JavaVM* GetJavaVM() {
+    return s_java_vm;
+}
+
+jobject GetAppClassLoader() {
+    return s_app_class_loader;
+}
+
+jclass FindClass(JNIEnv* env, const char* name) {
+    if (s_app_class_loader == nullptr) {
+        return env->FindClass(name);
+    }
+    const jclass loader_class = env->GetObjectClass(s_app_class_loader);
+    const jmethodID load_class =
+        env->GetMethodID(loader_class, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
+    env->DeleteLocalRef(loader_class);
+
+    std::string dotted_name{name};
+    std::replace(dotted_name.begin(), dotted_name.end(), '/', '.');
+    const jstring j_name = env->NewStringUTF(dotted_name.c_str());
+    const auto found =
+        static_cast<jclass>(env->CallObjectMethod(s_app_class_loader, load_class, j_name));
+    env->DeleteLocalRef(j_name);
+    if (env->ExceptionCheck()) {
+        env->ExceptionClear();
+        return nullptr;
+    }
+    return found;
 }
 
 jclass GetCoreErrorClass() {
@@ -115,6 +153,18 @@ jmethodID GetRequestWifiPermission() {
 
 jmethodID GetScanWifiAccessPoints() {
     return s_scan_wifi_access_points;
+}
+
+jmethodID GetCreateSessionTexture() {
+    return s_create_session_texture;
+}
+
+jmethodID GetGetSessionSurface() {
+    return s_get_session_surface;
+}
+
+jmethodID GetReleaseSessionTextures() {
+    return s_release_session_textures;
 }
 
 jclass GetCheatClass() {
@@ -167,21 +217,15 @@ jobject GetJavaCiaInstallStatus(Service::AM::InstallStatus status) {
 extern "C" {
 #endif
 
-jint JNI_OnLoad(JavaVM* vm, void* reserved) {
-    s_java_vm = vm;
-
-    JNIEnv* env;
-    if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION) != JNI_OK)
-        return JNI_ERR;
-
+static jint InitializeIds(JNIEnv* env) {
     // Initialize misc classes
     s_savestate_info_class = reinterpret_cast<jclass>(
-        env->NewGlobalRef(env->FindClass("org/citra/citra_emu/NativeLibrary$SaveStateInfo")));
+        env->NewGlobalRef(IDCache::FindClass(env,"org/citra/citra_emu/NativeLibrary$SaveStateInfo")));
     s_core_error_class = reinterpret_cast<jclass>(
-        env->NewGlobalRef(env->FindClass("org/citra/citra_emu/NativeLibrary$CoreError")));
+        env->NewGlobalRef(IDCache::FindClass(env,"org/citra/citra_emu/NativeLibrary$CoreError")));
 
     // Initialize NativeLibrary
-    const jclass native_library_class = env->FindClass("org/citra/citra_emu/NativeLibrary");
+    const jclass native_library_class = IDCache::FindClass(env,"org/citra/citra_emu/NativeLibrary");
     s_native_library_class = reinterpret_cast<jclass>(env->NewGlobalRef(native_library_class));
     s_on_core_error = env->GetStaticMethodID(
         s_native_library_class, "onCoreError",
@@ -198,25 +242,31 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
     s_scan_wifi_access_points = env->GetStaticMethodID(s_native_library_class,
                                                        "scanWifiAccessPoints",
                                                        "()[Ljava/lang/String;");
+    s_create_session_texture =
+        env->GetStaticMethodID(s_native_library_class, "createSessionTexture", "(IIZ)J");
+    s_get_session_surface = env->GetStaticMethodID(s_native_library_class, "getSessionSurface",
+                                                   "(Z)Landroid/view/Surface;");
+    s_release_session_textures =
+        env->GetStaticMethodID(s_native_library_class, "releaseSessionTextures", "()V");
     env->DeleteLocalRef(native_library_class);
 
     // Initialize Cheat
-    const jclass cheat_class = env->FindClass("org/citra/citra_emu/features/cheats/model/Cheat");
+    const jclass cheat_class = IDCache::FindClass(env,"org/citra/citra_emu/features/cheats/model/Cheat");
     s_cheat_class = reinterpret_cast<jclass>(env->NewGlobalRef(cheat_class));
     s_cheat_pointer = env->GetFieldID(cheat_class, "mPointer", "J");
     s_cheat_constructor = env->GetMethodID(cheat_class, "<init>", "(J)V");
     env->DeleteLocalRef(cheat_class);
 
     // Initialize GameInfo
-    const jclass game_info_class = env->FindClass("org/citra/citra_emu/model/GameInfo");
+    const jclass game_info_class = IDCache::FindClass(env,"org/citra/citra_emu/model/GameInfo");
     s_game_info_pointer = env->GetFieldID(game_info_class, "pointer", "J");
     env->DeleteLocalRef(game_info_class);
 
     // Initialize Disk Shader Cache Progress Dialog
     s_disk_cache_progress_class = reinterpret_cast<jclass>(
-        env->NewGlobalRef(env->FindClass("org/citra/citra_emu/utils/DiskShaderCacheProgress")));
+        env->NewGlobalRef(IDCache::FindClass(env,"org/citra/citra_emu/utils/DiskShaderCacheProgress")));
     jclass load_callback_stage_class =
-        env->FindClass("org/citra/citra_emu/utils/DiskShaderCacheProgress$LoadCallbackStage");
+        IDCache::FindClass(env,"org/citra/citra_emu/utils/DiskShaderCacheProgress$LoadCallbackStage");
     s_disk_cache_load_progress = env->GetStaticMethodID(
         s_disk_cache_progress_class, "loadProgress",
         "(Lorg/citra/citra_emu/utils/DiskShaderCacheProgress$LoadCallbackStage;II)V");
@@ -241,12 +291,12 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
 
     // CIA Install
     s_cia_install_helper_class = reinterpret_cast<jclass>(
-        env->NewGlobalRef(env->FindClass("org/citra/citra_emu/utils/CiaInstallWorker")));
+        env->NewGlobalRef(IDCache::FindClass(env,"org/citra/citra_emu/utils/CiaInstallWorker")));
     s_cia_install_helper_set_progress =
         env->GetMethodID(s_cia_install_helper_class, "setProgressCallback", "(II)V");
     // Initialize CIA InstallStatus map
     jclass cia_install_status_class =
-        env->FindClass("org/citra/citra_emu/NativeLibrary$InstallStatus");
+        IDCache::FindClass(env,"org/citra/citra_emu/NativeLibrary$InstallStatus");
     const auto to_java_cia_install_status = [env,
                                              cia_install_status_class](const std::string& stage) {
         return env->NewGlobalRef(env->GetStaticObjectField(
@@ -276,12 +326,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
     return JNI_VERSION;
 }
 
-void JNI_OnUnload(JavaVM* vm, void* reserved) {
-    JNIEnv* env;
-    if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION) != JNI_OK) {
-        return;
-    }
-
+static void ReleaseIds(JNIEnv* env) {
     env->DeleteGlobalRef(s_savestate_info_class);
     env->DeleteGlobalRef(s_core_error_class);
     env->DeleteGlobalRef(s_disk_cache_progress_class);
@@ -301,8 +346,61 @@ void JNI_OnUnload(JavaVM* vm, void* reserved) {
     SoftwareKeyboard::CleanupJNI(env);
     Camera::StillImage::CleanupJNI(env);
     AndroidStorage::CleanupJNI();
+    s_java_load_callback_stages.clear();
+    s_java_cia_install_status.clear();
+}
+
+jint JNI_OnLoad(JavaVM* vm, void* reserved) {
+    s_java_vm = vm;
+
+    JNIEnv* env;
+    if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION) != JNI_OK)
+        return JNI_ERR;
+
+    const jclass native_library_class = env->FindClass("org/citra/citra_emu/NativeLibrary");
+    const jclass class_class = env->GetObjectClass(native_library_class);
+    const jmethodID get_class_loader =
+        env->GetMethodID(class_class, "getClassLoader", "()Ljava/lang/ClassLoader;");
+    s_app_class_loader =
+        env->NewGlobalRef(env->CallObjectMethod(native_library_class, get_class_loader));
+    env->DeleteLocalRef(class_class);
+    env->DeleteLocalRef(native_library_class);
+
+    return InitializeIds(env);
+}
+
+void JNI_OnUnload(JavaVM* vm, void* reserved) {
+    JNIEnv* env;
+    if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION) != JNI_OK) {
+        return;
+    }
+    ReleaseIds(env);
+    env->DeleteGlobalRef(s_app_class_loader);
+    s_app_class_loader = nullptr;
 }
 
 #ifdef __cplusplus
 }
 #endif
+
+namespace IDCache {
+
+bool InitializeForSession(JavaVM* vm, jobject app_class_loader) {
+    s_java_vm = vm;
+    JNIEnv* env = GetEnvForThread();
+    s_app_class_loader = env->NewGlobalRef(app_class_loader);
+    const bool initialized = InitializeIds(env) == JNI_VERSION;
+    if (env->ExceptionCheck()) {
+        env->ExceptionDescribe();
+    }
+    return initialized;
+}
+
+void ReleaseForSession() {
+    JNIEnv* env = GetEnvForThread();
+    ReleaseIds(env);
+    env->DeleteGlobalRef(s_app_class_loader);
+    s_app_class_loader = nullptr;
+}
+
+} // namespace IDCache

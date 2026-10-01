@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:ui' show AppExitType;
 
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
@@ -8,6 +10,7 @@ import '../../app_services.dart';
 import '../../data/games/game_title_provider.dart';
 import '../../data/settings/media_volume_provider.dart';
 import '../../data/settings/sections/media_settings.dart';
+import 'emulation_backend.dart';
 import 'emulation_screens_layout.dart';
 import 'emulation_session_state.dart';
 import 'media_session_metadata.dart';
@@ -21,10 +24,11 @@ final emulationSessionProvider =
 
 class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
   NativeBridge get _bridge => AppServices.nativeBridge;
-  StreamSubscription<ShaderCacheProgress>? _shaderProgressSubscription;
+  final EmulationBackend _backend = EmulationBackend();
   StreamSubscription<void>? _closeRequestSubscription;
   final _mediaSession = MediaSessionService();
   bool _mediaSessionActivated = false;
+  Future<void>? _nativeSessionRelease;
 
   bool get _treatAsMediaSession => AppServices.emulatorSettingsRepository
       .readBool(MediaSettingKeys.treatAudioAsMediaSession);
@@ -33,7 +37,7 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
   EmulationSessionState build() {
     ref.onDispose(_teardownNativeSession);
     _closeRequestSubscription = _bridge.closeRequests.listen(
-      (_) => unawaited(terminate()),
+      (_) => unawaited(_exitApplication()),
     );
     ref.onDispose(() => _closeRequestSubscription?.cancel());
     return const EmulationSessionState();
@@ -47,53 +51,41 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
     if (state.isLaunched) return;
 
     await AppServices.emulatorSettingsRepository.load();
-    await _syncVirtualAccessPoints();
 
-    _shaderProgressSubscription = _bridge.shaderCacheProgress().listen((
-      progress,
-    ) {
-      switch (progress.stage) {
-        case ShaderCacheStage.prepare:
-          return;
-        case ShaderCacheStage.decompile:
-        case ShaderCacheStage.build:
-          state = state.copyWith(shaderProgress: progress);
-        case ShaderCacheStage.complete:
-          state = state.copyWith(emulationStarted: true);
-      }
-    });
-
-    final topTextureId = await _bridge.createEmulationTexture(
-      width: (layout.topScreen.width * devicePixelRatio).round(),
-      height: (layout.topScreen.height * devicePixelRatio).round(),
+    final topSize = Size(
+      (layout.topScreen.width * devicePixelRatio).roundToDouble(),
+      (layout.topScreen.height * devicePixelRatio).roundToDouble(),
     );
-    final bottomWidth = (layout.bottomScreen.width * devicePixelRatio).round();
-    final bottomHeight = (layout.bottomScreen.height * devicePixelRatio)
-        .round();
-    final bottomTextureId = await _bridge.createEmulationTexture(
-      width: bottomWidth,
-      height: bottomHeight,
-      secondary: true,
+    final bottomSize = Size(
+      (layout.bottomScreen.width * devicePixelRatio).roundToDouble(),
+      (layout.bottomScreen.height * devicePixelRatio).roundToDouble(),
     );
 
-    state = state.copyWith(
-      topTextureId: topTextureId,
-      bottomTextureId: bottomTextureId,
-      bottomTextureSize: Size(bottomWidth.toDouble(), bottomHeight.toDouble()),
-      isLaunched: true,
+    state = state.copyWith(bottomTextureSize: bottomSize, isLaunched: true);
+    await _backend.start(
+      gamePath: gamePath,
+      topScreenSize: topSize,
+      bottomScreenSize: bottomSize,
+      listener: EmulationBackendListener(
+        onTexture: (textureId, {required secondary}) {
+          state = secondary
+              ? state.copyWith(bottomTextureId: textureId)
+              : state.copyWith(topTextureId: textureId);
+        },
+        onShaderProgress: (progress) {
+          switch (progress.stage) {
+            case ShaderCacheStage.prepare:
+              return;
+            case ShaderCacheStage.decompile:
+            case ShaderCacheStage.build:
+              state = state.copyWith(shaderProgress: progress);
+            case ShaderCacheStage.complete:
+              state = state.copyWith(emulationStarted: true);
+          }
+        },
+        onError: (message) => debugPrint('Emulation error: $message'),
+      ),
     );
-    await _bridge.startEmulation(gamePath);
-  }
-
-  /// The emulation core runs in its own process, so the native virtual access point override set
-  /// from the settings screen (running in the main process) never reaches it. Re-apply the
-  /// persisted override here before starting emulation.
-  Future<void> _syncVirtualAccessPoints() async {
-    final enabled = await AppServices.virtualAccessPointsRepository.isEnabled();
-    if (!enabled) return;
-    final accessPoints = await AppServices.virtualAccessPointsRepository
-        .readAll();
-    await _bridge.setVirtualAccessPoints(accessPoints);
   }
 
   Future<void> activateMediaSessionIfNeeded(Game? game) async {
@@ -122,9 +114,9 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
 
   Future<void> togglePause() async {
     if (state.isPaused) {
-      await _bridge.resumeEmulation();
+      await _backend.resume();
     } else {
-      await _bridge.pauseEmulation();
+      await _backend.pause();
     }
     state = state.copyWith(isPaused: !state.isPaused, isAutoPaused: false);
     await _mediaSession.updatePlaybackState(isPlaying: !state.isPaused);
@@ -132,16 +124,16 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
 
   Future<void> advanceFrame() => _bridge.advanceFrame();
 
-  Future<void> pauseForClosePrompt() => _bridge.pauseEmulation();
+  Future<void> pauseForClosePrompt() => _backend.pause();
 
-  Future<void> cancelClosePrompt() => _bridge.resumeEmulation();
+  Future<void> cancelClosePrompt() => _backend.resume();
 
   Future<void> handleAppBackground() async {
     if (!state.isLaunched) return;
     await _bridge.pauseRendering();
     if (state.isPaused) return;
     if (_treatAsMediaSession) return;
-    await _bridge.pauseEmulation();
+    await _backend.pause();
     state = state.copyWith(isPaused: true, isAutoPaused: true);
   }
 
@@ -149,7 +141,7 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
     if (!state.isLaunched) return;
     await _bridge.resumeRendering();
     if (!state.isAutoPaused) return;
-    await _bridge.resumeEmulation();
+    await _backend.resume();
     state = state.copyWith(isPaused: false, isAutoPaused: false);
   }
 
@@ -213,22 +205,28 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
     state = state.copyWith(isClosingWindow: true);
     await WidgetsBinding.instance.endOfFrame;
     await WidgetsBinding.instance.endOfFrame;
-    await _bridge.terminateProcess();
+    state = state.copyWith(isFinished: true);
   }
 
-  Future<void> _teardownNativeSession() async {
-    await _releaseNativeSession();
-    await _bridge.terminateProcess();
+  /// Stops the game and returns once the native session has released everything, without leaving
+  /// the screen. Used right before the application exits.
+  Future<void> stopForExit() => _releaseNativeSession();
+
+  /// Asks the application to exit. The game is stopped first, see [stopForExit].
+  Future<void> _exitApplication() {
+    return ServicesBinding.instance.exitApplication(AppExitType.cancelable);
   }
 
-  Future<void> _releaseNativeSession() async {
-    await _shaderProgressSubscription?.cancel();
-    _shaderProgressSubscription = null;
+  Future<void> _teardownNativeSession() => _releaseNativeSession();
+
+  Future<void> _releaseNativeSession() => _nativeSessionRelease ??= _performRelease();
+
+  Future<void> _performRelease() async {
     _mediaSessionActivated = false;
     await ref.read(masterVolumeProvider.notifier).stopNativeSync();
     await _mediaSession.deactivate();
     if (state.isLaunched) {
-      await _bridge.stopEmulation();
+      await _backend.stop();
     }
   }
 }

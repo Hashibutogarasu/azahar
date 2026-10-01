@@ -41,28 +41,8 @@
             android:authorities="${applicationId}.azahar_for_flutter.init"
             android:exported="false"
             android:initOrder="100" />
-        <provider
-            android:name="com.karasu256.azahar_reloaded.lib.azahar_for_flutter.AzaharEmulationInitProvider"
-            android:authorities="${applicationId}.azahar_for_flutter.init.emulation"
-            android:process=":emulation"
-            android:exported="false"
-            android:initOrder="100" />
-        <activity
-            android:name="org.citra.citra_emu.EmulationActivity"
-            android:process=":emulation"
-            android:exported="false"
-            android:launchMode="singleTop"
-            android:theme="@style/AzaharEmulationTheme"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-            android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize">
-            <meta-data
-                android:name="io.flutter.embedding.android.NormalTheme"
-                android:resource="@style/AzaharEmulationTheme" />
-        </activity>
         <service
             android:name="org.citra.citra_emu.PlaybackService"
-            android:process=":emulation"
             android:foregroundServiceType="mediaPlayback"
             android:exported="false">
             <intent-filter>

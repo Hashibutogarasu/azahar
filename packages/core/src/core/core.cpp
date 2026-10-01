@@ -663,6 +663,10 @@ void System::Shutdown(bool is_deserializing) {
         video_dumper->StopDumping();
     }
 
+    if (!is_deserializing && memory_tools.IsRecording()) {
+        memory_tools.StopRecording();
+    }
+
     if (auto room_member = Network::GetRoomMember().lock()) {
         Network::GameInfo game_info{};
         room_member->SendGameInfo(game_info);

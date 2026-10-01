@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/settings/system_files_provider.dart';
 import '../../i18n/translations.g.dart';
 import '../../widgets/confirmation_dialog.dart';
+import '../games/game_process_provider.dart';
 import 'dialogs/artic_base_address_entry_dialog.dart';
 
 class SystemFilesPage extends ConsumerStatefulWidget {
@@ -111,10 +112,22 @@ class _SystemFilesPageState extends ConsumerState<SystemFilesPage> {
     final linked = await _service.isFullConsoleLinked();
     if (mounted) setState(() => _consoleLinked = linked);
     unawaited(_loadHomeMenuPaths());
-    await _service.launchArticInstall(
-      address: result.address,
-      installO3ds: result.installO3ds,
-    );
+    if (!mounted) return;
+    await ref
+        .read(gameProcessProvider.notifier)
+        .launch(
+          context,
+          path: _service.articInstallPath(
+            address: result.address,
+            installO3ds: result.installO3ds,
+          ),
+        );
+  }
+
+  Future<void> _launchHomeMenu(int region) async {
+    final path = _homeMenuPaths[region];
+    if (path == null || path.isEmpty) return;
+    await ref.read(gameProcessProvider.notifier).launch(context, path: path);
   }
 
   Future<void> _confirmDeleteSystemFiles() async {
@@ -169,7 +182,7 @@ class _SystemFilesPageState extends ConsumerState<SystemFilesPage> {
           FilledButton(
             onPressed: _selectedRegion == null
                 ? null
-                : () => _service.launchHomeMenu(_selectedRegion!),
+                : () => _launchHomeMenu(_selectedRegion!),
             child: Text(s.start),
           ),
           SwitchListTile(

@@ -12,7 +12,6 @@ import 'package:stack_trace/stack_trace.dart' as stack_trace;
 import 'app_services.dart';
 import 'data/settings/debug_settings_provider.dart';
 import 'data/user_directory_bootstrap.dart';
-import 'emulation_main.dart';
 import 'errors/app_exception.dart';
 import 'i18n/translations.g.dart';
 import 'routing/app_routes.dart';
@@ -42,36 +41,12 @@ void main(List<String> args) {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+      await initializeRust();
       AppServices.loggingService.start();
       await AppServices.migrateKeyValueRepositories();
       await applyDebugSettings(
         await AppServices.debugSettingsRepository.read(),
       );
-
-      final initialRoute =
-          WidgetsBinding.instance.platformDispatcher.defaultRouteName;
-      if (initialRoute.startsWith(emulationRoutePrefix)) {
-        final gamePath = Uri.decodeComponent(
-          initialRoute.substring(emulationRoutePrefix.length),
-        );
-        runApp(
-          ProviderScope(child: EmulationStandaloneApp(gamePath: gamePath)),
-        );
-        return;
-      }
-
-      final emulationArgumentIndex = args.indexOf(emulationArgument);
-      if (emulationArgumentIndex != -1 &&
-          emulationArgumentIndex + 1 < args.length) {
-        runApp(
-          ProviderScope(
-            child: EmulationStandaloneApp(
-              gamePath: args[emulationArgumentIndex + 1],
-            ),
-          ),
-        );
-        return;
-      }
 
       if (Platform.isLinux) {
         late final AppLifecycleListener exitListener;

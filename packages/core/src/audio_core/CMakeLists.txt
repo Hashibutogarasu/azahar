@@ -4,6 +4,8 @@ add_library(audio_core STATIC
     codec.h
     dsp_interface.cpp
     dsp_interface.h
+    external_sink.cpp
+    external_sink.h
     hle/aac_decoder.cpp
     hle/aac_decoder.h
     hle/common.h

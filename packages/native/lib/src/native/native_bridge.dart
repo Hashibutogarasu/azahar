@@ -15,15 +15,11 @@ import '../models/gamepad_context.dart';
 import '../models/gpu_driver_info.dart';
 import '../models/installed_title_path.dart';
 import '../models/shader_cache_backend.dart';
-import '../models/shader_cache_progress.dart';
 import '../models/wifi_channel.dart';
 
 class NativeBridge {
   NativeBridge()
     : _channel = const MethodChannel('org.citra.citra_emu/azahar_bridge'),
-      _shaderProgressChannel = const EventChannel(
-        'org.citra.citra_emu/azahar_bridge/shader_progress',
-      ),
       _copyProgressChannel = const EventChannel(
         'org.citra.citra_emu/azahar_bridge/copy_progress',
       ),
@@ -46,7 +42,6 @@ class NativeBridge {
   }
 
   final MethodChannel _channel;
-  final EventChannel _shaderProgressChannel;
   final EventChannel _copyProgressChannel;
   final EventChannel _mediaNotificationStopChannel;
   final EventChannel _mediaNotificationPlayPauseChannel;
@@ -54,13 +49,29 @@ class NativeBridge {
   final EventChannel _logLinesChannel;
   final EventChannel _gamePadChannel;
   final _closeRequestedController = StreamController<void>.broadcast();
+  final _launchRequestedController = StreamController<String>.broadcast();
 
   Stream<void> get closeRequests => _closeRequestedController.stream;
 
+  /// Paths of games the system asked to launch while the app is running, for example from a
+  /// pinned shortcut.
+  Stream<String> get launchRequests => _launchRequestedController.stream;
+
   Future<void> _handleNativeCall(MethodCall call) async {
-    if (call.method == 'requestClose') {
-      _closeRequestedController.add(null);
+    switch (call.method) {
+      case 'requestClose':
+        _closeRequestedController.add(null);
+      case 'launchGame':
+        final path = (call.arguments as Map<Object?, Object?>)['path'];
+        if (path is String && path.isNotEmpty) {
+          _launchRequestedController.add(path);
+        }
     }
+  }
+
+  /// Returns the path of the game the app was started to launch, if any, and forgets it.
+  Future<String?> takePendingLaunch() {
+    return _channel.invokeMethod<String>('takePendingLaunch');
   }
 
   Stream<CopyDirProgress> copyDirProgress() {
@@ -73,19 +84,6 @@ class NativeBridge {
         map['name'] as String? ?? '',
         (map['progress'] as num?)?.toInt() ?? 0,
         (map['max'] as num?)?.toInt() ?? 0,
-      );
-    });
-  }
-
-  Stream<ShaderCacheProgress> shaderCacheProgress() {
-    return _shaderProgressChannel.receiveBroadcastStream().map((event) {
-      final map = (event as Map).cast<Object?, Object?>();
-      return ShaderCacheProgress(
-        stage: ShaderCacheStage.values.byName(
-          (map['stage'] as String).toLowerCase(),
-        ),
-        progress: (map['progress'] as num).toInt(),
-        max: (map['max'] as num).toInt(),
       );
     });
   }
@@ -265,31 +263,6 @@ class NativeBridge {
     });
   }
 
-  Future<int> createEmulationTexture({
-    required int width,
-    required int height,
-    bool secondary = false,
-  }) async {
-    final result = await _channel.invokeMethod<int>('createEmulationTexture', {
-      'width': width,
-      'height': height,
-      'secondary': secondary,
-    });
-    return result ?? -1;
-  }
-
-  Future<void> startEmulation(String path) {
-    return _channel.invokeMethod<void>('startEmulation', {'path': path});
-  }
-
-  Future<void> pauseEmulation() {
-    return _channel.invokeMethod<void>('pauseEmulation');
-  }
-
-  Future<void> resumeEmulation() {
-    return _channel.invokeMethod<void>('resumeEmulation');
-  }
-
   Future<void> advanceFrame() {
     return _channel.invokeMethod<void>('advanceFrame');
   }
@@ -346,10 +319,6 @@ class NativeBridge {
     return _channel.invokeMethod<void>('resumeRendering');
   }
 
-  Future<void> stopEmulation() {
-    return _channel.invokeMethod<void>('stopEmulation');
-  }
-
   Future<double> getSystemMediaVolume() async {
     final result = await _channel.invokeMethod<double>('getSystemMediaVolume');
     return result ?? 0;
@@ -397,16 +366,6 @@ class NativeBridge {
     return _mediaNotificationPlayPauseChannel.receiveBroadcastStream().map(
       (event) => event as bool,
     );
-  }
-
-  Future<void> launchEmulationActivity(String gamePath) {
-    return _channel.invokeMethod<void>('launchEmulationActivity', {
-      'path': gamePath,
-    });
-  }
-
-  Future<void> terminateProcess() {
-    return _channel.invokeMethod<void>('terminateProcess');
   }
 
   Future<void> setConsoleLogEnabled(bool enabled) {

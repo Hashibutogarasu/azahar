@@ -7,6 +7,7 @@
 #include "common/logging/log.h"
 #include "core/frontend/camera/blank_camera.h"
 #include "jni/camera/still_image_camera.h"
+#include "jni/id_cache.h"
 
 static jclass s_still_image_camera_helper_class;
 static jmethodID s_open_file_picker;
@@ -16,7 +17,7 @@ namespace Camera::StillImage {
 
 void InitJNI(JNIEnv* env) {
     s_still_image_camera_helper_class = reinterpret_cast<jclass>(
-        env->NewGlobalRef(env->FindClass("org/citra/citra_emu/camera/StillImageCameraHelper")));
+        env->NewGlobalRef(IDCache::FindClass(env,"org/citra/citra_emu/camera/StillImageCameraHelper")));
     s_open_file_picker = env->GetStaticMethodID(s_still_image_camera_helper_class, "OpenFilePicker",
                                                 "()Ljava/lang/String;");
     s_load_image_from_file =

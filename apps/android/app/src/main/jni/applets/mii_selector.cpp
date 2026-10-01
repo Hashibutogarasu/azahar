@@ -34,7 +34,7 @@ void AndroidMiiSelector::Setup(const Frontend::MiiSelectorConfig& config) {
 
     // List mii names
     // The 'Standard Mii' is not included here as we need Java side to translate it
-    const jclass string_class = reinterpret_cast<jclass>(env->FindClass("java/lang/String"));
+    const jclass string_class = reinterpret_cast<jclass>(IDCache::FindClass(env,"java/lang/String"));
     const jobjectArray array =
         env->NewObjectArray(static_cast<jsize>(miis.size()), string_class, nullptr);
     for (std::size_t i = 0; i < miis.size(); ++i) {
@@ -66,11 +66,11 @@ void AndroidMiiSelector::Setup(const Frontend::MiiSelectorConfig& config) {
 
 void InitJNI(JNIEnv* env) {
     s_mii_selector_class = reinterpret_cast<jclass>(
-        env->NewGlobalRef(env->FindClass("org/citra/citra_emu/applets/MiiSelector")));
+        env->NewGlobalRef(IDCache::FindClass(env,"org/citra/citra_emu/applets/MiiSelector")));
     s_mii_selector_config_class = reinterpret_cast<jclass>(env->NewGlobalRef(
-        env->FindClass("org/citra/citra_emu/applets/MiiSelector$MiiSelectorConfig")));
+        IDCache::FindClass(env,"org/citra/citra_emu/applets/MiiSelector$MiiSelectorConfig")));
     s_mii_selector_data_class = reinterpret_cast<jclass>(env->NewGlobalRef(
-        env->FindClass("org/citra/citra_emu/applets/MiiSelector$MiiSelectorData")));
+        IDCache::FindClass(env,"org/citra/citra_emu/applets/MiiSelector$MiiSelectorData")));
 
     s_mii_selector_execute =
         env->GetStaticMethodID(s_mii_selector_class, "Execute",

@@ -5,8 +5,11 @@
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
+#include <cstring>
 #include <deque>
+#include <functional>
 #include <mutex>
+#include <set>
 #include <string>
 #include <string_view>
 #include <thread>
@@ -15,6 +18,10 @@
 #include <EGL/eglext.h>
 #include <glad/glad.h>
 
+#include <fmt/format.h>
+
+#include "audio_core/external_sink.h"
+#include "audio_core/sink_details.h"
 #include "common/logging/backend.h"
 #include "common/logging/log.h"
 #include "common/microprofile.h"
@@ -24,7 +31,9 @@
 #include "core/frontend/applets/default_applets.h"
 #include "core/frontend/emu_window.h"
 #include "core/frontend/framebuffer_layout.h"
+#include "core/hle/kernel/kernel.h"
 #include "core/hle/service/service.h"
+#include "core/memory.h"
 #include "gamepad.h"
 #include "input_common/main.h"
 #include "network/network.h"
@@ -53,17 +62,10 @@ struct FlutterGlContext {
     bool ready = false;
     EGLDisplay display = EGL_NO_DISPLAY;
     EGLContext context = EGL_NO_CONTEXT;
-    bool has_pending_start = false;
-    std::string pending_path;
+    void* pending_session = nullptr;
 };
 
-struct PendingEmulationStart {
-    std::string path;
-    EGLDisplay display;
-    EGLContext context;
-};
-
-gboolean StartEmulationOnMainThread(gpointer user_data);
+gboolean StartPendingSessionOnMainThread(gpointer user_data);
 
 FlutterGlContext& GetFlutterGlContext() {
     static FlutterGlContext instance;
@@ -216,7 +218,7 @@ static gboolean azahar_texture_populate(FlTextureGL* texture, uint32_t* target, 
 
         FlutterGlContext& ctx = GetFlutterGlContext();
         if (!ctx.ready) {
-            PendingEmulationStart* to_start = nullptr;
+            void* to_start = nullptr;
             {
                 std::lock_guard<std::mutex> lock(ctx.mutex);
                 if (!ctx.ready) {
@@ -224,16 +226,13 @@ static gboolean azahar_texture_populate(FlTextureGL* texture, uint32_t* target, 
                     ctx.context = eglGetCurrentContext();
                     if (ctx.display != EGL_NO_DISPLAY && ctx.context != EGL_NO_CONTEXT) {
                         ctx.ready = true;
-                        if (ctx.has_pending_start) {
-                            to_start = new PendingEmulationStart{std::move(ctx.pending_path),
-                                                                 ctx.display, ctx.context};
-                            ctx.has_pending_start = false;
-                        }
+                        to_start = ctx.pending_session;
+                        ctx.pending_session = nullptr;
                     }
                 }
             }
             if (to_start) {
-                g_idle_add(StartEmulationOnMainThread, to_start);
+                g_idle_add(StartPendingSessionOnMainThread, to_start);
             }
         }
 
@@ -545,127 +544,229 @@ private:
     int exported_height_{};
 };
 
-std::unique_ptr<EmuWindow_Flutter> g_window;
-std::unique_ptr<EmuWindow_Flutter> g_secondary_window;
-AzaharTexture* g_primary_texture{};
-AzaharTexture* g_secondary_texture{};
 FlTextureRegistrar* g_texture_registrar{};
-FlEventChannel* g_shader_progress_channel{};
 
-std::atomic<bool> g_stop_run{true};
-std::atomic<bool> g_session_active{false};
-std::atomic<bool> g_pause_emulation{false};
-std::atomic<bool> g_advance_frame_requested{false};
-std::atomic<bool> g_present_frames{false};
-std::atomic<bool> g_present_thread_stop{false};
+std::mutex g_sessions_mutex;
+std::set<Session::Impl*> g_live_sessions;
+Session::Impl* g_active_session{};
 
-std::mutex g_paused_mutex;
-std::mutex g_running_mutex;
-std::condition_variable g_running_cv;
+}  // namespace
 
-std::thread g_emulation_thread;
-std::thread g_present_thread;
+struct Session::Impl {
+    Impl(std::string game_path, SessionOptions session_options, SessionCallbacks session_callbacks)
+        : path(std::move(game_path)), options(session_options),
+          callbacks(std::move(session_callbacks)) {}
 
-EmuWindow_Flutter* GetTouchscreenWindow() {
-    return g_secondary_window ? g_secondary_window.get() : g_window.get();
-}
+    std::string path;
+    SessionOptions options;
+    SessionCallbacks callbacks;
 
-const char* ShaderProgressStageName(VideoCore::LoadCallbackStage stage) {
-    switch (stage) {
-    case VideoCore::LoadCallbackStage::Prepare:
-        return "prepare";
-    case VideoCore::LoadCallbackStage::Decompile:
-        return "decompile";
-    case VideoCore::LoadCallbackStage::Build:
-        return "build";
-    case VideoCore::LoadCallbackStage::Complete:
-        return "complete";
-    default:
-        return nullptr;
+    std::unique_ptr<EmuWindow_Flutter> window;
+    std::unique_ptr<EmuWindow_Flutter> secondary_window;
+    AzaharTexture* primary_texture{};
+    AzaharTexture* secondary_texture{};
+
+    std::atomic<bool> stop_run{false};
+    std::atomic<bool> pause_emulation{false};
+    std::atomic<bool> advance_frame_requested{false};
+    std::atomic<bool> present_frames{false};
+    std::atomic<bool> present_thread_stop{false};
+    std::atomic<bool> loaded{false};
+    std::atomic<std::size_t> fcram_size{0};
+
+    bool started{false};
+    bool input_initialized{false};
+    AudioCore::SinkType previous_output_type{AudioCore::SinkType::Auto};
+    bool previous_swap_screen{false};
+
+    std::mutex paused_mutex;
+    std::condition_variable running_cv;
+
+    std::thread emulation_thread;
+    std::thread present_thread;
+
+    EmuWindow_Flutter* GetTouchscreenWindow() {
+        return secondary_window ? secondary_window.get() : window.get();
     }
-}
 
-struct ShaderProgressEvent {
-    VideoCore::LoadCallbackStage stage;
-    std::size_t progress;
-    std::size_t max;
+    void ReportShaderProgress(VideoCore::LoadCallbackStage stage, std::size_t progress,
+                              std::size_t max);
+    void ReportError(const std::string& message);
+    void CreateTextures();
+    void ReleaseTextures();
+    void CreateWindowsAndStartThreads(EGLDisplay display, EGLContext context);
+    void RunEmulation();
+    void PresentLoop();
+    void TeardownOnEmulationThread();
+    void InitializeSubsystems();
+    void ShutdownSubsystems();
 };
 
-gboolean SendShaderProgressEvent(gpointer user_data) {
-    std::unique_ptr<ShaderProgressEvent> event(static_cast<ShaderProgressEvent*>(user_data));
-    const char* stage_name = ShaderProgressStageName(event->stage);
-    if (!g_shader_progress_channel || !stage_name) {
+namespace {
+
+template <typename Function>
+void RunOnMainThreadAndWait(Function&& function) {
+    if (g_main_context_is_owner(g_main_context_default())) {
+        function();
+        return;
+    }
+    struct Job {
+        std::function<void()> function;
+        std::mutex mutex;
+        std::condition_variable cv;
+        bool done = false;
+    } job;
+    job.function = std::forward<Function>(function);
+    g_idle_add(
+        [](gpointer user_data) -> gboolean {
+            Job* job = static_cast<Job*>(user_data);
+            job->function();
+            std::lock_guard<std::mutex> lock(job->mutex);
+            job->done = true;
+            job->cv.notify_all();
+            return G_SOURCE_REMOVE;
+        },
+        &job);
+    std::unique_lock<std::mutex> lock(job.mutex);
+    job.cv.wait(lock, [&job] { return job.done; });
+}
+
+int32_t ToShaderStage(VideoCore::LoadCallbackStage stage) {
+    switch (stage) {
+    case VideoCore::LoadCallbackStage::Prepare:
+    case VideoCore::LoadCallbackStage::Preload:
+        return 0;
+    case VideoCore::LoadCallbackStage::Decompile:
+        return 1;
+    case VideoCore::LoadCallbackStage::Build:
+        return 2;
+    case VideoCore::LoadCallbackStage::Complete:
+        return 3;
+    }
+    return 0;
+}
+
+gboolean StartPendingSessionOnMainThread(gpointer user_data) {
+    std::lock_guard<std::mutex> lock(g_sessions_mutex);
+    Session::Impl* session = static_cast<Session::Impl*>(user_data);
+    if (g_live_sessions.count(session) == 0) {
         return G_SOURCE_REMOVE;
     }
-    g_autoptr(FlValue) map = fl_value_new_map();
-    fl_value_set_string_take(map, "stage", fl_value_new_string(stage_name));
-    fl_value_set_string_take(map, "progress",
-                             fl_value_new_int(static_cast<int64_t>(event->progress)));
-    fl_value_set_string_take(map, "max", fl_value_new_int(static_cast<int64_t>(event->max)));
-    fl_event_channel_send(g_shader_progress_channel, map, nullptr, nullptr);
+    FlutterGlContext& ctx = GetFlutterGlContext();
+    session->CreateWindowsAndStartThreads(ctx.display, ctx.context);
     return G_SOURCE_REMOVE;
 }
 
-void ReportShaderProgress(VideoCore::LoadCallbackStage stage, std::size_t progress,
-                          std::size_t max) {
-    g_idle_add(SendShaderProgressEvent, new ShaderProgressEvent{stage, progress, max});
-}
+}  // namespace
 
-bool ConsumeFlutterGlContextOrRegisterPendingStart(const std::string& path, EGLDisplay& display,
-                                                   EGLContext& context) {
-    FlutterGlContext& ctx = GetFlutterGlContext();
-    std::lock_guard<std::mutex> lock(ctx.mutex);
-    if (ctx.ready) {
-        display = ctx.display;
-        context = ctx.context;
-        return true;
+void Session::Impl::ReportShaderProgress(VideoCore::LoadCallbackStage stage, std::size_t progress,
+                                         std::size_t max) {
+    if (callbacks.on_shader_progress) {
+        callbacks.on_shader_progress(ToShaderStage(stage), progress, max);
     }
-    ctx.has_pending_start = true;
-    ctx.pending_path = path;
-    return false;
 }
 
-gboolean ReleaseTexturesOnMainThread(gpointer user_data) {
-    AzaharTexture* textures[] = {g_primary_texture, g_secondary_texture};
-    g_primary_texture = nullptr;
-    g_secondary_texture = nullptr;
+void Session::Impl::ReportError(const std::string& message) {
+    LOG_CRITICAL(Frontend, "{}", message);
+    if (callbacks.on_error) {
+        callbacks.on_error(message);
+    }
+}
+
+void Session::Impl::CreateTextures() {
+    FlTextureRegistrar* registrar = g_texture_registrar;
+    if (registrar == nullptr) {
+        return;
+    }
+    const auto create = [&](int width, int height, bool secondary) -> AzaharTexture* {
+        AzaharTexture* texture = AZAHAR_TEXTURE(g_object_new(AZAHAR_TYPE_TEXTURE, nullptr));
+        texture->state->width = static_cast<GLuint>(std::max(width, 1));
+        texture->state->height = static_cast<GLuint>(std::max(height, 1));
+        if (!fl_texture_registrar_register_texture(registrar, FL_TEXTURE(texture))) {
+            g_object_unref(texture);
+            return nullptr;
+        }
+        if (callbacks.on_texture) {
+            callbacks.on_texture(fl_texture_get_id(FL_TEXTURE(texture)), secondary);
+        }
+        return texture;
+    };
+    primary_texture = create(options.primary_width, options.primary_height, false);
+    if (options.dual_screen) {
+        secondary_texture = create(options.secondary_width, options.secondary_height, true);
+    }
+}
+
+void Session::Impl::ReleaseTextures() {
+    FlTextureRegistrar* registrar = g_texture_registrar;
+    AzaharTexture* textures[] = {primary_texture, secondary_texture};
+    primary_texture = nullptr;
+    secondary_texture = nullptr;
     for (AzaharTexture* texture : textures) {
         if (texture == nullptr) {
             continue;
         }
-        if (g_texture_registrar != nullptr) {
-            fl_texture_registrar_unregister_texture(g_texture_registrar, FL_TEXTURE(texture));
+        if (registrar != nullptr) {
+            fl_texture_registrar_unregister_texture(registrar, FL_TEXTURE(texture));
         }
         g_object_unref(texture);
     }
-    g_texture_registrar = nullptr;
-    return G_SOURCE_REMOVE;
 }
 
-void ShutdownWindows() {
-    g_present_thread_stop = true;
-    if (g_present_thread.joinable()) {
-        g_present_thread.join();
+void Session::Impl::InitializeSubsystems() {
+    InputCommon::Init();
+    Gamepad::Register();
+    Network::Init();
+    input_initialized = true;
+}
+
+void Session::Impl::ShutdownSubsystems() {
+    if (!input_initialized) {
+        return;
+    }
+    Network::Shutdown();
+    InputCommon::Shutdown();
+    input_initialized = false;
+}
+
+void Session::Impl::CreateWindowsAndStartThreads(EGLDisplay display, EGLContext context) {
+    Core::System& system = Core::System::GetInstance();
+    window = std::make_unique<EmuWindow_Flutter>(
+        system, primary_texture, g_texture_registrar,
+        static_cast<int>(primary_texture->state->width.load()),
+        static_cast<int>(primary_texture->state->height.load()), false, display, context);
+    if (secondary_texture) {
+        secondary_window = std::make_unique<EmuWindow_Flutter>(
+            system, secondary_texture, g_texture_registrar,
+            static_cast<int>(secondary_texture->state->width.load()),
+            static_cast<int>(secondary_texture->state->height.load()), true, display, context);
     }
 
-    if (g_window) {
-        g_window->DoneCurrent();
+    present_thread_stop = false;
+    emulation_thread = std::thread([this] { RunEmulation(); });
+    present_thread = std::thread([this] { PresentLoop(); });
+}
+
+void Session::Impl::TeardownOnEmulationThread() {
+    present_thread_stop = true;
+    if (present_thread.joinable()) {
+        present_thread.join();
     }
-    if (g_secondary_window) {
-        g_secondary_window->DoneCurrent();
+
+    if (window) {
+        window->DoneCurrent();
+    }
+    if (secondary_window) {
+        secondary_window->DoneCurrent();
     }
     Core::System::GetInstance().Shutdown();
-    g_secondary_window.reset();
-    g_window.reset();
-    InputCommon::Shutdown();
+    AudioCore::SetExternalAudioHandler({});
+    secondary_window.reset();
+    window.reset();
     MicroProfileShutdown();
-    g_idle_add(ReleaseTexturesOnMainThread, nullptr);
-    g_session_active = false;
 }
 
-void RunEmulation(std::string path) {
-    std::scoped_lock lock(g_running_mutex);
-
+void Session::Impl::RunEmulation() {
     EnsureUserPathInitialized();
     EnsureLoggingInitialized();
     EnsureLleModulesInitialized();
@@ -674,36 +775,50 @@ void RunEmulation(std::string path) {
 
     Core::System& system = Core::System::GetInstance();
 
+    Settings::values.output_type = AudioCore::SinkType::External;
+    AudioCore::SetExternalAudioHandler([this](const s16* frames, std::size_t frame_count) {
+        if (callbacks.on_audio) {
+            callbacks.on_audio(frames, frame_count);
+        }
+    });
+
     system.ApplySettings();
     Settings::LogSettings();
 
     Frontend::RegisterDefaultApplets(system);
 
-    g_window->MakeCurrent();
-    if (g_secondary_window) {
-        g_secondary_window->MakeCurrent();
-        g_window->MakeCurrent();
+    window->MakeCurrent();
+    if (secondary_window) {
+        secondary_window->MakeCurrent();
+        window->MakeCurrent();
     }
 
     const Core::System::ResultStatus load_result =
-        system.Load(*g_window, path, g_secondary_window.get());
+        system.Load(*window, path, secondary_window.get());
     if (load_result != Core::System::ResultStatus::Success) {
-        LOG_CRITICAL(Frontend, "Failed to load {}: {}", path, static_cast<int>(load_result));
-        ShutdownWindows();
+        ReportError(fmt::format("Failed to load {}: {}", path, static_cast<int>(load_result)));
+        TeardownOnEmulationThread();
         return;
     }
 
-    g_stop_run = false;
-    g_pause_emulation = false;
-    g_present_frames = true;
+    fcram_size = Settings::values.is_new_3ds.GetValue() ? Memory::FCRAM_N3DS_SIZE
+                                                        : Memory::FCRAM_SIZE;
+    loaded = true;
+    present_frames = true;
 
-    system.GPU().Renderer().Rasterizer()->LoadDiskResources(g_stop_run, &ReportShaderProgress);
+    system.GPU().Renderer().Rasterizer()->LoadDiskResources(
+        stop_run, [this](VideoCore::LoadCallbackStage stage, std::size_t progress,
+                         std::size_t max) { ReportShaderProgress(stage, progress, max); });
     ReportShaderProgress(VideoCore::LoadCallbackStage::Complete, 0, 0);
 
-    SCOPE_EXIT({ ShutdownWindows(); });
+    SCOPE_EXIT({
+        loaded = false;
+        fcram_size = 0;
+        TeardownOnEmulationThread();
+    });
 
-    while (!g_stop_run) {
-        if (!g_pause_emulation) {
+    while (!stop_run) {
+        if (!pause_emulation) {
             const auto result = system.RunLoop();
             if (result == Core::System::ResultStatus::Success ||
                 result == Core::System::ResultStatus::ShutdownRequested) {
@@ -720,72 +835,210 @@ void RunEmulation(std::string path) {
         SCOPE_EXIT({ Settings::values.volume = volume; });
         Settings::values.volume = 0;
 
-        std::unique_lock<std::mutex> pause_lock(g_paused_mutex);
-        g_running_cv.wait(pause_lock, [] {
-            return !g_pause_emulation || g_stop_run || g_advance_frame_requested;
+        std::unique_lock<std::mutex> pause_lock(paused_mutex);
+        running_cv.wait(pause_lock, [this] {
+            return !pause_emulation || stop_run || advance_frame_requested;
         });
-        if (g_advance_frame_requested && g_pause_emulation && !g_stop_run) {
+        if (advance_frame_requested && pause_emulation && !stop_run) {
             pause_lock.unlock();
             static_cast<void>(system.RunLoop());
-            g_advance_frame_requested = false;
+            advance_frame_requested = false;
         }
     }
 }
 
-// Linux has no Choreographer/vsync callback to piggyback on, so a dedicated thread paces
-// presentation itself, mirroring the role of EmulationController's frame callback on Android.
-void PresentLoop() {
+/**
+ * Paces presentation from a dedicated thread, since there is no display callback to rely on.
+ */
+void Session::Impl::PresentLoop() {
     auto next_frame = std::chrono::steady_clock::now();
-    while (!g_present_thread_stop) {
-        if (g_present_frames) {
-            if (g_window) {
-                g_window->TryPresenting();
+    while (!present_thread_stop) {
+        if (present_frames) {
+            if (window) {
+                window->TryPresenting();
             }
-            if (g_secondary_window) {
-                g_secondary_window->TryPresenting();
+            if (secondary_window) {
+                secondary_window->TryPresenting();
             }
         }
         next_frame += std::chrono::milliseconds(16);
         std::this_thread::sleep_until(next_frame);
     }
-    if (g_window) {
-        g_window->ReleaseCurrent();
+    if (window) {
+        window->ReleaseCurrent();
     }
-    if (g_secondary_window) {
-        g_secondary_window->ReleaseCurrent();
+    if (secondary_window) {
+        secondary_window->ReleaseCurrent();
     }
 }
 
-void CreateWindowsAndStartEmulation(const std::string& path, EGLDisplay display,
-                                    EGLContext context) {
+Session::Session(std::string game_path, SessionOptions options, SessionCallbacks callbacks)
+    : impl_(std::make_unique<Impl>(std::move(game_path), options, std::move(callbacks))) {}
+
+Session::~Session() {
+    {
+        std::lock_guard<std::mutex> lock(g_sessions_mutex);
+        g_live_sessions.erase(impl_.get());
+        if (g_active_session == impl_.get()) {
+            g_active_session = nullptr;
+        }
+    }
+    {
+        FlutterGlContext& ctx = GetFlutterGlContext();
+        std::lock_guard<std::mutex> lock(ctx.mutex);
+        if (ctx.pending_session == impl_.get()) {
+            ctx.pending_session = nullptr;
+        }
+    }
+
+    impl_->stop_run = true;
+    impl_->pause_emulation = false;
+    impl_->advance_frame_requested = false;
+    impl_->present_frames = false;
+    impl_->present_thread_stop = true;
+    impl_->running_cv.notify_all();
+
+    if (impl_->emulation_thread.joinable()) {
+        impl_->emulation_thread.join();
+    }
+    if (impl_->present_thread.joinable()) {
+        impl_->present_thread.join();
+    }
+
+    AudioCore::SetExternalAudioHandler({});
+    Settings::values.output_type = impl_->previous_output_type;
+    Settings::values.swap_screen = impl_->previous_swap_screen;
+    impl_->ShutdownSubsystems();
+
+    RunOnMainThreadAndWait([this] { impl_->ReleaseTextures(); });
+}
+
+bool Session::Start() {
+    EnsureLoggingInitialized();
+    if (g_texture_registrar == nullptr) {
+        impl_->ReportError("The texture registrar is not available");
+        return false;
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(g_sessions_mutex);
+        if (g_active_session != nullptr) {
+            impl_->ReportError("Another emulation session is still active");
+            return false;
+        }
+        g_active_session = impl_.get();
+        g_live_sessions.insert(impl_.get());
+    }
+
+    impl_->previous_output_type = Settings::values.output_type.GetValue();
+    impl_->previous_swap_screen = Settings::values.swap_screen.GetValue();
+    impl_->InitializeSubsystems();
+    impl_->started = true;
+
+    RunOnMainThreadAndWait([this] {
+        impl_->CreateTextures();
+        FlutterGlContext& ctx = GetFlutterGlContext();
+        bool ready = false;
+        {
+            std::lock_guard<std::mutex> lock(ctx.mutex);
+            ready = ctx.ready;
+            if (!ready) {
+                ctx.pending_session = impl_.get();
+            }
+        }
+        if (ready) {
+            std::lock_guard<std::mutex> lock(g_sessions_mutex);
+            impl_->CreateWindowsAndStartThreads(ctx.display, ctx.context);
+        }
+    });
+    return impl_->primary_texture != nullptr;
+}
+
+void Session::Pause() {
+    impl_->pause_emulation = true;
+}
+
+void Session::Resume() {
+    impl_->pause_emulation = false;
+    impl_->running_cv.notify_all();
+}
+
+bool Session::IsPaused() const {
+    return impl_->pause_emulation;
+}
+
+void Session::AdvanceFrame() {
+    Core::System::GetInstance().frame_limiter.AdvanceFrame();
+    impl_->advance_frame_requested = true;
+    impl_->running_cv.notify_all();
+}
+
+void Session::PauseRendering() {
+    impl_->present_frames = false;
+}
+
+void Session::ResumeRendering() {
+    impl_->present_frames = true;
+}
+
+std::size_t Session::FcramSize() const {
+    return impl_->fcram_size;
+}
+
+bool Session::ReadMemory(uint32_t address, uint8_t* out, std::size_t length) {
+    if (!impl_->loaded || length == 0) {
+        return false;
+    }
     Core::System& system = Core::System::GetInstance();
-    g_window = std::make_unique<EmuWindow_Flutter>(
-        system, g_primary_texture, g_texture_registrar,
-        static_cast<int>(g_primary_texture->state->width.load()),
-        static_cast<int>(g_primary_texture->state->height.load()), false, display, context);
-    if (g_secondary_texture) {
-        g_secondary_window = std::make_unique<EmuWindow_Flutter>(
-            system, g_secondary_texture, g_texture_registrar,
-            static_cast<int>(g_secondary_texture->state->width.load()),
-            static_cast<int>(g_secondary_texture->state->height.load()), true, display, context);
+    if (!system.IsPoweredOn()) {
+        return false;
     }
-
-    g_present_thread_stop = false;
-    g_session_active = true;
-    g_emulation_thread = std::thread(RunEmulation, path);
-    g_present_thread = std::thread(PresentLoop);
+    const auto process = system.Kernel().GetCurrentProcess();
+    if (!process) {
+        return false;
+    }
+    constexpr uint64_t kPageSize = 0x1000;
+    const uint64_t end = static_cast<uint64_t>(address) + length;
+    if (end > 0x100000000ULL) {
+        return false;
+    }
+    Memory::MemorySystem& memory = system.Memory();
+    for (uint64_t page = address & ~(kPageSize - 1); page < end; page += kPageSize) {
+        if (!memory.IsValidVirtualAddress(*process, static_cast<VAddr>(page))) {
+            return false;
+        }
+    }
+    memory.ReadBlock(*process, address, out, length);
+    return true;
 }
 
-gboolean StartEmulationOnMainThread(gpointer user_data) {
-    std::unique_ptr<PendingEmulationStart> pending(static_cast<PendingEmulationStart*>(user_data));
-    CreateWindowsAndStartEmulation(pending->path, pending->display, pending->context);
-    return G_SOURCE_REMOVE;
+bool Session::ReadFcram(std::size_t offset, uint8_t* out, std::size_t length) {
+    const std::size_t size = impl_->fcram_size;
+    if (!impl_->loaded || size == 0 || offset > size || length > size - offset) {
+        return false;
+    }
+    const uint8_t* fcram = Core::System::GetInstance().Memory().GetFCRAMPointer(0);
+    std::memcpy(out, fcram + offset, length);
+    return true;
 }
 
-}  // namespace
+bool Session::OnTouchEvent(double x, double y, bool pressed) {
+    EmuWindow_Flutter* window = impl_->GetTouchscreenWindow();
+    if (!window) {
+        return false;
+    }
+    return window->OnTouchEvent(static_cast<int>(x + 0.5), static_cast<int>(y + 0.5), pressed);
+}
 
-void SetShaderProgressChannel(FlEventChannel* channel) {
-    g_shader_progress_channel = channel;
+void Session::OnTouchMoved(double x, double y) {
+    EmuWindow_Flutter* window = impl_->GetTouchscreenWindow();
+    if (window) {
+        window->OnTouchMoved(static_cast<int>(x), static_cast<int>(y));
+    }
+}
+
+void SetTextureRegistrar(FlTextureRegistrar* registrar) {
+    g_texture_registrar = registrar;
 }
 
 void SetLogLinesChannel(FlEventChannel* channel) {
@@ -802,112 +1055,40 @@ void SetConsoleLogEnabled(bool enabled) {
     }
 }
 
-int64_t CreateTexture(FlTextureRegistrar* registrar, int width, int height, bool secondary) {
-    EnsureLoggingInitialized();
-    AzaharTexture* texture = AZAHAR_TEXTURE(g_object_new(AZAHAR_TYPE_TEXTURE, nullptr));
-    texture->state->width = static_cast<GLuint>(std::max(width, 1));
-    texture->state->height = static_cast<GLuint>(std::max(height, 1));
-
-    if (!fl_texture_registrar_register_texture(registrar, FL_TEXTURE(texture))) {
-        g_object_unref(texture);
-        return -1;
-    }
-
-    g_texture_registrar = registrar;
-    if (secondary) {
-        g_secondary_texture = texture;
-    } else {
-        g_primary_texture = texture;
-    }
-    return fl_texture_get_id(FL_TEXTURE(texture));
-}
-
-bool IsRunning() {
-    return !g_stop_run;
-}
-
 bool IsSessionActive() {
-    return g_session_active;
-}
-
-void StartEmulation(const std::string& path) {
-    EnsureLoggingInitialized();
-    if (g_primary_texture == nullptr) {
-        LOG_CRITICAL(Frontend, "StartEmulation called before CreateTexture");
-        return;
-    }
-
-    if (!g_stop_run) {
-        g_pause_emulation = false;
-        g_running_cv.notify_all();
-        g_present_frames = true;
-        return;
-    }
-
-    static bool input_and_network_initialized = false;
-    if (!input_and_network_initialized) {
-        InputCommon::Init();
-        Gamepad::Register();
-        Network::Init();
-        input_and_network_initialized = true;
-    }
-
-    EGLDisplay flutter_display{};
-    EGLContext flutter_context{};
-    if (ConsumeFlutterGlContextOrRegisterPendingStart(path, flutter_display, flutter_context)) {
-        CreateWindowsAndStartEmulation(path, flutter_display, flutter_context);
-    }
-}
-
-void PauseEmulation() {
-    g_pause_emulation = true;
-}
-
-void ResumeEmulation() {
-    g_pause_emulation = false;
-    g_running_cv.notify_all();
+    std::lock_guard<std::mutex> lock(g_sessions_mutex);
+    return g_active_session != nullptr;
 }
 
 void AdvanceFrame() {
-    Core::System::GetInstance().frame_limiter.AdvanceFrame();
-    g_advance_frame_requested = true;
-    g_running_cv.notify_all();
-}
-
-void PauseRendering() {
-    g_present_frames = false;
-}
-
-void ResumeRendering() {
-    g_present_frames = true;
-}
-
-void StopEmulation() {
-    g_stop_run = true;
-    g_pause_emulation = false;
-    g_advance_frame_requested = false;
-    g_present_frames = false;
-    g_present_thread_stop = true;
-    g_running_cv.notify_all();
-}
-
-void StopPresentingAndWait() {
-    g_present_frames = false;
-    g_present_thread_stop = true;
-    if (g_present_thread.joinable()) {
-        g_present_thread.join();
+    std::lock_guard<std::mutex> lock(g_sessions_mutex);
+    if (g_active_session != nullptr) {
+        Core::System::GetInstance().frame_limiter.AdvanceFrame();
+        g_active_session->advance_frame_requested = true;
+        g_active_session->running_cv.notify_all();
     }
 }
 
-void StopAndWait() {
-    StopEmulation();
-    if (g_emulation_thread.joinable()) {
-        g_emulation_thread.join();
+void PauseRendering() {
+    std::lock_guard<std::mutex> lock(g_sessions_mutex);
+    if (g_active_session != nullptr) {
+        g_active_session->present_frames = false;
+    }
+}
+
+void ResumeRendering() {
+    std::lock_guard<std::mutex> lock(g_sessions_mutex);
+    if (g_active_session != nullptr) {
+        g_active_session->present_frames = true;
     }
 }
 
 bool OnTouchEvent(double x, double y, bool pressed) {
-    EmuWindow_Flutter* window = GetTouchscreenWindow();
+    std::lock_guard<std::mutex> lock(g_sessions_mutex);
+    if (g_active_session == nullptr) {
+        return false;
+    }
+    EmuWindow_Flutter* window = g_active_session->GetTouchscreenWindow();
     if (!window) {
         return false;
     }
@@ -915,7 +1096,11 @@ bool OnTouchEvent(double x, double y, bool pressed) {
 }
 
 void OnTouchMoved(double x, double y) {
-    EmuWindow_Flutter* window = GetTouchscreenWindow();
+    std::lock_guard<std::mutex> lock(g_sessions_mutex);
+    if (g_active_session == nullptr) {
+        return;
+    }
+    EmuWindow_Flutter* window = g_active_session->GetTouchscreenWindow();
     if (window) {
         window->OnTouchMoved(static_cast<int>(x), static_cast<int>(y));
     }

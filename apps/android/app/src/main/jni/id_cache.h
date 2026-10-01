@@ -17,6 +17,33 @@ namespace IDCache {
 
 JNIEnv* GetEnvForThread();
 
+JavaVM* GetJavaVM();
+
+/**
+ * The class loader of the application. A library that is loaded from native code instead of
+ * `System.loadLibrary` has no class loader of its own context, so it resolves the application
+ * classes through this one.
+ */
+jobject GetAppClassLoader();
+
+/**
+ * Finds a class by its JNI name, through the application class loader when one is known.
+ */
+jclass FindClass(JNIEnv* env, const char* name);
+
+/**
+ * Initializes the cache of a library that was not loaded by `System.loadLibrary`, so
+ * `JNI_OnLoad` did not run for it.
+ *
+ * @return true when every class and method was found.
+ */
+bool InitializeForSession(JavaVM* vm, jobject app_class_loader);
+
+/**
+ * Releases what [InitializeForSession] created. Nothing of the cache is used afterwards.
+ */
+void ReleaseForSession();
+
 jclass GetCoreErrorClass();
 jclass GetSavestateInfoClass();
 
@@ -33,6 +60,9 @@ jmethodID GetRequestCameraPermission();
 jmethodID GetRequestMicPermission();
 jmethodID GetRequestWifiPermission();
 jmethodID GetScanWifiAccessPoints();
+jmethodID GetCreateSessionTexture();
+jmethodID GetGetSessionSurface();
+jmethodID GetReleaseSessionTextures();
 
 jclass GetCheatClass();
 jfieldID GetCheatPointer();
