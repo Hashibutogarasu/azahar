@@ -83,6 +83,21 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo apt-get install -y ccache
+      - name: Add swap space
+        run: |
+          sudo fallocate -l 8G /swapfile-ci
+          sudo chmod 600 /swapfile-ci
+          sudo mkswap /swapfile-ci
+          sudo swapon /swapfile-ci
+          free -h
+      - name: Limit Gradle memory and parallelism
+        run: |
+          mkdir -p ~/.gradle
+          {
+            echo "org.gradle.jvmargs=-Xmx4G -XX:MaxMetaspaceSize=1G -XX:ReservedCodeCacheSize=256m"
+            echo "org.gradle.workers.max=1"
+            echo "kotlin.daemon.jvmargs=-Xmx1G"
+          } > ~/.gradle/gradle.properties
       - name: Build APK
         run: ./.ci/flutter-android.sh
       - name: Report
