@@ -1,0 +1,47 @@
+name: Docker image
+description: Loads a Docker image from the Actions cache, or pulls it and caches it.
+
+inputs:
+  image:
+    description: The image to load.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve image digest
+      id: ref
+      shell: bash
+      run: |
+        digest=$(docker buildx imagetools inspect "${{ inputs.image }}" --format '{{.Manifest.Digest}}')
+        name=$(echo "${{ inputs.image }}" | tr '/:' '--')
+        echo "key=docker-$name-$digest" >> "$GITHUB_OUTPUT"
+        echo "path=$RUNNER_TEMP/docker-$name.tar" >> "$GITHUB_OUTPUT"
+    - name: Restore image
+      id: restore
+      uses: actions/cache/restore@v4
+      with:
+        path: ${{ steps.ref.outputs.path }}
+        key: ${{ steps.ref.outputs.key }}
+    - name: Load image
+      if: steps.restore.outputs.cache-hit == 'true'
+      shell: bash
+      run: |
+        docker load -i "${{ steps.ref.outputs.path }}"
+        rm -f "${{ steps.ref.outputs.path }}"
+    - name: Pull image
+      if: steps.restore.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        docker pull "${{ inputs.image }}"
+        docker save "${{ inputs.image }}" -o "${{ steps.ref.outputs.path }}"
+    - name: Save image
+      if: steps.restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: ${{ steps.ref.outputs.path }}
+        key: ${{ steps.ref.outputs.key }}
+    - name: Remove image archive
+      if: steps.restore.outputs.cache-hit != 'true'
+      shell: bash
+      run: rm -f "${{ steps.ref.outputs.path }}"

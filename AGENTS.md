@@ -40,10 +40,10 @@ export CMAKE_GENERATOR=Ninja
 Set up the environment before you change any code. Run the real commands and fix the errors they report; do not guess what is broken by searching the source.
 
 1. Install the Flutter SDK version from `.fvmrc`, then create `.env.sh` as shown above.
-2. Fetch the submodules. Some of them use SSH URLs, so rewrite them to HTTPS when SSH is not available:
+2. Fetch the submodules:
 
    ```sh
-   git -c url."https://github.com/".insteadOf="git@github.com:" submodule update --init --recursive
+   git submodule update --init --recursive
    ```
 
    If GitHub returns HTTP 429, retry with `--jobs 1`.

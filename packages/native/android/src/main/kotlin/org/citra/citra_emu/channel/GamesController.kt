@@ -44,9 +44,13 @@ class GamesController(private val activity: Activity, private val cacheDir: File
                 "installedTitlePaths"
             ) ?: emptyList()).map { InstalledTitlePath(it.getValue("root"), it.getValue("path")) }
             Thread {
-                val games = GameHelper.getGames(gamesDirectory, installedTitlePaths)
-                    .map { it.toChannelMap() }
-                activity.runOnUiThread { result.success(games) }
+                try {
+                    val games = GameHelper.getGames(gamesDirectory, installedTitlePaths)
+                        .map { it.toChannelMap() }
+                    activity.runOnUiThread { result.success(games) }
+                } catch (e: Exception) {
+                    activity.runOnUiThread { result.error("getGames", e.message, null) }
+                }
             }.start()
         }
     }

@@ -285,7 +285,9 @@ if (ENABLE_QT)
 
     find_package(Qt6 REQUIRED COMPONENTS Widgets Multimedia Concurrent)
 
-    if (NOT WIN32)
+    # Qt 6.9 moved the private Gui module into its own package. Older versions
+    # define Qt6::GuiPrivate in the Gui package that Widgets already found.
+    if (NOT WIN32 AND Qt6_VERSION VERSION_GREATER_EQUAL 6.9)
         find_package(Qt6 REQUIRED COMPONENTS GuiPrivate)
     endif()
 
@@ -517,4 +519,26 @@ if(ENABLE_QT AND UNIX AND NOT APPLE)
             RENAME "org.azahar_emu.Azahar.png")
     install(FILES "${AZAHAR_DIST_DIR}/org.azahar_emu.Azahar.xml"
             DESTINATION "${CMAKE_INSTALL_PREFIX}/share/mime/packages")
+endif()
+
+# .deb packaging via CPack, opt-in so it doesn't affect regular builds.
+option(ENABLE_CPACK_DEB "Enable CPack's DEB generator for packaging a .deb" OFF)
+if (ENABLE_CPACK_DEB)
+    if (NOT UNIX OR APPLE)
+        message(FATAL_ERROR "ENABLE_CPACK_DEB is only supported on Linux")
+    endif()
+
+    set(CPACK_PACKAGE_NAME "azahar")
+    set(CPACK_PACKAGE_VENDOR "Azahar Emulator Project")
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Nintendo 3DS emulator")
+    set(CPACK_PACKAGE_CONTACT "https://github.com/azahar-emu/azahar")
+    if (NOT CPACK_PACKAGE_VERSION)
+        set(CPACK_PACKAGE_VERSION "0.0.0")
+    endif()
+    set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
+    set(CPACK_GENERATOR "DEB")
+    set(CPACK_DEBIAN_PACKAGE_SECTION "games")
+    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+    set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/azahar-emu/azahar")
+    include(CPack)
 endif()

@@ -15,7 +15,9 @@ class UserDirectoriesService {
   Future<String?> previousUserDirectory() =>
       AppServices.citraDirectoryRepository.citraDirectoryUri();
 
-  Future<String?> pickUserDirectory() => FilePicker.getDirectoryPath();
+  Future<String?> pickUserDirectory() => Platform.isAndroid
+      ? AppServices.nativeBridge.openUserDirectory()
+      : FilePicker.getDirectoryPath();
 
   Stream<CopyDirProgress> copyDirProgress() =>
       AppServices.nativeBridge.copyDirProgress();
@@ -38,7 +40,9 @@ class UserDirectoriesService {
     await AppServices.loggingService.userDirectoryChanged();
   }
 
-  Future<String?> pickGamesDirectory() => FilePicker.getDirectoryPath();
+  Future<String?> pickGamesDirectory() => Platform.isAndroid
+      ? AppServices.nativeBridge.openGamesDirectory()
+      : FilePicker.getDirectoryPath();
 
   Future<void> confirmGamesDirectory(String uri) {
     return AppServices.gamesDirectoryRepository.setGamesDirectoryUri(uri);
