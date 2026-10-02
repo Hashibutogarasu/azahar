@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../data/repositories/first_launch_repository.dart';
-import '../../data/repositories/game_repository.dart';
 import '../../data/repositories/games_directory_repository.dart';
 import '../../data/repositories/permission_repository.dart';
 import '../../data/settings/user_directories_provider.dart';
@@ -16,7 +15,6 @@ class SetupWizardViewModel extends ChangeNotifier {
     this._firstLaunchRepository,
     this._gamesDirectoryRepository,
     this._userDirectories,
-    this._gameRepository,
     this._permissionRepository,
   );
 
@@ -25,7 +23,6 @@ class SetupWizardViewModel extends ChangeNotifier {
   final FirstLaunchRepository _firstLaunchRepository;
   final GamesDirectoryRepository _gamesDirectoryRepository;
   final UserDirectoriesService _userDirectories;
-  final GameRepository _gameRepository;
 
   bool isLoaded = false;
   bool notificationsCompleted = false;
@@ -112,8 +109,6 @@ class SetupWizardViewModel extends ChangeNotifier {
     return true;
   }
 
-  Future<void> completeSetup() async {
-    await _firstLaunchRepository.setFirstApplicationLaunchComplete();
-    await _gameRepository.rescan();
-  }
+  Future<void> completeSetup() =>
+      _firstLaunchRepository.setFirstApplicationLaunchComplete();
 }
