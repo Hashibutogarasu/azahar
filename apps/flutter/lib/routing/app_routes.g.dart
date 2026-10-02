@@ -27,6 +27,7 @@ List<RouteBase> get $appRoutes => [
   $optionsAccessibilitySettingsRoute,
   $optionsAdvancedSettingsRoute,
   $optionsFeatureFlagsRoute,
+  $profileCreateShellRoute,
 ];
 
 RouteBase get $setupRoute => GoRouteData.$route(
@@ -634,6 +635,95 @@ mixin $OptionsFeatureFlagsRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/options/feature-flags');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $profileCreateShellRoute => ShellRouteData.$route(
+  factory: $ProfileCreateShellRouteExtension._fromState,
+  routes: [
+    GoRouteData.$route(
+      path: '/profiles/new/name',
+      hasOverriddenOnExit: false,
+      factory: $ProfileNameRoute._fromState,
+    ),
+    GoRouteData.$route(
+      path: '/profiles/new/user-directory',
+      hasOverriddenOnExit: false,
+      factory: $ProfileUserDirectoryRoute._fromState,
+    ),
+    GoRouteData.$route(
+      path: '/profiles/new/games-directory',
+      hasOverriddenOnExit: false,
+      factory: $ProfileGamesDirectoryRoute._fromState,
+    ),
+  ],
+);
+
+extension $ProfileCreateShellRouteExtension on ProfileCreateShellRoute {
+  static ProfileCreateShellRoute _fromState(GoRouterState state) =>
+      const ProfileCreateShellRoute();
+}
+
+mixin $ProfileNameRoute on GoRouteData {
+  static ProfileNameRoute _fromState(GoRouterState state) =>
+      const ProfileNameRoute();
+
+  @override
+  String get location => GoRouteData.$location('/profiles/new/name');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ProfileUserDirectoryRoute on GoRouteData {
+  static ProfileUserDirectoryRoute _fromState(GoRouterState state) =>
+      const ProfileUserDirectoryRoute();
+
+  @override
+  String get location => GoRouteData.$location('/profiles/new/user-directory');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ProfileGamesDirectoryRoute on GoRouteData {
+  static ProfileGamesDirectoryRoute _fromState(GoRouterState state) =>
+      const ProfileGamesDirectoryRoute();
+
+  @override
+  String get location => GoRouteData.$location('/profiles/new/games-directory');
 
   @override
   void go(BuildContext context) => context.go(location);

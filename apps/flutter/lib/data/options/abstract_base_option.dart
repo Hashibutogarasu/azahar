@@ -30,6 +30,7 @@ part 'emulator/emulator_percent_option.dart';
 part 'emulator/emulator_string_option.dart';
 part 'options/action_option.dart';
 part 'options/bool_option.dart';
+part 'options/custom_widget_option.dart';
 part 'options/date_time_option.dart';
 part 'options/enum_option.dart';
 part 'options/float_option.dart';

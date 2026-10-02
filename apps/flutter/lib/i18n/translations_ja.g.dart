@@ -68,6 +68,10 @@ class TranslationsJa extends Translations
     'modded': '改造済み',
   };
   @override
+  late final _Translations$profiles$ja profiles = _Translations$profiles$ja._(
+    _root,
+  );
+  @override
   late final _Translations$setup$ja setup = _Translations$setup$ja._(_root);
   @override
   late final _Translations$home$ja home = _Translations$home$ja._(_root);
@@ -116,6 +120,30 @@ class _Translations$common$ja extends Translations$common$en {
   String get save => '保存';
 }
 
+// Path: profiles
+class _Translations$profiles$ja extends Translations$profiles$en {
+  _Translations$profiles$ja._(TranslationsJa root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsJa _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get switchTitle => 'プロファイルの切り替え';
+  @override
+  String get builtIn => 'ビルトイン';
+  @override
+  String builtInLocation({required Object path}) => 'アプリ内（${path}）';
+  @override
+  String get add => 'プロファイルを追加';
+  @override
+  String get gameRunning => 'ゲームの実行中はプロファイルを切り替えられません。';
+  @override
+  late final _Translations$profiles$create$ja create =
+      _Translations$profiles$create$ja._(_root);
+}
+
 // Path: setup
 class _Translations$setup$ja extends Translations$setup$en {
   _Translations$setup$ja._(TranslationsJa root)
@@ -127,6 +155,8 @@ class _Translations$setup$ja extends Translations$setup$en {
   // Translations
   @override
   String get next => '次へ';
+  @override
+  String get skip => 'スキップ';
   @override
   String get back => '戻る';
   @override
@@ -667,6 +697,36 @@ class _Translations$settings$ja extends Translations$settings$en {
   @override
   late final _Translations$settings$language$ja language =
       _Translations$settings$language$ja._(_root);
+}
+
+// Path: profiles.create
+class _Translations$profiles$create$ja extends Translations$profiles$create$en {
+  _Translations$profiles$create$ja._(TranslationsJa root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsJa _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => '新しいプロファイル';
+  @override
+  String get nameTitle => 'プロファイル名';
+  @override
+  String get nameDescription => '新しいプロファイルの名前を決めてください。';
+  @override
+  String get nameHint => 'プロファイル名';
+  @override
+  String get nameEmpty => 'プロファイル名を入力してください。';
+  @override
+  String get nameTaken => '同じ名前のプロファイルがすでにあります。';
+  @override
+  String get userDirectoryDescription =>
+      'このプロファイルの NAND、セーブデータ、チート、設定を置くフォルダを選んでください。';
+  @override
+  String get gamesDirectoryDescription => 'このプロファイルでゲームを探すフォルダを選んでください。';
+  @override
+  String get create => '作成';
 }
 
 // Path: setup.welcome
@@ -2240,7 +2300,25 @@ extension on TranslationsJa {
           'tags.userInstalled' => 'ユーザー',
           'tags.hidden' => '非表示',
           'tags.modded' => '改造済み',
+          'profiles.switchTitle' => 'プロファイルの切り替え',
+          'profiles.builtIn' => 'ビルトイン',
+          'profiles.builtInLocation' =>
+            ({required Object path}) => 'アプリ内（${path}）',
+          'profiles.add' => 'プロファイルを追加',
+          'profiles.gameRunning' => 'ゲームの実行中はプロファイルを切り替えられません。',
+          'profiles.create.title' => '新しいプロファイル',
+          'profiles.create.nameTitle' => 'プロファイル名',
+          'profiles.create.nameDescription' => '新しいプロファイルの名前を決めてください。',
+          'profiles.create.nameHint' => 'プロファイル名',
+          'profiles.create.nameEmpty' => 'プロファイル名を入力してください。',
+          'profiles.create.nameTaken' => '同じ名前のプロファイルがすでにあります。',
+          'profiles.create.userDirectoryDescription' =>
+            'このプロファイルの NAND、セーブデータ、チート、設定を置くフォルダを選んでください。',
+          'profiles.create.gamesDirectoryDescription' =>
+            'このプロファイルでゲームを探すフォルダを選んでください。',
+          'profiles.create.create' => '作成',
           'setup.next' => '次へ',
+          'setup.skip' => 'スキップ',
           'setup.back' => '戻る',
           'setup.stepComplete' => '完了！',
           'setup.warningSkip' => 'スキップ',
@@ -2799,6 +2877,9 @@ extension on TranslationsJa {
           'settings.system.countries.spain' => 'スペイン',
           'settings.system.countries.swaziland' => 'スワジランド',
           'settings.system.countries.sweden' => 'スウェーデン',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.system.countries.switzerland' => 'スイス',
           'settings.system.countries.turkey' => 'トルコ',
           'settings.system.countries.unitedKingdom' => 'イギリス',
@@ -2814,9 +2895,6 @@ extension on TranslationsJa {
           'settings.system.countries.djibouti' => 'ジブチ',
           'settings.system.countries.somalia' => 'ソマリア',
           'settings.system.countries.andorra' => 'アンドラ',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.system.countries.gibraltar' => 'ジブラルタル',
           'settings.system.countries.guernsey' => 'ガーンジー',
           'settings.system.countries.isleOfMan' => 'マン島',

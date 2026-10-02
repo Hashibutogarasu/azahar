@@ -6,18 +6,37 @@
 
 namespace {
 constexpr char kAppDataDirName[] = "azahar";
+
+std::string& ConfiguredUserDirectory() {
+  static std::string directory;
+  return directory;
 }
 
+std::string& AppliedUserDirectory() {
+  static std::string directory;
+  return directory;
+}
+}  // namespace
+
 std::string UserDataDirectory() {
-  std::string path = std::string(g_get_user_data_dir()) + "/" + kAppDataDirName;
+  std::string path = ConfiguredUserDirectory();
+  if (path.empty()) {
+    path = std::string(g_get_user_data_dir()) + "/" + kAppDataDirName;
+  }
   g_mkdir_with_parents(path.c_str(), 0700);
   return path;
 }
 
+void SetUserDirectory(const std::string& path) {
+  ConfiguredUserDirectory() = path;
+  EnsureUserPathInitialized();
+}
+
 void EnsureUserPathInitialized() {
-  static const bool initialized = [] {
-    FileUtil::SetUserPath(UserDataDirectory() + "/");
-    return true;
-  }();
-  (void)initialized;
+  const std::string directory = UserDataDirectory();
+  if (AppliedUserDirectory() == directory) {
+    return;
+  }
+  FileUtil::SetUserPath(directory + "/");
+  AppliedUserDirectory() = directory;
 }

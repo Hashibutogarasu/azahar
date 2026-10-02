@@ -30,6 +30,7 @@ class _SetupWizardPageState extends State<SetupWizardPage> {
     AppServices.gamesDirectoryRepository,
     UserDirectoriesService(),
     AppServices.permissionRepository,
+    AppServices.profileService,
   );
   final Set<int> _hasBeenWarned = {};
   int _currentPage = 0;
@@ -100,24 +101,17 @@ class _SetupWizardPageState extends State<SetupWizardPage> {
         icon: Icons.folder_open,
         title: t.setup.dataFolders.title,
         description: t.setup.dataFolders.description,
+        nextLabel: _viewModel.foldersConfirmed ? null : t.setup.skip,
         actions: [
           SetupAction(
             icon: Icons.home,
             label: t.setup.userDirectory.title,
-            isUnskippable: true,
-            warningTitle: t.setup.userDirectory.warningTitle,
-            warningDescription: t.setup.userDirectory.warningDescription,
-            warningHelpUrl: t.setup.userDirectory.warningHelpUrl,
             isCompleted: _viewModel.userDirectoryCompleted,
             performAction: (context) => _performUserDirectorySelection(context),
           ),
           SetupAction(
             icon: Icons.sports_esports,
             label: t.setup.gamesDirectory.title,
-            hasWarning: true,
-            warningTitle: t.setup.gamesDirectory.warningTitle,
-            warningDescription: t.setup.gamesDirectory.warningDescription,
-            warningHelpUrl: t.setup.gamesDirectory.warningHelpUrl,
             isCompleted: _viewModel.gamesDirectoryCompleted,
             performAction: (_) async {
               final uri = await _viewModel.pickGamesDirectory();
@@ -262,6 +256,7 @@ class _SetupWizardPageState extends State<SetupWizardPage> {
             SetupNavigationBar(
               showBack: _currentPage > 0,
               showNext: _currentPage >= 1 && _currentPage <= steps.length - 2,
+              nextLabel: steps[_currentPage].nextLabel,
               onBack: () => _advanceTo(_currentPage - 1),
               onNext: () => _onNextPressed(steps),
             ),

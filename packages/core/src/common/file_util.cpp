@@ -784,8 +784,8 @@ void SetUserPath(const std::string& path) {
     if (!path.empty() && CreateFullPath(path)) {
         LOG_INFO(Common_Filesystem, "Using {} as the user directory", path);
         user_path = path;
-        g_paths.emplace(UserPath::ConfigDir, user_path + CONFIG_DIR DIR_SEP);
-        g_paths.emplace(UserPath::CacheDir, user_path + CACHE_DIR DIR_SEP);
+        g_paths.insert_or_assign(UserPath::ConfigDir, user_path + CONFIG_DIR DIR_SEP);
+        g_paths.insert_or_assign(UserPath::CacheDir, user_path + CACHE_DIR DIR_SEP);
     } else {
 #ifdef _WIN32
         user_path = GetExeDirectory() + DIR_SEP USERDATA_DIR DIR_SEP;
@@ -802,12 +802,12 @@ void SetUserPath(const std::string& path) {
             LOG_INFO(Common_Filesystem, "Using the local user directory");
         }
 
-        g_paths.emplace(UserPath::ConfigDir, user_path + CONFIG_DIR DIR_SEP);
-        g_paths.emplace(UserPath::CacheDir, user_path + CACHE_DIR DIR_SEP);
+        g_paths.insert_or_assign(UserPath::ConfigDir, user_path + CONFIG_DIR DIR_SEP);
+        g_paths.insert_or_assign(UserPath::CacheDir, user_path + CACHE_DIR DIR_SEP);
 #elif ANDROID
         user_path = "/";
-        g_paths.emplace(UserPath::ConfigDir, user_path + CONFIG_DIR DIR_SEP);
-        g_paths.emplace(UserPath::CacheDir, user_path + CACHE_DIR DIR_SEP);
+        g_paths.insert_or_assign(UserPath::ConfigDir, user_path + CONFIG_DIR DIR_SEP);
+        g_paths.insert_or_assign(UserPath::CacheDir, user_path + CACHE_DIR DIR_SEP);
 #else
         std::string& legacy_citra_user_path = g_paths[UserPath::LegacyCitraUserDir];
         std::string& legacy_lime3ds_user_path = g_paths[UserPath::LegacyLime3DSUserDir];
@@ -815,8 +815,8 @@ void SetUserPath(const std::string& path) {
         if (current_dir.has_value() &&
             FileUtil::Exists(current_dir.value() + USERDATA_DIR DIR_SEP)) {
             user_path = current_dir.value() + USERDATA_DIR DIR_SEP;
-            g_paths.emplace(UserPath::ConfigDir, user_path + CONFIG_DIR DIR_SEP);
-            g_paths.emplace(UserPath::CacheDir, user_path + CACHE_DIR DIR_SEP);
+            g_paths.insert_or_assign(UserPath::ConfigDir, user_path + CONFIG_DIR DIR_SEP);
+            g_paths.insert_or_assign(UserPath::CacheDir, user_path + CACHE_DIR DIR_SEP);
         } else {
             std::string data_dir = GetUserDirectory("XDG_DATA_HOME") + DIR_SEP EMU_DATA_DIR DIR_SEP;
 
@@ -829,16 +829,16 @@ void SetUserPath(const std::string& path) {
             std::string cache_dir =
                 GetUserDirectory("XDG_CACHE_HOME") + DIR_SEP EMU_DATA_DIR DIR_SEP;
 
-            g_paths.emplace(UserPath::LegacyCitraConfigDir,
+            g_paths.insert_or_assign(UserPath::LegacyCitraConfigDir,
                             GetUserDirectory("XDG_CONFIG_HOME") +
                                 DIR_SEP LEGACY_CITRA_DATA_DIR DIR_SEP);
-            g_paths.emplace(UserPath::LegacyCitraCacheDir,
+            g_paths.insert_or_assign(UserPath::LegacyCitraCacheDir,
                             GetUserDirectory("XDG_CACHE_HOME") +
                                 DIR_SEP LEGACY_CITRA_DATA_DIR DIR_SEP);
-            g_paths.emplace(UserPath::LegacyLime3DSConfigDir,
+            g_paths.insert_or_assign(UserPath::LegacyLime3DSConfigDir,
                             GetUserDirectory("XDG_CONFIG_HOME") +
                                 DIR_SEP LEGACY_LIME3DS_DATA_DIR DIR_SEP);
-            g_paths.emplace(UserPath::LegacyLime3DSCacheDir,
+            g_paths.insert_or_assign(UserPath::LegacyLime3DSCacheDir,
                             GetUserDirectory("XDG_CACHE_HOME") +
                                 DIR_SEP LEGACY_LIME3DS_DATA_DIR DIR_SEP);
 
@@ -860,25 +860,25 @@ void SetUserPath(const std::string& path) {
             user_path = data_dir;
             legacy_citra_user_path = legacy_citra_data_dir;
             legacy_lime3ds_user_path = legacy_lime3ds_data_dir;
-            g_paths.emplace(UserPath::ConfigDir, config_dir);
-            g_paths.emplace(UserPath::CacheDir, cache_dir);
+            g_paths.insert_or_assign(UserPath::ConfigDir, config_dir);
+            g_paths.insert_or_assign(UserPath::CacheDir, cache_dir);
         }
 #endif
     }
 
-    g_paths.emplace(UserPath::SDMCDir, user_path + SDMC_DIR DIR_SEP);
-    g_paths.emplace(UserPath::NANDDir, user_path + NAND_DIR DIR_SEP);
-    g_paths.emplace(UserPath::SysDataDir, user_path + SYSDATA_DIR DIR_SEP);
+    g_paths.insert_or_assign(UserPath::SDMCDir, user_path + SDMC_DIR DIR_SEP);
+    g_paths.insert_or_assign(UserPath::NANDDir, user_path + NAND_DIR DIR_SEP);
+    g_paths.insert_or_assign(UserPath::SysDataDir, user_path + SYSDATA_DIR DIR_SEP);
     // TODO: Put the logs in a better location for each OS
-    g_paths.emplace(UserPath::LogDir, user_path + LOG_DIR DIR_SEP);
-    g_paths.emplace(UserPath::CheatsDir, user_path + CHEATS_DIR DIR_SEP);
-    g_paths.emplace(UserPath::DLLDir, user_path + DLL_DIR DIR_SEP);
-    g_paths.emplace(UserPath::ShaderDir, user_path + SHADER_DIR DIR_SEP);
-    g_paths.emplace(UserPath::DumpDir, user_path + DUMP_DIR DIR_SEP);
-    g_paths.emplace(UserPath::LoadDir, user_path + LOAD_DIR DIR_SEP);
-    g_paths.emplace(UserPath::StatesDir, user_path + STATES_DIR DIR_SEP);
-    g_paths.emplace(UserPath::IconsDir, user_path + ICONS_DIR DIR_SEP);
-    g_paths.emplace(UserPath::PlayTimeDir, user_path + LOG_DIR DIR_SEP);
+    g_paths.insert_or_assign(UserPath::LogDir, user_path + LOG_DIR DIR_SEP);
+    g_paths.insert_or_assign(UserPath::CheatsDir, user_path + CHEATS_DIR DIR_SEP);
+    g_paths.insert_or_assign(UserPath::DLLDir, user_path + DLL_DIR DIR_SEP);
+    g_paths.insert_or_assign(UserPath::ShaderDir, user_path + SHADER_DIR DIR_SEP);
+    g_paths.insert_or_assign(UserPath::DumpDir, user_path + DUMP_DIR DIR_SEP);
+    g_paths.insert_or_assign(UserPath::LoadDir, user_path + LOAD_DIR DIR_SEP);
+    g_paths.insert_or_assign(UserPath::StatesDir, user_path + STATES_DIR DIR_SEP);
+    g_paths.insert_or_assign(UserPath::IconsDir, user_path + ICONS_DIR DIR_SEP);
+    g_paths.insert_or_assign(UserPath::PlayTimeDir, user_path + LOG_DIR DIR_SEP);
     g_default_paths = g_paths;
 }
 

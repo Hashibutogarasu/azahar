@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app_services.dart';
+import '../../../screens/options/widgets/profile_radio_list.dart';
 import '../../settings/country.dart';
 import '../../settings/sections/system_settings.dart';
 import '../../settings/system_save_value_store.dart';
@@ -11,7 +12,8 @@ import '../option_section.dart';
 import '../option_value.dart';
 import '../store_option_values.dart';
 
-/// The items of the profile settings page: the emulated console's profile (region, country,
+/// The items of the profile settings page: switching between the profiles, the emulated console's
+/// profile (region, country,
 /// language, user name, Play Coins, steps, Console ID, MAC address) followed by the birthday.
 /// It is shown by that page and is not listed on the Options page.
 final profileOptionsProvider = Provider<OptionCategory>((ref) {
@@ -22,6 +24,16 @@ final profileOptionsProvider = Provider<OptionCategory>((ref) {
     id: 'profile',
     title: (t) => t.settings.general.title,
     sections: [
+      OptionSection(
+        title: (t) => t.profiles.switchTitle,
+        options: [
+          CustomWidgetOption(
+            title: (t) => t.profiles.switchTitle,
+            icon: Icons.switch_account,
+            builder: (context) => const ProfileRadioList(),
+          ),
+        ],
+      ),
       OptionSection(
         title: (t) => t.settings.system.profileSettings,
         options: [

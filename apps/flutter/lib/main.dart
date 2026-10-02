@@ -44,6 +44,7 @@ void main(List<String> args) {
       await initializeRust();
       AppServices.loggingService.start();
       await AppServices.migrateKeyValueRepositories();
+      await AppServices.profileService.initialize();
       await applyDebugSettings(
         await AppServices.debugSettingsRepository.read(),
       );

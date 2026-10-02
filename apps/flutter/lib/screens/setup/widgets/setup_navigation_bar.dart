@@ -9,10 +9,12 @@ class SetupNavigationBar extends StatelessWidget {
     required this.showNext,
     required this.onBack,
     required this.onNext,
+    this.nextLabel,
   });
 
   final bool showBack;
   final bool showNext;
+  final String? nextLabel;
   final VoidCallback onBack;
   final VoidCallback onNext;
 
@@ -27,7 +29,10 @@ class SetupNavigationBar extends StatelessWidget {
             TextButton(onPressed: onBack, child: Text(t.setup.back)),
           const Spacer(),
           if (showNext)
-            TextButton(onPressed: onNext, child: Text(t.setup.next)),
+            TextButton(
+              onPressed: onNext,
+              child: Text(nextLabel ?? t.setup.next),
+            ),
         ],
       ),
     );
