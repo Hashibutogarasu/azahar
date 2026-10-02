@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
+import '../../data/profiles/profile_service.dart';
 import '../../data/repositories/first_launch_repository.dart';
 import '../../data/repositories/games_directory_repository.dart';
 import '../../data/repositories/permission_repository.dart';
@@ -16,6 +17,7 @@ class SetupWizardViewModel extends ChangeNotifier {
     this._gamesDirectoryRepository,
     this._userDirectories,
     this._permissionRepository,
+    this._profileService,
   );
 
   final NativeBridge _nativeBridge;
@@ -23,6 +25,7 @@ class SetupWizardViewModel extends ChangeNotifier {
   final FirstLaunchRepository _firstLaunchRepository;
   final GamesDirectoryRepository _gamesDirectoryRepository;
   final UserDirectoriesService _userDirectories;
+  final ProfileService _profileService;
 
   bool isLoaded = false;
   bool notificationsCompleted = false;
@@ -109,6 +112,16 @@ class SetupWizardViewModel extends ChangeNotifier {
     return true;
   }
 
-  Future<void> completeSetup() =>
-      _firstLaunchRepository.setFirstApplicationLaunchComplete();
+  bool get foldersConfirmed =>
+      userDirectoryCompleted && gamesDirectoryCompleted;
+
+  Future<void> completeSetup() async {
+    if (foldersConfirmed) {
+      await _profileService.createUserProfileFromCurrent();
+    } else {
+      final builtIn = await _profileService.ensureBuiltInProfile();
+      await _profileService.switchTo(builtIn.cuid);
+    }
+    await _firstLaunchRepository.setFirstApplicationLaunchComplete();
+  }
 }

@@ -562,6 +562,279 @@ as OptionValue<bool>,
 }
 
 /// @nodoc
+mixin _$CustomWidgetOption {
+
+ TranslationText get title; TranslationText? get description; IconData get icon; WidgetBuilder get builder;
+/// Create a copy of CustomWidgetOption
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CustomWidgetOptionCopyWith<CustomWidgetOption> get copyWith => _$CustomWidgetOptionCopyWithImpl<CustomWidgetOption>(this as CustomWidgetOption, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as CustomWidgetOption;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CustomWidgetOption&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.builder, _this.builder) || other.builder == _this.builder));
+}
+
+
+@override
+int get hashCode {
+  final _this = this as CustomWidgetOption;
+  return Object.hash(runtimeType,_this.title,_this.description,_this.icon,_this.builder);
+}
+
+@override
+String toString() {
+  final _this = this as CustomWidgetOption;
+  return 'CustomWidgetOption(title: ${_this.title}, description: ${_this.description}, icon: ${_this.icon}, builder: ${_this.builder})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CustomWidgetOptionCopyWith<$Res>  {
+  factory $CustomWidgetOptionCopyWith(CustomWidgetOption value, $Res Function(CustomWidgetOption) _then) = _$CustomWidgetOptionCopyWithImpl;
+@useResult
+$Res call({
+ TranslationText title, TranslationText? description, IconData icon, WidgetBuilder builder
+});
+
+
+
+
+}
+/// @nodoc
+class _$CustomWidgetOptionCopyWithImpl<$Res>
+    implements $CustomWidgetOptionCopyWith<$Res> {
+  _$CustomWidgetOptionCopyWithImpl(this._self, this._then);
+
+  final CustomWidgetOption _self;
+  final $Res Function(CustomWidgetOption) _then;
+
+/// Create a copy of CustomWidgetOption
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? description = freezed,Object? icon = null,Object? builder = null,}) {
+  return _then(CustomWidgetOption(
+title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as TranslationText,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as TranslationText?,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
+as IconData,builder: null == builder ? _self.builder : builder // ignore: cast_nullable_to_non_nullable
+as WidgetBuilder,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [CustomWidgetOption].
+extension CustomWidgetOptionPatterns on CustomWidgetOption {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _CustomWidgetOption value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _CustomWidgetOption() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _CustomWidgetOption value)  $default,){
+final _that = this;
+switch (_that) {
+case _CustomWidgetOption():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _CustomWidgetOption value)?  $default,){
+final _that = this;
+switch (_that) {
+case _CustomWidgetOption() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( TranslationText title,  TranslationText? description,  IconData icon,  WidgetBuilder builder)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _CustomWidgetOption() when $default != null:
+return $default(_that.title,_that.description,_that.icon,_that.builder);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( TranslationText title,  TranslationText? description,  IconData icon,  WidgetBuilder builder)  $default,) {final _that = this;
+switch (_that) {
+case _CustomWidgetOption():
+return $default(_that.title,_that.description,_that.icon,_that.builder);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( TranslationText title,  TranslationText? description,  IconData icon,  WidgetBuilder builder)?  $default,) {final _that = this;
+switch (_that) {
+case _CustomWidgetOption() when $default != null:
+return $default(_that.title,_that.description,_that.icon,_that.builder);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _CustomWidgetOption extends CustomWidgetOption {
+  const _CustomWidgetOption({required this.title, this.description, required this.icon, required this.builder}): super._();
+  
+
+@override final  TranslationText title;
+@override final  TranslationText? description;
+@override final  IconData icon;
+@override final  WidgetBuilder builder;
+
+/// Create a copy of CustomWidgetOption
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$CustomWidgetOptionCopyWith<_CustomWidgetOption> get copyWith => __$CustomWidgetOptionCopyWithImpl<_CustomWidgetOption>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CustomWidgetOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.builder, builder) || other.builder == builder));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,title,description,icon,builder);
+}
+
+@override
+String toString() {
+    return 'CustomWidgetOption(title: $title, description: $description, icon: $icon, builder: $builder)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$CustomWidgetOptionCopyWith<$Res> implements $CustomWidgetOptionCopyWith<$Res> {
+  factory _$CustomWidgetOptionCopyWith(_CustomWidgetOption value, $Res Function(_CustomWidgetOption) _then) = __$CustomWidgetOptionCopyWithImpl;
+@override @useResult
+$Res call({
+ TranslationText title, TranslationText? description, IconData icon, WidgetBuilder builder
+});
+
+
+
+
+}
+/// @nodoc
+class __$CustomWidgetOptionCopyWithImpl<$Res>
+    implements _$CustomWidgetOptionCopyWith<$Res> {
+  __$CustomWidgetOptionCopyWithImpl(this._self, this._then);
+
+  final _CustomWidgetOption _self;
+  final $Res Function(_CustomWidgetOption) _then;
+
+/// Create a copy of CustomWidgetOption
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? icon = null,Object? builder = null,}) {
+  return _then(_CustomWidgetOption(
+title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as TranslationText,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as TranslationText?,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
+as IconData,builder: null == builder ? _self.builder : builder // ignore: cast_nullable_to_non_nullable
+as WidgetBuilder,
+  ));
+}
+
+
+}
+
+/// @nodoc
 mixin _$DateTimeOption {
 
  TranslationText get title; TranslationText? get description; IconData get icon; OptionValue<String> get value;

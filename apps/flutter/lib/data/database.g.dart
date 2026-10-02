@@ -4633,6 +4633,434 @@ class FeatureFlagsCompanion extends UpdateCompanion<FeatureFlagSetting> {
   }
 }
 
+class $ProfilesTable extends Profiles
+    with TableInfo<$ProfilesTable, ProfileRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ProfilesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _cuidMeta = const VerificationMeta('cuid');
+  @override
+  late final GeneratedColumn<String> cuid = GeneratedColumn<String>(
+    'cuid',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: _newProfileCuid,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _userDirectoryMeta = const VerificationMeta(
+    'userDirectory',
+  );
+  @override
+  late final GeneratedColumn<String> userDirectory = GeneratedColumn<String>(
+    'user_directory',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _gamesDirectoryMeta = const VerificationMeta(
+    'gamesDirectory',
+  );
+  @override
+  late final GeneratedColumn<String> gamesDirectory = GeneratedColumn<String>(
+    'games_directory',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _isBuiltInMeta = const VerificationMeta(
+    'isBuiltIn',
+  );
+  @override
+  late final GeneratedColumn<bool> isBuiltIn = GeneratedColumn<bool>(
+    'is_built_in',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_built_in" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    cuid,
+    name,
+    userDirectory,
+    gamesDirectory,
+    isBuiltIn,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'profiles';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ProfileRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('cuid')) {
+      context.handle(
+        _cuidMeta,
+        cuid.isAcceptableOrUnknown(data['cuid']!, _cuidMeta),
+      );
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('user_directory')) {
+      context.handle(
+        _userDirectoryMeta,
+        userDirectory.isAcceptableOrUnknown(
+          data['user_directory']!,
+          _userDirectoryMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_userDirectoryMeta);
+    }
+    if (data.containsKey('games_directory')) {
+      context.handle(
+        _gamesDirectoryMeta,
+        gamesDirectory.isAcceptableOrUnknown(
+          data['games_directory']!,
+          _gamesDirectoryMeta,
+        ),
+      );
+    }
+    if (data.containsKey('is_built_in')) {
+      context.handle(
+        _isBuiltInMeta,
+        isBuiltIn.isAcceptableOrUnknown(data['is_built_in']!, _isBuiltInMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {cuid};
+  @override
+  ProfileRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ProfileRow(
+      cuid: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}cuid'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      userDirectory: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_directory'],
+      )!,
+      gamesDirectory: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}games_directory'],
+      ),
+      isBuiltIn: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_built_in'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ProfilesTable createAlias(String alias) {
+    return $ProfilesTable(attachedDatabase, alias);
+  }
+}
+
+class ProfileRow extends DataClass implements Insertable<ProfileRow> {
+  final String cuid;
+  final String name;
+  final String userDirectory;
+  final String? gamesDirectory;
+  final bool isBuiltIn;
+  final DateTime createdAt;
+  const ProfileRow({
+    required this.cuid,
+    required this.name,
+    required this.userDirectory,
+    this.gamesDirectory,
+    required this.isBuiltIn,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['cuid'] = Variable<String>(cuid);
+    map['name'] = Variable<String>(name);
+    map['user_directory'] = Variable<String>(userDirectory);
+    if (!nullToAbsent || gamesDirectory != null) {
+      map['games_directory'] = Variable<String>(gamesDirectory);
+    }
+    map['is_built_in'] = Variable<bool>(isBuiltIn);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  ProfilesCompanion toCompanion(bool nullToAbsent) {
+    return ProfilesCompanion(
+      cuid: Value(cuid),
+      name: Value(name),
+      userDirectory: Value(userDirectory),
+      gamesDirectory: gamesDirectory == null && nullToAbsent
+          ? const Value.absent()
+          : Value(gamesDirectory),
+      isBuiltIn: Value(isBuiltIn),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory ProfileRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ProfileRow(
+      cuid: serializer.fromJson<String>(json['cuid']),
+      name: serializer.fromJson<String>(json['name']),
+      userDirectory: serializer.fromJson<String>(json['userDirectory']),
+      gamesDirectory: serializer.fromJson<String?>(json['gamesDirectory']),
+      isBuiltIn: serializer.fromJson<bool>(json['isBuiltIn']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'cuid': serializer.toJson<String>(cuid),
+      'name': serializer.toJson<String>(name),
+      'userDirectory': serializer.toJson<String>(userDirectory),
+      'gamesDirectory': serializer.toJson<String?>(gamesDirectory),
+      'isBuiltIn': serializer.toJson<bool>(isBuiltIn),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  ProfileRow copyWith({
+    String? cuid,
+    String? name,
+    String? userDirectory,
+    Value<String?> gamesDirectory = const Value.absent(),
+    bool? isBuiltIn,
+    DateTime? createdAt,
+  }) => ProfileRow(
+    cuid: cuid ?? this.cuid,
+    name: name ?? this.name,
+    userDirectory: userDirectory ?? this.userDirectory,
+    gamesDirectory: gamesDirectory.present
+        ? gamesDirectory.value
+        : this.gamesDirectory,
+    isBuiltIn: isBuiltIn ?? this.isBuiltIn,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  ProfileRow copyWithCompanion(ProfilesCompanion data) {
+    return ProfileRow(
+      cuid: data.cuid.present ? data.cuid.value : this.cuid,
+      name: data.name.present ? data.name.value : this.name,
+      userDirectory: data.userDirectory.present
+          ? data.userDirectory.value
+          : this.userDirectory,
+      gamesDirectory: data.gamesDirectory.present
+          ? data.gamesDirectory.value
+          : this.gamesDirectory,
+      isBuiltIn: data.isBuiltIn.present ? data.isBuiltIn.value : this.isBuiltIn,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProfileRow(')
+          ..write('cuid: $cuid, ')
+          ..write('name: $name, ')
+          ..write('userDirectory: $userDirectory, ')
+          ..write('gamesDirectory: $gamesDirectory, ')
+          ..write('isBuiltIn: $isBuiltIn, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    cuid,
+    name,
+    userDirectory,
+    gamesDirectory,
+    isBuiltIn,
+    createdAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ProfileRow &&
+          other.cuid == this.cuid &&
+          other.name == this.name &&
+          other.userDirectory == this.userDirectory &&
+          other.gamesDirectory == this.gamesDirectory &&
+          other.isBuiltIn == this.isBuiltIn &&
+          other.createdAt == this.createdAt);
+}
+
+class ProfilesCompanion extends UpdateCompanion<ProfileRow> {
+  final Value<String> cuid;
+  final Value<String> name;
+  final Value<String> userDirectory;
+  final Value<String?> gamesDirectory;
+  final Value<bool> isBuiltIn;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const ProfilesCompanion({
+    this.cuid = const Value.absent(),
+    this.name = const Value.absent(),
+    this.userDirectory = const Value.absent(),
+    this.gamesDirectory = const Value.absent(),
+    this.isBuiltIn = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ProfilesCompanion.insert({
+    this.cuid = const Value.absent(),
+    required String name,
+    required String userDirectory,
+    this.gamesDirectory = const Value.absent(),
+    this.isBuiltIn = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : name = Value(name),
+       userDirectory = Value(userDirectory);
+  static Insertable<ProfileRow> custom({
+    Expression<String>? cuid,
+    Expression<String>? name,
+    Expression<String>? userDirectory,
+    Expression<String>? gamesDirectory,
+    Expression<bool>? isBuiltIn,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (cuid != null) 'cuid': cuid,
+      if (name != null) 'name': name,
+      if (userDirectory != null) 'user_directory': userDirectory,
+      if (gamesDirectory != null) 'games_directory': gamesDirectory,
+      if (isBuiltIn != null) 'is_built_in': isBuiltIn,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ProfilesCompanion copyWith({
+    Value<String>? cuid,
+    Value<String>? name,
+    Value<String>? userDirectory,
+    Value<String?>? gamesDirectory,
+    Value<bool>? isBuiltIn,
+    Value<DateTime>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return ProfilesCompanion(
+      cuid: cuid ?? this.cuid,
+      name: name ?? this.name,
+      userDirectory: userDirectory ?? this.userDirectory,
+      gamesDirectory: gamesDirectory ?? this.gamesDirectory,
+      isBuiltIn: isBuiltIn ?? this.isBuiltIn,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (cuid.present) {
+      map['cuid'] = Variable<String>(cuid.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (userDirectory.present) {
+      map['user_directory'] = Variable<String>(userDirectory.value);
+    }
+    if (gamesDirectory.present) {
+      map['games_directory'] = Variable<String>(gamesDirectory.value);
+    }
+    if (isBuiltIn.present) {
+      map['is_built_in'] = Variable<bool>(isBuiltIn.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProfilesCompanion(')
+          ..write('cuid: $cuid, ')
+          ..write('name: $name, ')
+          ..write('userDirectory: $userDirectory, ')
+          ..write('gamesDirectory: $gamesDirectory, ')
+          ..write('isBuiltIn: $isBuiltIn, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4660,6 +5088,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $GameTagsTable gameTags = $GameTagsTable(this);
   late final $UserGameInfosTable userGameInfos = $UserGameInfosTable(this);
   late final $FeatureFlagsTable featureFlags = $FeatureFlagsTable(this);
+  late final $ProfilesTable profiles = $ProfilesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4681,6 +5110,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     gameTags,
     userGameInfos,
     featureFlags,
+    profiles,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -7844,6 +8274,235 @@ typedef $$FeatureFlagsTableProcessedTableManager =
       FeatureFlagSetting,
       PrefetchHooks Function()
     >;
+typedef $$ProfilesTableCreateCompanionBuilder =
+    ProfilesCompanion Function({
+      Value<String> cuid,
+      required String name,
+      required String userDirectory,
+      Value<String?> gamesDirectory,
+      Value<bool> isBuiltIn,
+      Value<DateTime> createdAt,
+      Value<int> rowid,
+    });
+typedef $$ProfilesTableUpdateCompanionBuilder =
+    ProfilesCompanion Function({
+      Value<String> cuid,
+      Value<String> name,
+      Value<String> userDirectory,
+      Value<String?> gamesDirectory,
+      Value<bool> isBuiltIn,
+      Value<DateTime> createdAt,
+      Value<int> rowid,
+    });
+
+class $$ProfilesTableFilterComposer
+    extends Composer<_$AppDatabase, $ProfilesTable> {
+  $$ProfilesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get cuid => $composableBuilder(
+    column: $table.cuid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userDirectory => $composableBuilder(
+    column: $table.userDirectory,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get gamesDirectory => $composableBuilder(
+    column: $table.gamesDirectory,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isBuiltIn => $composableBuilder(
+    column: $table.isBuiltIn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ProfilesTableOrderingComposer
+    extends Composer<_$AppDatabase, $ProfilesTable> {
+  $$ProfilesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get cuid => $composableBuilder(
+    column: $table.cuid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userDirectory => $composableBuilder(
+    column: $table.userDirectory,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get gamesDirectory => $composableBuilder(
+    column: $table.gamesDirectory,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isBuiltIn => $composableBuilder(
+    column: $table.isBuiltIn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ProfilesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ProfilesTable> {
+  $$ProfilesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get cuid =>
+      $composableBuilder(column: $table.cuid, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get userDirectory => $composableBuilder(
+    column: $table.userDirectory,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get gamesDirectory => $composableBuilder(
+    column: $table.gamesDirectory,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get isBuiltIn =>
+      $composableBuilder(column: $table.isBuiltIn, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$ProfilesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ProfilesTable,
+          ProfileRow,
+          $$ProfilesTableFilterComposer,
+          $$ProfilesTableOrderingComposer,
+          $$ProfilesTableAnnotationComposer,
+          $$ProfilesTableCreateCompanionBuilder,
+          $$ProfilesTableUpdateCompanionBuilder,
+          (
+            ProfileRow,
+            BaseReferences<_$AppDatabase, $ProfilesTable, ProfileRow>,
+          ),
+          ProfileRow,
+          PrefetchHooks Function()
+        > {
+  $$ProfilesTableTableManager(_$AppDatabase db, $ProfilesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ProfilesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ProfilesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ProfilesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> cuid = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> userDirectory = const Value.absent(),
+                Value<String?> gamesDirectory = const Value.absent(),
+                Value<bool> isBuiltIn = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ProfilesCompanion(
+                cuid: cuid,
+                name: name,
+                userDirectory: userDirectory,
+                gamesDirectory: gamesDirectory,
+                isBuiltIn: isBuiltIn,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> cuid = const Value.absent(),
+                required String name,
+                required String userDirectory,
+                Value<String?> gamesDirectory = const Value.absent(),
+                Value<bool> isBuiltIn = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ProfilesCompanion.insert(
+                cuid: cuid,
+                name: name,
+                userDirectory: userDirectory,
+                gamesDirectory: gamesDirectory,
+                isBuiltIn: isBuiltIn,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ProfilesTable, ProfileRow>(table),
+                  BaseReferences<_$AppDatabase, $ProfilesTable, ProfileRow>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ProfilesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ProfilesTable,
+      ProfileRow,
+      $$ProfilesTableFilterComposer,
+      $$ProfilesTableOrderingComposer,
+      $$ProfilesTableAnnotationComposer,
+      $$ProfilesTableCreateCompanionBuilder,
+      $$ProfilesTableUpdateCompanionBuilder,
+      (ProfileRow, BaseReferences<_$AppDatabase, $ProfilesTable, ProfileRow>),
+      ProfileRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -7879,4 +8538,6 @@ class $AppDatabaseManager {
       $$UserGameInfosTableTableManager(_db, _db.userGameInfos);
   $$FeatureFlagsTableTableManager get featureFlags =>
       $$FeatureFlagsTableTableManager(_db, _db.featureFlags);
+  $$ProfilesTableTableManager get profiles =>
+      $$ProfilesTableTableManager(_db, _db.profiles);
 }

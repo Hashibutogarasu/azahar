@@ -68,6 +68,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
     'hidden': 'Hidden',
     'modded': 'Modded',
   };
+  late final Translations$profiles$en profiles =
+      Translations$profiles$en.internal(_root);
   late final Translations$setup$en setup = Translations$setup$en.internal(
     _root,
   );
@@ -111,6 +113,34 @@ class Translations$common$en {
   String get save => 'Save';
 }
 
+// Path: profiles
+class Translations$profiles$en {
+  Translations$profiles$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Switch Profile'
+  String get switchTitle => 'Switch Profile';
+
+  /// en: 'Built-in'
+  String get builtIn => 'Built-in';
+
+  /// en: 'In the app (${path})'
+  String builtInLocation({required Object path}) => 'In the app (${path})';
+
+  /// en: 'Add Profile'
+  String get add => 'Add Profile';
+
+  /// en: 'The profile can't be switched while a game is running.'
+  String get gameRunning =>
+      'The profile can\'t be switched while a game is running.';
+
+  late final Translations$profiles$create$en create =
+      Translations$profiles$create$en.internal(_root);
+}
+
 // Path: setup
 class Translations$setup$en {
   Translations$setup$en.internal(this._root);
@@ -121,6 +151,9 @@ class Translations$setup$en {
 
   /// en: 'Next'
   String get next => 'Next';
+
+  /// en: 'Skip'
+  String get skip => 'Skip';
 
   /// en: 'Back'
   String get back => 'Back';
@@ -795,6 +828,44 @@ class Translations$settings$en {
       Translations$settings$featureFlags$en.internal(_root);
   late final Translations$settings$language$en language =
       Translations$settings$language$en.internal(_root);
+}
+
+// Path: profiles.create
+class Translations$profiles$create$en {
+  Translations$profiles$create$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'New Profile'
+  String get title => 'New Profile';
+
+  /// en: 'Profile Name'
+  String get nameTitle => 'Profile Name';
+
+  /// en: 'Choose a name for the new profile.'
+  String get nameDescription => 'Choose a name for the new profile.';
+
+  /// en: 'Profile name'
+  String get nameHint => 'Profile name';
+
+  /// en: 'Enter a profile name.'
+  String get nameEmpty => 'Enter a profile name.';
+
+  /// en: 'A profile with this name already exists.'
+  String get nameTaken => 'A profile with this name already exists.';
+
+  /// en: 'Choose the folder where this profile keeps its NAND, saves, cheats and settings.'
+  String get userDirectoryDescription =>
+      'Choose the folder where this profile keeps its NAND, saves, cheats and settings.';
+
+  /// en: 'Choose the folder this profile scans for games.'
+  String get gamesDirectoryDescription =>
+      'Choose the folder this profile scans for games.';
+
+  /// en: 'Create'
+  String get create => 'Create';
 }
 
 // Path: setup.welcome
@@ -2847,7 +2918,28 @@ extension on Translations {
           'tags.userInstalled' => 'User',
           'tags.hidden' => 'Hidden',
           'tags.modded' => 'Modded',
+          'profiles.switchTitle' => 'Switch Profile',
+          'profiles.builtIn' => 'Built-in',
+          'profiles.builtInLocation' =>
+            ({required Object path}) => 'In the app (${path})',
+          'profiles.add' => 'Add Profile',
+          'profiles.gameRunning' =>
+            'The profile can\'t be switched while a game is running.',
+          'profiles.create.title' => 'New Profile',
+          'profiles.create.nameTitle' => 'Profile Name',
+          'profiles.create.nameDescription' =>
+            'Choose a name for the new profile.',
+          'profiles.create.nameHint' => 'Profile name',
+          'profiles.create.nameEmpty' => 'Enter a profile name.',
+          'profiles.create.nameTaken' =>
+            'A profile with this name already exists.',
+          'profiles.create.userDirectoryDescription' =>
+            'Choose the folder where this profile keeps its NAND, saves, cheats and settings.',
+          'profiles.create.gamesDirectoryDescription' =>
+            'Choose the folder this profile scans for games.',
+          'profiles.create.create' => 'Create',
           'setup.next' => 'Next',
+          'setup.skip' => 'Skip',
           'setup.back' => 'Back',
           'setup.stepComplete' => 'Complete!',
           'setup.warningSkip' => 'Skip',
@@ -3451,6 +3543,9 @@ extension on Translations {
           'settings.system.countries.slovenia' => 'Slovenia',
           'settings.system.countries.southAfrica' => 'South Africa',
           'settings.system.countries.spain' => 'Spain',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.system.countries.swaziland' => 'Swaziland',
           'settings.system.countries.sweden' => 'Sweden',
           'settings.system.countries.switzerland' => 'Switzerland',
@@ -3466,9 +3561,6 @@ extension on Translations {
           'settings.system.countries.sudan' => 'Sudan',
           'settings.system.countries.eritrea' => 'Eritrea',
           'settings.system.countries.djibouti' => 'Djibouti',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.system.countries.somalia' => 'Somalia',
           'settings.system.countries.andorra' => 'Andorra',
           'settings.system.countries.gibraltar' => 'Gibraltar',

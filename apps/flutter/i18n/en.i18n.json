@@ -11,8 +11,27 @@
     "hidden": "Hidden",
     "modded": "Modded"
   },
+  "profiles": {
+    "switchTitle": "Switch Profile",
+    "builtIn": "Built-in",
+    "builtInLocation": "In the app (${path})",
+    "add": "Add Profile",
+    "gameRunning": "The profile can't be switched while a game is running.",
+    "create": {
+      "title": "New Profile",
+      "nameTitle": "Profile Name",
+      "nameDescription": "Choose a name for the new profile.",
+      "nameHint": "Profile name",
+      "nameEmpty": "Enter a profile name.",
+      "nameTaken": "A profile with this name already exists.",
+      "userDirectoryDescription": "Choose the folder where this profile keeps its NAND, saves, cheats and settings.",
+      "gamesDirectoryDescription": "Choose the folder this profile scans for games.",
+      "create": "Create"
+    }
+  },
   "setup": {
     "next": "Next",
+    "skip": "Skip",
     "back": "Back",
     "stepComplete": "Complete!",
     "warningSkip": "Skip",

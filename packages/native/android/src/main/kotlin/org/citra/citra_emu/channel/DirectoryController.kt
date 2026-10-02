@@ -9,10 +9,15 @@ import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.result.ActivityResultLauncher
+import androidx.documentfile.provider.DocumentFile
+import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.profiles.ProfileStore
+import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.profiles.ProfilesDocumentsProvider
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import org.citra.citra_emu.NativeLibrary
 import org.citra.citra_emu.utils.DirectoryInitialization
+import org.citra.citra_emu.utils.DirectoryInitialization.DirectoryInitializationState
 import org.citra.citra_emu.utils.FileUtil
 import org.citra.citra_emu.utils.PermissionsHandler
 
@@ -29,7 +34,15 @@ class DirectoryController(
     fun onUserDirectoryPicked(uri: Uri?) {
         val result = pendingUserDirectoryResult
         pendingUserDirectoryResult = null
-        result?.success(uri?.toString())
+        if (uri == null) {
+            result?.success(null)
+            return
+        }
+        contentResolver.takePersistableUriPermission(
+            uri,
+            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        )
+        result?.success(uri.toString())
     }
 
     fun onGamesDirectoryPicked(uri: Uri?) {
@@ -47,8 +60,61 @@ class DirectoryController(
         OpenUserDirectory(),
         ConfirmUserDirectory(),
         HasUserDirectoryWriteAccess(),
-        OpenGamesDirectory()
+        OpenGamesDirectory(),
+        SetProfiles(),
+        ProfileTreeUri(),
+        InitializeProfileDirectory()
     )
+
+    private inner class SetProfiles : AzaharMethodHandler {
+        override val name = "setProfiles"
+        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+            val profiles = call.argument<List<Map<String, Any>>>("profiles") ?: emptyList()
+            ProfilesDocumentsProvider.setProfiles(
+                activity,
+                profiles.map {
+                    ProfileStore.Entry(
+                        hash = it["hash"] as String,
+                        name = it["name"] as String,
+                        isBuiltIn = it["isBuiltIn"] as Boolean,
+                        location = Uri.parse(it["location"] as String)
+                    )
+                }
+            )
+            result.success(null)
+        }
+    }
+
+    private inner class ProfileTreeUri : AzaharMethodHandler {
+        override val name = "profileTreeUri"
+        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+            val hash = call.argument<String>("hash")!!
+            result.success(ProfilesDocumentsProvider.treeUri(activity, hash).toString())
+        }
+    }
+
+    private inner class InitializeProfileDirectory : AzaharMethodHandler {
+        override val name = "initializeProfileDirectory"
+        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+            val uri = Uri.parse(call.argument<String>("uri")!!)
+            Thread {
+                try {
+                    val root = DocumentFile.fromTreeUri(activity, uri)
+                        ?: throw IllegalArgumentException("Cannot open $uri")
+                    listOf("config", "nand", "sdmc", "sysdata", "cheats", "log").forEach {
+                        if (root.findFile(it) == null) {
+                            root.createDirectory(it)
+                        }
+                    }
+                    activity.runOnUiThread { result.success(null) }
+                } catch (e: Exception) {
+                    activity.runOnUiThread {
+                        result.error("initializeProfileDirectory", e.message, null)
+                    }
+                }
+            }.start()
+        }
+    }
 
     private inner class OpenUserDirectory : AzaharMethodHandler {
         override val name = "openUserDirectory"
@@ -80,7 +146,9 @@ class DirectoryController(
             val previousUri = call.argument<String>("previousUri")
             val moveData = call.argument<Boolean>("moveData") ?: false
             val parsed = Uri.parse(uri)
-            if (uri != previousUri) {
+            val isProfileTree =
+                parsed.authority == ProfilesDocumentsProvider.authority(activity)
+            if (uri != previousUri && !isProfileTree) {
                 contentResolver.takePersistableUriPermission(
                     parsed,
                     Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
@@ -90,7 +158,11 @@ class DirectoryController(
             fun commit() {
                 PermissionsHandler.setCitraDirectory(uri)
                 DirectoryInitialization.resetCitraDirectoryState()
-                DirectoryInitialization.start()
+                if (DirectoryInitialization.start() ==
+                    DirectoryInitializationState.CITRA_DIRECTORIES_INITIALIZED
+                ) {
+                    NativeLibrary.reloadSettings()
+                }
                 result.success(null)
             }
 

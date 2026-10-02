@@ -10,6 +10,7 @@ import android.content.SharedPreferences
 import android.net.Uri
 import androidx.preference.PreferenceManager
 import androidx.documentfile.provider.DocumentFile
+import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.profiles.ProfilesDocumentsProvider
 import org.citra.citra_emu.CitraApplication
 
 object PermissionsHandler {
@@ -24,6 +25,9 @@ object PermissionsHandler {
             }
 
             val uri = citraDirectory
+            if (uri.authority == ProfilesDocumentsProvider.authority(context)) {
+                return DocumentFile.fromTreeUri(context, uri)?.exists() == true
+            }
             val takeFlags =
                 Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
             context.contentResolver.takePersistableUriPermission(uri, takeFlags)

@@ -2,6 +2,7 @@ import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import 'data/database.dart';
 import 'data/logging_service.dart';
+import 'data/profiles/profile_service.dart';
 import 'data/repositories/accessibility_settings_repository.dart';
 import 'data/repositories/advanced_settings_repository.dart';
 import 'data/repositories/artic_base_address_repository.dart';
@@ -22,6 +23,7 @@ import 'data/repositories/media_settings_repository.dart';
 import 'data/repositories/option_history_repository.dart';
 import 'data/repositories/permission_repository.dart';
 import 'data/repositories/pinned_options_repository.dart';
+import 'data/repositories/profile_repository.dart';
 import 'data/repositories/selected_tags_repository.dart';
 import 'data/repositories/tag_repository.dart';
 import 'data/repositories/theme_settings_repository.dart';
@@ -74,10 +76,13 @@ abstract final class AppServices {
       VirtualAccessPointsRepository(database);
   static final FirstLaunchRepository firstLaunchRepository =
       FirstLaunchRepository(database);
+  static final ProfileRepository profileRepository = ProfileRepository(
+    database,
+  );
   static final CitraDirectoryRepository citraDirectoryRepository =
-      CitraDirectoryRepository(database);
+      CitraDirectoryRepository(database, profileRepository);
   static final GamesDirectoryRepository gamesDirectoryRepository =
-      GamesDirectoryRepository(database);
+      GamesDirectoryRepository(database, profileRepository);
   static final LanguageCodeRepository languageCodeRepository =
       LanguageCodeRepository(database);
   static final ArticBaseAddressRepository articBaseAddressRepository =
@@ -95,6 +100,16 @@ abstract final class AppServices {
       SelectedTagsRepository(database);
   static final FeatureFlagsRepository featureFlagsRepository =
       FeatureFlagsRepository(database);
+
+  static final ProfileService profileService = ProfileService(
+    profileRepository,
+    nativeBridge,
+    citraDirectoryRepository,
+    gamesDirectoryRepository,
+    firstLaunchRepository,
+    systemSaveRepository,
+    loggingService,
+  );
 
   static final List<KeyValueRepository> keyValueRepositories = [
     firstLaunchRepository,

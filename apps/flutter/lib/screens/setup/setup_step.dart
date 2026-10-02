@@ -31,6 +31,7 @@ class SetupStep {
     required this.title,
     required this.description,
     required this.actions,
+    this.nextLabel,
   }) : assert(icon != null || imageAsset != null),
        assert(actions.length > 0);
 
@@ -39,6 +40,7 @@ class SetupStep {
   final String title;
   final String description;
   final List<SetupAction> actions;
+  final String? nextLabel;
 
   bool get isCompleted => actions.every((action) => action.isCompleted);
 }

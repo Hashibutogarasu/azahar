@@ -29,15 +29,15 @@ class UserDirectoriesService {
   }) async {
     if (Platform.isLinux) {
       await UserDirectoryBootstrap.writeConfiguredDirectory(uri);
-    } else {
-      await AppServices.nativeBridge.confirmUserDirectory(
-        uri: uri,
-        previousUri: previousUri,
-        moveData: moveData,
-      );
     }
+    await AppServices.nativeBridge.confirmUserDirectory(
+      uri: uri,
+      previousUri: previousUri,
+      moveData: moveData,
+    );
     await AppServices.citraDirectoryRepository.setCitraDirectoryUri(uri);
     await AppServices.loggingService.userDirectoryChanged();
+    await AppServices.profileService.reapplyDefaultProfile();
   }
 
   Future<String?> pickGamesDirectory() => Platform.isAndroid

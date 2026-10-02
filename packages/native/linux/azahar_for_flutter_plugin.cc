@@ -248,6 +248,26 @@ FlMethodResponse* HandleHasUserDirectoryWriteAccess(GtkWindow* window, FlValue* 
   return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
 }
 
+FlMethodResponse* HandleConfirmUserDirectory(GtkWindow* window, FlValue* args) {
+  const std::string directory = StringArgument(args, "uri");
+  if (!directory.empty()) {
+    SetUserDirectory(directory);
+  }
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+FlMethodResponse* HandleInitializeProfileDirectory(GtkWindow* window, FlValue* args) {
+  const std::string directory = StringArgument(args, "uri");
+  if (directory.empty()) {
+    return FL_METHOD_RESPONSE(fl_method_error_response_new(
+        "initializeProfileDirectory", "The profile directory is empty", nullptr));
+  }
+  for (const char* folder : {"config", "nand", "sdmc", "sysdata", "cheats", "log"}) {
+    g_mkdir_with_parents((directory + "/" + folder).c_str(), 0700);
+  }
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
 std::vector<GameScanner::InstalledTitlePath> InstalledTitlePathsArgument(FlValue* args) {
   std::vector<GameScanner::InstalledTitlePath> paths;
   FlValue* list_value = fl_value_lookup_string(args, "installedTitlePaths");
@@ -643,6 +663,8 @@ using BridgeMethodHandler = std::function<FlMethodResponse*(GtkWindow*, FlValue*
 const std::unordered_map<std::string, BridgeMethodHandler>& BridgeMethodHandlers() {
   static const std::unordered_map<std::string, BridgeMethodHandler> handlers = {
       {"hasUserDirectoryWriteAccess", HandleHasUserDirectoryWriteAccess},
+      {"confirmUserDirectory", HandleConfirmUserDirectory},
+      {"initializeProfileDirectory", HandleInitializeProfileDirectory},
       {"getGames", HandleGetGames},
       {"readEmulatorConfig", HandleReadEmulatorConfig},
       {"writeEmulatorConfig", HandleWriteEmulatorConfig},

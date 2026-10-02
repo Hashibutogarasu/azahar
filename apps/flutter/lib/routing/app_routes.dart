@@ -13,6 +13,10 @@ import '../screens/options/gpu_driver_manager_page.dart';
 import '../screens/options/legacy_options_page.dart';
 import '../screens/options/options_page.dart';
 import '../screens/options/system_files_page.dart';
+import '../screens/profiles/create/profile_create_shell.dart';
+import '../screens/profiles/create/profile_games_directory_page.dart';
+import '../screens/profiles/create/profile_name_page.dart';
+import '../screens/profiles/create/profile_user_directory_page.dart';
 import '../screens/settings/sections/accessibility_settings_page.dart';
 import '../screens/settings/sections/advanced_settings_page.dart';
 import '../screens/settings/sections/camera_settings_page.dart';
@@ -30,6 +34,7 @@ import 'app_route_data.dart';
 
 part 'app_routes.g.dart';
 part 'options_page_routes.dart';
+part 'profile_create_routes.dart';
 
 @TypedGoRoute<SetupRoute>(path: '/setup')
 class SetupRoute extends AppRouteData with $SetupRoute {

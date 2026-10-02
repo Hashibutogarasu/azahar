@@ -123,6 +123,39 @@ class NativeBridge {
     });
   }
 
+  /// Hands the profiles over to the Android file manager, which shows each of them as a root.
+  Future<void> setProfiles(
+    List<({String hash, String name, bool isBuiltIn, String location})>
+    profiles,
+  ) {
+    return _channel.invokeMethod<void>('setProfiles', {
+      'profiles': [
+        for (final profile in profiles)
+          {
+            'hash': profile.hash,
+            'name': profile.name,
+            'isBuiltIn': profile.isBuiltIn,
+            'location': profile.location,
+          },
+      ],
+    });
+  }
+
+  /// The URI through which the Android core reaches the folder of the profile [hash].
+  Future<String> profileTreeUri(String hash) async {
+    final result = await _channel.invokeMethod<String>('profileTreeUri', {
+      'hash': hash,
+    });
+    return result!;
+  }
+
+  /// Creates the folders the core expects in the profile folder [uri].
+  Future<void> initializeProfileDirectory(String uri) {
+    return _channel.invokeMethod<void>('initializeProfileDirectory', {
+      'uri': uri,
+    });
+  }
+
   Future<bool> hasUserDirectoryWriteAccess() async {
     final result = await _channel.invokeMethod<bool>(
       'hasUserDirectoryWriteAccess',

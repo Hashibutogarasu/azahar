@@ -29,6 +29,7 @@ part 'tables/tags.dart';
 part 'tables/game_tags.dart';
 part 'tables/user_game_infos.dart';
 part 'tables/feature_flags.dart';
+part 'tables/profiles.dart';
 
 @DriftDatabase(
   tables: [
@@ -48,6 +49,7 @@ part 'tables/feature_flags.dart';
     GameTags,
     UserGameInfos,
     FeatureFlags,
+    Profiles,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -64,7 +66,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 15;
+  int get schemaVersion => 16;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -125,6 +127,9 @@ class AppDatabase extends _$AppDatabase {
       if (from < 15) {
         await customStatement('DROP TABLE IF EXISTS feature_flags');
         await m.createTable(featureFlags);
+      }
+      if (from < 16) {
+        await m.createTable(profiles);
       }
     },
   );
