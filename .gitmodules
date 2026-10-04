@@ -91,12 +91,6 @@
 [submodule "oaknut"]
 	path = packages/core/externals/oaknut
 	url = https://github.com/merryhime/oaknut.git
-[submodule "compatibility-list"]
-	path = apps/qt-desktop/dist/compatibility_list
-	url = https://github.com/azahar-emu/compatibility-list
-[submodule "radial-gamepad"]
-	path = packages/android/externals/radial-gamepad
-	url = git@github.com:Hashibutogarasu/RadialGamePad.git
 [submodule "babstrap_settings_screen"]
 	path = apps/flutter/packages/babstrap_settings_screen
 	url = git@github.com:Hashibutogarasu/babstrap_settings_screen.git

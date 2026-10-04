@@ -22,6 +22,7 @@ project(citra LANGUAGES C CXX ASM)
 get_filename_component(AZAHAR_REPO_ROOT "${PROJECT_SOURCE_DIR}/../.." ABSOLUTE)
 set(AZAHAR_APPS_DIR "${AZAHAR_REPO_ROOT}/apps")
 set(AZAHAR_DIST_DIR "${AZAHAR_APPS_DIR}/qt-desktop/dist")
+set(AZAHAR_NATIVE_ANDROID_DIR "${AZAHAR_REPO_ROOT}/packages/native/android/src/main")
 
 # Some submodules like to pick their own default build type if not specified.
 # Make sure we default to Release build type always, unless the generator has custom types.
@@ -201,17 +202,6 @@ endfunction()
 if (EXISTS "${AZAHAR_REPO_ROOT}/.git/objects")
     # only check submodules when source is obtained via Git
     check_submodules_present()
-endif()
-
-configure_file(${AZAHAR_DIST_DIR}/compatibility_list/compatibility_list.qrc
-               ${PROJECT_BINARY_DIR}/dist/compatibility_list/compatibility_list.qrc
-               COPYONLY)
-if (EXISTS ${AZAHAR_DIST_DIR}/compatibility_list/compatibility_list.json)
-    file(COPY "${AZAHAR_DIST_DIR}/compatibility_list/compatibility_list.json"
-        DESTINATION "${PROJECT_BINARY_DIR}/dist/compatibility_list/")
-endif()
-if (NOT EXISTS ${PROJECT_BINARY_DIR}/dist/compatibility_list/compatibility_list.json)
-    file(WRITE ${PROJECT_BINARY_DIR}/dist/compatibility_list/compatibility_list.json "")
 endif()
 
 # Detect current compilation architecture and create standard definitions

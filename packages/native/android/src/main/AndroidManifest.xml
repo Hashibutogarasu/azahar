@@ -52,7 +52,7 @@
             </intent-filter>
         </provider>
         <service
-            android:name="org.citra.citra_emu.PlaybackService"
+            android:name="com.karasu256.azahar_reloaded.lib.azahar_for_flutter.PlaybackService"
             android:foregroundServiceType="mediaPlayback"
             android:exported="false">
             <intent-filter>
