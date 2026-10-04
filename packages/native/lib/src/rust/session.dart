@@ -3,6 +3,7 @@
 
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
+import 'api/audio.dart';
 import 'frb_generated.dart';
 
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
@@ -28,13 +29,14 @@ sealed class SessionEvent with _$SessionEvent {
       SessionEvent_Error;
 }
 
-/// Size of the screen textures of a session.
+/// Size of the screen textures of a session and the engine that plays its audio.
 class SessionOptions {
   final int primaryWidth;
   final int primaryHeight;
   final int secondaryWidth;
   final int secondaryHeight;
   final bool dualScreen;
+  final AudioEngine audioEngine;
 
   const SessionOptions({
     required this.primaryWidth,
@@ -42,6 +44,7 @@ class SessionOptions {
     required this.secondaryWidth,
     required this.secondaryHeight,
     required this.dualScreen,
+    required this.audioEngine,
   });
 
   @override
@@ -50,7 +53,8 @@ class SessionOptions {
       primaryHeight.hashCode ^
       secondaryWidth.hashCode ^
       secondaryHeight.hashCode ^
-      dualScreen.hashCode;
+      dualScreen.hashCode ^
+      audioEngine.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -61,7 +65,8 @@ class SessionOptions {
           primaryHeight == other.primaryHeight &&
           secondaryWidth == other.secondaryWidth &&
           secondaryHeight == other.secondaryHeight &&
-          dualScreen == other.dualScreen;
+          dualScreen == other.dualScreen &&
+          audioEngine == other.audioEngine;
 }
 
 /// Lifecycle state of a session.

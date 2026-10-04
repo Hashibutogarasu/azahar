@@ -43,7 +43,7 @@ typedef struct AzaharSessionCallbacks {
   void (*on_shader_progress)(void* user, int32_t stage, uint64_t progress, uint64_t max);
   void (*on_texture)(void* user, int64_t texture_id, int32_t secondary);
   void (*on_error)(void* user, const char* message);
-  /** Pushes interleaved signed 16 bit stereo frames sampled at AZAHAR_AUDIO_SAMPLE_RATE. */
+  /** Pushes stereo s16 frames at AZAHAR_AUDIO_SAMPLE_RATE; when NULL the core plays through OpenAL. */
   void (*on_audio)(void* user, const int16_t* frames, size_t frame_count);
 } AzaharSessionCallbacks;
 

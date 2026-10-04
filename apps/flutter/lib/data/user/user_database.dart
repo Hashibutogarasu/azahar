@@ -67,7 +67,7 @@ class UserDatabase extends _$UserDatabase {
   ];
 
   @override
-  int get schemaVersion => 17;
+  int get schemaVersion => 18;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -134,6 +134,9 @@ class UserDatabase extends _$UserDatabase {
         await (delete(
           appSettings,
         )..where((tbl) => tbl.key.isIn(_masterKeys))).go();
+      }
+      if (from < 18) {
+        await m.addColumn(mediaSettings, mediaSettings.audioEngine);
       }
     },
   );

@@ -2576,8 +2576,19 @@ class $MediaSettingsTable extends MediaSettings
     requiredDuringInsert: false,
     defaultValue: const Constant(100.0),
   );
+  static const VerificationMeta _audioEngineMeta = const VerificationMeta(
+    'audioEngine',
+  );
   @override
-  List<GeneratedColumn> get $columns => [id, masterVolume];
+  late final GeneratedColumn<String> audioEngine = GeneratedColumn<String>(
+    'audio_engine',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, masterVolume, audioEngine];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -2602,6 +2613,15 @@ class $MediaSettingsTable extends MediaSettings
         ),
       );
     }
+    if (data.containsKey('audio_engine')) {
+      context.handle(
+        _audioEngineMeta,
+        audioEngine.isAcceptableOrUnknown(
+          data['audio_engine']!,
+          _audioEngineMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -2619,6 +2639,10 @@ class $MediaSettingsTable extends MediaSettings
         DriftSqlType.double,
         data['${effectivePrefix}master_volume'],
       )!,
+      audioEngine: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}audio_engine'],
+      ),
     );
   }
 
@@ -2631,12 +2655,22 @@ class $MediaSettingsTable extends MediaSettings
 class MediaSetting extends DataClass implements Insertable<MediaSetting> {
   final int id;
   final double masterVolume;
-  const MediaSetting({required this.id, required this.masterVolume});
+
+  /// Name of the chosen `AudioEngine`, or null while none has been chosen.
+  final String? audioEngine;
+  const MediaSetting({
+    required this.id,
+    required this.masterVolume,
+    this.audioEngine,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['master_volume'] = Variable<double>(masterVolume);
+    if (!nullToAbsent || audioEngine != null) {
+      map['audio_engine'] = Variable<String>(audioEngine);
+    }
     return map;
   }
 
@@ -2644,6 +2678,9 @@ class MediaSetting extends DataClass implements Insertable<MediaSetting> {
     return MediaSettingsCompanion(
       id: Value(id),
       masterVolume: Value(masterVolume),
+      audioEngine: audioEngine == null && nullToAbsent
+          ? const Value.absent()
+          : Value(audioEngine),
     );
   }
 
@@ -2655,6 +2692,7 @@ class MediaSetting extends DataClass implements Insertable<MediaSetting> {
     return MediaSetting(
       id: serializer.fromJson<int>(json['id']),
       masterVolume: serializer.fromJson<double>(json['masterVolume']),
+      audioEngine: serializer.fromJson<String?>(json['audioEngine']),
     );
   }
   @override
@@ -2663,12 +2701,18 @@ class MediaSetting extends DataClass implements Insertable<MediaSetting> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'masterVolume': serializer.toJson<double>(masterVolume),
+      'audioEngine': serializer.toJson<String?>(audioEngine),
     };
   }
 
-  MediaSetting copyWith({int? id, double? masterVolume}) => MediaSetting(
+  MediaSetting copyWith({
+    int? id,
+    double? masterVolume,
+    Value<String?> audioEngine = const Value.absent(),
+  }) => MediaSetting(
     id: id ?? this.id,
     masterVolume: masterVolume ?? this.masterVolume,
+    audioEngine: audioEngine.present ? audioEngine.value : this.audioEngine,
   );
   MediaSetting copyWithCompanion(MediaSettingsCompanion data) {
     return MediaSetting(
@@ -2676,6 +2720,9 @@ class MediaSetting extends DataClass implements Insertable<MediaSetting> {
       masterVolume: data.masterVolume.present
           ? data.masterVolume.value
           : this.masterVolume,
+      audioEngine: data.audioEngine.present
+          ? data.audioEngine.value
+          : this.audioEngine,
     );
   }
 
@@ -2683,49 +2730,58 @@ class MediaSetting extends DataClass implements Insertable<MediaSetting> {
   String toString() {
     return (StringBuffer('MediaSetting(')
           ..write('id: $id, ')
-          ..write('masterVolume: $masterVolume')
+          ..write('masterVolume: $masterVolume, ')
+          ..write('audioEngine: $audioEngine')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, masterVolume);
+  int get hashCode => Object.hash(id, masterVolume, audioEngine);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is MediaSetting &&
           other.id == this.id &&
-          other.masterVolume == this.masterVolume);
+          other.masterVolume == this.masterVolume &&
+          other.audioEngine == this.audioEngine);
 }
 
 class MediaSettingsCompanion extends UpdateCompanion<MediaSetting> {
   final Value<int> id;
   final Value<double> masterVolume;
+  final Value<String?> audioEngine;
   const MediaSettingsCompanion({
     this.id = const Value.absent(),
     this.masterVolume = const Value.absent(),
+    this.audioEngine = const Value.absent(),
   });
   MediaSettingsCompanion.insert({
     this.id = const Value.absent(),
     this.masterVolume = const Value.absent(),
+    this.audioEngine = const Value.absent(),
   });
   static Insertable<MediaSetting> custom({
     Expression<int>? id,
     Expression<double>? masterVolume,
+    Expression<String>? audioEngine,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (masterVolume != null) 'master_volume': masterVolume,
+      if (audioEngine != null) 'audio_engine': audioEngine,
     });
   }
 
   MediaSettingsCompanion copyWith({
     Value<int>? id,
     Value<double>? masterVolume,
+    Value<String?>? audioEngine,
   }) {
     return MediaSettingsCompanion(
       id: id ?? this.id,
       masterVolume: masterVolume ?? this.masterVolume,
+      audioEngine: audioEngine ?? this.audioEngine,
     );
   }
 
@@ -2738,6 +2794,9 @@ class MediaSettingsCompanion extends UpdateCompanion<MediaSetting> {
     if (masterVolume.present) {
       map['master_volume'] = Variable<double>(masterVolume.value);
     }
+    if (audioEngine.present) {
+      map['audio_engine'] = Variable<String>(audioEngine.value);
+    }
     return map;
   }
 
@@ -2745,7 +2804,8 @@ class MediaSettingsCompanion extends UpdateCompanion<MediaSetting> {
   String toString() {
     return (StringBuffer('MediaSettingsCompanion(')
           ..write('id: $id, ')
-          ..write('masterVolume: $masterVolume')
+          ..write('masterVolume: $masterVolume, ')
+          ..write('audioEngine: $audioEngine')
           ..write(')'))
         .toString();
   }
@@ -6201,11 +6261,13 @@ typedef $$MediaSettingsTableCreateCompanionBuilder =
     MediaSettingsCompanion Function({
       Value<int> id,
       Value<double> masterVolume,
+      Value<String?> audioEngine,
     });
 typedef $$MediaSettingsTableUpdateCompanionBuilder =
     MediaSettingsCompanion Function({
       Value<int> id,
       Value<double> masterVolume,
+      Value<String?> audioEngine,
     });
 
 class $$MediaSettingsTableFilterComposer
@@ -6224,6 +6286,11 @@ class $$MediaSettingsTableFilterComposer
 
   ColumnFilters<double> get masterVolume => $composableBuilder(
     column: $table.masterVolume,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get audioEngine => $composableBuilder(
+    column: $table.audioEngine,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -6246,6 +6313,11 @@ class $$MediaSettingsTableOrderingComposer
     column: $table.masterVolume,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get audioEngine => $composableBuilder(
+    column: $table.audioEngine,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$MediaSettingsTableAnnotationComposer
@@ -6262,6 +6334,11 @@ class $$MediaSettingsTableAnnotationComposer
 
   GeneratedColumn<double> get masterVolume => $composableBuilder(
     column: $table.masterVolume,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get audioEngine => $composableBuilder(
+    column: $table.audioEngine,
     builder: (column) => column,
   );
 }
@@ -6299,14 +6376,21 @@ class $$MediaSettingsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<double> masterVolume = const Value.absent(),
-              }) => MediaSettingsCompanion(id: id, masterVolume: masterVolume),
+                Value<String?> audioEngine = const Value.absent(),
+              }) => MediaSettingsCompanion(
+                id: id,
+                masterVolume: masterVolume,
+                audioEngine: audioEngine,
+              ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 Value<double> masterVolume = const Value.absent(),
+                Value<String?> audioEngine = const Value.absent(),
               }) => MediaSettingsCompanion.insert(
                 id: id,
                 masterVolume: masterVolume,
+                audioEngine: audioEngine,
               ),
           withReferenceMapper: (p0) => p0
               .map(

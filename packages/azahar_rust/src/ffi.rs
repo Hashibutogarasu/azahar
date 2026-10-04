@@ -11,6 +11,7 @@ use std::thread::JoinHandle;
 
 use crate::error::{AzaharError, Result};
 use crate::library::{CoreLibrary, close};
+use crate::api::audio::AudioEngine;
 use crate::raw::{RawCallbacks, RawOptions, RawSession, STATUS_INVALID_ADDRESS, STATUS_OK};
 use crate::session::{SessionEvent, SessionOptions, ShaderStage};
 
@@ -192,6 +193,7 @@ impl SessionHandle {
             secondary_height: options.secondary_height,
             dual_screen: options.dual_screen as i32,
         };
+        let plays_audio = options.audio_engine.effective() == AudioEngine::Oboe;
         let user = context as *const CallbackContext as usize;
 
         let worker = Worker::spawn()?;
@@ -201,7 +203,7 @@ impl SessionHandle {
                 on_shader_progress: Some(trampoline_shader_progress),
                 on_texture: Some(trampoline_texture),
                 on_error: Some(trampoline_error),
-                on_audio: Some(trampoline_audio),
+                on_audio: plays_audio.then_some(trampoline_audio as _),
             };
             unsafe { (library.api.create)(path.as_ptr(), &raw_options, &callbacks) as usize }
         });

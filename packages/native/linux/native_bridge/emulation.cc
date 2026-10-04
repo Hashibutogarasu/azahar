@@ -775,12 +775,15 @@ void Session::Impl::RunEmulation() {
 
     Core::System& system = Core::System::GetInstance();
 
-    Settings::values.output_type = AudioCore::SinkType::External;
-    AudioCore::SetExternalAudioHandler([this](const s16* frames, std::size_t frame_count) {
-        if (callbacks.on_audio) {
+    if (callbacks.on_audio) {
+        Settings::values.output_type = AudioCore::SinkType::External;
+        AudioCore::SetExternalAudioHandler([this](const s16* frames, std::size_t frame_count) {
             callbacks.on_audio(frames, frame_count);
-        }
-    });
+        });
+    } else {
+        Settings::values.output_type = AudioCore::SinkType::OpenAL;
+        AudioCore::SetExternalAudioHandler({});
+    }
 
     system.ApplySettings();
     Settings::LogSettings();

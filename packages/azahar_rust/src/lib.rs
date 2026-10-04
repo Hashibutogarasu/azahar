@@ -5,6 +5,7 @@
 //! in `include/azahar_storage.h`. The unsafe surface is confined to [`ffi`] and the storage ABI.
 
 pub mod api;
+#[cfg(target_os = "android")]
 pub mod audio;
 pub mod error;
 mod ffi;

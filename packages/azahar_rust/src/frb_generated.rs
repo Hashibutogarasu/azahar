@@ -39,7 +39,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.13.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -830592108;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1293222700;
 
 // Section: executor
 
@@ -47,6 +47,64 @@ flutter_rust_bridge::frb_generated_default_handler!();
 
 // Section: wire_funcs
 
+fn wire__crate__api__audio__available_audio_engines_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "available_audio_engines",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok = Ok::<_, ()>(crate::api::audio::available_audio_engines())?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
+fn wire__crate__api__audio__default_audio_engine_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "default_audio_engine",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok = Ok::<_, ()>(crate::api::audio::default_audio_engine())?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
 fn wire__crate__api__session__dump_fcram_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -442,6 +500,18 @@ impl SseDecode for String {
     }
 }
 
+impl SseDecode for crate::api::audio::AudioEngine {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::audio::AudioEngine::OpenAl,
+            1 => crate::api::audio::AudioEngine::Oboe,
+            _ => unreachable!("Invalid variant for AudioEngine: {}", inner),
+        };
+    }
+}
+
 impl SseDecode for crate::error::AzaharError {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -521,6 +591,18 @@ impl SseDecode for i64 {
     }
 }
 
+impl SseDecode for Vec<crate::api::audio::AudioEngine> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::audio::AudioEngine>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
 impl SseDecode for Vec<u8> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -581,12 +663,14 @@ impl SseDecode for crate::session::SessionOptions {
         let mut var_secondaryWidth = <i32>::sse_decode(deserializer);
         let mut var_secondaryHeight = <i32>::sse_decode(deserializer);
         let mut var_dualScreen = <bool>::sse_decode(deserializer);
+        let mut var_audioEngine = <crate::api::audio::AudioEngine>::sse_decode(deserializer);
         return crate::session::SessionOptions {
             primary_width: var_primaryWidth,
             primary_height: var_primaryHeight,
             secondary_width: var_secondaryWidth,
             secondary_height: var_secondaryHeight,
             dual_screen: var_dualScreen,
+            audio_engine: var_audioEngine,
         };
     }
 }
@@ -653,17 +737,17 @@ fn pde_ffi_dispatcher_primary_impl(
 ) {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        1 => wire__crate__api__session__dump_fcram_impl(port, ptr, rust_vec_len, data_len),
-        2 => wire__crate__api__session__fcram_size_impl(port, ptr, rust_vec_len, data_len),
-        3 => wire__crate__api__session__init_app_impl(port, ptr, rust_vec_len, data_len),
-        4 => wire__crate__api__storage__initialize_storage_impl(port, ptr, rust_vec_len, data_len),
-        5 => wire__crate__api__session__pause_game_impl(port, ptr, rust_vec_len, data_len),
-        6 => wire__crate__api__session__read_memory_impl(port, ptr, rust_vec_len, data_len),
-        7 => wire__crate__api__session__read_u32_impl(port, ptr, rust_vec_len, data_len),
-        8 => wire__crate__api__session__resume_game_impl(port, ptr, rust_vec_len, data_len),
-        9 => wire__crate__api__session__set_volume_impl(port, ptr, rust_vec_len, data_len),
-        10 => wire__crate__api__session__start_game_impl(port, ptr, rust_vec_len, data_len),
-        11 => wire__crate__api__session__stop_game_impl(port, ptr, rust_vec_len, data_len),
+        3 => wire__crate__api__session__dump_fcram_impl(port, ptr, rust_vec_len, data_len),
+        4 => wire__crate__api__session__fcram_size_impl(port, ptr, rust_vec_len, data_len),
+        5 => wire__crate__api__session__init_app_impl(port, ptr, rust_vec_len, data_len),
+        6 => wire__crate__api__storage__initialize_storage_impl(port, ptr, rust_vec_len, data_len),
+        7 => wire__crate__api__session__pause_game_impl(port, ptr, rust_vec_len, data_len),
+        8 => wire__crate__api__session__read_memory_impl(port, ptr, rust_vec_len, data_len),
+        9 => wire__crate__api__session__read_u32_impl(port, ptr, rust_vec_len, data_len),
+        10 => wire__crate__api__session__resume_game_impl(port, ptr, rust_vec_len, data_len),
+        11 => wire__crate__api__session__set_volume_impl(port, ptr, rust_vec_len, data_len),
+        12 => wire__crate__api__session__start_game_impl(port, ptr, rust_vec_len, data_len),
+        13 => wire__crate__api__session__stop_game_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -676,12 +760,35 @@ fn pde_ffi_dispatcher_sync_impl(
 ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
+        1 => wire__crate__api__audio__available_audio_engines_impl(ptr, rust_vec_len, data_len),
+        2 => wire__crate__api__audio__default_audio_engine_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
 
 // Section: rust2dart
 
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::audio::AudioEngine {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::OpenAl => 0.into_dart(),
+            Self::Oboe => 1.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::audio::AudioEngine
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::audio::AudioEngine>
+    for crate::api::audio::AudioEngine
+{
+    fn into_into_dart(self) -> crate::api::audio::AudioEngine {
+        self
+    }
+}
 // Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::error::AzaharError {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
@@ -774,6 +881,7 @@ impl flutter_rust_bridge::IntoDart for crate::session::SessionOptions {
             self.secondary_width.into_into_dart().into_dart(),
             self.secondary_height.into_into_dart().into_dart(),
             self.dual_screen.into_into_dart().into_dart(),
+            self.audio_engine.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -852,6 +960,22 @@ impl SseEncode for String {
     }
 }
 
+impl SseEncode for crate::api::audio::AudioEngine {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::audio::AudioEngine::OpenAl => 0,
+                crate::api::audio::AudioEngine::Oboe => 1,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
 impl SseEncode for crate::error::AzaharError {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -927,6 +1051,16 @@ impl SseEncode for i64 {
     }
 }
 
+impl SseEncode for Vec<crate::api::audio::AudioEngine> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::audio::AudioEngine>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<u8> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -982,6 +1116,7 @@ impl SseEncode for crate::session::SessionOptions {
         <i32>::sse_encode(self.secondary_width, serializer);
         <i32>::sse_encode(self.secondary_height, serializer);
         <bool>::sse_encode(self.dual_screen, serializer);
+        <crate::api::audio::AudioEngine>::sse_encode(self.audio_engine, serializer);
     }
 }
 
