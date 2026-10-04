@@ -23,7 +23,7 @@ class CitraDirectoryRepository extends MasterKeyValueRepository {
   Future<void> setCitraDirectoryUri(String uri) async {
     await write(_key, uri);
     final profile = await _profiles.defaultProfile();
-    if (profile != null && !profile.isBuiltIn) {
+    if (profile != null) {
       await _profiles.updateDirectories(profile.cuid, userDirectory: uri);
     }
   }

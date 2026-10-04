@@ -9,78 +9,92 @@ import '../profiles/profile.dart';
 import '../repositories/installed_titles_repository.dart';
 import 'user_session.dart';
 
-/// Keeps the user database of the active profile open.
+/// Keeps the user database of the active profile open, and never more than one at a time.
 ///
-/// Opening another profile's database does not close the previous one right away, since the
-/// widgets still built on it may read it until the app is rebuilt by [remount].
+/// While the app is shown, its widgets read the open database, so opening another profile's
+/// database only takes effect on [remount]: the app is taken down first, then the open database
+/// is closed, the new one is opened, and the app is built again on it.
 class UserSessions {
   UserSessions(this._gamesDirectoryRepository, this._installedTitlesRepository);
 
   final GamesDirectoryRepository _gamesDirectoryRepository;
   final InstalledTitlesRepository _installedTitlesRepository;
-  final List<UserSession> _retired = [];
   final Set<String> _deletedFiles = {};
-  UserSession? _current;
   final ValueNotifier<int> generation = ValueNotifier(0);
+  final ValueNotifier<bool> reopening = ValueNotifier(false);
+  UserSession? _current;
+  Profile? _pending;
+  bool _isShown = false;
 
   /// The session of the active profile.
   UserSession get current =>
       _current ?? (throw StateError('No user database is open'));
 
-  /// Opens the user database of [profile] unless it is already open.
-  Future<void> open(Profile profile) async {
-    final file = File(profile.databaseFile);
-    final previous = _current;
-    if (previous != null && p.equals(previous.file.path, file.path)) return;
-    final session = UserSession(
-      file,
-      _gamesDirectoryRepository,
-      _installedTitlesRepository,
-    );
-    await session.migrateKeys();
-    _current = session;
-    if (previous != null) _retired.add(previous);
-  }
+  /// Marks that the app is shown, so opening another database waits for [remount].
+  void markShown() => _isShown = true;
 
-  /// Writes a copy of the active user database to [file].
-  Future<void> copyCurrentTo(File file) => current.database.copyTo(file);
+  /// Opens the user database of [profile] unless it is already open. While the app is shown it is
+  /// opened on the next [remount] instead.
+  Future<void> open(Profile profile) async {
+    if (_isOpen(profile.databaseFile)) {
+      _pending = null;
+      return;
+    }
+    if (_isShown && _current != null) {
+      _pending = profile;
+      return;
+    }
+    await _reopen(profile);
+  }
 
   /// Deletes the user database of the removed [profile] once it is no longer open, together with
   /// its folder when nothing else is left in it.
   Future<void> deleteWhenClosed(Profile profile) async {
     _deletedFiles.add(profile.databaseFile);
-    if (!_retired.any((session) => p.equals(session.file.path, profile.databaseFile))) {
-      await _deleteFiles();
-    }
+    if (!_isOpen(profile.databaseFile)) await _deleteFiles();
   }
 
-  /// Rebuilds the app on the active user database, then closes the databases it no longer uses.
+  /// Builds the app again on the user database opened last, if it changed.
   void remount() {
-    generation.value++;
-    WidgetsBinding.instance.addPostFrameCallback((_) => _closeRetired());
+    final pending = _pending;
+    if (pending == null) return;
+    _pending = null;
+    reopening.value = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _reopen(pending);
+      generation.value++;
+      reopening.value = false;
+    });
   }
 
-  Future<void> _closeRetired() async {
-    final retired = List.of(_retired);
-    _retired.clear();
-    for (final session in retired) {
-      await session.database.close();
-    }
+  bool _isOpen(String path) {
+    final current = _current;
+    return current != null && p.equals(current.file.path, path);
+  }
+
+  Future<void> _reopen(Profile profile) async {
+    final previous = _current;
+    _current = null;
+    await previous?.database.close();
+    final session = UserSession(
+      File(profile.databaseFile),
+      _gamesDirectoryRepository,
+      _installedTitlesRepository,
+    );
+    await session.migrateKeys();
+    _current = session;
     await _deleteFiles();
   }
 
   Future<void> _deleteFiles() async {
     for (final path in List.of(_deletedFiles)) {
-      if (path.isEmpty) {
-        _deletedFiles.remove(path);
-        continue;
-      }
+      _deletedFiles.remove(path);
+      if (path.isEmpty) continue;
       await DatabaseFiles.delete(path);
       final folder = File(path).parent;
       if (await folder.exists() && await folder.list().isEmpty) {
         await folder.delete();
       }
-      _deletedFiles.remove(path);
     }
   }
 }

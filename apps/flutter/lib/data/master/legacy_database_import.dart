@@ -123,7 +123,11 @@ class LegacyDatabaseImport {
         ),
       );
       final database = File(
-        p.join(profilesDirectory.path, profile.hash, UserDatabase.fileName),
+        p.join(
+          profilesDirectory.path,
+          profile.folderName,
+          UserDatabase.fileName,
+        ),
       );
       await _copy(legacy, database);
       await _profiles.updateDirectories(

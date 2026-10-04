@@ -14,7 +14,6 @@
   "profiles": {
     "switchTitle": "プロファイルの切り替え",
     "builtIn": "ビルトイン",
-    "builtInLocation": "アプリ内（${path}）",
     "add": "プロファイルを追加",
     "gameRunning": "ゲームの実行中はプロファイルを切り替えられません。",
     "delete": "削除",

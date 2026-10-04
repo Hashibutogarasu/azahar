@@ -116,7 +116,7 @@ class SetupWizardViewModel extends ChangeNotifier {
 
   Future<void> completeSetup() async {
     if (foldersConfirmed) {
-      await _profileService.createUserProfileFromCurrent();
+      await _profileService.adoptChosenFolders();
     } else {
       final builtIn = await _profileService.ensureBuiltInProfile();
       await _profileService.switchTo(builtIn.cuid);

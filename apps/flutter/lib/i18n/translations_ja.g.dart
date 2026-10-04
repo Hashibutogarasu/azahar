@@ -134,8 +134,6 @@ class _Translations$profiles$ja extends Translations$profiles$en {
   @override
   String get builtIn => 'ビルトイン';
   @override
-  String builtInLocation({required Object path}) => 'アプリ内（${path}）';
-  @override
   String get add => 'プロファイルを追加';
   @override
   String get gameRunning => 'ゲームの実行中はプロファイルを切り替えられません。';
@@ -2331,8 +2329,6 @@ extension on TranslationsJa {
           'tags.modded' => '改造済み',
           'profiles.switchTitle' => 'プロファイルの切り替え',
           'profiles.builtIn' => 'ビルトイン',
-          'profiles.builtInLocation' =>
-            ({required Object path}) => 'アプリ内（${path}）',
           'profiles.add' => 'プロファイルを追加',
           'profiles.gameRunning' => 'ゲームの実行中はプロファイルを切り替えられません。',
           'profiles.delete' => '削除',
@@ -2907,10 +2903,10 @@ extension on TranslationsJa {
           'settings.system.countries.portugal' => 'ポルトガル',
           'settings.system.countries.romania' => 'ルーマニア',
           'settings.system.countries.russia' => 'ロシア',
+          'settings.system.countries.serbia' => 'セルビア',
           _ => null,
         } ??
         switch (path) {
-          'settings.system.countries.serbia' => 'セルビア',
           'settings.system.countries.slovakia' => 'スロバキア',
           'settings.system.countries.slovenia' => 'スロベニア',
           'settings.system.countries.southAfrica' => '南アフリカ',

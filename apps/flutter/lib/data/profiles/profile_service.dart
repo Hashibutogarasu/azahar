@@ -55,7 +55,6 @@ class ProfileService {
   final LegacyUserDirectoryRepository _legacyDecision;
 
   static const String builtInName = 'builtin';
-  static const String _defaultUserName = 'AZAHAR';
 
   /// Prepares the profiles at startup: creates the built-in profile, opens the user database of
   /// the active profile, moves an existing setup into a user profile, and applies the default
@@ -75,7 +74,7 @@ class ProfileService {
     }
     await _sessions.open((await _profiles.activeProfile())!);
     if (await _needsMigration()) {
-      await createUserProfileFromCurrent();
+      await adoptChosenFolders();
       return;
     }
     await _publishProfiles();
@@ -113,27 +112,21 @@ class ProfileService {
     return profile;
   }
 
-  /// Creates a user profile from the folders chosen so far, without moving any data, and makes it
-  /// the default profile. Its name is the user name of the emulated console, and its user
-  /// database starts as a copy of the active one.
-  Future<Profile> createUserProfileFromCurrent() async {
+  /// Gives the built-in profile the folders chosen so far, without moving any data, and makes it
+  /// the default profile. The folders chosen in the setup wizard or by an earlier version thereby
+  /// become the first profile instead of a second one next to the built-in profile.
+  Future<Profile> adoptChosenFolders() async {
+    final builtIn = await ensureBuiltInProfile();
     final userDirectory = await _citraDirectories.chosenDirectoryUri();
-    final gamesDirectory = await _gamesDirectories.chosenDirectoryUri();
-    await _systemSave.load();
-    final userName = _systemSave.username.trim();
-    final created = await _profiles.create(
-      name: await _uniqueName(userName.isEmpty ? _defaultUserName : userName),
-      userDirectory: FolderLocation.toUri(userDirectory!),
-      gamesDirectory: gamesDirectory,
-    );
-    final database = await _databaseFile(created);
-    await _sessions.copyCurrentTo(database);
     await _profiles.updateDirectories(
-      created.cuid,
-      databaseFile: database.path,
+      builtIn.cuid,
+      userDirectory: userDirectory == null
+          ? null
+          : FolderLocation.toUri(userDirectory),
+      gamesDirectory: await _gamesDirectories.chosenDirectoryUri(),
     );
-    await switchTo(created.cuid);
-    return (await _profiles.profileByCuid(created.cuid))!;
+    await switchTo(builtIn.cuid);
+    return (await _profiles.profileByCuid(builtIn.cuid))!;
   }
 
   /// Creates a user profile named [name] in the folders the user picked, and creates the folders
@@ -220,6 +213,7 @@ class ProfileService {
 
   Future<bool> _needsMigration() async {
     if (await _firstLaunch.isFirstApplicationLaunch()) return false;
+    if (await _profiles.defaultProfile() != null) return false;
     final profiles = await _profiles.profiles();
     if (profiles.any((profile) => !profile.isBuiltIn)) return false;
     return await _citraDirectories.chosenDirectoryUri() != null;
@@ -231,7 +225,7 @@ class ProfileService {
 
   Future<Directory> _profileFolder(Profile profile) async {
     final profiles = await _locations.profilesDirectory();
-    return Directory(p.join(profiles.path, profile.hash));
+    return Directory(p.join(profiles.path, profile.folderName));
   }
 
   /// Makes the folder of [profile] in the profiles folder its user folder, which then holds both
@@ -264,12 +258,14 @@ class ProfileService {
     await _settings.clearPendingUserDatabase();
   }
 
-  /// Moves the built-in profile folder into the profiles folder, together with its user database.
+  /// Moves the built-in profile out of the folder an earlier version created for it, named after
+  /// its hash, into its folder in the profiles folder, together with its user database. A folder
+  /// the user picked stays where it is.
   Future<Profile> _relocateBuiltIn(Profile builtIn) async {
     final current = FolderLocation.toPath(builtIn.userDirectory);
     final target = await _profileFolder(builtIn);
     final database = File(p.join(target.path, UserDatabase.fileName));
-    if (current == null || p.equals(current, target.path)) {
+    if (current == null || p.basename(current) != builtIn.hash) {
       if (builtIn.databaseFile.isNotEmpty) return builtIn;
       await _profiles.updateDirectories(
         builtIn.cuid,
@@ -347,14 +343,5 @@ class ProfileService {
           location: profile.userDirectory,
         ),
     ]);
-  }
-
-  Future<String> _uniqueName(String base) async {
-    if (!await _profiles.nameExists(base)) return base;
-    var index = 2;
-    while (await _profiles.nameExists('$base ($index)')) {
-      index++;
-    }
-    return '$base ($index)';
   }
 }

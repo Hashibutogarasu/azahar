@@ -109,18 +109,35 @@ Future<void> _initializeProfiles() async {
   await done.future;
 }
 
-/// Rebuilds the whole app, with fresh providers, whenever another user database is opened.
-class AzaharRoot extends StatelessWidget {
+/// Rebuilds the whole app, with fresh providers, whenever another user database is opened. While
+/// the database is being replaced the app is taken down, so nothing reads the closing one.
+class AzaharRoot extends StatefulWidget {
   const AzaharRoot({super.key});
 
   @override
+  State<AzaharRoot> createState() => _AzaharRootState();
+}
+
+class _AzaharRootState extends State<AzaharRoot> {
+  final _sessions = AppServices.userSessions;
+
+  @override
+  void initState() {
+    super.initState();
+    _sessions.markShown();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<int>(
-      valueListenable: AppServices.userSessions.generation,
-      builder: (context, generation, _) => ProviderScope(
-        key: ValueKey(generation),
-        child: const AzaharApp(),
-      ),
+    return ListenableBuilder(
+      listenable: Listenable.merge([_sessions.generation, _sessions.reopening]),
+      builder: (context, _) {
+        if (_sessions.reopening.value) return const SizedBox.shrink();
+        return ProviderScope(
+          key: ValueKey(_sessions.generation.value),
+          child: const AzaharApp(),
+        );
+      },
     );
   }
 }

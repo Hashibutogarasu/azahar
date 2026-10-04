@@ -155,11 +155,7 @@ class ProfileRadioTile extends ConsumerWidget {
       value: profile.cuid,
       enabled: enabled,
       title: Text(profile.isBuiltIn ? t.profiles.builtIn : profile.name),
-      subtitle: Text(
-        profile.isBuiltIn
-            ? t.profiles.builtInLocation(path: 'profiles/${profile.hash}')
-            : AppServices.profileService.displayLocation(profile),
-      ),
+      subtitle: Text(AppServices.profileService.displayLocation(profile)),
       secondary: isDesktop && hasMenu
           ? PopupMenuButton<void>(
               enabled: enabled,

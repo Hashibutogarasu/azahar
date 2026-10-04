@@ -138,12 +138,6 @@ class UserDatabase extends _$UserDatabase {
     },
   );
 
-  /// Writes a copy of this database to [file], which must not exist yet.
-  Future<void> copyTo(File file) async {
-    await file.parent.create(recursive: true);
-    await customStatement('VACUUM INTO ?', [file.path]);
-  }
-
   static QueryExecutor _openConnection(File file) {
     return LazyDatabase(() async {
       await file.parent.create(recursive: true);

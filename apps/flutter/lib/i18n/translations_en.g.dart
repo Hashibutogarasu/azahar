@@ -127,9 +127,6 @@ class Translations$profiles$en {
   /// en: 'Built-in'
   String get builtIn => 'Built-in';
 
-  /// en: 'In the app (${path})'
-  String builtInLocation({required Object path}) => 'In the app (${path})';
-
   /// en: 'Add Profile'
   String get add => 'Add Profile';
 
@@ -2953,8 +2950,6 @@ extension on Translations {
           'tags.modded' => 'Modded',
           'profiles.switchTitle' => 'Switch Profile',
           'profiles.builtIn' => 'Built-in',
-          'profiles.builtInLocation' =>
-            ({required Object path}) => 'In the app (${path})',
           'profiles.add' => 'Add Profile',
           'profiles.gameRunning' =>
             'The profile can\'t be switched while a game is running.',
@@ -3579,10 +3574,10 @@ extension on Translations {
           'settings.system.countries.norway' => 'Norway',
           'settings.system.countries.poland' => 'Poland',
           'settings.system.countries.portugal' => 'Portugal',
+          'settings.system.countries.romania' => 'Romania',
           _ => null,
         } ??
         switch (path) {
-          'settings.system.countries.romania' => 'Romania',
           'settings.system.countries.russia' => 'Russia',
           'settings.system.countries.serbia' => 'Serbia',
           'settings.system.countries.slovakia' => 'Slovakia',

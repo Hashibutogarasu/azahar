@@ -14,7 +14,6 @@
   "profiles": {
     "switchTitle": "Switch Profile",
     "builtIn": "Built-in",
-    "builtInLocation": "In the app (${path})",
     "add": "Add Profile",
     "gameRunning": "The profile can't be switched while a game is running.",
     "delete": "Delete",
