@@ -2,6 +2,7 @@
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
 
+#include <mutex>
 #include <cryptopp/sha.h>
 #include "common/common_paths.h"
 #include "common/logging/log.h"
@@ -26,6 +27,11 @@ static FileSys::Certificate ct_cert;
 static MovableSedFull movable;
 static bool movable_signature_valid = false;
 
+/// Guards the console unique data above. It is loaded on first use, which can happen on the
+/// emulation thread and on the title scan of AM at the same time, and the certificate is only
+/// complete once LoadOTP has built it after the OTP became valid.
+static std::recursive_mutex unique_data_mutex;
+
 bool SecureInfoA::VerifySignature() const {
     return HW::RSA::GetSecureInfoSlot().Verify(
         std::span<const u8>(reinterpret_cast<const u8*>(&body), sizeof(body)), signature);
@@ -41,6 +47,7 @@ bool MovableSed::VerifySignature() const {
 }
 
 SecureDataLoadStatus LoadSecureInfoA() {
+    std::scoped_lock lock{unique_data_mutex};
     if (secure_info_a.IsValid()) {
         return secure_info_a_signature_valid
                    ? SecureDataLoadStatus::Loaded
@@ -92,6 +99,7 @@ SecureDataLoadStatus LoadSecureInfoA() {
 }
 
 SecureDataLoadStatus LoadLocalFriendCodeSeedB() {
+    std::scoped_lock lock{unique_data_mutex};
     if (local_friend_code_seed_b.IsValid()) {
         return local_friend_code_seed_b_signature_valid ? SecureDataLoadStatus::Loaded
                                                         : SecureDataLoadStatus::InvalidSignature;
@@ -124,6 +132,7 @@ SecureDataLoadStatus LoadLocalFriendCodeSeedB() {
 }
 
 SecureDataLoadStatus LoadOTP() {
+    std::scoped_lock lock{unique_data_mutex};
     if (otp.Valid()) {
         return SecureDataLoadStatus::Loaded;
     }
@@ -168,6 +177,7 @@ SecureDataLoadStatus LoadOTP() {
 }
 
 SecureDataLoadStatus LoadMovable() {
+    std::scoped_lock lock{unique_data_mutex};
     if (movable.IsValid()) {
         return movable_signature_valid ? SecureDataLoadStatus::Loaded
                                        : SecureDataLoadStatus::InvalidSignature;
@@ -247,6 +257,7 @@ MovableSedFull& GetMovableSed() {
     return movable;
 }
 void InvalidateSecureData() {
+    std::scoped_lock lock{unique_data_mutex};
     secure_info_a.Invalidate();
     local_friend_code_seed_b.Invalidate();
     otp.Invalidate();
@@ -257,6 +268,7 @@ void InvalidateSecureData() {
 std::unique_ptr<FileUtil::IOFile> OpenUniqueCryptoFile(const std::string& filename,
                                                        const char openmode[], UniqueCryptoFileID id,
                                                        int flags) {
+    std::unique_lock lock{unique_data_mutex};
     LoadOTP();
 
     if (!ct_cert.IsValid() || !otp.Valid()) {
@@ -271,6 +283,7 @@ std::unique_ptr<FileUtil::IOFile> OpenUniqueCryptoFile(const std::string& filena
     hash_data.pkey = ct_cert.GetPublicKeyECC();
     hash_data.device_id = otp.GetDeviceID();
     hash_data.id = static_cast<u32>(id);
+    lock.unlock();
 
     CryptoPP::SHA256 hash;
     u8 digest[CryptoPP::SHA256::DIGESTSIZE];
