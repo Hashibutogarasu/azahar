@@ -11,12 +11,14 @@ class GameTitle extends ConsumerWidget {
     this.style,
     this.maxLines,
     this.overflow,
+    this.textAlign,
   });
 
   final String gamePath;
   final TextStyle? style;
   final int? maxLines;
   final TextOverflow? overflow;
+  final TextAlign? textAlign;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,6 +27,7 @@ class GameTitle extends ConsumerWidget {
       style: style,
       maxLines: maxLines,
       overflow: overflow,
+      textAlign: textAlign,
     );
   }
 }
