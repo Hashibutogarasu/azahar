@@ -68,3 +68,6 @@ VULKAN_SDK/
 .envrc
 .dart_tool/
 melos_*.iml
+
+# FVM Version Cache
+.fvm/

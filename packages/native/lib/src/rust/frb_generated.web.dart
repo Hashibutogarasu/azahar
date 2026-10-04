@@ -7,6 +7,7 @@
 // ignore_for_file: argument_type_not_assignable
 
 import 'api/session.dart';
+import 'api/storage.dart';
 
 import 'dart:async';
 import 'dart:convert';

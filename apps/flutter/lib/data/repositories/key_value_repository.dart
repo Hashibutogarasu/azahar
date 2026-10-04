@@ -12,7 +12,7 @@ abstract class KeyValueRepository {
       final value = await read(oldKey);
       if (value == null) continue;
       await write(newKey, value);
-      await delete(oldKey);
+      await deleteKey(oldKey);
     }
   }
 
@@ -31,7 +31,7 @@ abstract class KeyValueRepository {
         );
   }
 
-  Future<void> delete(String key) {
+  Future<void> deleteKey(String key) {
     return (db.delete(
       db.appSettings,
     )..where((tbl) => tbl.key.equals(key))).go();

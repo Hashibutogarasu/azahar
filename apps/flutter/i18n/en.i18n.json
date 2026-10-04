@@ -17,6 +17,8 @@
     "builtInLocation": "In the app (${path})",
     "add": "Add Profile",
     "gameRunning": "The profile can't be switched while a game is running.",
+    "delete": "Delete",
+    "deleteGameRunning": "The profile can't be deleted while a game is running.",
     "create": {
       "title": "New Profile",
       "nameTitle": "Profile Name",
@@ -24,8 +26,6 @@
       "nameHint": "Profile name",
       "nameEmpty": "Enter a profile name.",
       "nameTaken": "A profile with this name already exists.",
-      "userDirectoryDescription": "Choose the folder where this profile keeps its NAND, saves, cheats and settings.",
-      "gamesDirectoryDescription": "Choose the folder this profile scans for games.",
       "create": "Create"
     }
   },

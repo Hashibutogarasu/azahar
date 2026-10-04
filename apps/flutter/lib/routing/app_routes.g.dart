@@ -659,14 +659,9 @@ RouteBase get $profileCreateShellRoute => ShellRouteData.$route(
       factory: $ProfileNameRoute._fromState,
     ),
     GoRouteData.$route(
-      path: '/profiles/new/user-directory',
+      path: '/profiles/new/directories',
       hasOverriddenOnExit: false,
-      factory: $ProfileUserDirectoryRoute._fromState,
-    ),
-    GoRouteData.$route(
-      path: '/profiles/new/games-directory',
-      hasOverriddenOnExit: false,
-      factory: $ProfileGamesDirectoryRoute._fromState,
+      factory: $ProfileDirectoriesRoute._fromState,
     ),
   ],
 );
@@ -697,33 +692,12 @@ mixin $ProfileNameRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin $ProfileUserDirectoryRoute on GoRouteData {
-  static ProfileUserDirectoryRoute _fromState(GoRouterState state) =>
-      const ProfileUserDirectoryRoute();
+mixin $ProfileDirectoriesRoute on GoRouteData {
+  static ProfileDirectoriesRoute _fromState(GoRouterState state) =>
+      const ProfileDirectoriesRoute();
 
   @override
-  String get location => GoRouteData.$location('/profiles/new/user-directory');
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
-}
-
-mixin $ProfileGamesDirectoryRoute on GoRouteData {
-  static ProfileGamesDirectoryRoute _fromState(GoRouterState state) =>
-      const ProfileGamesDirectoryRoute();
-
-  @override
-  String get location => GoRouteData.$location('/profiles/new/games-directory');
+  String get location => GoRouteData.$location('/profiles/new/directories');
 
   @override
   void go(BuildContext context) => context.go(location);

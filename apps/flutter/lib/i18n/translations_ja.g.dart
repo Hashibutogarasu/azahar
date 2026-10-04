@@ -140,6 +140,12 @@ class _Translations$profiles$ja extends Translations$profiles$en {
   @override
   String get gameRunning => 'ゲームの実行中はプロファイルを切り替えられません。';
   @override
+  String get delete => '削除';
+  @override
+  String get deleteGameRunning => 'ゲームの実行中はプロファイルを削除できません。';
+  @override
+  String get changing => 'プロファイルを変更中のため、完了するまで操作できません。';
+  @override
   late final _Translations$profiles$create$ja create =
       _Translations$profiles$create$ja._(_root);
 }
@@ -720,11 +726,6 @@ class _Translations$profiles$create$ja extends Translations$profiles$create$en {
   String get nameEmpty => 'プロファイル名を入力してください。';
   @override
   String get nameTaken => '同じ名前のプロファイルがすでにあります。';
-  @override
-  String get userDirectoryDescription =>
-      'このプロファイルの NAND、セーブデータ、チート、設定を置くフォルダを選んでください。';
-  @override
-  String get gamesDirectoryDescription => 'このプロファイルでゲームを探すフォルダを選んでください。';
   @override
   String get create => '作成';
 }
@@ -2306,16 +2307,15 @@ extension on TranslationsJa {
             ({required Object path}) => 'アプリ内（${path}）',
           'profiles.add' => 'プロファイルを追加',
           'profiles.gameRunning' => 'ゲームの実行中はプロファイルを切り替えられません。',
+          'profiles.delete' => '削除',
+          'profiles.deleteGameRunning' => 'ゲームの実行中はプロファイルを削除できません。',
+          'profiles.changing' => 'プロファイルを変更中のため、完了するまで操作できません。',
           'profiles.create.title' => '新しいプロファイル',
           'profiles.create.nameTitle' => 'プロファイル名',
           'profiles.create.nameDescription' => '新しいプロファイルの名前を決めてください。',
           'profiles.create.nameHint' => 'プロファイル名',
           'profiles.create.nameEmpty' => 'プロファイル名を入力してください。',
           'profiles.create.nameTaken' => '同じ名前のプロファイルがすでにあります。',
-          'profiles.create.userDirectoryDescription' =>
-            'このプロファイルの NAND、セーブデータ、チート、設定を置くフォルダを選んでください。',
-          'profiles.create.gamesDirectoryDescription' =>
-            'このプロファイルでゲームを探すフォルダを選んでください。',
           'profiles.create.create' => '作成',
           'setup.next' => '次へ',
           'setup.skip' => 'スキップ',
@@ -2876,10 +2876,10 @@ extension on TranslationsJa {
           'settings.system.countries.southAfrica' => '南アフリカ',
           'settings.system.countries.spain' => 'スペイン',
           'settings.system.countries.swaziland' => 'スワジランド',
-          'settings.system.countries.sweden' => 'スウェーデン',
           _ => null,
         } ??
         switch (path) {
+          'settings.system.countries.sweden' => 'スウェーデン',
           'settings.system.countries.switzerland' => 'スイス',
           'settings.system.countries.turkey' => 'トルコ',
           'settings.system.countries.unitedKingdom' => 'イギリス',

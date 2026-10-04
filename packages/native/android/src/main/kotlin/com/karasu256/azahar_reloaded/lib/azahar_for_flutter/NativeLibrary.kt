@@ -151,10 +151,10 @@ object NativeLibrary {
     external fun getIsSystemTitle(path: String): Boolean
 
     /**
-     * Sets the current working user directory
-     * If not set, it auto-detects a location
+     * Hands the user directory to the storage of the Rust crate, which decides how the core
+     * reaches it, so that a folder of the app is not reached through the Storage Access Framework.
      */
-    external fun setUserDirectory(directory: String)
+    external fun setStorageRoot(location: String)
 
     /**
      * Gives the native side the context of the application, for the audio output of a session

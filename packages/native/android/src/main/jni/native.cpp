@@ -45,6 +45,7 @@
 #include "common/scm_rev.h"
 #include "common/scope_exit.h"
 #include "common/settings.h"
+#include "common/storage.h"
 #include "common/string_util.h"
 #include "core/core.h"
 #include "core/frontend/applets/default_applets.h"
@@ -636,10 +637,12 @@ jstring Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibra
     return ToJString(env, "");
 }
 
-void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_setUserDirectory(JNIEnv* env,
-                                                              [[maybe_unused]] jobject obj,
-                                                              jstring j_directory) {
-    FileUtil::SetCurrentDir(GetJString(env, j_directory));
+void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_setStorageRoot(
+    JNIEnv* env, [[maybe_unused]] jobject obj, jstring j_location) {
+    if (!Common::Storage::SetRoot(GetJString(env, j_location))) {
+        LOG_ERROR(Frontend, "The user directory could not be set");
+    }
+    FileUtil::SetUserPath();
 }
 
 jobjectArray Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_getInstalledGamePaths(
@@ -1455,6 +1458,7 @@ struct AzaharHostState {
     const char* custom_driver_dir;
     const char* custom_driver_name;
     const char* file_redirect_dir;
+    const AzaharStorageApi* storage;
 };
 
 static jobject g_application_context{};
@@ -1490,6 +1494,7 @@ const AzaharHostState* azahar_host_state() {
     state.custom_driver_dir = g_host_state.custom_driver_dir.c_str();
     state.custom_driver_name = g_host_state.custom_driver_name.c_str();
     state.file_redirect_dir = g_host_state.file_redirect_dir.c_str();
+    state.storage = Common::Storage::Api();
     return &state;
 }
 
@@ -1549,6 +1554,9 @@ static int32_t InitSessionLibraryUnguarded(void* java_vm, void* app_class_loader
             return AZAHAR_STATUS_LOAD_FAILED;
         }
         JNIEnv* env = IDCache::GetEnvForThread();
+        if (host_state != nullptr) {
+            Common::Storage::Register(host_state->storage);
+        }
         step = "the logging";
         if (host_state != nullptr) {
             console_log_enabled = host_state->console_log_enabled != 0;

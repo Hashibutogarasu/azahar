@@ -137,6 +137,17 @@ class Translations$profiles$en {
   String get gameRunning =>
       'The profile can\'t be switched while a game is running.';
 
+  /// en: 'Delete'
+  String get delete => 'Delete';
+
+  /// en: 'The profile can't be deleted while a game is running.'
+  String get deleteGameRunning =>
+      'The profile can\'t be deleted while a game is running.';
+
+  /// en: 'Profiles can't be changed until the current change finishes.'
+  String get changing =>
+      'Profiles can\'t be changed until the current change finishes.';
+
   late final Translations$profiles$create$en create =
       Translations$profiles$create$en.internal(_root);
 }
@@ -855,14 +866,6 @@ class Translations$profiles$create$en {
 
   /// en: 'A profile with this name already exists.'
   String get nameTaken => 'A profile with this name already exists.';
-
-  /// en: 'Choose the folder where this profile keeps its NAND, saves, cheats and settings.'
-  String get userDirectoryDescription =>
-      'Choose the folder where this profile keeps its NAND, saves, cheats and settings.';
-
-  /// en: 'Choose the folder this profile scans for games.'
-  String get gamesDirectoryDescription =>
-      'Choose the folder this profile scans for games.';
 
   /// en: 'Create'
   String get create => 'Create';
@@ -2925,6 +2928,11 @@ extension on Translations {
           'profiles.add' => 'Add Profile',
           'profiles.gameRunning' =>
             'The profile can\'t be switched while a game is running.',
+          'profiles.delete' => 'Delete',
+          'profiles.deleteGameRunning' =>
+            'The profile can\'t be deleted while a game is running.',
+          'profiles.changing' =>
+            'Profiles can\'t be changed until the current change finishes.',
           'profiles.create.title' => 'New Profile',
           'profiles.create.nameTitle' => 'Profile Name',
           'profiles.create.nameDescription' =>
@@ -2933,10 +2941,6 @@ extension on Translations {
           'profiles.create.nameEmpty' => 'Enter a profile name.',
           'profiles.create.nameTaken' =>
             'A profile with this name already exists.',
-          'profiles.create.userDirectoryDescription' =>
-            'Choose the folder where this profile keeps its NAND, saves, cheats and settings.',
-          'profiles.create.gamesDirectoryDescription' =>
-            'Choose the folder this profile scans for games.',
           'profiles.create.create' => 'Create',
           'setup.next' => 'Next',
           'setup.skip' => 'Skip',
@@ -3542,10 +3546,10 @@ extension on Translations {
           'settings.system.countries.slovakia' => 'Slovakia',
           'settings.system.countries.slovenia' => 'Slovenia',
           'settings.system.countries.southAfrica' => 'South Africa',
-          'settings.system.countries.spain' => 'Spain',
           _ => null,
         } ??
         switch (path) {
+          'settings.system.countries.spain' => 'Spain',
           'settings.system.countries.swaziland' => 'Swaziland',
           'settings.system.countries.sweden' => 'Sweden',
           'settings.system.countries.switzerland' => 'Switzerland',

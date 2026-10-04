@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 
 import '../database.dart';
 import '../profiles/profile.dart';
+import 'deletable.dart';
 import 'key_value_repository.dart';
 
 /// Thrown when a profile is created with the name of an existing profile.
@@ -15,7 +16,7 @@ class DuplicateProfileNameException implements Exception {
 }
 
 /// Stores the profiles and which of them is the default one.
-class ProfileRepository extends KeyValueRepository {
+class ProfileRepository extends KeyValueRepository implements Deletable<String> {
   ProfileRepository(super.db);
 
   final String _defaultProfileKey = 'default_profile';
@@ -102,6 +103,13 @@ class ProfileRepository extends KeyValueRepository {
             : Value(gamesDirectory),
       ),
     );
+  }
+
+  @override
+  Future<void> delete(String cuid) {
+    return (db.delete(
+      db.profiles,
+    )..where((tbl) => tbl.cuid.equals(cuid))).go();
   }
 
   Future<String?> defaultProfileCuid() => read(_defaultProfileKey);

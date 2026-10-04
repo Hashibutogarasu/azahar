@@ -5,12 +5,7 @@ part of 'app_routes.dart';
 @TypedShellRoute<ProfileCreateShellRoute>(
   routes: [
     TypedGoRoute<ProfileNameRoute>(path: '/profiles/new/name'),
-    TypedGoRoute<ProfileUserDirectoryRoute>(
-      path: '/profiles/new/user-directory',
-    ),
-    TypedGoRoute<ProfileGamesDirectoryRoute>(
-      path: '/profiles/new/games-directory',
-    ),
+    TypedGoRoute<ProfileDirectoriesRoute>(path: '/profiles/new/directories'),
   ],
 )
 class ProfileCreateShellRoute extends ShellRouteData {
@@ -31,22 +26,12 @@ class ProfileNameRoute extends AppRouteData with $ProfileNameRoute {
   }
 }
 
-class ProfileUserDirectoryRoute extends AppRouteData
-    with $ProfileUserDirectoryRoute {
-  const ProfileUserDirectoryRoute();
+class ProfileDirectoriesRoute extends AppRouteData
+    with $ProfileDirectoriesRoute {
+  const ProfileDirectoriesRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const ProfileUserDirectoryPage();
-  }
-}
-
-class ProfileGamesDirectoryRoute extends AppRouteData
-    with $ProfileGamesDirectoryRoute {
-  const ProfileGamesDirectoryRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const ProfileGamesDirectoryPage();
+    return const ProfileDirectoriesPage();
   }
 }

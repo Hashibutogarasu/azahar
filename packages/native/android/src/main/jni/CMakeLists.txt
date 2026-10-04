@@ -91,6 +91,7 @@ add_custom_target(azahar_rust_lib
 
 # Only the library of the application contains the crate. It loads the library of the session.
 add_dependencies(citra-android azahar_rust_lib)
+target_sources(citra-android PRIVATE host_storage.cpp)
 target_link_libraries(citra-android PRIVATE
     -Wl,--whole-archive
     "${AZAHAR_RUST_LIB}"

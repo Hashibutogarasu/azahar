@@ -15,15 +15,20 @@ import '../../../widgets/app_liquid_glass.dart';
 /// assertion; passing `backgroundColor: Colors.transparent` through to it and painting the same
 /// color on an outer [Material] keeps the same look while giving `ListTile` an unobstructed
 /// `Material` ancestor to paint its background/ink splashes onto.
+///
+/// When [enabled] is false the title is shown in the disabled style and the items ignore input.
+/// The items show their own disabled style, since only they know how they look when disabled.
 class SettingsGroupCard extends ConsumerWidget {
   const SettingsGroupCard({
     super.key,
     this.settingsGroupTitle,
     this.trailing,
     required this.items,
+    this.enabled = true,
   });
 
   final String? settingsGroupTitle;
+  final bool enabled;
 
   /// Shown at the right end of the title row, such as an action that applies to the whole group.
   final Widget? trailing;
@@ -45,9 +50,10 @@ class SettingsGroupCard extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       settingsGroupTitle!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
+                        color: enabled ? null : Theme.of(context).disabledColor,
                       ),
                     ),
                   ),
@@ -63,10 +69,16 @@ class SettingsGroupCard extends ConsumerWidget {
                 : Theme.of(context).cardColor,
             borderColor: surfaceTheme.borderColor,
             backdropBlur: !ref.watch(performanceImprovementsProvider),
-            child: babstrap.SettingsGroup(
-              backgroundColor: Colors.transparent,
-              margin: EdgeInsets.zero,
-              items: items,
+            child: ExcludeFocus(
+              excluding: !enabled,
+              child: IgnorePointer(
+                ignoring: !enabled,
+                child: babstrap.SettingsGroup(
+                  backgroundColor: Colors.transparent,
+                  margin: EdgeInsets.zero,
+                  items: items,
+                ),
+              ),
             ),
           ),
         ],

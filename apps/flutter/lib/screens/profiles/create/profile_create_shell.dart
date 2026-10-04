@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../i18n/translations.g.dart';
+import '../../../widgets/busy_pop_scope.dart';
 import 'profile_draft_provider.dart';
 
 /// The layout shared by the pages for adding a profile. It keeps [profileDraftProvider] alive
@@ -14,9 +15,14 @@ class ProfileCreateShell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(profileDraftProvider);
-    return Scaffold(
-      appBar: AppBar(title: Text(context.t.profiles.create.title)),
-      body: SafeArea(child: child),
+    return BusyPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          leading: busyBackButtonFor(context),
+          title: Text(context.t.profiles.create.title),
+        ),
+        body: SafeArea(child: child),
+      ),
     );
   }
 }
