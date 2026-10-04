@@ -74,8 +74,8 @@ void InitJNI(JNIEnv* env) {
 
     s_mii_selector_execute =
         env->GetStaticMethodID(s_mii_selector_class, "Execute",
-                               "(Lcom/karasu256/azahar_reloaded/lib/azahar_for_flutter/applets/MiiSelector$MiiSelectorConfig;)Lorg/"
-                               "citra/citra_emu/applets/MiiSelector$MiiSelectorData;");
+                               "(Lcom/karasu256/azahar_reloaded/lib/azahar_for_flutter/applets/MiiSelector$MiiSelectorConfig;)"
+                               "Lcom/karasu256/azahar_reloaded/lib/azahar_for_flutter/applets/MiiSelector$MiiSelectorData;");
 }
 
 void CleanupJNI(JNIEnv* env) {
