@@ -1,14 +1,17 @@
 import 'dart:io';
 
+import '../gamepad/actions/gamepad_action_registry.dart';
 import '../master/repositories/games_directory_repository.dart';
 import '../repositories/installed_titles_repository.dart';
 import '../repositories/loadable.dart';
 import '../settings/control_bindings_value_store.dart';
 import 'repositories/accessibility_settings_repository.dart';
 import 'repositories/advanced_settings_repository.dart';
+import 'repositories/app_key_bindings_repository.dart';
 import 'repositories/artic_base_address_repository.dart';
 import 'repositories/control_bindings_repository.dart';
 import 'repositories/debug_settings_repository.dart';
+import 'repositories/emulation_key_bindings_repository.dart';
 import 'repositories/feature_flags_repository.dart';
 import 'repositories/game_repository.dart';
 import 'repositories/input_layout_repository.dart';
@@ -41,6 +44,14 @@ class UserSession {
     controlBindingsValueStore = ControlBindingsValueStore(
       controlBindingsRepository,
     );
+    appKeyBindingsRepository = AppKeyBindingsRepository(
+      database,
+      GamepadActionRegistry.standard,
+    );
+    emulationKeyBindingsRepository = EmulationKeyBindingsRepository(
+      database,
+      GamepadActionRegistry.standard,
+    );
     inputLayoutRepository = InputLayoutRepository(database);
     themeSettingsRepository = ThemeSettingsRepository(database);
     accessibilitySettingsRepository = AccessibilitySettingsRepository(database);
@@ -64,6 +75,8 @@ class UserSession {
   late final GameRepository gameRepository;
   late final ControlBindingsRepository controlBindingsRepository;
   late final ControlBindingsValueStore controlBindingsValueStore;
+  late final AppKeyBindingsRepository appKeyBindingsRepository;
+  late final EmulationKeyBindingsRepository emulationKeyBindingsRepository;
   late final InputLayoutRepository inputLayoutRepository;
   late final ThemeSettingsRepository themeSettingsRepository;
   late final AccessibilitySettingsRepository accessibilitySettingsRepository;
@@ -90,6 +103,8 @@ class UserSession {
 
   List<Loadable> get loadables => [
     controlBindingsValueStore,
+    appKeyBindingsRepository,
+    emulationKeyBindingsRepository,
     languageCodeRepository,
     legacySettingsUiRepository,
     featureFlagsRepository,

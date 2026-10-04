@@ -20,9 +20,11 @@ import 'data/settings/emulator_settings_repository.dart';
 import 'data/settings/system_save_repository.dart';
 import 'data/user/repositories/accessibility_settings_repository.dart';
 import 'data/user/repositories/advanced_settings_repository.dart';
+import 'data/user/repositories/app_key_bindings_repository.dart';
 import 'data/user/repositories/artic_base_address_repository.dart';
 import 'data/user/repositories/control_bindings_repository.dart';
 import 'data/user/repositories/debug_settings_repository.dart';
+import 'data/user/repositories/emulation_key_bindings_repository.dart';
 import 'data/user/repositories/feature_flags_repository.dart';
 import 'data/user/repositories/game_repository.dart';
 import 'data/user/repositories/input_layout_repository.dart';
@@ -116,6 +118,10 @@ abstract final class AppServices {
       userSessions.current.controlBindingsRepository;
   static ControlBindingsValueStore get controlBindingsValueStore =>
       userSessions.current.controlBindingsValueStore;
+  static AppKeyBindingsRepository get appKeyBindingsRepository =>
+      userSessions.current.appKeyBindingsRepository;
+  static EmulationKeyBindingsRepository get emulationKeyBindingsRepository =>
+      userSessions.current.emulationKeyBindingsRepository;
   static InputLayoutRepository get inputLayoutRepository =>
       userSessions.current.inputLayoutRepository;
   static ThemeSettingsRepository get themeSettingsRepository =>

@@ -21,6 +21,7 @@ import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.camera.StillImageCam
 import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.channel.AzaharMethodHandler
 import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.channel.CheatsController
 import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.channel.CiaInstallController
+import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.channel.ControllerMotionController
 import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.channel.DirectoryController
 import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.channel.EmulationController
 import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.channel.GameActionsController
@@ -86,6 +87,7 @@ internal class MainEngineSession(
     private val systemVolumeController = SystemVolumeController(activity)
     private val mediaNotificationController = MediaNotificationController(activity)
     private val gamepadController = GamepadController()
+    private val controllerMotionController = ControllerMotionController(activity)
 
     /** The game the host activity was started to launch, until Dart takes it. */
     @Volatile
@@ -193,6 +195,10 @@ internal class MainEngineSession(
             mediaNotificationController.createPlayPauseEventStreamHandler()
         )
         registerEventChannel(GAMEPAD_CHANNEL, gamepadController.createStreamHandler())
+        registerEventChannel(
+            CONTROLLER_MOTION_CHANNEL,
+            controllerMotionController.createStreamHandler()
+        )
 
         methodChannel.setMethodCallHandler { call, result ->
             handlers[call.method]?.execute(call, result) ?: result.notImplemented()
@@ -241,6 +247,8 @@ internal class MainEngineSession(
         const val COPY_PROGRESS_CHANNEL = "org.citra.citra_emu/azahar_bridge/copy_progress"
         const val LOG_LINES_CHANNEL = "org.citra.citra_emu/azahar_bridge/log_lines"
         const val GAMEPAD_CHANNEL = "org.citra.citra_emu/azahar_bridge/gamepad_events"
+        const val CONTROLLER_MOTION_CHANNEL =
+            "org.citra.citra_emu/azahar_bridge/controller_motion"
         const val SYSTEM_VOLUME_CHANNEL = "org.citra.citra_emu/azahar_bridge/system_volume"
         const val MEDIA_NOTIFICATION_STOP_CHANNEL =
             "org.citra.citra_emu/azahar_bridge/media_notification_stop"

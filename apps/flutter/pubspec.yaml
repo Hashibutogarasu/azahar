@@ -41,7 +41,6 @@ dependencies:
   sqlite3: ^3.7.0
   sqlite3_flutter_libs: ^0.6.0+eol
   stack_trace: ^1.12.2
-  universal_gamepad: ^1.5.8
   url_launcher: ^6.3.2
 
 dev_dependencies:

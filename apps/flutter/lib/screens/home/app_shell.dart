@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../data/gamepad/shell_navigation_provider.dart';
 import '../../data/platform_provider.dart';
 import '../../data/settings/accessibility_settings_provider.dart';
 import '../../data/settings/advanced_settings_provider.dart';
@@ -11,13 +12,15 @@ import '../../theme/extensions/app_navigation_bar_theme.dart';
 import '../../theme/extensions/background_blob_theme.dart';
 import '../../widgets/app_nav_bar.dart';
 import '../../widgets/background_blobs.dart';
+import '../../widgets/gamepad/gamepad_focus_region.dart';
+import '../../widgets/gamepad_notification_bar.dart';
 import 'desktop_app_shell.dart';
 
 /// The bottom navigation shell across the Games/Options tabs, mirroring the original app's
 /// `MainScreen` + `MainBottomNavigation`. Every other screen (emulation, settings, ...) lives
 /// outside this shell. [AppNavBar]'s shape (floating pill vs. flush full-width bar) comes
-/// entirely from the active [AppNavigationBarTheme]. The decorative background blobs are drawn
-/// here too, so every branch gets them without each page having to add its own.
+/// entirely from the active [AppNavigationBarTheme]. The decorative background blobs and the
+/// [GamepadNotificationBar] are placed here too, so every branch gets them.
 ///
 /// When the nav bar floats (a translucent pill, not [AppNavigationBarTheme.stretchToFullWidth]),
 /// content is allowed to run edge-to-edge behind it instead of reserving opaque space for it,
@@ -38,6 +41,19 @@ class AppShell extends ConsumerStatefulWidget {
 
 class _AppShellState extends ConsumerState<AppShell> {
   bool _navBarVisible = true;
+  late final ShellNavigationController _shellNavigation;
+
+  @override
+  void initState() {
+    super.initState();
+    _shellNavigation = ref.read(shellNavigationProvider);
+  }
+
+  @override
+  void dispose() {
+    _shellNavigation.detach(widget.navigationShell);
+    super.dispose();
+  }
 
   bool _handleScrollNotification(UserScrollNotification notification) {
     switch (notification.direction) {
@@ -53,6 +69,7 @@ class _AppShellState extends ConsumerState<AppShell> {
 
   @override
   Widget build(BuildContext context) {
+    _shellNavigation.attach(widget.navigationShell);
     final navBarTheme = Theme.of(context).extension<AppNavigationBarTheme>()!;
     final blobVariant =
         BackgroundBlobVariant.values[widget.navigationShell.currentIndex];
@@ -73,35 +90,43 @@ class _AppShellState extends ConsumerState<AppShell> {
         child: Stack(
           children: [
             Positioned.fill(child: BackgroundBlobs(variant: blobVariant)),
-            if (navBarTheme.stretchToFullWidth)
-              _NavBarInsets(
-                navBarTheme: navBarTheme,
-                child: widget.navigationShell,
-              )
-            else
-              widget.navigationShell,
-            AnimatedPositioned(
-              duration: animationDuration,
-              curve: Curves.easeInOut,
-              left: navBarTheme.horizontalMargin,
-              right: navBarTheme.horizontalMargin,
-              bottom: _navBarVisible
-                  ? navBarTheme.bottomMargin
-                  : hiddenBottomOffset,
-              child: AnimatedOpacity(
-                duration: animationDuration,
-                opacity: _navBarVisible ? 1 : 0,
-                child: navBarTheme.stretchToFullWidth
-                    ? AppNavBar(
-                        navigationShell: widget.navigationShell,
-                        animationDuration: animationDuration,
-                      )
-                    : Center(
-                        child: AppNavBar(
-                          navigationShell: widget.navigationShell,
-                          animationDuration: animationDuration,
-                        ),
+            GamepadNotificationColumn(
+              child: Stack(
+                children: [
+                  if (navBarTheme.stretchToFullWidth)
+                    _NavBarInsets(
+                      navBarTheme: navBarTheme,
+                      child: widget.navigationShell,
+                    )
+                  else
+                    widget.navigationShell,
+                  AnimatedPositioned(
+                    duration: animationDuration,
+                    curve: Curves.easeInOut,
+                    left: navBarTheme.horizontalMargin,
+                    right: navBarTheme.horizontalMargin,
+                    bottom: _navBarVisible
+                        ? navBarTheme.bottomMargin
+                        : hiddenBottomOffset,
+                    child: AnimatedOpacity(
+                      duration: animationDuration,
+                      opacity: _navBarVisible ? 1 : 0,
+                      child: GamepadFocusRegion(
+                        child: navBarTheme.stretchToFullWidth
+                            ? AppNavBar(
+                                navigationShell: widget.navigationShell,
+                                animationDuration: animationDuration,
+                              )
+                            : Center(
+                                child: AppNavBar(
+                                  navigationShell: widget.navigationShell,
+                                  animationDuration: animationDuration,
+                                ),
+                              ),
                       ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

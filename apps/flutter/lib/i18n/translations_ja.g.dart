@@ -60,6 +60,10 @@ class TranslationsJa extends Translations
   @override
   late final _Translations$common$ja common = _Translations$common$ja._(_root);
   @override
+  late final _Translations$gamepad$ja gamepad = _Translations$gamepad$ja._(
+    _root,
+  );
+  @override
   Map<String, String> get tags => {
     'all': 'すべて',
     'system': 'システム',
@@ -118,6 +122,21 @@ class _Translations$common$ja extends Translations$common$en {
   String get cancel => 'キャンセル';
   @override
   String get save => '保存';
+}
+
+// Path: gamepad
+class _Translations$gamepad$ja extends Translations$gamepad$en {
+  _Translations$gamepad$ja._(TranslationsJa root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsJa _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get connected => '外部コントローラーが接続されました。';
+  @override
+  String get disconnected => '外部コントローラーが切断されました。';
 }
 
 // Path: profiles
@@ -389,6 +408,8 @@ class _Translations$emulation$ja extends Translations$emulation$en {
   String get save => '保存';
   @override
   String get discard => '破棄';
+  @override
+  String get showVirtualGamepad => '画面上のコントローラーを表示';
 }
 
 // Path: applets
@@ -1633,7 +1654,7 @@ class _Translations$settings$gamepad$ja
   @override
   String get invertGyroHorizontalDescription => 'ジャイロスコープの水平方向（ヨー）の軸を反転します。';
   @override
-  String get genericButtons => 'ボタン';
+  String get consoleControls => '3DS の操作';
   @override
   String get buttonA => 'A';
   @override
@@ -1653,20 +1674,6 @@ class _Translations$settings$gamepad$ja
   @override
   String get cStick => 'Cスティック';
   @override
-  String get axisVertical => '上下軸';
-  @override
-  String get axisHorizontal => '左右軸';
-  @override
-  String get dpadAxis => '十字キー（軸）';
-  @override
-  String get dpadAxisDescription =>
-      'コントローラーによっては十字キーを軸としてマッピングできない場合があります。その場合は十字キー（ボタン）のセクションを使用してください。';
-  @override
-  String get dpadButtons => '十字キー（ボタン）';
-  @override
-  String get dpadButtonsDescription =>
-      '十字キー（軸）のボタンマッピングで問題がある場合のみ、こちらに十字キーをマッピングしてください。';
-  @override
   String get buttonUp => '上';
   @override
   String get buttonDown => '下';
@@ -1674,8 +1681,6 @@ class _Translations$settings$gamepad$ja
   String get buttonLeft => '左';
   @override
   String get buttonRight => '右';
-  @override
-  String get triggers => 'トリガー';
   @override
   String get buttonL => 'L';
   @override
@@ -1705,6 +1710,36 @@ class _Translations$settings$gamepad$ja
   @override
   String get useArticBaseControllerDescription =>
       'Artic Baseサーバーに接続している間、設定した入力デバイスの代わりにサーバーが提供するコントロールを使用します。';
+  @override
+  String get appControls => 'アプリ操作';
+  @override
+  String get emulationControls => 'エミュレーション操作';
+  @override
+  String get actionPreviousPage => '前のページ';
+  @override
+  String get actionNextPage => '次のページ';
+  @override
+  String get actionPreviousFocusRegion => '前の領域';
+  @override
+  String get actionNextFocusRegion => '次の領域';
+  @override
+  String get actionMoveFocusUp => '上へ移動';
+  @override
+  String get actionMoveFocusDown => '下へ移動';
+  @override
+  String get actionMoveFocusLeft => '左へ移動';
+  @override
+  String get actionMoveFocusRight => '右へ移動';
+  @override
+  String get actionActivate => '決定';
+  @override
+  String get actionCancel => 'キャンセル';
+  @override
+  String get actionOpenContextMenu => 'メニューを開く';
+  @override
+  String get actionToggleEmulationFocus => 'ゲームとメニューの切り替え';
+  @override
+  String get notBound => '未設定';
 }
 
 // Path: settings.layout
@@ -2344,6 +2379,8 @@ extension on TranslationsJa {
           'appName' => 'Azahar',
           'common.cancel' => 'キャンセル',
           'common.save' => '保存',
+          'gamepad.connected' => '外部コントローラーが接続されました。',
+          'gamepad.disconnected' => '外部コントローラーが切断されました。',
           'tags.all' => 'すべて',
           'tags.system' => 'システム',
           'tags.userInstalled' => 'ユーザー',
@@ -2511,6 +2548,7 @@ extension on TranslationsJa {
           'emulation.gameEndedMessage' => 'ゲームを開始してから保存した内容を保存しますか？それとも破棄しますか？',
           'emulation.save' => '保存',
           'emulation.discard' => '破棄',
+          'emulation.showVirtualGamepad' => '画面上のコントローラーを表示',
           'applets.softwareKeyboard' => 'ソフトウェアキーボード',
           'applets.iForgot' => '忘れました',
           'applets.standardMii' => '標準のMii',
@@ -2926,12 +2964,12 @@ extension on TranslationsJa {
           'settings.system.countries.liechtenstein' => 'リヒテンシュタイン',
           'settings.system.countries.lithuania' => 'リトアニア',
           'settings.system.countries.luxembourg' => 'ルクセンブルク',
-          'settings.system.countries.macedonia' => 'マケドニア',
-          'settings.system.countries.malta' => 'マルタ',
-          'settings.system.countries.montenegro' => 'モンテネグロ',
           _ => null,
         } ??
         switch (path) {
+          'settings.system.countries.macedonia' => 'マケドニア',
+          'settings.system.countries.malta' => 'マルタ',
+          'settings.system.countries.montenegro' => 'モンテネグロ',
           'settings.system.countries.mozambique' => 'モザンビーク',
           'settings.system.countries.namibia' => 'ナミビア',
           'settings.system.countries.netherlands' => 'オランダ',
@@ -3039,7 +3077,7 @@ extension on TranslationsJa {
           'settings.gamepad.invertGyroHorizontal' => 'ジャイロの水平軸を反転',
           'settings.gamepad.invertGyroHorizontalDescription' =>
             'ジャイロスコープの水平方向（ヨー）の軸を反転します。',
-          'settings.gamepad.genericButtons' => 'ボタン',
+          'settings.gamepad.consoleControls' => '3DS の操作',
           'settings.gamepad.buttonA' => 'A',
           'settings.gamepad.buttonB' => 'B',
           'settings.gamepad.buttonX' => 'X',
@@ -3049,19 +3087,10 @@ extension on TranslationsJa {
           'settings.gamepad.buttonHome' => 'HOME',
           'settings.gamepad.circlePad' => 'サークルパッド',
           'settings.gamepad.cStick' => 'Cスティック',
-          'settings.gamepad.axisVertical' => '上下軸',
-          'settings.gamepad.axisHorizontal' => '左右軸',
-          'settings.gamepad.dpadAxis' => '十字キー（軸）',
-          'settings.gamepad.dpadAxisDescription' =>
-            'コントローラーによっては十字キーを軸としてマッピングできない場合があります。その場合は十字キー（ボタン）のセクションを使用してください。',
-          'settings.gamepad.dpadButtons' => '十字キー（ボタン）',
-          'settings.gamepad.dpadButtonsDescription' =>
-            '十字キー（軸）のボタンマッピングで問題がある場合のみ、こちらに十字キーをマッピングしてください。',
           'settings.gamepad.buttonUp' => '上',
           'settings.gamepad.buttonDown' => '下',
           'settings.gamepad.buttonLeft' => '左',
           'settings.gamepad.buttonRight' => '右',
-          'settings.gamepad.triggers' => 'トリガー',
           'settings.gamepad.buttonL' => 'L',
           'settings.gamepad.buttonR' => 'R',
           'settings.gamepad.buttonZl' => 'ZL',
@@ -3078,6 +3107,21 @@ extension on TranslationsJa {
             'Artic Baseサーバー接続時にArticコントローラーを使用',
           'settings.gamepad.useArticBaseControllerDescription' =>
             'Artic Baseサーバーに接続している間、設定した入力デバイスの代わりにサーバーが提供するコントロールを使用します。',
+          'settings.gamepad.appControls' => 'アプリ操作',
+          'settings.gamepad.emulationControls' => 'エミュレーション操作',
+          'settings.gamepad.actionPreviousPage' => '前のページ',
+          'settings.gamepad.actionNextPage' => '次のページ',
+          'settings.gamepad.actionPreviousFocusRegion' => '前の領域',
+          'settings.gamepad.actionNextFocusRegion' => '次の領域',
+          'settings.gamepad.actionMoveFocusUp' => '上へ移動',
+          'settings.gamepad.actionMoveFocusDown' => '下へ移動',
+          'settings.gamepad.actionMoveFocusLeft' => '左へ移動',
+          'settings.gamepad.actionMoveFocusRight' => '右へ移動',
+          'settings.gamepad.actionActivate' => '決定',
+          'settings.gamepad.actionCancel' => 'キャンセル',
+          'settings.gamepad.actionOpenContextMenu' => 'メニューを開く',
+          'settings.gamepad.actionToggleEmulationFocus' => 'ゲームとメニューの切り替え',
+          'settings.gamepad.notBound' => '未設定',
           'settings.layout.title' => 'レイアウト',
           'settings.layout.screenOrientation' => '画面の向き',
           'settings.layout.screenOrientationAutoSensor' => '自動',

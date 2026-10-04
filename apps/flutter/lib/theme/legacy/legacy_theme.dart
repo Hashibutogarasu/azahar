@@ -4,7 +4,9 @@ import '../extensions/app_navigation_bar_theme.dart';
 import '../extensions/app_search_bar_theme.dart';
 import '../extensions/app_toggle_switch_theme.dart';
 import '../extensions/background_blob_theme.dart';
+import '../extensions/emulation_focus_frame_theme.dart';
 import '../extensions/game_card_theme.dart';
+import '../extensions/gamepad_notification_bar_theme.dart';
 import '../extensions/glass_surface_theme.dart';
 import '../extensions/settings_list_item_theme.dart';
 
@@ -73,6 +75,8 @@ abstract final class LegacyTheme {
       AppToggleSwitchTheme.flat(colorScheme),
       GameCardTheme.flat(colorScheme),
       BackgroundBlobTheme.flat(colorScheme),
+      GamepadNotificationBarTheme.flat(colorScheme),
+      EmulationFocusFrameTheme.flat(colorScheme),
     ];
   }
 }

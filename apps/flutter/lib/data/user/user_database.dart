@@ -26,6 +26,8 @@ part 'tables/tags.dart';
 part 'tables/game_tags.dart';
 part 'tables/user_game_infos.dart';
 part 'tables/feature_flags.dart';
+part 'tables/app_key_bindings.dart';
+part 'tables/emulation_key_bindings.dart';
 
 /// The data of one profile: its settings, games, tags and controls.
 @DriftDatabase(
@@ -46,6 +48,8 @@ part 'tables/feature_flags.dart';
     GameTags,
     UserGameInfos,
     FeatureFlags,
+    AppKeyBindings,
+    EmulationKeyBindings,
   ],
 )
 class UserDatabase extends _$UserDatabase {
@@ -67,7 +71,7 @@ class UserDatabase extends _$UserDatabase {
   ];
 
   @override
-  int get schemaVersion => 18;
+  int get schemaVersion => 19;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -137,6 +141,10 @@ class UserDatabase extends _$UserDatabase {
       }
       if (from < 18) {
         await m.addColumn(mediaSettings, mediaSettings.audioEngine);
+      }
+      if (from < 19) {
+        await m.createTable(appKeyBindings);
+        await m.createTable(emulationKeyBindings);
       }
     },
   );

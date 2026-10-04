@@ -19,6 +19,7 @@ list(APPEND PLUGIN_SOURCES
   "native_bridge/wifi.cc"
   "native_bridge/cheats.cc"
   "native_bridge/gamepad.cc"
+  "native_bridge/controller_motion.cc"
 )
 
 # The core static libraries are linked into the executable, so the plugin is

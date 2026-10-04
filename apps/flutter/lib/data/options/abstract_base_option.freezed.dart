@@ -1659,7 +1659,7 @@ as List<EnumChoice<T>>,
 /// @nodoc
 mixin _$InputBindingOption {
 
- TranslationText get title; TranslationText? get description; IconData get icon; OptionValue<String> get value;
+ TranslationText get title; TranslationText? get description; IconData get icon; OptionValue<String> get value; InputBindingMode get mode;
 /// Create a copy of InputBindingOption
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1671,20 +1671,20 @@ $InputBindingOptionCopyWith<InputBindingOption> get copyWith => _$InputBindingOp
 @override
 bool operator ==(Object other) {
   final _this = this as InputBindingOption;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InputBindingOption&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.value, _this.value) || other.value == _this.value));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InputBindingOption&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.value, _this.value) || other.value == _this.value)&&(identical(other.mode, _this.mode) || other.mode == _this.mode));
 }
 
 
 @override
 int get hashCode {
   final _this = this as InputBindingOption;
-  return Object.hash(runtimeType,_this.title,_this.description,_this.icon,_this.value);
+  return Object.hash(runtimeType,_this.title,_this.description,_this.icon,_this.value,_this.mode);
 }
 
 @override
 String toString() {
   final _this = this as InputBindingOption;
-  return 'InputBindingOption(title: ${_this.title}, description: ${_this.description}, icon: ${_this.icon}, value: ${_this.value})';
+  return 'InputBindingOption(title: ${_this.title}, description: ${_this.description}, icon: ${_this.icon}, value: ${_this.value}, mode: ${_this.mode})';
 }
 
 
@@ -1695,7 +1695,7 @@ abstract mixin class $InputBindingOptionCopyWith<$Res>  {
   factory $InputBindingOptionCopyWith(InputBindingOption value, $Res Function(InputBindingOption) _then) = _$InputBindingOptionCopyWithImpl;
 @useResult
 $Res call({
- TranslationText title, TranslationText? description, IconData icon, OptionValue<String> value
+ TranslationText title, TranslationText? description, IconData icon, OptionValue<String> value, InputBindingMode mode
 });
 
 
@@ -1712,13 +1712,14 @@ class _$InputBindingOptionCopyWithImpl<$Res>
 
 /// Create a copy of InputBindingOption
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? description = freezed,Object? icon = null,Object? value = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? description = freezed,Object? icon = null,Object? value = null,Object? mode = null,}) {
   return _then(InputBindingOption(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as TranslationText,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as TranslationText?,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
 as IconData,value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
-as OptionValue<String>,
+as OptionValue<String>,mode: null == mode ? _self.mode : mode // ignore: cast_nullable_to_non_nullable
+as InputBindingMode,
   ));
 }
 
@@ -1803,10 +1804,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( TranslationText title,  TranslationText? description,  IconData icon,  OptionValue<String> value)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( TranslationText title,  TranslationText? description,  IconData icon,  OptionValue<String> value,  InputBindingMode mode)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _InputBindingOption() when $default != null:
-return $default(_that.title,_that.description,_that.icon,_that.value);case _:
+return $default(_that.title,_that.description,_that.icon,_that.value,_that.mode);case _:
   return orElse();
 
 }
@@ -1824,10 +1825,10 @@ return $default(_that.title,_that.description,_that.icon,_that.value);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( TranslationText title,  TranslationText? description,  IconData icon,  OptionValue<String> value)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( TranslationText title,  TranslationText? description,  IconData icon,  OptionValue<String> value,  InputBindingMode mode)  $default,) {final _that = this;
 switch (_that) {
 case _InputBindingOption():
-return $default(_that.title,_that.description,_that.icon,_that.value);case _:
+return $default(_that.title,_that.description,_that.icon,_that.value,_that.mode);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1844,10 +1845,10 @@ return $default(_that.title,_that.description,_that.icon,_that.value);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( TranslationText title,  TranslationText? description,  IconData icon,  OptionValue<String> value)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( TranslationText title,  TranslationText? description,  IconData icon,  OptionValue<String> value,  InputBindingMode mode)?  $default,) {final _that = this;
 switch (_that) {
 case _InputBindingOption() when $default != null:
-return $default(_that.title,_that.description,_that.icon,_that.value);case _:
+return $default(_that.title,_that.description,_that.icon,_that.value,_that.mode);case _:
   return null;
 
 }
@@ -1859,13 +1860,14 @@ return $default(_that.title,_that.description,_that.icon,_that.value);case _:
 
 
 class _InputBindingOption extends InputBindingOption {
-  const _InputBindingOption({required this.title, this.description, required this.icon, required this.value}): super._();
+  const _InputBindingOption({required this.title, this.description, required this.icon, required this.value, this.mode = InputBindingMode.rawKey}): super._();
   
 
 @override final  TranslationText title;
 @override final  TranslationText? description;
 @override final  IconData icon;
 @override final  OptionValue<String> value;
+@override@JsonKey() final  InputBindingMode mode;
 
 /// Create a copy of InputBindingOption
 /// with the given fields replaced by the non-null parameter values.
@@ -1877,18 +1879,18 @@ _$InputBindingOptionCopyWith<_InputBindingOption> get copyWith => __$InputBindin
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InputBindingOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InputBindingOption&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.value, value) || other.value == value)&&(identical(other.mode, mode) || other.mode == mode));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,title,description,icon,value);
+    return Object.hash(runtimeType,title,description,icon,value,mode);
 }
 
 @override
 String toString() {
-    return 'InputBindingOption(title: $title, description: $description, icon: $icon, value: $value)';
+    return 'InputBindingOption(title: $title, description: $description, icon: $icon, value: $value, mode: $mode)';
 }
 
 
@@ -1899,7 +1901,7 @@ abstract mixin class _$InputBindingOptionCopyWith<$Res> implements $InputBinding
   factory _$InputBindingOptionCopyWith(_InputBindingOption value, $Res Function(_InputBindingOption) _then) = __$InputBindingOptionCopyWithImpl;
 @override @useResult
 $Res call({
- TranslationText title, TranslationText? description, IconData icon, OptionValue<String> value
+ TranslationText title, TranslationText? description, IconData icon, OptionValue<String> value, InputBindingMode mode
 });
 
 
@@ -1916,13 +1918,14 @@ class __$InputBindingOptionCopyWithImpl<$Res>
 
 /// Create a copy of InputBindingOption
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? icon = null,Object? value = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? description = freezed,Object? icon = null,Object? value = null,Object? mode = null,}) {
   return _then(_InputBindingOption(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as TranslationText,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as TranslationText?,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
 as IconData,value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
-as OptionValue<String>,
+as OptionValue<String>,mode: null == mode ? _self.mode : mode // ignore: cast_nullable_to_non_nullable
+as InputBindingMode,
   ));
 }
 

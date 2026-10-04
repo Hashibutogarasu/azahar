@@ -1,6 +1,7 @@
 part of '../abstract_base_option.dart';
 
-/// A gamepad button or axis bound by pressing it. The value is the key of the bound input.
+/// A gamepad button, key combination or stick bound by pressing it. The value is the bound input,
+/// written as [mode] describes.
 @freezed
 abstract class InputBindingOption
     with _$InputBindingOption, WidgetConvertable
@@ -12,6 +13,7 @@ abstract class InputBindingOption
     TranslationText? description,
     required IconData icon,
     required OptionValue<String> value,
+    @Default(InputBindingMode.rawKey) InputBindingMode mode,
   }) = _InputBindingOption;
 
   @override

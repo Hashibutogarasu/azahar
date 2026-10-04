@@ -7,7 +7,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   desktop_multi_window
   dynamic_color
   gamepads_linux
-  universal_gamepad
   url_launcher_linux
 )
 

@@ -15,6 +15,7 @@ import '../models/gamepad_context.dart';
 import '../models/gpu_driver_info.dart';
 import '../models/installed_title_path.dart';
 import '../models/shader_cache_backend.dart';
+import '../models/vec3.dart';
 import '../models/wifi_channel.dart';
 import '../rust/api/storage.dart' as rust_storage;
 
@@ -38,6 +39,9 @@ class NativeBridge {
       ),
       _gamePadChannel = const EventChannel(
         'org.citra.citra_emu/azahar_bridge/gamepad_events',
+      ),
+      _controllerMotionChannel = const EventChannel(
+        'org.citra.citra_emu/azahar_bridge/controller_motion',
       ) {
     _channel.setMethodCallHandler(_handleNativeCall);
   }
@@ -49,6 +53,7 @@ class NativeBridge {
   final EventChannel _systemVolumeChannel;
   final EventChannel _logLinesChannel;
   final EventChannel _gamePadChannel;
+  final EventChannel _controllerMotionChannel;
   final _closeRequestedController = StreamController<void>.broadcast();
   final _launchRequestedController = StreamController<String>.broadcast();
 
@@ -102,6 +107,21 @@ class NativeBridge {
       (event) =>
           GamePadContext.fromMap((event as Map).cast<Object?, Object?>()),
     );
+  }
+
+  /// Reports the motion sensors built into a connected game controller, with the acceleration in
+  /// m/s² and the rotation rate in rad/s, in the axes the platform reports them in. The sensors
+  /// are only read while the stream is listened to.
+  Stream<({Vec3 accel, Vec3 gyro})> controllerMotion() {
+    return _controllerMotionChannel.receiveBroadcastStream().map((event) {
+      final map = (event as Map).cast<Object?, Object?>();
+      Vec3 vector(Object? value) {
+        final list = (value as List).cast<num>();
+        return Vec3(list[0].toDouble(), list[1].toDouble(), list[2].toDouble());
+      }
+
+      return (accel: vector(map['accel']), gyro: vector(map['gyro']));
+    });
   }
 
   Future<String?> openUserDirectory() {

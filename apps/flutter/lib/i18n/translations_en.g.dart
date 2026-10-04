@@ -61,6 +61,9 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$common$en common = Translations$common$en.internal(
     _root,
   );
+  late final Translations$gamepad$en gamepad = Translations$gamepad$en.internal(
+    _root,
+  );
   Map<String, String> get tags => {
     'all': 'All',
     'system': 'System',
@@ -111,6 +114,21 @@ class Translations$common$en {
 
   /// en: 'Save'
   String get save => 'Save';
+}
+
+// Path: gamepad
+class Translations$gamepad$en {
+  Translations$gamepad$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'An external controller was connected.'
+  String get connected => 'An external controller was connected.';
+
+  /// en: 'An external controller was disconnected.'
+  String get disconnected => 'An external controller was disconnected.';
 }
 
 // Path: profiles
@@ -458,6 +476,9 @@ class Translations$emulation$en {
 
   /// en: 'Discard'
   String get discard => 'Discard';
+
+  /// en: 'Show On-Screen Controller'
+  String get showVirtualGamepad => 'Show On-Screen Controller';
 }
 
 // Path: applets
@@ -2014,8 +2035,8 @@ class Translations$settings$gamepad$en {
   String get invertGyroHorizontalDescription =>
       'Invert the gyroscope\'s horizontal (yaw) axis.';
 
-  /// en: 'Buttons'
-  String get genericButtons => 'Buttons';
+  /// en: '3DS Controls'
+  String get consoleControls => '3DS Controls';
 
   /// en: 'A'
   String get buttonA => 'A';
@@ -2044,26 +2065,6 @@ class Translations$settings$gamepad$en {
   /// en: 'C-Stick'
   String get cStick => 'C-Stick';
 
-  /// en: 'Up/Down Axis'
-  String get axisVertical => 'Up/Down Axis';
-
-  /// en: 'Left/Right Axis'
-  String get axisHorizontal => 'Left/Right Axis';
-
-  /// en: 'D-Pad (Axis)'
-  String get dpadAxis => 'D-Pad (Axis)';
-
-  /// en: 'Some controllers may not be able to map their D-pad as an axis. If that's the case, use the D-Pad (buttons) section.'
-  String get dpadAxisDescription =>
-      'Some controllers may not be able to map their D-pad as an axis. If that\'s the case, use the D-Pad (buttons) section.';
-
-  /// en: 'D-Pad (Button)'
-  String get dpadButtons => 'D-Pad (Button)';
-
-  /// en: 'Only map the D-pad to these if you're facing issues with the D-Pad (Axis) button mappings.'
-  String get dpadButtonsDescription =>
-      'Only map the D-pad to these if you\'re facing issues with the D-Pad (Axis) button mappings.';
-
   /// en: 'Up'
   String get buttonUp => 'Up';
 
@@ -2075,9 +2076,6 @@ class Translations$settings$gamepad$en {
 
   /// en: 'Right'
   String get buttonRight => 'Right';
-
-  /// en: 'Triggers'
-  String get triggers => 'Triggers';
 
   /// en: 'L'
   String get buttonL => 'L';
@@ -2122,6 +2120,51 @@ class Translations$settings$gamepad$en {
   /// en: 'Use the controls provided by Artic Base Server when connected to it instead of the configured input device.'
   String get useArticBaseControllerDescription =>
       'Use the controls provided by Artic Base Server when connected to it instead of the configured input device.';
+
+  /// en: 'App Controls'
+  String get appControls => 'App Controls';
+
+  /// en: 'Emulation Controls'
+  String get emulationControls => 'Emulation Controls';
+
+  /// en: 'Previous Page'
+  String get actionPreviousPage => 'Previous Page';
+
+  /// en: 'Next Page'
+  String get actionNextPage => 'Next Page';
+
+  /// en: 'Previous Area'
+  String get actionPreviousFocusRegion => 'Previous Area';
+
+  /// en: 'Next Area'
+  String get actionNextFocusRegion => 'Next Area';
+
+  /// en: 'Move Up'
+  String get actionMoveFocusUp => 'Move Up';
+
+  /// en: 'Move Down'
+  String get actionMoveFocusDown => 'Move Down';
+
+  /// en: 'Move Left'
+  String get actionMoveFocusLeft => 'Move Left';
+
+  /// en: 'Move Right'
+  String get actionMoveFocusRight => 'Move Right';
+
+  /// en: 'Select'
+  String get actionActivate => 'Select';
+
+  /// en: 'Cancel'
+  String get actionCancel => 'Cancel';
+
+  /// en: 'Open Menu'
+  String get actionOpenContextMenu => 'Open Menu';
+
+  /// en: 'Switch Between Game and Menu'
+  String get actionToggleEmulationFocus => 'Switch Between Game and Menu';
+
+  /// en: 'Not set'
+  String get notBound => 'Not set';
 }
 
 // Path: settings.layout
@@ -2976,6 +3019,8 @@ extension on Translations {
           'appName' => 'Azahar',
           'common.cancel' => 'Cancel',
           'common.save' => 'Save',
+          'gamepad.connected' => 'An external controller was connected.',
+          'gamepad.disconnected' => 'An external controller was disconnected.',
           'tags.all' => 'All',
           'tags.system' => 'System',
           'tags.userInstalled' => 'User',
@@ -3161,6 +3206,7 @@ extension on Translations {
             'Save what the game saved since it started, or discard it?',
           'emulation.save' => 'Save',
           'emulation.discard' => 'Discard',
+          'emulation.showVirtualGamepad' => 'Show On-Screen Controller',
           'applets.softwareKeyboard' => 'Software Keyboard',
           'applets.iForgot' => 'I Forgot',
           'applets.standardMii' => 'Standard Mii',
@@ -3609,12 +3655,12 @@ extension on Translations {
           'settings.system.countries.latvia' => 'Latvia',
           'settings.system.countries.lesotho' => 'Lesotho',
           'settings.system.countries.liechtenstein' => 'Liechtenstein',
-          'settings.system.countries.lithuania' => 'Lithuania',
-          'settings.system.countries.luxembourg' => 'Luxembourg',
-          'settings.system.countries.macedonia' => 'Macedonia',
           _ => null,
         } ??
         switch (path) {
+          'settings.system.countries.lithuania' => 'Lithuania',
+          'settings.system.countries.luxembourg' => 'Luxembourg',
+          'settings.system.countries.macedonia' => 'Macedonia',
           'settings.system.countries.malta' => 'Malta',
           'settings.system.countries.montenegro' => 'Montenegro',
           'settings.system.countries.mozambique' => 'Mozambique',
@@ -3728,7 +3774,7 @@ extension on Translations {
             'Invert Gyro Horizontal Axis',
           'settings.gamepad.invertGyroHorizontalDescription' =>
             'Invert the gyroscope\'s horizontal (yaw) axis.',
-          'settings.gamepad.genericButtons' => 'Buttons',
+          'settings.gamepad.consoleControls' => '3DS Controls',
           'settings.gamepad.buttonA' => 'A',
           'settings.gamepad.buttonB' => 'B',
           'settings.gamepad.buttonX' => 'X',
@@ -3738,19 +3784,10 @@ extension on Translations {
           'settings.gamepad.buttonHome' => 'HOME',
           'settings.gamepad.circlePad' => 'Circle Pad',
           'settings.gamepad.cStick' => 'C-Stick',
-          'settings.gamepad.axisVertical' => 'Up/Down Axis',
-          'settings.gamepad.axisHorizontal' => 'Left/Right Axis',
-          'settings.gamepad.dpadAxis' => 'D-Pad (Axis)',
-          'settings.gamepad.dpadAxisDescription' =>
-            'Some controllers may not be able to map their D-pad as an axis. If that\'s the case, use the D-Pad (buttons) section.',
-          'settings.gamepad.dpadButtons' => 'D-Pad (Button)',
-          'settings.gamepad.dpadButtonsDescription' =>
-            'Only map the D-pad to these if you\'re facing issues with the D-Pad (Axis) button mappings.',
           'settings.gamepad.buttonUp' => 'Up',
           'settings.gamepad.buttonDown' => 'Down',
           'settings.gamepad.buttonLeft' => 'Left',
           'settings.gamepad.buttonRight' => 'Right',
-          'settings.gamepad.triggers' => 'Triggers',
           'settings.gamepad.buttonL' => 'L',
           'settings.gamepad.buttonR' => 'R',
           'settings.gamepad.buttonZl' => 'ZL',
@@ -3767,6 +3804,22 @@ extension on Translations {
             'Use Artic Controller when connected to Artic Base Server',
           'settings.gamepad.useArticBaseControllerDescription' =>
             'Use the controls provided by Artic Base Server when connected to it instead of the configured input device.',
+          'settings.gamepad.appControls' => 'App Controls',
+          'settings.gamepad.emulationControls' => 'Emulation Controls',
+          'settings.gamepad.actionPreviousPage' => 'Previous Page',
+          'settings.gamepad.actionNextPage' => 'Next Page',
+          'settings.gamepad.actionPreviousFocusRegion' => 'Previous Area',
+          'settings.gamepad.actionNextFocusRegion' => 'Next Area',
+          'settings.gamepad.actionMoveFocusUp' => 'Move Up',
+          'settings.gamepad.actionMoveFocusDown' => 'Move Down',
+          'settings.gamepad.actionMoveFocusLeft' => 'Move Left',
+          'settings.gamepad.actionMoveFocusRight' => 'Move Right',
+          'settings.gamepad.actionActivate' => 'Select',
+          'settings.gamepad.actionCancel' => 'Cancel',
+          'settings.gamepad.actionOpenContextMenu' => 'Open Menu',
+          'settings.gamepad.actionToggleEmulationFocus' =>
+            'Switch Between Game and Menu',
+          'settings.gamepad.notBound' => 'Not set',
           'settings.layout.title' => 'Layout',
           'settings.layout.screenOrientation' => 'Screen Orientation',
           'settings.layout.screenOrientationAutoSensor' => 'Automatic',
