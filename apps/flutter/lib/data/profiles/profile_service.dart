@@ -107,16 +107,8 @@ class ProfileService {
       userDirectory: '',
       isBuiltIn: true,
     );
-    final folder = await _profileFolder(created);
-    await folder.create(recursive: true);
-    final database = File(p.join(folder.path, UserDatabase.fileName));
-    await _adoptPendingDatabase(database);
-    await _profiles.updateDirectories(
-      created.cuid,
-      userDirectory: FolderLocation.toUri(folder.path),
-      databaseFile: database.path,
-    );
-    final profile = (await _profiles.profileByCuid(created.cuid))!;
+    await _adoptPendingDatabase(await _databaseFile(created));
+    final profile = await _useProfileFolder(created);
     await _initializeFolder(profile);
     return profile;
   }
@@ -145,24 +137,33 @@ class ProfileService {
   }
 
   /// Creates a user profile named [name] in the folders the user picked, and creates the folders
-  /// the core expects in its user folder.
+  /// the core expects in its user folder. Without [userDirectory] the profile keeps its data in
+  /// its own folder in the profiles folder, like the built-in profile, and without
+  /// [gamesDirectory] it has no games folder.
   ///
   /// Throws [DuplicateProfileNameException] when a profile named [name] already exists.
   Future<Profile> createUserProfile({
     required String name,
-    required String userDirectory,
-    required String gamesDirectory,
+    String? userDirectory,
+    String? gamesDirectory,
   }) async {
     final created = await _profiles.create(
       name: name,
-      userDirectory: FolderLocation.toUri(userDirectory),
+      userDirectory: userDirectory == null
+          ? ''
+          : FolderLocation.toUri(userDirectory),
       gamesDirectory: gamesDirectory,
     );
-    await _profiles.updateDirectories(
-      created.cuid,
-      databaseFile: (await _databaseFile(created)).path,
-    );
-    final profile = (await _profiles.profileByCuid(created.cuid))!;
+    final Profile profile;
+    if (userDirectory == null) {
+      profile = await _useProfileFolder(created);
+    } else {
+      await _profiles.updateDirectories(
+        created.cuid,
+        databaseFile: (await _databaseFile(created)).path,
+      );
+      profile = (await _profiles.profileByCuid(created.cuid))!;
+    }
     await _initializeFolder(profile);
     return profile;
   }
@@ -231,6 +232,19 @@ class ProfileService {
   Future<Directory> _profileFolder(Profile profile) async {
     final profiles = await _locations.profilesDirectory();
     return Directory(p.join(profiles.path, profile.hash));
+  }
+
+  /// Makes the folder of [profile] in the profiles folder its user folder, which then holds both
+  /// its data and its user database.
+  Future<Profile> _useProfileFolder(Profile profile) async {
+    final folder = await _profileFolder(profile);
+    await folder.create(recursive: true);
+    await _profiles.updateDirectories(
+      profile.cuid,
+      userDirectory: FolderLocation.toUri(folder.path),
+      databaseFile: (await _databaseFile(profile)).path,
+    );
+    return (await _profiles.profileByCuid(profile.cuid))!;
   }
 
   Future<File> _databaseFile(Profile profile) async {
