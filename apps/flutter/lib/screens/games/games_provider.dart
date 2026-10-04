@@ -18,6 +18,8 @@ class GamesNotifier extends AsyncNotifier<List<Game>> {
   int _scanGeneration = 0;
   Future<void>? _scan;
   Future<void>? _queuedScan;
+  int _scanHolds = 0;
+  bool _scanHeldBack = false;
 
   @override
   Future<List<Game>> build() async {
@@ -36,6 +38,10 @@ class GamesNotifier extends AsyncNotifier<List<Game>> {
   /// title. Calls made while a scan is queued share that scan. When the scan fails, the games
   /// shown so far stay and the error is kept in the state.
   Future<void> rescan() {
+    if (_scanHolds > 0) {
+      _scanHeldBack = true;
+      return Future.value();
+    }
     final running = _scan;
     if (running != null) {
       return _queuedScan ??= running.then((_) {
@@ -48,6 +54,22 @@ class GamesNotifier extends AsyncNotifier<List<Game>> {
       if (identical(_scan, scan)) _scan = null;
     });
     return _scan = scan;
+  }
+
+  /// Waits for the running scan and holds back new ones, since a scan and a game share the core.
+  Future<void> holdScans() async {
+    _scanHolds++;
+    final running = _scan;
+    if (running != null) await running;
+  }
+
+  /// Ends one [holdScans] and runs the scan asked for meanwhile.
+  void releaseScans() {
+    if (_scanHolds == 0) return;
+    _scanHolds--;
+    if (_scanHolds > 0 || !_scanHeldBack) return;
+    _scanHeldBack = false;
+    unawaited(rescan());
   }
 
   Future<void> _runScan() async {
