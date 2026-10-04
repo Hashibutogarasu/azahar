@@ -3,6 +3,9 @@ import 'dart:ui';
 
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
+import '../../errors/app_exception.dart';
+import '../../i18n/translations.g.dart';
+
 /// Receives what an [EmulationBackend] reports while a game is running.
 class EmulationBackendListener {
   const EmulationBackendListener({
@@ -82,11 +85,22 @@ class EmulationBackend {
   Future<void> resume() => resumeGame();
 
   /// Stops the game and returns once every native resource is released.
-  Future<void> stop() async {
+  ///
+  /// The saves, system data and titles the game changed are kept in memory while it runs. With
+  /// [persist] they are written to the storage, otherwise they are discarded. Throws a
+  /// [SaveFailedException] when some of them could not be written.
+  Future<void> stop({required bool persist}) async {
     if (!_started) return;
     _started = false;
-    await stopGame();
-    await _subscription?.cancel();
-    _subscription = null;
+    try {
+      await stopGame(persist: persist);
+    } on AzaharError_StorageCommit catch (error) {
+      throw SaveFailedException(
+        t.emulation.saveFailed(paths: error.field0.join(', ')),
+      );
+    } finally {
+      await _subscription?.cancel();
+      _subscription = null;
+    }
   }
 }

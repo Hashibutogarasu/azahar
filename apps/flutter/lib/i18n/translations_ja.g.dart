@@ -373,9 +373,14 @@ class _Translations$emulation$ja extends Translations$emulation$en {
   @override
   String get menuSectionOther => 'その他';
   @override
-  String get closeGame => 'ゲームを終了';
+  String get saveAndExit => '保存して終了';
   @override
-  String get closeGameMessage => '現在のゲームを終了してもよろしいですか？';
+  String get exitWithoutSaving => '保存しないで終了';
+  @override
+  String get exitWithoutSavingMessage =>
+      'ゲームを開始してから保存した内容はすべて破棄されます。保存しないで終了しますか？';
+  @override
+  String saveFailed({required Object paths}) => '一部のファイルを保存できませんでした: ${paths}';
 }
 
 // Path: applets
@@ -2488,8 +2493,12 @@ extension on TranslationsJa {
           'emulation.cheatErrorOnLine' =>
             ({required Object line}) => '${line}行目にエラーがあります',
           'emulation.menuSectionOther' => 'その他',
-          'emulation.closeGame' => 'ゲームを終了',
-          'emulation.closeGameMessage' => '現在のゲームを終了してもよろしいですか？',
+          'emulation.saveAndExit' => '保存して終了',
+          'emulation.exitWithoutSaving' => '保存しないで終了',
+          'emulation.exitWithoutSavingMessage' =>
+            'ゲームを開始してから保存した内容はすべて破棄されます。保存しないで終了しますか？',
+          'emulation.saveFailed' =>
+            ({required Object paths}) => '一部のファイルを保存できませんでした: ${paths}',
           'applets.softwareKeyboard' => 'ソフトウェアキーボード',
           'applets.iForgot' => '忘れました',
           'applets.standardMii' => '標準のMii',
@@ -2912,11 +2921,11 @@ extension on TranslationsJa {
           'settings.system.countries.namibia' => 'ナミビア',
           'settings.system.countries.netherlands' => 'オランダ',
           'settings.system.countries.newZealand' => 'ニュージーランド',
-          'settings.system.countries.norway' => 'ノルウェー',
-          'settings.system.countries.poland' => 'ポーランド',
           _ => null,
         } ??
         switch (path) {
+          'settings.system.countries.norway' => 'ノルウェー',
+          'settings.system.countries.poland' => 'ポーランド',
           'settings.system.countries.portugal' => 'ポルトガル',
           'settings.system.countries.romania' => 'ルーマニア',
           'settings.system.countries.russia' => 'ロシア',

@@ -116,7 +116,7 @@ abstract class RustLibApi extends BaseApi {
     required SessionOptions options,
   });
 
-  Future<void> crateApiSessionStopGame();
+  Future<void> crateApiSessionStopGame({required bool persist});
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -467,11 +467,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   );
 
   @override
-  Future<void> crateApiSessionStopGame() {
+  Future<void> crateApiSessionStopGame({required bool persist}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_bool(persist, serializer);
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
@@ -484,14 +485,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeErrorData: sse_decode_azahar_error,
         ),
         constMeta: kCrateApiSessionStopGameConstMeta,
-        argValues: [],
+        argValues: [persist],
         apiImpl: this,
       ),
     );
   }
 
   TaskConstMeta get kCrateApiSessionStopGameConstMeta =>
-      const TaskConstMeta(debugName: "stop_game", argNames: []);
+      const TaskConstMeta(debugName: "stop_game", argNames: ["persist"]);
 
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw) {
@@ -546,6 +547,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         return AzaharError_Audio(dco_decode_String(raw[1]));
       case 9:
         return AzaharError_Storage(dco_decode_String(raw[1]));
+      case 10:
+        return AzaharError_StorageCommit(dco_decode_list_String(raw[1]));
       default:
         throw Exception("unreachable");
     }
@@ -579,6 +582,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   PlatformInt64 dco_decode_i_64(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dcoDecodeI64(raw);
+  }
+
+  @protected
+  List<String> dco_decode_list_String(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_String).toList();
   }
 
   @protected
@@ -732,6 +741,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 9:
         var var_field0 = sse_decode_String(deserializer);
         return AzaharError_Storage(var_field0);
+      case 10:
+        var var_field0 = sse_decode_list_String(deserializer);
+        return AzaharError_StorageCommit(var_field0);
       default:
         throw UnimplementedError('');
     }
@@ -767,6 +779,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   PlatformInt64 sse_decode_i_64(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getPlatformInt64();
+  }
+
+  @protected
+  List<String> sse_decode_list_String(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <String>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_String(deserializer));
+    }
+    return ans_;
   }
 
   @protected
@@ -945,6 +969,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case AzaharError_Storage(field0: final field0):
         sse_encode_i_32(9, serializer);
         sse_encode_String(field0, serializer);
+      case AzaharError_StorageCommit(field0: final field0):
+        sse_encode_i_32(10, serializer);
+        sse_encode_list_String(field0, serializer);
     }
   }
 
@@ -979,6 +1006,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putPlatformInt64(self);
+  }
+
+  @protected
+  void sse_encode_list_String(List<String> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_String(item, serializer);
+    }
   }
 
   @protected

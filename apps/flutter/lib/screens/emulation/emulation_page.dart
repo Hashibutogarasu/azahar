@@ -14,12 +14,12 @@ import 'motion_input_source.dart';
 import 'physical_gamepad_source.dart';
 import 'widgets/bottom_screen.dart';
 import 'widgets/cheats_dialog.dart';
-import 'widgets/close_game_dialog.dart';
 import 'widgets/emulation_drawer.dart';
 import 'widgets/gamepad/emulation_gamepad.dart';
 import 'widgets/emulation_loading_card.dart';
 import 'widgets/emulation_menu_actions.dart';
 import 'widgets/emulation_side_panel.dart';
+import 'widgets/exit_without_saving_dialog.dart';
 import 'widgets/top_screen.dart';
 
 class EmulationPage extends ConsumerStatefulWidget {
@@ -108,14 +108,18 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
     }
   }
 
-  Future<void> _confirmCloseGame() async {
+  Future<void> _saveAndExit() {
+    return ref.read(emulationSessionProvider.notifier).terminate(save: true);
+  }
+
+  Future<void> _confirmExitWithoutSaving() async {
     final notifier = ref.read(emulationSessionProvider.notifier);
     final wasRunning = await notifier.pauseForDialog();
     if (!mounted) return;
-    final confirmed = await CloseGameDialog.show(context);
+    final confirmed = await ExitWithoutSavingDialog.show(context);
     if (!mounted) return;
     if (confirmed == true) {
-      await notifier.terminate();
+      await notifier.terminate(save: false);
     } else {
       await notifier.resumeAfterDialog(wasRunning: wasRunning);
     }
@@ -190,7 +194,8 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
       onTogglePause: notifier.togglePause,
       onAdvanceFrame: notifier.advanceFrame,
       onCheats: widget.game == null ? null : _openCheats,
-      onCloseGame: _confirmCloseGame,
+      onSaveAndExit: _saveAndExit,
+      onExitWithoutSaving: _confirmExitWithoutSaving,
     );
     final screens = SafeArea(
       child: LayoutBuilder(

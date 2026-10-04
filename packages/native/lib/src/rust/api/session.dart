@@ -25,7 +25,11 @@ Future<void> pauseGame() => RustLib.instance.api.crateApiSessionPauseGame();
 Future<void> resumeGame() => RustLib.instance.api.crateApiSessionResumeGame();
 
 /// Stops the game and returns after all of its resources have been freed.
-Future<void> stopGame() => RustLib.instance.api.crateApiSessionStopGame();
+///
+/// With `persist`, the saves, system data and titles the game changed are
+/// written to the storage; otherwise the changes are discarded.
+Future<void> stopGame({required bool persist}) =>
+    RustLib.instance.api.crateApiSessionStopGame(persist: persist);
 
 Future<void> setVolume({required double volume}) =>
     RustLib.instance.api.crateApiSessionSetVolume(volume: volume);

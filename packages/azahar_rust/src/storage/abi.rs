@@ -1,6 +1,6 @@
 use std::ffi::{CStr, CString, c_char, c_void};
 
-use super::{OpenMode, set_root, storage_for, with_state};
+use super::{OpenMode, route, route_any, set_root, with_state};
 
 type EntryCallback = unsafe extern "C" fn(*mut c_void, *const c_char);
 
@@ -48,39 +48,39 @@ unsafe fn text<'a>(value: *const c_char) -> Option<&'a str> {
 }
 
 unsafe extern "C" fn exists(path: *const c_char) -> i32 {
-    unsafe { text(path) }.is_some_and(|path| storage_for(path).exists(path)) as i32
+    unsafe { text(path) }.is_some_and(|path| route(path).storage().exists(path)) as i32
 }
 
 unsafe extern "C" fn is_directory(path: *const c_char) -> i32 {
-    unsafe { text(path) }.is_some_and(|path| storage_for(path).is_directory(path)) as i32
+    unsafe { text(path) }.is_some_and(|path| route(path).storage().is_directory(path)) as i32
 }
 
 unsafe extern "C" fn size(path: *const c_char) -> u64 {
-    unsafe { text(path) }.map_or(0, |path| storage_for(path).size(path))
+    unsafe { text(path) }.map_or(0, |path| route(path).storage().size(path))
 }
 
 unsafe extern "C" fn create_dir(path: *const c_char) -> i32 {
-    unsafe { text(path) }.is_some_and(|path| storage_for(path).create_dir(path)) as i32
+    unsafe { text(path) }.is_some_and(|path| route(path).storage().create_dir(path)) as i32
 }
 
 unsafe extern "C" fn remove_file(path: *const c_char) -> i32 {
-    unsafe { text(path) }.is_some_and(|path| storage_for(path).remove_file(path)) as i32
+    unsafe { text(path) }.is_some_and(|path| route(path).storage().remove_file(path)) as i32
 }
 
 unsafe extern "C" fn remove_dir(path: *const c_char) -> i32 {
-    unsafe { text(path) }.is_some_and(|path| storage_for(path).remove_dir(path)) as i32
+    unsafe { text(path) }.is_some_and(|path| route(path).storage().remove_dir(path)) as i32
 }
 
 unsafe extern "C" fn rename(from: *const c_char, to: *const c_char) -> i32 {
     match unsafe { (text(from), text(to)) } {
-        (Some(from), Some(to)) => storage_for(from).rename(from, to) as i32,
+        (Some(from), Some(to)) => route_any(&[from, to]).storage().rename(from, to) as i32,
         _ => 0,
     }
 }
 
 unsafe extern "C" fn copy(from: *const c_char, to: *const c_char) -> i32 {
     match unsafe { (text(from), text(to)) } {
-        (Some(from), Some(to)) => storage_for(from).copy(from, to) as i32,
+        (Some(from), Some(to)) => route_any(&[from, to]).storage().copy(from, to) as i32,
         _ => 0,
     }
 }
@@ -92,7 +92,7 @@ unsafe extern "C" fn open(path: *const c_char, mode: *const c_char) -> i32 {
     let Some(mode) = OpenMode::parse(mode) else {
         return -1;
     };
-    storage_for(path).open(path, mode).unwrap_or(-1)
+    route(path).storage().open(path, mode).unwrap_or(-1)
 }
 
 unsafe extern "C" fn list(
@@ -103,7 +103,7 @@ unsafe extern "C" fn list(
     let (Some(path), Some(callback)) = (unsafe { text(path) }, callback) else {
         return 0;
     };
-    let Some(names) = storage_for(path).list(path) else {
+    let Some(names) = route(path).storage().list(path) else {
         return 0;
     };
     for name in names {

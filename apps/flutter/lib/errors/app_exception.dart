@@ -19,3 +19,9 @@ class NativeBridgeException extends AppException {
 class InvalidSettingValueException extends AppException {
   const InvalidSettingValueException(super.message);
 }
+
+/// Thrown when some of the files a game changed could not be written to the storage when it
+/// stopped.
+class SaveFailedException extends AppException {
+  const SaveFailedException(super.message);
+}

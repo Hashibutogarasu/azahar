@@ -3,19 +3,27 @@
 
 mod abi;
 mod native;
+mod overlay;
 #[cfg(target_os = "android")]
 mod saf;
 
 use std::ffi::CString;
 use std::os::fd::RawFd;
 use std::path::PathBuf;
-use std::sync::RwLock;
+use std::sync::{Arc, RwLock};
+
+use overlay::Overlay;
 
 use crate::error::{AzaharError, Result};
 
 /// Folders the core expects in a user directory before it first runs, since it does not create
 /// the folders of its settings and logs by itself.
 const USER_DIRECTORIES: [&str; 6] = ["config", "nand", "sdmc", "sysdata", "cheats", "log"];
+
+/// Folders of the user directory whose changes are held in memory during a session. They hold
+/// the saves, the system data and the installed titles. Logs and caches are left out, since a
+/// log is needed after a crash and a cache is not part of what the user saves or discards.
+const OVERLAY_DIRECTORIES: [&str; 3] = ["nand", "sdmc", "sysdata"];
 
 /// A file system the core can reach. The paths are the ones the core uses, so a backend decides
 /// on its own how a path maps to its storage.
@@ -177,6 +185,88 @@ fn with_state<R>(f: impl FnOnce(&State) -> R) -> R {
 
 fn storage_for(path: &str) -> &'static dyn Storage {
     with_state(|state| backend(path, &state.root))
+}
+
+static OVERLAY: RwLock<Option<Arc<Overlay>>> = RwLock::new(None);
+
+/// The storage that answers for one path: the overlay while a session holds the path in memory,
+/// otherwise the backend of the path.
+enum Route {
+    Overlay(Arc<Overlay>),
+    Backend(&'static dyn Storage),
+}
+
+impl Route {
+    fn storage(&self) -> &dyn Storage {
+        match self {
+            Self::Overlay(overlay) => overlay.as_ref(),
+            Self::Backend(backend) => *backend,
+        }
+    }
+}
+
+/// Whether `path` lies in one of [`OVERLAY_DIRECTORIES`] of the current user directory. The user
+/// directory is read on every call, because the core may set it after the session started.
+fn in_overlay_directory(path: &str) -> bool {
+    let path = overlay::normalize(path);
+    with_state(|state| {
+        let Ok(user_path) = state.user_path.to_str() else {
+            return false;
+        };
+        OVERLAY_DIRECTORIES.iter().any(|name| {
+            let folder = format!("{user_path}{name}");
+            path == folder || path.starts_with(&format!("{folder}/"))
+        })
+    })
+}
+
+fn route(path: &str) -> Route {
+    route_any(&[path])
+}
+
+/// Routes an operation on several paths to the overlay when any of them is held in memory, so
+/// that a file moved into or out of an overlay folder is still tracked.
+fn route_any(paths: &[&str]) -> Route {
+    let overlay = OVERLAY
+        .read()
+        .unwrap_or_else(|error| error.into_inner())
+        .clone();
+    match overlay {
+        Some(overlay) if paths.iter().any(|path| in_overlay_directory(path)) => {
+            Route::Overlay(overlay)
+        }
+        _ => Route::Backend(storage_for(paths[0])),
+    }
+}
+
+/// Starts holding the changes to the saves, the system data and the installed titles in memory.
+pub fn begin_overlay() {
+    *OVERLAY.write().unwrap_or_else(|error| error.into_inner()) =
+        Some(Arc::new(Overlay::default()));
+}
+
+/// Writes the changes held in memory to the storage. Fails with the paths that could not be
+/// written; the other changes are written anyway.
+pub fn commit_overlay() -> Result<()> {
+    let overlay = OVERLAY
+        .read()
+        .unwrap_or_else(|error| error.into_inner())
+        .clone();
+    let Some(overlay) = overlay else {
+        return Ok(());
+    };
+    let failed = overlay.commit();
+    if failed.is_empty() {
+        Ok(())
+    } else {
+        Err(AzaharError::StorageCommit(failed))
+    }
+}
+
+/// Stops holding changes in memory and drops the ones not written, so that every later access
+/// reaches the storage again.
+pub fn end_overlay() {
+    *OVERLAY.write().unwrap_or_else(|error| error.into_inner()) = None;
 }
 
 fn set_root(location: &str) -> Result<()> {

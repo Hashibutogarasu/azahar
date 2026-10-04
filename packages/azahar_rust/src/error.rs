@@ -33,6 +33,9 @@ pub enum AzaharError {
     /// A folder of a user directory could not be created.
     #[error("the folder {0} could not be created")]
     Storage(String),
+    /// Some of the files the game changed could not be written to the storage.
+    #[error("the changed files could not be saved: {}", .0.join(", "))]
+    StorageCommit(Vec<String>),
 }
 
 /// Result alias used across the crate.

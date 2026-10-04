@@ -182,8 +182,10 @@
     "cheatCodeEmpty": "Code can't be empty",
     "cheatErrorOnLine": "Error on line ${line}",
     "menuSectionOther": "Other",
-    "closeGame": "Close Game",
-    "closeGameMessage": "Are you sure that you would like to close the current game?"
+    "saveAndExit": "Save and Exit",
+    "exitWithoutSaving": "Exit Without Saving",
+    "exitWithoutSavingMessage": "Everything the game saved since it started will be discarded. Exit without saving?",
+    "saveFailed": "Some files could not be saved: ${paths}"
   },
   "applets": {
     "softwareKeyboard": "Software Keyboard",
