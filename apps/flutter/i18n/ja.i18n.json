@@ -17,15 +17,14 @@
     "builtInLocation": "アプリ内（${path}）",
     "add": "プロファイルを追加",
     "gameRunning": "ゲームの実行中はプロファイルを切り替えられません。",
-    "create": {
+    "delete": "削除",
+    "deleteGameRunning": "ゲームの実行中はプロファイルを削除できません。",    "create": {
       "title": "新しいプロファイル",
       "nameTitle": "プロファイル名",
       "nameDescription": "新しいプロファイルの名前を決めてください。",
       "nameHint": "プロファイル名",
       "nameEmpty": "プロファイル名を入力してください。",
       "nameTaken": "同じ名前のプロファイルがすでにあります。",
-      "userDirectoryDescription": "このプロファイルの NAND、セーブデータ、チート、設定を置くフォルダを選んでください。",
-      "gamesDirectoryDescription": "このプロファイルでゲームを探すフォルダを選んでください。",
       "create": "作成"
     }
   },

@@ -16,6 +16,7 @@
 #include <string>
 #include <thread>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include "azahar_storage.h"
@@ -705,30 +706,73 @@ const std::unordered_map<std::string, BridgeMethodHandler>& BridgeMethodHandlers
   return handlers;
 }
 
+/**
+ * Methods whose work would stall the GTK main thread, and with it every frame of Flutter, so
+ * they run on a worker thread and are answered on the main thread.
+ */
+const std::unordered_set<std::string>& BackgroundBridgeMethods() {
+  static const std::unordered_set<std::string> methods = {"confirmUserDirectory"};
+  return methods;
+}
+
+FlMethodResponse* InvokeBridgeMethod(const BridgeMethodHandler& handler, GtkWindow* window,
+                                     FlValue* args) {
+  try {
+    return handler(window, args);
+  } catch (const std::exception& e) {
+    return FL_METHOD_RESPONSE(
+        fl_method_error_response_new("native_exception", e.what(), nullptr));
+  } catch (...) {
+    return FL_METHOD_RESPONSE(
+        fl_method_error_response_new("native_exception", "unknown exception", nullptr));
+  }
+}
+
+struct PendingBridgeResponse {
+  FlMethodCall* method_call;
+  FlMethodResponse* response;
+};
+
+/**
+ * Answers a method that ran on a worker thread, because a method call may only be answered on
+ * the thread of the engine.
+ */
+gboolean RespondToBridgeMethod(gpointer data) {
+  auto* pending = static_cast<PendingBridgeResponse*>(data);
+  fl_method_call_respond(pending->method_call, pending->response, nullptr);
+  g_object_unref(pending->response);
+  g_object_unref(pending->method_call);
+  delete pending;
+  return G_SOURCE_REMOVE;
+}
+
 void HandleBridgeMethodCall(FlMethodChannel* channel,
                             FlMethodCall* method_call,
                             gpointer user_data) {
   GtkWindow* window = GTK_WINDOW(user_data);
   const std::string name = fl_method_call_get_name(method_call);
-  FlValue* args = fl_method_call_get_args(method_call);
 
   const auto& handlers = BridgeMethodHandlers();
   const auto it = handlers.find(name);
-  g_autoptr(FlMethodResponse) response = nullptr;
   if (it == handlers.end()) {
-    response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
-  } else {
-    try {
-      response = it->second(window, args);
-    } catch (const std::exception& e) {
-      response = FL_METHOD_RESPONSE(
-          fl_method_error_response_new("native_exception", e.what(), nullptr));
-    } catch (...) {
-      response = FL_METHOD_RESPONSE(
-          fl_method_error_response_new("native_exception", "unknown exception", nullptr));
-    }
+    g_autoptr(FlMethodResponse) response =
+        FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
+    fl_method_call_respond(method_call, response, nullptr);
+    return;
   }
 
+  if (BackgroundBridgeMethods().count(name) > 0) {
+    g_object_ref(method_call);
+    std::thread([handler = it->second, window, method_call] {
+      FlMethodResponse* response =
+          InvokeBridgeMethod(handler, window, fl_method_call_get_args(method_call));
+      g_idle_add(RespondToBridgeMethod, new PendingBridgeResponse{method_call, response});
+    }).detach();
+    return;
+  }
+
+  g_autoptr(FlMethodResponse) response =
+      InvokeBridgeMethod(it->second, window, fl_method_call_get_args(method_call));
   fl_method_call_respond(method_call, response, nullptr);
 }
 

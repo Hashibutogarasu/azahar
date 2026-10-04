@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app_services.dart';
 import '../../../screens/options/widgets/profile_radio_list.dart';
+import '../../busy_provider.dart';
 import '../../settings/country.dart';
 import '../../settings/sections/system_settings.dart';
 import '../../settings/system_save_value_store.dart';
@@ -26,6 +27,7 @@ final profileOptionsProvider = Provider<OptionCategory>((ref) {
     sections: [
       OptionSection(
         title: (t) => t.profiles.switchTitle,
+        disabledWhen: isBusyProvider,
         options: [
           CustomWidgetOption(
             title: (t) => t.profiles.switchTitle,

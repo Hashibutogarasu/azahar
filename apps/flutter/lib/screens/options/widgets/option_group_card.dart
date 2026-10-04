@@ -15,7 +15,8 @@ import 'widget_settings_item.dart';
 ///
 /// While [entries] is empty and an [emptyMessage] is given, the message is shown in place of the
 /// items. [trailing] is placed at the right end of the title row. Set [inHistory] for the History
-/// section, whose items can also be removed from the history from their long-press menu.
+/// section, whose items can also be removed from the history from their long-press menu. Clear
+/// [enabled] to show the whole card disabled.
 class OptionGroupCard extends ConsumerWidget {
   const OptionGroupCard({
     super.key,
@@ -24,6 +25,7 @@ class OptionGroupCard extends ConsumerWidget {
     this.emptyMessage,
     this.trailing,
     this.inHistory = false,
+    this.enabled = true,
   });
 
   final String? title;
@@ -31,12 +33,14 @@ class OptionGroupCard extends ConsumerWidget {
   final String? emptyMessage;
   final Widget? trailing;
   final bool inHistory;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SettingsGroupCard(
       settingsGroupTitle: title,
       trailing: trailing,
+      enabled: enabled,
       items: [
         WidgetSettingsItem(
           child: AnimatedOptionItems(

@@ -42,7 +42,7 @@ class _ProfileNamePageState extends ConsumerState<ProfileNamePage> {
     setState(() => _error = error);
     if (error != null) return;
     ref.read(profileDraftProvider.notifier).setName(name);
-    await const ProfileUserDirectoryRoute().push<void>(context);
+    await const ProfileDirectoriesRoute().push<void>(context);
   }
 
   @override

@@ -138,7 +138,7 @@ class DirectoryController(
                 ) {
                     NativeLibrary.reloadSettings()
                 }
-                result.success(null)
+                activity.runOnUiThread { result.success(null) }
             }
 
             if (moveData && previousUri != null) {
@@ -166,12 +166,12 @@ class DirectoryController(
                         }
 
                         override fun onComplete() {
-                            activity.runOnUiThread { commit() }
+                            commit()
                         }
                     })
                 }.start()
             } else {
-                commit()
+                Thread { commit() }.start()
             }
         }
     }

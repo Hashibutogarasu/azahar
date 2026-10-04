@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$OptionSection {
 
- TranslationText? get title; List<AbstractBaseOption> get options;
+ TranslationText? get title; List<AbstractBaseOption> get options; ProviderListenable<bool>? get disabledWhen;
 /// Create a copy of OptionSection
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $OptionSectionCopyWith<OptionSection> get copyWith => _$OptionSectionCopyWithImp
 @override
 bool operator ==(Object other) {
   final _this = this as OptionSection;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OptionSection&&(identical(other.title, _this.title) || other.title == _this.title)&&const DeepCollectionEquality().equals(other.options, _this.options));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OptionSection&&(identical(other.title, _this.title) || other.title == _this.title)&&const DeepCollectionEquality().equals(other.options, _this.options)&&const DeepCollectionEquality().equals(other.disabledWhen, _this.disabledWhen));
 }
 
 
 @override
 int get hashCode {
   final _this = this as OptionSection;
-  return Object.hash(runtimeType,_this.title,const DeepCollectionEquality().hash(_this.options));
+  return Object.hash(runtimeType,_this.title,const DeepCollectionEquality().hash(_this.options),const DeepCollectionEquality().hash(_this.disabledWhen));
 }
 
 @override
 String toString() {
   final _this = this as OptionSection;
-  return 'OptionSection(title: ${_this.title}, options: ${_this.options})';
+  return 'OptionSection(title: ${_this.title}, options: ${_this.options}, disabledWhen: ${_this.disabledWhen})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $OptionSectionCopyWith<$Res>  {
   factory $OptionSectionCopyWith(OptionSection value, $Res Function(OptionSection) _then) = _$OptionSectionCopyWithImpl;
 @useResult
 $Res call({
- TranslationText? title, List<AbstractBaseOption> options
+ TranslationText? title, List<AbstractBaseOption> options, ProviderListenable<bool>? disabledWhen
 });
 
 
@@ -68,11 +68,12 @@ class _$OptionSectionCopyWithImpl<$Res>
 
 /// Create a copy of OptionSection
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? title = freezed,Object? options = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? title = freezed,Object? options = null,Object? disabledWhen = freezed,}) {
   return _then(OptionSection(
 title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as TranslationText?,options: null == options ? _self.options : options // ignore: cast_nullable_to_non_nullable
-as List<AbstractBaseOption>,
+as List<AbstractBaseOption>,disabledWhen: freezed == disabledWhen ? _self.disabledWhen : disabledWhen // ignore: cast_nullable_to_non_nullable
+as ProviderListenable<bool>?,
   ));
 }
 
@@ -157,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( TranslationText? title,  List<AbstractBaseOption> options)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( TranslationText? title,  List<AbstractBaseOption> options,  ProviderListenable<bool>? disabledWhen)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _OptionSection() when $default != null:
-return $default(_that.title,_that.options);case _:
+return $default(_that.title,_that.options,_that.disabledWhen);case _:
   return orElse();
 
 }
@@ -178,10 +179,10 @@ return $default(_that.title,_that.options);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( TranslationText? title,  List<AbstractBaseOption> options)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( TranslationText? title,  List<AbstractBaseOption> options,  ProviderListenable<bool>? disabledWhen)  $default,) {final _that = this;
 switch (_that) {
 case _OptionSection():
-return $default(_that.title,_that.options);case _:
+return $default(_that.title,_that.options,_that.disabledWhen);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -198,10 +199,10 @@ return $default(_that.title,_that.options);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( TranslationText? title,  List<AbstractBaseOption> options)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( TranslationText? title,  List<AbstractBaseOption> options,  ProviderListenable<bool>? disabledWhen)?  $default,) {final _that = this;
 switch (_that) {
 case _OptionSection() when $default != null:
-return $default(_that.title,_that.options);case _:
+return $default(_that.title,_that.options,_that.disabledWhen);case _:
   return null;
 
 }
@@ -213,7 +214,7 @@ return $default(_that.title,_that.options);case _:
 
 
 class _OptionSection implements OptionSection {
-  const _OptionSection({this.title, required  List<AbstractBaseOption> options}): _options = options;
+  const _OptionSection({this.title, required  List<AbstractBaseOption> options, this.disabledWhen}): _options = options;
   
 
 @override final  TranslationText? title;
@@ -224,6 +225,7 @@ class _OptionSection implements OptionSection {
   return EqualUnmodifiableListView(_options);
 }
 
+@override final  ProviderListenable<bool>? disabledWhen;
 
 /// Create a copy of OptionSection
 /// with the given fields replaced by the non-null parameter values.
@@ -235,18 +237,18 @@ _$OptionSectionCopyWith<_OptionSection> get copyWith => __$OptionSectionCopyWith
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _OptionSection&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other.options, _options));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _OptionSection&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other.options, _options)&&const DeepCollectionEquality().equals(other.disabledWhen, disabledWhen));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,title,const DeepCollectionEquality().hash(_options));
+    return Object.hash(runtimeType,title,const DeepCollectionEquality().hash(_options),const DeepCollectionEquality().hash(disabledWhen));
 }
 
 @override
 String toString() {
-    return 'OptionSection(title: $title, options: $options)';
+    return 'OptionSection(title: $title, options: $options, disabledWhen: $disabledWhen)';
 }
 
 
@@ -257,7 +259,7 @@ abstract mixin class _$OptionSectionCopyWith<$Res> implements $OptionSectionCopy
   factory _$OptionSectionCopyWith(_OptionSection value, $Res Function(_OptionSection) _then) = __$OptionSectionCopyWithImpl;
 @override @useResult
 $Res call({
- TranslationText? title, List<AbstractBaseOption> options
+ TranslationText? title, List<AbstractBaseOption> options, ProviderListenable<bool>? disabledWhen
 });
 
 
@@ -274,11 +276,12 @@ class __$OptionSectionCopyWithImpl<$Res>
 
 /// Create a copy of OptionSection
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = freezed,Object? options = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = freezed,Object? options = null,Object? disabledWhen = freezed,}) {
   return _then(_OptionSection(
 title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as TranslationText?,options: null == options ? _self._options : options // ignore: cast_nullable_to_non_nullable
-as List<AbstractBaseOption>,
+as List<AbstractBaseOption>,disabledWhen: freezed == disabledWhen ? _self.disabledWhen : disabledWhen // ignore: cast_nullable_to_non_nullable
+as ProviderListenable<bool>?,
   ));
 }
 

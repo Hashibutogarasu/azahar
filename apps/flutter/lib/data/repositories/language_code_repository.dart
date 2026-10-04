@@ -20,7 +20,7 @@ class LanguageCodeRepository extends KeyValueRepository implements Loadable {
 
   Future<void> setLanguageCode(String? languageCode) async {
     if (languageCode == null) {
-      await delete(_key);
+      await deleteKey(_key);
     } else {
       await write(_key, languageCode);
     }

@@ -122,6 +122,29 @@ class ProfileService {
     await _logging.userDirectoryChanged();
   }
 
+  /// Removes the user profile [cuid] without touching the files in its folder, since the folder
+  /// was picked by the user. When it was the default profile, the built-in profile takes its
+  /// place. The folders the core expects are then created again in the folder now in use, so the
+  /// core never starts on a folder it cannot write to.
+  ///
+  /// Returns whether the default profile changed. The built-in profile cannot be removed.
+  Future<bool> deleteProfile(String cuid) async {
+    final profile = await _profiles.profileByCuid(cuid);
+    if (profile == null || profile.isBuiltIn) return false;
+    final wasDefault = await _profiles.defaultProfileCuid() == cuid;
+    await _profiles.delete(cuid);
+    await _publishProfiles();
+    final current = wasDefault
+        ? await ensureBuiltInProfile()
+        : await _profiles.defaultProfile();
+    if (current == null) return false;
+    await _nativeBridge.initializeStorage(current.userDirectory);
+    if (wasDefault) {
+      await switchTo(current.cuid);
+    }
+    return wasDefault;
+  }
+
   /// Points the core at the folder of the default profile again, after its folder changed.
   Future<void> reapplyDefaultProfile() async {
     final profile = await _profiles.defaultProfile();

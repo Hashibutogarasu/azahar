@@ -97,29 +97,17 @@ class _SetupWizardPageState extends State<SetupWizardPage> {
           ),
         ],
       ),
-      SetupStep(
-        icon: Icons.folder_open,
-        title: t.setup.dataFolders.title,
-        description: t.setup.dataFolders.description,
+      SetupStep.dataFolders(
+        t,
         nextLabel: _viewModel.foldersConfirmed ? null : t.setup.skip,
-        actions: [
-          SetupAction(
-            icon: Icons.home,
-            label: t.setup.userDirectory.title,
-            isCompleted: _viewModel.userDirectoryCompleted,
-            performAction: (context) => _performUserDirectorySelection(context),
-          ),
-          SetupAction(
-            icon: Icons.sports_esports,
-            label: t.setup.gamesDirectory.title,
-            isCompleted: _viewModel.gamesDirectoryCompleted,
-            performAction: (_) async {
-              final uri = await _viewModel.pickGamesDirectory();
-              if (uri == null) return false;
-              return _viewModel.confirmGamesDirectory(uri);
-            },
-          ),
-        ],
+        userDirectoryCompleted: _viewModel.userDirectoryCompleted,
+        gamesDirectoryCompleted: _viewModel.gamesDirectoryCompleted,
+        selectUserDirectory: _performUserDirectorySelection,
+        selectGamesDirectory: (_) async {
+          final uri = await _viewModel.pickGamesDirectory();
+          if (uri == null) return false;
+          return _viewModel.confirmGamesDirectory(uri);
+        },
       ),
       SetupStep(
         icon: Icons.check_circle,
