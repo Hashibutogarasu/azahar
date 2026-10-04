@@ -201,9 +201,9 @@ if (ENABLE_ROOM)
 endif()
 
 if (ANDROID)
-    add_subdirectory(${AZAHAR_APPS_DIR}/android/app/src/main/jni ${PROJECT_BINARY_DIR}/apps/android/jni)
-    target_include_directories(citra-android PRIVATE ${AZAHAR_APPS_DIR}/android/app/src/main)
-    target_include_directories(azahar-session PRIVATE ${AZAHAR_APPS_DIR}/android/app/src/main)
+    add_subdirectory(${AZAHAR_NATIVE_ANDROID_DIR}/jni ${PROJECT_BINARY_DIR}/native/android/jni)
+    target_include_directories(citra-android PRIVATE ${AZAHAR_NATIVE_ANDROID_DIR})
+    target_include_directories(azahar-session PRIVATE ${AZAHAR_NATIVE_ANDROID_DIR})
 endif()
 
 if (ENABLE_WEB_SERVICE)

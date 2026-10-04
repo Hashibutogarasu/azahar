@@ -12,7 +12,7 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.PluginRegistry
-import org.citra.citra_emu.NativeLibrary
+import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.NativeLibrary
 
 /**
  * Flutter plugin that exposes the Azahar native layer to Dart.

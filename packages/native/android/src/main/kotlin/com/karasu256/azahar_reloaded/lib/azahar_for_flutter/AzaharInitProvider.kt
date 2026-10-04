@@ -5,7 +5,7 @@ import android.content.ContentProvider
 import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
-import org.citra.citra_emu.CitraApplication
+import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.CitraApplication
 
 /**
  * Initializes the native runtime before the host application is created.
