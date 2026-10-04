@@ -56,7 +56,7 @@ extension AzaharErrorPatterns on AzaharError {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( AzaharError_SessionActive value)?  sessionActive,TResult Function( AzaharError_NoSession value)?  noSession,TResult Function( AzaharError_InvalidPath value)?  invalidPath,TResult Function( AzaharError_CreateFailed value)?  createFailed,TResult Function( AzaharError_InvalidState value)?  invalidState,TResult Function( AzaharError_Core value)?  core,TResult Function( AzaharError_InvalidAddress value)?  invalidAddress,TResult Function( AzaharError_LibraryLoad value)?  libraryLoad,TResult Function( AzaharError_Audio value)?  audio,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( AzaharError_SessionActive value)?  sessionActive,TResult Function( AzaharError_NoSession value)?  noSession,TResult Function( AzaharError_InvalidPath value)?  invalidPath,TResult Function( AzaharError_CreateFailed value)?  createFailed,TResult Function( AzaharError_InvalidState value)?  invalidState,TResult Function( AzaharError_Core value)?  core,TResult Function( AzaharError_InvalidAddress value)?  invalidAddress,TResult Function( AzaharError_LibraryLoad value)?  libraryLoad,TResult Function( AzaharError_Audio value)?  audio,TResult Function( AzaharError_Storage value)?  storage,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case AzaharError_SessionActive() when sessionActive != null:
@@ -68,7 +68,8 @@ return invalidState(_that);case AzaharError_Core() when core != null:
 return core(_that);case AzaharError_InvalidAddress() when invalidAddress != null:
 return invalidAddress(_that);case AzaharError_LibraryLoad() when libraryLoad != null:
 return libraryLoad(_that);case AzaharError_Audio() when audio != null:
-return audio(_that);case _:
+return audio(_that);case AzaharError_Storage() when storage != null:
+return storage(_that);case _:
   return orElse();
 
 }
@@ -86,7 +87,7 @@ return audio(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( AzaharError_SessionActive value)  sessionActive,required TResult Function( AzaharError_NoSession value)  noSession,required TResult Function( AzaharError_InvalidPath value)  invalidPath,required TResult Function( AzaharError_CreateFailed value)  createFailed,required TResult Function( AzaharError_InvalidState value)  invalidState,required TResult Function( AzaharError_Core value)  core,required TResult Function( AzaharError_InvalidAddress value)  invalidAddress,required TResult Function( AzaharError_LibraryLoad value)  libraryLoad,required TResult Function( AzaharError_Audio value)  audio,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( AzaharError_SessionActive value)  sessionActive,required TResult Function( AzaharError_NoSession value)  noSession,required TResult Function( AzaharError_InvalidPath value)  invalidPath,required TResult Function( AzaharError_CreateFailed value)  createFailed,required TResult Function( AzaharError_InvalidState value)  invalidState,required TResult Function( AzaharError_Core value)  core,required TResult Function( AzaharError_InvalidAddress value)  invalidAddress,required TResult Function( AzaharError_LibraryLoad value)  libraryLoad,required TResult Function( AzaharError_Audio value)  audio,required TResult Function( AzaharError_Storage value)  storage,}){
 final _that = this;
 switch (_that) {
 case AzaharError_SessionActive():
@@ -98,7 +99,8 @@ return invalidState(_that);case AzaharError_Core():
 return core(_that);case AzaharError_InvalidAddress():
 return invalidAddress(_that);case AzaharError_LibraryLoad():
 return libraryLoad(_that);case AzaharError_Audio():
-return audio(_that);}
+return audio(_that);case AzaharError_Storage():
+return storage(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -112,7 +114,7 @@ return audio(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( AzaharError_SessionActive value)?  sessionActive,TResult? Function( AzaharError_NoSession value)?  noSession,TResult? Function( AzaharError_InvalidPath value)?  invalidPath,TResult? Function( AzaharError_CreateFailed value)?  createFailed,TResult? Function( AzaharError_InvalidState value)?  invalidState,TResult? Function( AzaharError_Core value)?  core,TResult? Function( AzaharError_InvalidAddress value)?  invalidAddress,TResult? Function( AzaharError_LibraryLoad value)?  libraryLoad,TResult? Function( AzaharError_Audio value)?  audio,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( AzaharError_SessionActive value)?  sessionActive,TResult? Function( AzaharError_NoSession value)?  noSession,TResult? Function( AzaharError_InvalidPath value)?  invalidPath,TResult? Function( AzaharError_CreateFailed value)?  createFailed,TResult? Function( AzaharError_InvalidState value)?  invalidState,TResult? Function( AzaharError_Core value)?  core,TResult? Function( AzaharError_InvalidAddress value)?  invalidAddress,TResult? Function( AzaharError_LibraryLoad value)?  libraryLoad,TResult? Function( AzaharError_Audio value)?  audio,TResult? Function( AzaharError_Storage value)?  storage,}){
 final _that = this;
 switch (_that) {
 case AzaharError_SessionActive() when sessionActive != null:
@@ -124,7 +126,8 @@ return invalidState(_that);case AzaharError_Core() when core != null:
 return core(_that);case AzaharError_InvalidAddress() when invalidAddress != null:
 return invalidAddress(_that);case AzaharError_LibraryLoad() when libraryLoad != null:
 return libraryLoad(_that);case AzaharError_Audio() when audio != null:
-return audio(_that);case _:
+return audio(_that);case AzaharError_Storage() when storage != null:
+return storage(_that);case _:
   return null;
 
 }
@@ -141,7 +144,7 @@ return audio(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  sessionActive,TResult Function()?  noSession,TResult Function()?  invalidPath,TResult Function()?  createFailed,TResult Function()?  invalidState,TResult Function( int field0)?  core,TResult Function( int address,  int len)?  invalidAddress,TResult Function( String field0)?  libraryLoad,TResult Function( String field0)?  audio,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  sessionActive,TResult Function()?  noSession,TResult Function()?  invalidPath,TResult Function()?  createFailed,TResult Function()?  invalidState,TResult Function( int field0)?  core,TResult Function( int address,  int len)?  invalidAddress,TResult Function( String field0)?  libraryLoad,TResult Function( String field0)?  audio,TResult Function( String field0)?  storage,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case AzaharError_SessionActive() when sessionActive != null:
 return sessionActive();case AzaharError_NoSession() when noSession != null:
@@ -152,7 +155,8 @@ return invalidState();case AzaharError_Core() when core != null:
 return core(_that.field0);case AzaharError_InvalidAddress() when invalidAddress != null:
 return invalidAddress(_that.address,_that.len);case AzaharError_LibraryLoad() when libraryLoad != null:
 return libraryLoad(_that.field0);case AzaharError_Audio() when audio != null:
-return audio(_that.field0);case _:
+return audio(_that.field0);case AzaharError_Storage() when storage != null:
+return storage(_that.field0);case _:
   return orElse();
 
 }
@@ -170,7 +174,7 @@ return audio(_that.field0);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  sessionActive,required TResult Function()  noSession,required TResult Function()  invalidPath,required TResult Function()  createFailed,required TResult Function()  invalidState,required TResult Function( int field0)  core,required TResult Function( int address,  int len)  invalidAddress,required TResult Function( String field0)  libraryLoad,required TResult Function( String field0)  audio,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  sessionActive,required TResult Function()  noSession,required TResult Function()  invalidPath,required TResult Function()  createFailed,required TResult Function()  invalidState,required TResult Function( int field0)  core,required TResult Function( int address,  int len)  invalidAddress,required TResult Function( String field0)  libraryLoad,required TResult Function( String field0)  audio,required TResult Function( String field0)  storage,}) {final _that = this;
 switch (_that) {
 case AzaharError_SessionActive():
 return sessionActive();case AzaharError_NoSession():
@@ -181,7 +185,8 @@ return invalidState();case AzaharError_Core():
 return core(_that.field0);case AzaharError_InvalidAddress():
 return invalidAddress(_that.address,_that.len);case AzaharError_LibraryLoad():
 return libraryLoad(_that.field0);case AzaharError_Audio():
-return audio(_that.field0);}
+return audio(_that.field0);case AzaharError_Storage():
+return storage(_that.field0);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -195,7 +200,7 @@ return audio(_that.field0);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  sessionActive,TResult? Function()?  noSession,TResult? Function()?  invalidPath,TResult? Function()?  createFailed,TResult? Function()?  invalidState,TResult? Function( int field0)?  core,TResult? Function( int address,  int len)?  invalidAddress,TResult? Function( String field0)?  libraryLoad,TResult? Function( String field0)?  audio,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  sessionActive,TResult? Function()?  noSession,TResult? Function()?  invalidPath,TResult? Function()?  createFailed,TResult? Function()?  invalidState,TResult? Function( int field0)?  core,TResult? Function( int address,  int len)?  invalidAddress,TResult? Function( String field0)?  libraryLoad,TResult? Function( String field0)?  audio,TResult? Function( String field0)?  storage,}) {final _that = this;
 switch (_that) {
 case AzaharError_SessionActive() when sessionActive != null:
 return sessionActive();case AzaharError_NoSession() when noSession != null:
@@ -206,7 +211,8 @@ return invalidState();case AzaharError_Core() when core != null:
 return core(_that.field0);case AzaharError_InvalidAddress() when invalidAddress != null:
 return invalidAddress(_that.address,_that.len);case AzaharError_LibraryLoad() when libraryLoad != null:
 return libraryLoad(_that.field0);case AzaharError_Audio() when audio != null:
-return audio(_that.field0);case _:
+return audio(_that.field0);case AzaharError_Storage() when storage != null:
+return storage(_that.field0);case _:
   return null;
 
 }
@@ -640,6 +646,74 @@ class _$AzaharError_AudioCopyWithImpl<$Res>
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
   return _then(AzaharError_Audio(
+null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class AzaharError_Storage extends AzaharError {
+  const AzaharError_Storage(this.field0): super._();
+  
+
+ final  String field0;
+
+/// Create a copy of AzaharError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$AzaharError_StorageCopyWith<AzaharError_Storage> get copyWith => _$AzaharError_StorageCopyWithImpl<AzaharError_Storage>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AzaharError_Storage&&(identical(other.field0, field0) || other.field0 == field0));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,field0);
+}
+
+@override
+String toString() {
+    return 'AzaharError.storage(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $AzaharError_StorageCopyWith<$Res> implements $AzaharErrorCopyWith<$Res> {
+  factory $AzaharError_StorageCopyWith(AzaharError_Storage value, $Res Function(AzaharError_Storage) _then) = _$AzaharError_StorageCopyWithImpl;
+@useResult
+$Res call({
+ String field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$AzaharError_StorageCopyWithImpl<$Res>
+    implements $AzaharError_StorageCopyWith<$Res> {
+  _$AzaharError_StorageCopyWithImpl(this._self, this._then);
+
+  final AzaharError_Storage _self;
+  final $Res Function(AzaharError_Storage) _then;
+
+/// Create a copy of AzaharError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(AzaharError_Storage(
 null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
 as String,
   ));

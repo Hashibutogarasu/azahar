@@ -4,6 +4,7 @@
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
 import 'api/session.dart';
+import 'api/storage.dart';
 
 import 'dart:async';
 import 'dart:convert';
@@ -72,7 +73,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.13.0';
 
   @override
-  int get rustContentHash => 1222654061;
+  int get rustContentHash => -830592108;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -89,6 +90,8 @@ abstract class RustLibApi extends BaseApi {
   Future<BigInt> crateApiSessionFcramSize();
 
   Future<void> crateApiSessionInitApp();
+
+  Future<void> crateApiStorageInitializeStorage({required String location});
 
   Future<void> crateApiSessionPauseGame();
 
@@ -201,6 +204,37 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "init_app", argNames: []);
 
   @override
+  Future<void> crateApiStorageInitializeStorage({required String location}) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(location, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 4,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_azahar_error,
+        ),
+        constMeta: kCrateApiStorageInitializeStorageConstMeta,
+        argValues: [location],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiStorageInitializeStorageConstMeta =>
+      const TaskConstMeta(
+        debugName: "initialize_storage",
+        argNames: ["location"],
+      );
+
+  @override
   Future<void> crateApiSessionPauseGame() {
     return handler.executeNormal(
       NormalTask(
@@ -209,7 +243,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 4,
+            funcId: 5,
             port: port_,
           );
         },
@@ -241,7 +275,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 5,
+            funcId: 6,
             port: port_,
           );
         },
@@ -271,7 +305,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 6,
+            funcId: 7,
             port: port_,
           );
         },
@@ -298,7 +332,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 7,
+            funcId: 8,
             port: port_,
           );
         },
@@ -326,7 +360,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 8,
+            funcId: 9,
             port: port_,
           );
         },
@@ -361,7 +395,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             pdeCallFfi(
               generalizedFrbRustBinding,
               serializer,
-              funcId: 9,
+              funcId: 10,
               port: port_,
             );
           },
@@ -392,7 +426,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 10,
+            funcId: 11,
             port: port_,
           );
         },
@@ -455,6 +489,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         return AzaharError_LibraryLoad(dco_decode_String(raw[1]));
       case 8:
         return AzaharError_Audio(dco_decode_String(raw[1]));
+      case 9:
+        return AzaharError_Storage(dco_decode_String(raw[1]));
       default:
         throw Exception("unreachable");
     }
@@ -624,6 +660,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 8:
         var var_field0 = sse_decode_String(deserializer);
         return AzaharError_Audio(var_field0);
+      case 9:
+        var var_field0 = sse_decode_String(deserializer);
+        return AzaharError_Storage(var_field0);
       default:
         throw UnimplementedError('');
     }
@@ -813,6 +852,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(field0, serializer);
       case AzaharError_Audio(field0: final field0):
         sse_encode_i_32(8, serializer);
+        sse_encode_String(field0, serializer);
+      case AzaharError_Storage(field0: final field0):
+        sse_encode_i_32(9, serializer);
         sse_encode_String(field0, serializer);
     }
   }

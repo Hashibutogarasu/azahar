@@ -18,6 +18,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "azahar_storage.h"
+#include "common/storage.h"
 #include "native_bridge/cheats.h"
 #include "native_bridge/cia_install.h"
 #include "native_bridge/emulation.h"
@@ -252,18 +254,6 @@ FlMethodResponse* HandleConfirmUserDirectory(GtkWindow* window, FlValue* args) {
   const std::string directory = StringArgument(args, "uri");
   if (!directory.empty()) {
     SetUserDirectory(directory);
-  }
-  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
-}
-
-FlMethodResponse* HandleInitializeProfileDirectory(GtkWindow* window, FlValue* args) {
-  const std::string directory = StringArgument(args, "uri");
-  if (directory.empty()) {
-    return FL_METHOD_RESPONSE(fl_method_error_response_new(
-        "initializeProfileDirectory", "The profile directory is empty", nullptr));
-  }
-  for (const char* folder : {"config", "nand", "sdmc", "sysdata", "cheats", "log"}) {
-    g_mkdir_with_parents((directory + "/" + folder).c_str(), 0700);
   }
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
 }
@@ -664,7 +654,6 @@ const std::unordered_map<std::string, BridgeMethodHandler>& BridgeMethodHandlers
   static const std::unordered_map<std::string, BridgeMethodHandler> handlers = {
       {"hasUserDirectoryWriteAccess", HandleHasUserDirectoryWriteAccess},
       {"confirmUserDirectory", HandleConfirmUserDirectory},
-      {"initializeProfileDirectory", HandleInitializeProfileDirectory},
       {"getGames", HandleGetGames},
       {"readEmulatorConfig", HandleReadEmulatorConfig},
       {"writeEmulatorConfig", HandleWriteEmulatorConfig},
@@ -798,6 +787,7 @@ void RegisterGamePadChannel(FlBinaryMessenger* messenger) {
 }  // namespace
 
 void azahar_for_flutter_plugin_register_with_registrar(FlPluginRegistrar* registrar) {
+  Common::Storage::Register(azahar_storage_api());
   FlView* view = fl_plugin_registrar_get_view(registrar);
   if (view == nullptr) {
     return;

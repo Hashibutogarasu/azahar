@@ -30,6 +30,9 @@ pub enum AzaharError {
     /// The audio output could not be opened.
     #[error("audio output failed: {0}")]
     Audio(String),
+    /// A folder of a user directory could not be created.
+    #[error("the folder {0} could not be created")]
+    Storage(String),
 }
 
 /// Result alias used across the crate.

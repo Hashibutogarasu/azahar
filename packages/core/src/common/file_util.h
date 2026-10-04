@@ -188,16 +188,14 @@ void GetAllFilesFromNestedEntries(FSTEntry& directory, std::vector<FSTEntry>& ou
 // deletes the given directory and anything under it. Returns true on success.
 bool DeleteDirRecursively(const std::string& directory, unsigned int recursion = 256);
 
-// Returns the current directory
-[[nodiscard]] std::optional<std::string> GetCurrentDir();
-
 // Create directory and copy contents (does not overwrite existing files)
 void CopyDir(const std::string& source_path, const std::string& dest_path);
 
-// Set the current directory to given directory
-bool SetCurrentDir(const std::string& directory);
-
-void SetUserPath(const std::string& path = "");
+/**
+ * Takes the user directory from the storage again, because the storage decides where it is and
+ * the paths derived from it are cached.
+ */
+void SetUserPath();
 
 void SetCurrentRomPath(const std::string& path);
 
@@ -211,18 +209,6 @@ void SetCurrentRomPath(const std::string& path);
 
 // Update the Global Path with the new value
 void UpdateUserPath(UserPath path, const std::string& filename);
-
-#ifdef __APPLE__
-[[nodiscard]] std::optional<std::string> GetBundleDirectory();
-#endif
-
-#ifdef _WIN32
-[[nodiscard]] const std::string& GetExeDirectory();
-[[nodiscard]] std::string AppDataRoamingDirectory();
-#else
-[[nodiscard]] const std::string GetHomeDirectory();
-[[nodiscard]] const std::string GetUserDirectory(const std::string& envvar);
-#endif
 
 std::size_t WriteStringToFile(bool text_file, const std::string& filename, std::string_view str);
 
@@ -421,13 +407,9 @@ public:
         return m_good;
     }
     [[nodiscard]] int GetFd() const {
-#ifdef ANDROID
-        return m_fd;
-#else
         if (m_file == nullptr)
             return -1;
         return fileno(m_file);
-#endif
     }
     [[nodiscard]] explicit operator bool() const {
         return IsGood();
@@ -468,7 +450,6 @@ private:
     bool Open();
 
     std::FILE* m_file = nullptr;
-    int m_fd = -1;
     bool m_good = true;
 
     std::string filename;

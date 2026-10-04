@@ -17,8 +17,9 @@ import 'profile.dart';
 ///
 /// The built-in profile and the user profiles only differ in when they are created and where
 /// their folder is. The built-in profile is created at startup in the app's documents, and a user
-/// profile uses folders the user picked. Both reach the core the same way: on Android through the
-/// profiles document provider, on Linux by the path of their folder.
+/// profile uses folders the user picked. Both reach the core the same way: on Android by the tree
+/// URI of the profiles document provider, which the native side resolves to the folder itself, and
+/// on Linux by the path of their folder.
 class ProfileService {
   ProfileService(
     this._profiles,
@@ -156,9 +157,7 @@ class ProfileService {
 
   Future<void> _initializeFolder(Profile profile) async {
     await _publishProfiles();
-    await _nativeBridge.initializeProfileDirectory(
-      await _coreDirectory(profile),
-    );
+    await _nativeBridge.initializeStorage(profile.userDirectory);
   }
 
   /// The folder of [profile] as the core reaches it.

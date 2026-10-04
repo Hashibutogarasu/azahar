@@ -3,6 +3,7 @@
 #include <glib.h>
 
 #include "common/file_util.h"
+#include "common/storage.h"
 
 namespace {
 constexpr char kAppDataDirName[] = "azahar";
@@ -37,6 +38,7 @@ void EnsureUserPathInitialized() {
   if (AppliedUserDirectory() == directory) {
     return;
   }
-  FileUtil::SetUserPath(directory + "/");
+  Common::Storage::SetRoot(directory);
+  FileUtil::SetUserPath();
   AppliedUserDirectory() = directory;
 }

@@ -2,7 +2,6 @@
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
 
-#include "common/android_storage.h"
 #include "common/common_paths.h"
 #include "common/logging/backend.h"
 #include "common/logging/filter.h"
@@ -321,7 +320,6 @@ static jint InitializeIds(JNIEnv* env) {
     MiiSelector::InitJNI(env);
     SoftwareKeyboard::InitJNI(env);
     Camera::StillImage::InitJNI(env);
-    AndroidStorage::InitJNI(env, s_native_library_class);
 
     return JNI_VERSION;
 }
@@ -345,7 +343,6 @@ static void ReleaseIds(JNIEnv* env) {
     MiiSelector::CleanupJNI(env);
     SoftwareKeyboard::CleanupJNI(env);
     Camera::StillImage::CleanupJNI(env);
-    AndroidStorage::CleanupJNI();
     s_java_load_callback_stages.clear();
     s_java_cia_install_status.clear();
 }

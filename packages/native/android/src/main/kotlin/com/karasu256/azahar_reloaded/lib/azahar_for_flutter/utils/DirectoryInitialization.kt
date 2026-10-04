@@ -9,6 +9,7 @@ import android.net.Uri
 import androidx.preference.PreferenceManager
 import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.CitraApplication
 import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.NativeLibrary
+import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.profiles.ProfilesDocumentsProvider
 import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.utils.PermissionsHandler.hasWriteAccess
 import java.io.File
 import java.io.FileOutputStream
@@ -43,6 +44,7 @@ object DirectoryInitialization {
             directoryState = if (hasWriteAccess(context)) {
                 if (setCitraUserDirectory()) {
                     CitraApplication.documentsTree.setRoot(Uri.parse(userPath))
+                    NativeLibrary.setStorageRoot(storageLocation(Uri.parse(userPath)).toString())
                     NativeLibrary.startLogging()
                     NativeLibrary.logUserDirectory(userPath.toString())
                     NativeLibrary.createConfigFile()
@@ -58,6 +60,14 @@ object DirectoryInitialization {
         isCitraDirectoryInitializationRunning.set(false)
         return directoryState
     }
+
+    /**
+     * The location the core reads the user directory from. A profile is chosen by the tree URI of
+     * [ProfilesDocumentsProvider], which only forwards to the real folder, so the folder itself
+     * is used to keep the core from going through the provider.
+     */
+    private fun storageLocation(userDirectory: Uri): Uri =
+        ProfilesDocumentsProvider.location(context, userDirectory) ?: userDirectory
 
     private fun deleteDirectoryRecursively(file: File) {
         if (file.isDirectory) {

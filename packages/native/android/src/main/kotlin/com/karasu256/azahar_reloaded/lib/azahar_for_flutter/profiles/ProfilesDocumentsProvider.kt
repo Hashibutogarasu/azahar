@@ -205,6 +205,18 @@ class ProfilesDocumentsProvider : DocumentsProvider() {
         fun treeUri(context: Context, hash: String): Uri =
             DocumentsContract.buildTreeDocumentUri(authority(context), documentId(hash, emptyList()))
 
+        /**
+         * The folder behind the tree URI of a profile, so a caller in this process can reach the
+         * folder without going through the provider. Returns null for any other URI.
+         */
+        fun location(context: Context, treeUri: Uri): Uri? {
+            if (treeUri.authority != authority(context)) return null
+            val documentId = runCatching { DocumentsContract.getTreeDocumentId(treeUri) }
+                .getOrNull() ?: return null
+            val hash = segments(documentId).firstOrNull() ?: return null
+            return ProfileStore(context).entry(hash)?.location
+        }
+
         /** Hands the profiles over to the provider and refreshes the roots of the file manager. */
         internal fun setProfiles(context: Context, entries: List<ProfileStore.Entry>) {
             ProfileStore(context).replace(entries)

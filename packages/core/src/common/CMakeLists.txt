@@ -58,8 +58,6 @@ add_library(citra_common STATIC
     aarch64/oaknut_abi.h
     aarch64/oaknut_util.h
     alignment.h
-    android_storage.h
-    android_storage.cpp
     announce_multiplayer_room.h
     arch.h
     archives.h
@@ -125,6 +123,8 @@ add_library(citra_common STATIC
     settings.cpp
     settings.h
     slot_vector.h
+    storage.cpp
+    storage.h
     serialization/atomic.h
     serialization/boost_discrete_interval.hpp
     serialization/boost_flat_set.h
@@ -190,6 +190,7 @@ create_target_directory_groups(citra_common)
 
 target_link_libraries(citra_common PUBLIC fmt library-headers microprofile Boost::boost Boost::serialization Boost::iostreams)
 target_link_libraries(citra_common PRIVATE cryptopp zstd)
+target_include_directories(citra_common PUBLIC "${AZAHAR_REPO_ROOT}/packages/azahar_rust/include")
 
 if ("x86_64" IN_LIST ARCHITECTURE)
     target_link_libraries(citra_common PRIVATE xbyak)

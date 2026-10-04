@@ -16,6 +16,7 @@ import '../models/gpu_driver_info.dart';
 import '../models/installed_title_path.dart';
 import '../models/shader_cache_backend.dart';
 import '../models/wifi_channel.dart';
+import '../rust/api/storage.dart' as rust_storage;
 
 class NativeBridge {
   NativeBridge()
@@ -149,11 +150,10 @@ class NativeBridge {
     return result!;
   }
 
-  /// Creates the folders the core expects in the profile folder [uri].
-  Future<void> initializeProfileDirectory(String uri) {
-    return _channel.invokeMethod<void>('initializeProfileDirectory', {
-      'uri': uri,
-    });
+  /// Creates the folders of a profile through the storage of the Rust crate, the same storage the
+  /// core reads them from, so that the folders exist however [location] is reached.
+  Future<void> initializeStorage(String location) {
+    return rust_storage.initializeStorage(location: location);
   }
 
   Future<bool> hasUserDirectoryWriteAccess() async {

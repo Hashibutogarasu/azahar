@@ -39,7 +39,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.13.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1222654061;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -830592108;
 
 // Section: executor
 
@@ -139,6 +139,39 @@ fn wire__crate__api__session__init_app_impl(
                     let output_ok = Ok::<_, ()>({
                         crate::api::session::init_app();
                     })?;
+                    std::result::Result::Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__storage__initialize_storage_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "initialize_storage",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_location = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, crate::error::AzaharError>((move || {
+                    let output_ok = crate::api::storage::initialize_storage(api_location)?;
                     std::result::Result::Ok(output_ok)
                 })())
             }
@@ -449,6 +482,10 @@ impl SseDecode for crate::error::AzaharError {
                 let mut var_field0 = <String>::sse_decode(deserializer);
                 return crate::error::AzaharError::Audio(var_field0);
             }
+            9 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::error::AzaharError::Storage(var_field0);
+            }
             _ => {
                 unimplemented!("");
             }
@@ -619,13 +656,14 @@ fn pde_ffi_dispatcher_primary_impl(
         1 => wire__crate__api__session__dump_fcram_impl(port, ptr, rust_vec_len, data_len),
         2 => wire__crate__api__session__fcram_size_impl(port, ptr, rust_vec_len, data_len),
         3 => wire__crate__api__session__init_app_impl(port, ptr, rust_vec_len, data_len),
-        4 => wire__crate__api__session__pause_game_impl(port, ptr, rust_vec_len, data_len),
-        5 => wire__crate__api__session__read_memory_impl(port, ptr, rust_vec_len, data_len),
-        6 => wire__crate__api__session__read_u32_impl(port, ptr, rust_vec_len, data_len),
-        7 => wire__crate__api__session__resume_game_impl(port, ptr, rust_vec_len, data_len),
-        8 => wire__crate__api__session__set_volume_impl(port, ptr, rust_vec_len, data_len),
-        9 => wire__crate__api__session__start_game_impl(port, ptr, rust_vec_len, data_len),
-        10 => wire__crate__api__session__stop_game_impl(port, ptr, rust_vec_len, data_len),
+        4 => wire__crate__api__storage__initialize_storage_impl(port, ptr, rust_vec_len, data_len),
+        5 => wire__crate__api__session__pause_game_impl(port, ptr, rust_vec_len, data_len),
+        6 => wire__crate__api__session__read_memory_impl(port, ptr, rust_vec_len, data_len),
+        7 => wire__crate__api__session__read_u32_impl(port, ptr, rust_vec_len, data_len),
+        8 => wire__crate__api__session__resume_game_impl(port, ptr, rust_vec_len, data_len),
+        9 => wire__crate__api__session__set_volume_impl(port, ptr, rust_vec_len, data_len),
+        10 => wire__crate__api__session__start_game_impl(port, ptr, rust_vec_len, data_len),
+        11 => wire__crate__api__session__stop_game_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -667,6 +705,9 @@ impl flutter_rust_bridge::IntoDart for crate::error::AzaharError {
             }
             crate::error::AzaharError::Audio(field0) => {
                 [8.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::error::AzaharError::Storage(field0) => {
+                [9.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
             _ => {
                 unimplemented!("");
@@ -845,6 +886,10 @@ impl SseEncode for crate::error::AzaharError {
             }
             crate::error::AzaharError::Audio(field0) => {
                 <i32>::sse_encode(8, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::error::AzaharError::Storage(field0) => {
+                <i32>::sse_encode(9, serializer);
                 <String>::sse_encode(field0, serializer);
             }
             _ => {
