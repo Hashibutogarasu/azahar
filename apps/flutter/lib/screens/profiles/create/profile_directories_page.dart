@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app_services.dart';
 import '../../../data/busy_provider.dart';
-import '../../../data/repositories/profile_repository.dart';
+import '../../../data/master/repositories/profile_repository.dart';
 import '../../../data/settings/user_directories_provider.dart';
 import '../../../i18n/translations.g.dart';
 import '../../setup/setup_step.dart';
@@ -15,6 +15,9 @@ import 'profile_draft_provider.dart';
 /// The last step of adding a profile: its user folder and games folder, chosen with the same
 /// step as the setup wizard. Confirming it creates the profile, makes the folders the core
 /// expects in its user folder, and leaves the pages for adding a profile.
+///
+/// The step can be skipped until both folders are chosen. Skipping it forgets the folders chosen
+/// so far and creates the profile in its own folder in the app, without a games folder.
 class ProfileDirectoriesPage extends ConsumerStatefulWidget {
   const ProfileDirectoriesPage({super.key});
 
@@ -25,7 +28,10 @@ class ProfileDirectoriesPage extends ConsumerStatefulWidget {
 
 class _ProfileDirectoriesPageState
     extends ConsumerState<ProfileDirectoriesPage> {
-  Future<void> _create() async {
+  Future<void> _create({required bool skip}) async {
+    if (skip) {
+      ref.read(profileDraftProvider.notifier).clearDirectories();
+    }
     final draft = ref.read(profileDraftProvider);
     try {
       await ref
@@ -33,8 +39,8 @@ class _ProfileDirectoriesPageState
           .run(
             () => AppServices.profileService.createUserProfile(
               name: draft.name,
-              userDirectory: draft.userDirectory!,
-              gamesDirectory: draft.gamesDirectory!,
+              userDirectory: draft.userDirectory,
+              gamesDirectory: draft.gamesDirectory,
             ),
           );
     } on DuplicateProfileNameException {
@@ -57,6 +63,8 @@ class _ProfileDirectoriesPageState
     final isBusy = ref.watch(isBusyProvider);
     final directories = ref.read(userDirectoriesProvider);
     final draftNotifier = ref.read(profileDraftProvider.notifier);
+    final foldersChosen =
+        draft.userDirectory != null && draft.gamesDirectory != null;
     return Column(
       children: [
         Expanded(
@@ -83,13 +91,10 @@ class _ProfileDirectoriesPageState
         ),
         SetupNavigationBar(
           showBack: !isBusy,
-          showNext:
-              draft.userDirectory != null &&
-              draft.gamesDirectory != null &&
-              !isBusy,
-          nextLabel: t.profiles.create.create,
+          showNext: !isBusy,
+          nextLabel: foldersChosen ? t.profiles.create.create : t.setup.skip,
           onBack: () => context.pop(),
-          onNext: _create,
+          onNext: () => _create(skip: !foldersChosen),
         ),
       ],
     );

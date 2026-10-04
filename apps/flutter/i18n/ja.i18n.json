@@ -14,11 +14,11 @@
   "profiles": {
     "switchTitle": "プロファイルの切り替え",
     "builtIn": "ビルトイン",
-    "builtInLocation": "アプリ内（${path}）",
     "add": "プロファイルを追加",
     "gameRunning": "ゲームの実行中はプロファイルを切り替えられません。",
     "delete": "削除",
-    "deleteGameRunning": "ゲームの実行中はプロファイルを削除できません。",    "create": {
+    "deleteGameRunning": "ゲームの実行中はプロファイルを削除できません。",
+    "create": {
       "title": "新しいプロファイル",
       "nameTitle": "プロファイル名",
       "nameDescription": "新しいプロファイルの名前を決めてください。",
@@ -26,6 +26,15 @@
       "nameEmpty": "プロファイル名を入力してください。",
       "nameTaken": "同じ名前のプロファイルがすでにあります。",
       "create": "作成"
+    },
+    "legacyMigration": {
+      "title": "以前のデータが見つかりました",
+      "description": "${path} に以前のバージョンのデータが見つかりました。ビルトインプロファイルへ移動しますか？",
+      "migrate": "移動する",
+      "keep": "移動しない",
+      "migrating": "データを移動しています",
+      "failed": "データを移動できませんでした: ${error}",
+      "proceed": "続行"
     }
   },
   "setup": {

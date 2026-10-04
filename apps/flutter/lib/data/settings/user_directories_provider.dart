@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../app_services.dart';
-import '../user_directory_bootstrap.dart';
 
 final userDirectoriesProvider = Provider<UserDirectoriesService>(
   (ref) => UserDirectoriesService(),
@@ -14,6 +13,10 @@ final userDirectoriesProvider = Provider<UserDirectoriesService>(
 class UserDirectoriesService {
   Future<String?> previousUserDirectory() =>
       AppServices.citraDirectoryRepository.citraDirectoryUri();
+
+  /// The user folder last chosen by the user, or null when none was chosen yet.
+  Future<String?> chosenUserDirectory() =>
+      AppServices.citraDirectoryRepository.chosenDirectoryUri();
 
   Future<String?> pickUserDirectory() => Platform.isAndroid
       ? AppServices.nativeBridge.openUserDirectory()
@@ -27,9 +30,6 @@ class UserDirectoriesService {
     String? previousUri,
     required bool moveData,
   }) async {
-    if (Platform.isLinux) {
-      await UserDirectoryBootstrap.writeConfiguredDirectory(uri);
-    }
     await AppServices.nativeBridge.confirmUserDirectory(
       uri: uri,
       previousUri: previousUri,

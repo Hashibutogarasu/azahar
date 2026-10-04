@@ -3,14 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app_services.dart';
 import '../../../data/busy_provider.dart';
-import '../../../data/options/categories/profile_options.dart';
 import '../../../data/platform_provider.dart';
 import '../../../data/profiles/profile.dart';
 import '../../../i18n/translations.g.dart';
 import '../../../routing/app_routes.dart';
 import '../../../widgets/long_press_menu_sheet.dart';
 import '../../games/game_process_provider.dart';
-import '../../games/games_provider.dart';
 
 /// The profiles, oldest first, with the default one selected.
 final profilesProvider = StreamProvider<List<Profile>>(
@@ -75,10 +73,10 @@ class ProfileRadioList extends ConsumerWidget {
       _showMessage(context, context.t.profiles.gameRunning);
       return;
     }
-    await ref.read(busyProvider.notifier).run(() async {
-      await AppServices.profileService.switchTo(cuid);
-      await _reload(ref);
-    });
+    await ref
+        .read(busyProvider.notifier)
+        .run(() => AppServices.profileService.switchTo(cuid));
+    AppServices.userSessions.remount();
   }
 
   Future<void> _delete(
@@ -91,20 +89,12 @@ class ProfileRadioList extends ConsumerWidget {
       _showMessage(context, context.t.profiles.deleteGameRunning);
       return;
     }
-    await ref.read(busyProvider.notifier).run(() async {
-      final switched = await AppServices.profileService.deleteProfile(cuid);
-      if (switched) {
-        await _reload(ref);
-      }
-    });
-  }
-
-  /// Reloads what depends on the default profile after it changed.
-  Future<void> _reload(WidgetRef ref) async {
-    await AppServices.loadAll();
-    ref.invalidate(defaultProfileCuidProvider);
-    ref.invalidate(profileOptionsProvider);
-    await ref.read(gamesProvider.notifier).rescan();
+    final switched = await ref
+        .read(busyProvider.notifier)
+        .run(() => AppServices.profileService.deleteProfile(cuid));
+    if (switched) {
+      AppServices.userSessions.remount();
+    }
   }
 
   void _showMessage(BuildContext context, String message) {
@@ -165,11 +155,7 @@ class ProfileRadioTile extends ConsumerWidget {
       value: profile.cuid,
       enabled: enabled,
       title: Text(profile.isBuiltIn ? t.profiles.builtIn : profile.name),
-      subtitle: Text(
-        profile.isBuiltIn
-            ? t.profiles.builtInLocation(path: 'profiles/${profile.hash}')
-            : AppServices.profileService.displayLocation(profile),
-      ),
+      subtitle: Text(AppServices.profileService.displayLocation(profile)),
       secondary: isDesktop && hasMenu
           ? PopupMenuButton<void>(
               enabled: enabled,

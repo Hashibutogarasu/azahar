@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app_services.dart';
-import '../../data/database.dart';
+import '../user/user_database.dart';
 import '../../i18n/translations.g.dart';
 import '../../theme/theme_settings_provider.dart';
 import 'reset_settings_provider.dart';

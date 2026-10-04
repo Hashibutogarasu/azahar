@@ -1,4 +1,4 @@
-import '../repositories/control_bindings_repository.dart';
+import '../user/repositories/control_bindings_repository.dart';
 import '../repositories/loadable.dart';
 import 'emulator_setting_key.dart';
 import 'settings_value_store.dart';

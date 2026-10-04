@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/options/option_entry.dart';
 import '../../../data/options/option_history_provider.dart';
 import '../../../data/options/pinned_options_provider.dart';
-import '../../../data/repositories/pinned_options_repository.dart';
+import '../../../data/user/repositories/pinned_options_repository.dart';
 import '../../../i18n/translations.g.dart';
 import '../../../widgets/long_press_menu_sheet.dart';
 

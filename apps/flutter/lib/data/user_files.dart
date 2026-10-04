@@ -3,12 +3,15 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
-import 'user_directory_bootstrap.dart';
-
 /// Reads and writes files inside the user directory using paths relative to it.
 abstract interface class UserFiles {
-  factory UserFiles.forPlatform(NativeBridge nativeBridge) {
-    return Platform.isLinux ? IoUserFiles() : BridgeUserFiles(nativeBridge);
+  /// [root] resolves the path of the user directory in use, for platforms that reach it with
+  /// `dart:io`.
+  factory UserFiles.forPlatform(
+    NativeBridge nativeBridge, {
+    required Future<String?> Function() root,
+  }) {
+    return Platform.isLinux ? IoUserFiles(root) : BridgeUserFiles(nativeBridge);
   }
 
   Future<bool> append(String path, String text);
@@ -20,10 +23,14 @@ abstract interface class UserFiles {
   Future<bool> share(String path);
 }
 
-/// Uses `dart:io` against the directory confirmed in the setup wizard.
+/// Uses `dart:io` against the user directory in use.
 class IoUserFiles implements UserFiles {
+  IoUserFiles(this._root);
+
+  final Future<String?> Function() _root;
+
   Future<File?> _file(String path) async {
-    final root = await UserDirectoryBootstrap.readConfiguredDirectory();
+    final root = await _root();
     if (root == null) return null;
     return File(p.joinAll([root, ...p.posix.split(path)]));
   }

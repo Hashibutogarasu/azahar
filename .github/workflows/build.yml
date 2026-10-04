@@ -191,30 +191,25 @@ jobs:
           key: ${{ runner.os }}-flutter-linux-${{ github.run_id }}-${{ github.run_attempt }}
 
   flatpak:
+    needs: linux
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
+      - name: Download Linux bundle
+        uses: actions/download-artifact@v4
         with:
-          submodules: recursive
-      - name: Free disk space
-        uses: ./.github/actions/free-disk-space
+          name: flutter-linux
+          path: apps/flutter/build/linux/x64/release/bundle
       - name: Load build image
         uses: ./.github/actions/docker-image
         with:
-          image: bilelmoussaoui/flatpak-github-actions:kde-6.7
-      - name: Restore build cache
-        uses: actions/cache/restore@v4
-        with:
-          path: .flatpak-builder
-          key: ${{ runner.os }}-flatpak-${{ github.run_id }}-${{ github.run_attempt }}
-          restore-keys: |
-            ${{ runner.os }}-flatpak-
+          image: bilelmoussaoui/flatpak-github-actions:gnome-47
       - name: Build
         run: |
           docker run --rm --privileged \
             -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" \
-            bilelmoussaoui/flatpak-github-actions:kde-6.7 \
+            bilelmoussaoui/flatpak-github-actions:gnome-47 \
             ./.ci/flatpak.sh
       - name: Take ownership of the build output
         if: always()
@@ -233,45 +228,20 @@ jobs:
         with:
           name: flatpak
           path: azahar.flatpak
-      - name: Save build cache
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: .flatpak-builder
-          key: ${{ runner.os }}-flatpak-${{ github.run_id }}-${{ github.run_attempt }}
 
   deb:
+    needs: linux
     runs-on: ubuntu-latest
-    timeout-minutes: 180
-    env:
-      CCACHE_DIR: ${{ github.workspace }}/.ccache
-      CCACHE_COMPILERCHECK: content
-      CCACHE_SLOPPINESS: time_macros
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
+      - name: Download Linux bundle
+        uses: actions/download-artifact@v4
         with:
-          submodules: recursive
-      - name: Free disk space
-        uses: ./.github/actions/free-disk-space
-      - name: Load build image
-        uses: ./.github/actions/docker-image
-        with:
-          image: opensauce04/azahar-build-environment:latest
-      - name: Restore build cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ env.CCACHE_DIR }}
-          key: ${{ runner.os }}-deb-${{ github.run_id }}-${{ github.run_attempt }}
-          restore-keys: |
-            ${{ runner.os }}-deb-
+          name: flutter-linux
+          path: apps/flutter/build/linux/x64/release/bundle
       - name: Build
-        run: |
-          docker run --rm -u "$(id -u):$(id -g)" \
-            -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" \
-            -e CCACHE_DIR -e CCACHE_COMPILERCHECK -e CCACHE_SLOPPINESS \
-            -e GITHUB_REF_TYPE -e GITHUB_REF_NAME \
-            opensauce04/azahar-build-environment:latest \
-            ./.ci/deb.sh
+        run: ./.ci/deb.sh
       - name: Report
         run: |
           {
@@ -288,9 +258,3 @@ jobs:
         with:
           name: deb
           path: build/*.deb
-      - name: Save build cache
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: ${{ env.CCACHE_DIR }}
-          key: ${{ runner.os }}-deb-${{ github.run_id }}-${{ github.run_attempt }}

@@ -1,0 +1,24 @@
+app-id: io.github.lime3ds.azahar
+runtime: org.gnome.Platform
+runtime-version: '47'
+sdk: org.gnome.Sdk
+command: azahar
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --device=all
+  - --filesystem=home
+modules:
+  - name: azahar
+    buildsystem: simple
+    build-commands:
+      - sh install.sh bundle "" /app
+    sources:
+      - type: dir
+        path: ../../build/linux/x64/release/bundle
+        dest: bundle
+      - type: file
+        path: install.sh

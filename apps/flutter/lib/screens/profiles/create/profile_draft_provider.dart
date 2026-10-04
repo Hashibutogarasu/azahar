@@ -20,4 +20,6 @@ class ProfileDraftNotifier extends Notifier<ProfileDraft> {
 
   void setGamesDirectory(String uri) =>
       state = state.copyWith(gamesDirectory: uri);
+
+  void clearDirectories() => state = ProfileDraft(name: state.name);
 }

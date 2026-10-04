@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app_services.dart';
-import '../database.dart';
+import '../user/user_database.dart';
 import '../settings/settings_load_provider.dart';
 
 /// The base of the notifier behind a feature flag. Its state is whether the flag is on, which
