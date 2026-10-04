@@ -124,9 +124,19 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
 
   Future<void> advanceFrame() => _bridge.advanceFrame();
 
-  Future<void> pauseForClosePrompt() => _backend.pause();
+  /// Pauses the game while a dialog is shown over it, the same way as [togglePause], so the menu
+  /// shows it as paused. Returns whether the game was running, to pass to [resumeAfterDialog].
+  Future<bool> pauseForDialog() async {
+    if (state.isPaused) return false;
+    await togglePause();
+    return true;
+  }
 
-  Future<void> cancelClosePrompt() => _backend.resume();
+  /// Resumes the game after a dialog when [pauseForDialog] paused it.
+  Future<void> resumeAfterDialog({required bool wasRunning}) async {
+    if (!wasRunning || !state.isPaused) return;
+    await togglePause();
+  }
 
   Future<void> handleAppBackground() async {
     if (!state.isLaunched) return;
