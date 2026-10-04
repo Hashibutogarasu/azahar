@@ -38,7 +38,6 @@ class _GamesListPageState extends ConsumerState<GamesListPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    ref.read(gamesProvider.notifier).rescan();
     _launchRequests = AppServices.nativeBridge.launchRequests.listen(
       (path) => unawaited(_launchRequested(path)),
     );

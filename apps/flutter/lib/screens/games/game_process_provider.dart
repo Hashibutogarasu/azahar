@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app_services.dart';
 import '../emulation/emulation_page.dart';
+import 'games_provider.dart';
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 final gameProcessProvider =
@@ -27,8 +28,10 @@ class GameProcessNotifier extends Notifier<bool> {
   Future<void> launch(BuildContext context, {required String path, Game? game}) async {
     if (state) return;
     final navigator = Navigator.of(context, rootNavigator: true);
+    final games = ref.read(gamesProvider.notifier);
     state = true;
     try {
+      await games.holdScans();
       if (game != null) {
         await AppServices.gameRepository.markLastPlayed(game.path);
       }
@@ -38,6 +41,7 @@ class GameProcessNotifier extends Notifier<bool> {
         ),
       );
     } finally {
+      games.releaseScans();
       if (!_disposed) state = false;
     }
   }
