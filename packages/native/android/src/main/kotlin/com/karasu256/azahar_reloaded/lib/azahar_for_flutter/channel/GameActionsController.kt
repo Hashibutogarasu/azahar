@@ -19,6 +19,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.CitraApplication
 import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.AzaharForFlutterPlugin
+import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.utils.FilesApp
 
 /**
  * Backs the game long-press menu (Open Folder / Uninstall / Delete Shader Cache /
@@ -57,8 +58,12 @@ class GameActionsController(private val activity: Activity) {
                 "/data/00000001",
             modsDir = "load/mods/$titleIdHexUpper",
             texturesDir = "load/textures/$titleIdHexUpper",
-            appDir = path.substringBeforeLast("/").split("/").filter { it.isNotEmpty() }
-                .joinToString("/"),
+            appDir = if (path.startsWith(CONTENT_SCHEME)) {
+                path
+            } else {
+                path.substringBeforeLast("/").split("/").filter { it.isNotEmpty() }
+                    .joinToString("/")
+            },
             dlcDir = "$basePath/title/0004008c/${titleIdHex.substring(8)}/content",
             updatesDir = "$basePath/title/0004000e/${titleIdHex.substring(8)}/content",
             extraDir = "$basePath/extdata/00000000/" +
@@ -84,6 +89,17 @@ class GameActionsController(private val activity: Activity) {
         else -> null
     }
 
+    /**
+     * The document URI of [dir], which is either a folder relative to the user directory or the
+     * content URI of a game file in the games folder, whose own folder is wanted.
+     */
+    private fun folderUri(dir: String, createIfNotExists: Boolean = false): Uri? =
+        if (dir.startsWith(CONTENT_SCHEME)) {
+            FilesApp.parentFolder(Uri.parse(dir))
+        } else {
+            CitraApplication.documentsTree.folderUriHelper(dir, createIfNotExists)
+        }
+
     private fun titleIdArgument(call: MethodCall): Long =
         (call.argument<Number>("titleId") ?: 0L).toLong()
 
@@ -101,7 +117,7 @@ class GameActionsController(private val activity: Activity) {
             val checkedDirs =
                 listOf(dirs.appDir, dirs.saveDir, dirs.updatesDir, dirs.dlcDir, dirs.extraDir)
             val checkedStatus = checkedDirs.map { dir ->
-                CitraApplication.documentsTree.folderUriHelper(dir)?.let {
+                folderUri(dir)?.let {
                     DocumentFile.fromTreeUri(activity, it)?.exists()
                 } ?: false
             }
@@ -118,7 +134,7 @@ class GameActionsController(private val activity: Activity) {
             val dirs = getGameDirectories(titleId, path)
             val dir = folderFor(dirs, folder) ?: return null
             val createIfNotExists = folder == "textures" || folder == "mods"
-            return CitraApplication.documentsTree.folderUriHelper(dir, createIfNotExists)
+            return folderUri(dir, createIfNotExists)
         }
 
         override fun deliver(value: Any?, result: MethodChannel.Result) {
@@ -127,13 +143,7 @@ class GameActionsController(private val activity: Activity) {
                 result.success(false)
                 return
             }
-            activity.startActivity(
-                Intent(Intent.ACTION_VIEW)
-                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    .setDataAndType(uri, "*/*")
-            )
-            result.success(true)
+            result.success(FilesApp.openFolder(activity, uri))
         }
     }
 
@@ -241,4 +251,8 @@ class GameActionsController(private val activity: Activity) {
             putExtra(AzaharForFlutterPlugin.EXTRA_GAME_PATH, path)
             putExtra("launched_from_shortcut", true)
         }
+
+    companion object {
+        private const val CONTENT_SCHEME = "content://"
+    }
 }
