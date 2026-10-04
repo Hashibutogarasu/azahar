@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../data/platform_provider.dart';
 import '../../data/settings/accessibility_settings_provider.dart';
 import '../../data/settings/advanced_settings_provider.dart';
 import '../../data/settings/animation_speed.dart';
 
 /// A [ShellNavigationContainerBuilder] for [AppShellRouteData] (see `app_routes.dart`) that
 /// slides the previous and next branch content horizontally, in the direction implied by the
-/// index change, instead of swapping instantly. All branches stay mounted (via [Offstage]) so
-/// their navigation/scroll state survives switching tabs, same as the default indexed-stack
-/// container.
+/// index change, instead of swapping instantly. On desktop the branches swap instantly, without
+/// sliding. All branches stay mounted (via [Offstage]) so their navigation/scroll state survives
+/// switching tabs, same as the default indexed-stack container.
 Widget slideBranchContainerBuilder(
   BuildContext context,
   StatefulNavigationShell navigationShell,
@@ -53,6 +54,14 @@ class _SlideBranchContainerState extends ConsumerState<SlideBranchContainer>
     super.didUpdateWidget(oldWidget);
     final newIndex = widget.navigationShell.currentIndex;
     if (newIndex == _currentIndex) return;
+    if (ref.read(isDesktopPlatformProvider)) {
+      _controller.value = 1;
+      setState(() {
+        _previousIndex = null;
+        _currentIndex = newIndex;
+      });
+      return;
+    }
     final reduceMotion = ref.read(accessibilitySettingsProvider).reduceMotion;
     final animationSpeed = ref.read(advancedSettingsProvider).animationSpeed;
     setState(() {
