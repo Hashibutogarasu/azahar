@@ -10,22 +10,17 @@ class Profile {
     required this.name,
     required this.userDirectory,
     required this.gamesDirectory,
+    required this.databaseFile,
     required this.isBuiltIn,
     required this.createdAt,
   });
 
   final String cuid;
   final String name;
-
-  /// The URI of the folder that holds the profile's data.
   final String userDirectory;
-
-  /// The URI of the folder that is scanned for games, or null when none was chosen.
   final String? gamesDirectory;
-
-  /// Whether the app created this profile in its documents folder.
+  final String databaseFile;
   final bool isBuiltIn;
-
   final DateTime createdAt;
 
   /// Identifies the profile outside the app, such as the root of the profile in the file manager

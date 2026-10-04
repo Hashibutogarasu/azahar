@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../app_services.dart';
-import '../data/database.dart';
+import '../data/user/user_database.dart';
 import 'theme_style.dart';
 
 final themeSettingsProvider =

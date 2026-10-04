@@ -6,7 +6,7 @@ import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../app_services.dart';
 import '../../data/platform_provider.dart';
-import '../../data/repositories/game_repository.dart';
+import '../../data/user/repositories/game_repository.dart';
 import '../../data/tags/tags_provider.dart';
 import '../../i18n/translations.g.dart';
 import '../../widgets/app_search_bar.dart';

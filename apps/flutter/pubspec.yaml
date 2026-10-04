@@ -38,6 +38,7 @@ dependencies:
   sensors_plus: ^7.1.0
   slang: ^4.19.2
   slang_flutter: ^4.19.0
+  sqlite3: ^3.7.0
   sqlite3_flutter_libs: ^0.6.0+eol
   stack_trace: ^1.12.2
   universal_gamepad: ^1.5.8

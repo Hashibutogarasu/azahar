@@ -144,10 +144,11 @@ class _Translations$profiles$ja extends Translations$profiles$en {
   @override
   String get deleteGameRunning => 'ゲームの実行中はプロファイルを削除できません。';
   @override
-  String get changing => 'プロファイルを変更中のため、完了するまで操作できません。';
-  @override
   late final _Translations$profiles$create$ja create =
       _Translations$profiles$create$ja._(_root);
+  @override
+  late final _Translations$profiles$legacyMigration$ja legacyMigration =
+      _Translations$profiles$legacyMigration$ja._(_root);
 }
 
 // Path: setup
@@ -728,6 +729,33 @@ class _Translations$profiles$create$ja extends Translations$profiles$create$en {
   String get nameTaken => '同じ名前のプロファイルがすでにあります。';
   @override
   String get create => '作成';
+}
+
+// Path: profiles.legacyMigration
+class _Translations$profiles$legacyMigration$ja
+    extends Translations$profiles$legacyMigration$en {
+  _Translations$profiles$legacyMigration$ja._(TranslationsJa root)
+    : this._root = root,
+      super.internal(root);
+
+  final TranslationsJa _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => '以前のデータが見つかりました';
+  @override
+  String description({required Object path}) =>
+      '${path} に以前のバージョンのデータが見つかりました。ビルトインプロファイルへ移動しますか？';
+  @override
+  String get migrate => '移動する';
+  @override
+  String get keep => '移動しない';
+  @override
+  String get migrating => 'データを移動しています';
+  @override
+  String failed({required Object error}) => 'データを移動できませんでした: ${error}';
+  @override
+  String get proceed => '続行';
 }
 
 // Path: setup.welcome
@@ -2309,7 +2337,6 @@ extension on TranslationsJa {
           'profiles.gameRunning' => 'ゲームの実行中はプロファイルを切り替えられません。',
           'profiles.delete' => '削除',
           'profiles.deleteGameRunning' => 'ゲームの実行中はプロファイルを削除できません。',
-          'profiles.changing' => 'プロファイルを変更中のため、完了するまで操作できません。',
           'profiles.create.title' => '新しいプロファイル',
           'profiles.create.nameTitle' => 'プロファイル名',
           'profiles.create.nameDescription' => '新しいプロファイルの名前を決めてください。',
@@ -2317,6 +2344,16 @@ extension on TranslationsJa {
           'profiles.create.nameEmpty' => 'プロファイル名を入力してください。',
           'profiles.create.nameTaken' => '同じ名前のプロファイルがすでにあります。',
           'profiles.create.create' => '作成',
+          'profiles.legacyMigration.title' => '以前のデータが見つかりました',
+          'profiles.legacyMigration.description' =>
+            ({required Object path}) =>
+                '${path} に以前のバージョンのデータが見つかりました。ビルトインプロファイルへ移動しますか？',
+          'profiles.legacyMigration.migrate' => '移動する',
+          'profiles.legacyMigration.keep' => '移動しない',
+          'profiles.legacyMigration.migrating' => 'データを移動しています',
+          'profiles.legacyMigration.failed' =>
+            ({required Object error}) => 'データを移動できませんでした: ${error}',
+          'profiles.legacyMigration.proceed' => '続行',
           'setup.next' => '次へ',
           'setup.skip' => 'スキップ',
           'setup.back' => '戻る',
@@ -2870,15 +2907,15 @@ extension on TranslationsJa {
           'settings.system.countries.portugal' => 'ポルトガル',
           'settings.system.countries.romania' => 'ルーマニア',
           'settings.system.countries.russia' => 'ロシア',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.system.countries.serbia' => 'セルビア',
           'settings.system.countries.slovakia' => 'スロバキア',
           'settings.system.countries.slovenia' => 'スロベニア',
           'settings.system.countries.southAfrica' => '南アフリカ',
           'settings.system.countries.spain' => 'スペイン',
           'settings.system.countries.swaziland' => 'スワジランド',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.system.countries.sweden' => 'スウェーデン',
           'settings.system.countries.switzerland' => 'スイス',
           'settings.system.countries.turkey' => 'トルコ',

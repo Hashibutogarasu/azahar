@@ -4,11 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../data/profiles/profile_service.dart';
-import '../../data/repositories/first_launch_repository.dart';
-import '../../data/repositories/games_directory_repository.dart';
+import '../../data/master/repositories/first_launch_repository.dart';
+import '../../data/master/repositories/games_directory_repository.dart';
 import '../../data/repositories/permission_repository.dart';
 import '../../data/settings/user_directories_provider.dart';
-import '../../data/user_directory_bootstrap.dart';
 
 class SetupWizardViewModel extends ChangeNotifier {
   SetupWizardViewModel(
@@ -98,7 +97,7 @@ class SetupWizardViewModel extends ChangeNotifier {
 
   Future<bool> _isUserDirectoryConfigured() async {
     if (Platform.isLinux) {
-      return (await UserDirectoryBootstrap.readConfiguredDirectory()) != null;
+      return await _userDirectories.chosenUserDirectory() != null;
     }
     return _nativeBridge.hasUserDirectoryWriteAccess();
   }

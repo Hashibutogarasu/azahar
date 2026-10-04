@@ -27,14 +27,14 @@ $OptionSectionCopyWith<OptionSection> get copyWith => _$OptionSectionCopyWithImp
 @override
 bool operator ==(Object other) {
   final _this = this as OptionSection;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OptionSection&&(identical(other.title, _this.title) || other.title == _this.title)&&const DeepCollectionEquality().equals(other.options, _this.options)&&const DeepCollectionEquality().equals(other.disabledWhen, _this.disabledWhen));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OptionSection&&(identical(other.title, _this.title) || other.title == _this.title)&&const DeepCollectionEquality().equals(other.options, _this.options)&&(identical(other.disabledWhen, _this.disabledWhen) || other.disabledWhen == _this.disabledWhen));
 }
 
 
 @override
 int get hashCode {
   final _this = this as OptionSection;
-  return Object.hash(runtimeType,_this.title,const DeepCollectionEquality().hash(_this.options),const DeepCollectionEquality().hash(_this.disabledWhen));
+  return Object.hash(runtimeType,_this.title,const DeepCollectionEquality().hash(_this.options),_this.disabledWhen);
 }
 
 @override
@@ -237,13 +237,13 @@ _$OptionSectionCopyWith<_OptionSection> get copyWith => __$OptionSectionCopyWith
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _OptionSection&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other.options, _options)&&const DeepCollectionEquality().equals(other.disabledWhen, disabledWhen));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _OptionSection&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other.options, _options)&&(identical(other.disabledWhen, disabledWhen) || other.disabledWhen == disabledWhen));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,title,const DeepCollectionEquality().hash(_options),const DeepCollectionEquality().hash(disabledWhen));
+    return Object.hash(runtimeType,title,const DeepCollectionEquality().hash(_options),disabledWhen);
 }
 
 @override

@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app_services.dart';
 import '../../../data/busy_provider.dart';
-import '../../../data/repositories/profile_repository.dart';
+import '../../../data/master/repositories/profile_repository.dart';
 import '../../../data/settings/user_directories_provider.dart';
 import '../../../i18n/translations.g.dart';
 import '../../setup/setup_step.dart';

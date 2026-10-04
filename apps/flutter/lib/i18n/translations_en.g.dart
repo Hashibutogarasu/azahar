@@ -144,12 +144,10 @@ class Translations$profiles$en {
   String get deleteGameRunning =>
       'The profile can\'t be deleted while a game is running.';
 
-  /// en: 'Profiles can't be changed until the current change finishes.'
-  String get changing =>
-      'Profiles can\'t be changed until the current change finishes.';
-
   late final Translations$profiles$create$en create =
       Translations$profiles$create$en.internal(_root);
+  late final Translations$profiles$legacyMigration$en legacyMigration =
+      Translations$profiles$legacyMigration$en.internal(_root);
 }
 
 // Path: setup
@@ -869,6 +867,38 @@ class Translations$profiles$create$en {
 
   /// en: 'Create'
   String get create => 'Create';
+}
+
+// Path: profiles.legacyMigration
+class Translations$profiles$legacyMigration$en {
+  Translations$profiles$legacyMigration$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'Existing Data Found'
+  String get title => 'Existing Data Found';
+
+  /// en: 'Data from an earlier version was found in ${path}. Move it into the built-in profile?'
+  String description({required Object path}) =>
+      'Data from an earlier version was found in ${path}. Move it into the built-in profile?';
+
+  /// en: 'Move'
+  String get migrate => 'Move';
+
+  /// en: 'Don't Move'
+  String get keep => 'Don\'t Move';
+
+  /// en: 'Moving data'
+  String get migrating => 'Moving data';
+
+  /// en: 'The data could not be moved: ${error}'
+  String failed({required Object error}) =>
+      'The data could not be moved: ${error}';
+
+  /// en: 'Continue'
+  String get proceed => 'Continue';
 }
 
 // Path: setup.welcome
@@ -2931,8 +2961,6 @@ extension on Translations {
           'profiles.delete' => 'Delete',
           'profiles.deleteGameRunning' =>
             'The profile can\'t be deleted while a game is running.',
-          'profiles.changing' =>
-            'Profiles can\'t be changed until the current change finishes.',
           'profiles.create.title' => 'New Profile',
           'profiles.create.nameTitle' => 'Profile Name',
           'profiles.create.nameDescription' =>
@@ -2942,6 +2970,17 @@ extension on Translations {
           'profiles.create.nameTaken' =>
             'A profile with this name already exists.',
           'profiles.create.create' => 'Create',
+          'profiles.legacyMigration.title' => 'Existing Data Found',
+          'profiles.legacyMigration.description' =>
+            ({required Object path}) =>
+                'Data from an earlier version was found in ${path}. Move it into the built-in profile?',
+          'profiles.legacyMigration.migrate' => 'Move',
+          'profiles.legacyMigration.keep' => 'Don\'t Move',
+          'profiles.legacyMigration.migrating' => 'Moving data',
+          'profiles.legacyMigration.failed' =>
+            ({required Object error}) =>
+                'The data could not be moved: ${error}',
+          'profiles.legacyMigration.proceed' => 'Continue',
           'setup.next' => 'Next',
           'setup.skip' => 'Skip',
           'setup.back' => 'Back',
@@ -3540,15 +3579,15 @@ extension on Translations {
           'settings.system.countries.norway' => 'Norway',
           'settings.system.countries.poland' => 'Poland',
           'settings.system.countries.portugal' => 'Portugal',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.system.countries.romania' => 'Romania',
           'settings.system.countries.russia' => 'Russia',
           'settings.system.countries.serbia' => 'Serbia',
           'settings.system.countries.slovakia' => 'Slovakia',
           'settings.system.countries.slovenia' => 'Slovenia',
           'settings.system.countries.southAfrica' => 'South Africa',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.system.countries.spain' => 'Spain',
           'settings.system.countries.swaziland' => 'Swaziland',
           'settings.system.countries.sweden' => 'Sweden',

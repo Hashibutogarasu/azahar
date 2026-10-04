@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app_services.dart';
-import '../database.dart';
+import '../user/user_database.dart';
 import 'animation_speed.dart';
 
 final advancedSettingsProvider =

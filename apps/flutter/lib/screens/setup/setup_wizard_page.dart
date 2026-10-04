@@ -123,6 +123,7 @@ class _SetupWizardPageState extends State<SetupWizardPage> {
               if (context.mounted) {
                 const GamesListRoute().go(context);
               }
+              AppServices.userSessions.remount();
               return false;
             },
           ),

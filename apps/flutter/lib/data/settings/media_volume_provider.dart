@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../app_services.dart';
-import '../database.dart';
+import '../user/user_database.dart';
 
 final masterVolumeProvider = NotifierProvider<MasterVolumeNotifier, double>(
   MasterVolumeNotifier.new,

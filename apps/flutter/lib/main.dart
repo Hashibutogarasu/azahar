@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-import 'dart:ui';
 
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
@@ -11,14 +9,15 @@ import 'package:stack_trace/stack_trace.dart' as stack_trace;
 
 import 'app_services.dart';
 import 'data/settings/debug_settings_provider.dart';
-import 'data/user_directory_bootstrap.dart';
 import 'errors/app_exception.dart';
 import 'i18n/translations.g.dart';
 import 'routing/app_routes.dart';
+import 'screens/profiles/legacy_data_prompt_page.dart';
 import 'screens/settings/settings_routes.dart' as legacy_settings;
 import 'theme/app_theme.dart';
 import 'theme/no_overscroll_indicator_behavior.dart';
 import 'theme/theme_settings_provider.dart';
+import 'theme/theme_style.dart';
 
 final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
@@ -42,23 +41,12 @@ void main(List<String> args) {
     () async {
       WidgetsFlutterBinding.ensureInitialized();
       await initializeRust();
+      await AppServices.prepareMasterDatabase();
       AppServices.loggingService.start();
-      await AppServices.migrateKeyValueRepositories();
-      await AppServices.profileService.initialize();
+      await _initializeProfiles();
       await applyDebugSettings(
         await AppServices.debugSettingsRepository.read(),
       );
-
-      if (Platform.isLinux) {
-        late final AppLifecycleListener exitListener;
-        exitListener = AppLifecycleListener(
-          onExitRequested: () async {
-            await UserDirectoryBootstrap.cleanupIfUnconfigured();
-            exitListener.dispose();
-            return AppExitResponse.exit;
-          },
-        );
-      }
 
       AppletChannel(
         _navigatorKey,
@@ -79,7 +67,7 @@ void main(List<String> args) {
         }
       };
 
-      runApp(const ProviderScope(child: AzaharApp()));
+      runApp(const AzaharRoot());
     },
     (error, stackTrace) {
       if (error is AppException) {
@@ -91,6 +79,50 @@ void main(List<String> args) {
       }
     },
   );
+}
+
+/// Initializes the profiles, first asking whether to move the core data left in the app data
+/// folder when there is any.
+Future<void> _initializeProfiles() async {
+  final profileService = AppServices.profileService;
+  if (!await profileService.shouldAskLegacyMigration()) {
+    await profileService.initialize();
+    return;
+  }
+  final systemDirectory = await AppServices.locationsRepository
+      .systemDirectory();
+  final done = Completer<void>();
+  runApp(
+    TranslationProvider(
+      child: MaterialApp(
+        theme: AppTheme.light(style: ThemeStyle.azahar),
+        darkTheme: AppTheme.dark(style: ThemeStyle.azahar),
+        home: LegacyDataPromptPage(
+          path: systemDirectory.path,
+          onChoice: (migrate) =>
+              profileService.initialize(migrateLegacyData: migrate),
+          onDone: done.complete,
+        ),
+      ),
+    ),
+  );
+  await done.future;
+}
+
+/// Rebuilds the whole app, with fresh providers, whenever another user database is opened.
+class AzaharRoot extends StatelessWidget {
+  const AzaharRoot({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<int>(
+      valueListenable: AppServices.userSessions.generation,
+      builder: (context, generation, _) => ProviderScope(
+        key: ValueKey(generation),
+        child: const AzaharApp(),
+      ),
+    );
+  }
 }
 
 class AzaharApp extends ConsumerWidget {
