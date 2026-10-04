@@ -110,14 +110,14 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
 
   Future<void> _confirmCloseGame() async {
     final notifier = ref.read(emulationSessionProvider.notifier);
-    await notifier.pauseForClosePrompt();
+    final wasRunning = await notifier.pauseForDialog();
     if (!mounted) return;
     final confirmed = await CloseGameDialog.show(context);
     if (!mounted) return;
     if (confirmed == true) {
       await notifier.terminate();
     } else {
-      await notifier.cancelClosePrompt();
+      await notifier.resumeAfterDialog(wasRunning: wasRunning);
     }
   }
 
@@ -125,8 +125,7 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
     final game = widget.game;
     if (game == null) return;
     final notifier = ref.read(emulationSessionProvider.notifier);
-    final wasPaused = ref.read(emulationSessionProvider).isPaused;
-    await notifier.pauseForClosePrompt();
+    final wasRunning = await notifier.pauseForDialog();
     try {
       if (!mounted) return;
       await CheatsDialog.show(
@@ -134,7 +133,7 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
         repository: CheatRepository(AppServices.nativeBridge, game.titleId),
       );
     } finally {
-      if (!wasPaused) await notifier.cancelClosePrompt();
+      await notifier.resumeAfterDialog(wasRunning: wasRunning);
     }
   }
 
