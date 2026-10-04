@@ -34,6 +34,9 @@ Emulation::SessionCallbacks MakeCallbacks(const AzaharSessionCallbacks& raw) {
       raw.on_audio(raw.user, frames, frame_count);
     };
   }
+  if (raw.on_shutdown_requested != nullptr) {
+    callbacks.on_shutdown_requested = [raw] { raw.on_shutdown_requested(raw.user); };
+  }
   return callbacks;
 }
 

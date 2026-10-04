@@ -27,6 +27,8 @@ sealed class SessionEvent with _$SessionEvent {
       SessionEvent_StateChanged;
   const factory SessionEvent.error({required String message}) =
       SessionEvent_Error;
+  const factory SessionEvent.shutdownRequested() =
+      SessionEvent_ShutdownRequested;
 }
 
 /// Size of the screen textures of a session and the engine that plays its audio.

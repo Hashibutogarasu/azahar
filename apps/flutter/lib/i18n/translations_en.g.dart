@@ -432,12 +432,32 @@ class Translations$emulation$en {
   /// en: 'Other'
   String get menuSectionOther => 'Other';
 
-  /// en: 'Close Game'
-  String get closeGame => 'Close Game';
+  /// en: 'Save and Exit'
+  String get saveAndExit => 'Save and Exit';
 
-  /// en: 'Are you sure that you would like to close the current game?'
-  String get closeGameMessage =>
-      'Are you sure that you would like to close the current game?';
+  /// en: 'Exit Without Saving'
+  String get exitWithoutSaving => 'Exit Without Saving';
+
+  /// en: 'Everything the game saved since it started will be discarded. Exit without saving?'
+  String get exitWithoutSavingMessage =>
+      'Everything the game saved since it started will be discarded. Exit without saving?';
+
+  /// en: 'Some files could not be saved: ${paths}'
+  String saveFailed({required Object paths}) =>
+      'Some files could not be saved: ${paths}';
+
+  /// en: 'The game has ended'
+  String get gameEndedTitle => 'The game has ended';
+
+  /// en: 'Save what the game saved since it started, or discard it?'
+  String get gameEndedMessage =>
+      'Save what the game saved since it started, or discard it?';
+
+  /// en: 'Save'
+  String get save => 'Save';
+
+  /// en: 'Discard'
+  String get discard => 'Discard';
 }
 
 // Path: applets
@@ -3129,9 +3149,18 @@ extension on Translations {
           'emulation.cheatErrorOnLine' =>
             ({required Object line}) => 'Error on line ${line}',
           'emulation.menuSectionOther' => 'Other',
-          'emulation.closeGame' => 'Close Game',
-          'emulation.closeGameMessage' =>
-            'Are you sure that you would like to close the current game?',
+          'emulation.saveAndExit' => 'Save and Exit',
+          'emulation.exitWithoutSaving' => 'Exit Without Saving',
+          'emulation.exitWithoutSavingMessage' =>
+            'Everything the game saved since it started will be discarded. Exit without saving?',
+          'emulation.saveFailed' =>
+            ({required Object paths}) =>
+                'Some files could not be saved: ${paths}',
+          'emulation.gameEndedTitle' => 'The game has ended',
+          'emulation.gameEndedMessage' =>
+            'Save what the game saved since it started, or discard it?',
+          'emulation.save' => 'Save',
+          'emulation.discard' => 'Discard',
           'applets.softwareKeyboard' => 'Software Keyboard',
           'applets.iForgot' => 'I Forgot',
           'applets.standardMii' => 'Standard Mii',
@@ -3583,15 +3612,15 @@ extension on Translations {
           'settings.system.countries.lithuania' => 'Lithuania',
           'settings.system.countries.luxembourg' => 'Luxembourg',
           'settings.system.countries.macedonia' => 'Macedonia',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.system.countries.malta' => 'Malta',
           'settings.system.countries.montenegro' => 'Montenegro',
           'settings.system.countries.mozambique' => 'Mozambique',
           'settings.system.countries.namibia' => 'Namibia',
           'settings.system.countries.netherlands' => 'Netherlands',
           'settings.system.countries.newZealand' => 'New Zealand',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.system.countries.norway' => 'Norway',
           'settings.system.countries.poland' => 'Poland',
           'settings.system.countries.portugal' => 'Portugal',

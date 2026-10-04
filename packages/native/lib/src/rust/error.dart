@@ -46,4 +46,8 @@ sealed class AzaharError with _$AzaharError implements FrbException {
 
   /// A folder of a user directory could not be created.
   const factory AzaharError.storage(String field0) = AzaharError_Storage;
+
+  /// Some of the files the game changed could not be written to the storage.
+  const factory AzaharError.storageCommit(List<String> field0) =
+      AzaharError_StorageCommit;
 }

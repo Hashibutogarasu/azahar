@@ -64,10 +64,16 @@ class EmulationMenuSections extends StatelessWidget {
           iconsOnly: iconsOnly,
           children: [
             EmulationMenuItem(
-              icon: Icons.exit_to_app,
-              title: t.emulation.closeGame,
+              icon: Icons.save,
+              title: t.emulation.saveAndExit,
               iconsOnly: iconsOnly,
-              onTap: actions.onCloseGame,
+              onTap: actions.onSaveAndExit,
+            ),
+            EmulationMenuItem(
+              icon: Icons.delete_forever,
+              title: t.emulation.exitWithoutSaving,
+              iconsOnly: iconsOnly,
+              onTap: actions.onExitWithoutSaving,
             ),
           ],
         ),

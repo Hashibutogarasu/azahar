@@ -27,6 +27,7 @@ struct SessionCallbacks {
   std::function<void(int64_t texture_id, bool secondary)> on_texture;
   std::function<void(const std::string& message)> on_error;
   std::function<void(const int16_t* frames, std::size_t frame_count)> on_audio;
+  std::function<void()> on_shutdown_requested;
 };
 
 struct SessionOptions {

@@ -1277,6 +1277,10 @@ static int32_t StartSessionUnguarded(AzaharSession* session) {
             ReportSessionError(session->callbacks, "The emulation threw an unknown exception");
         }
         stop_run = true;
+        if (result == Core::System::ResultStatus::ShutdownRequested &&
+            session->callbacks.on_shutdown_requested) {
+            session->callbacks.on_shutdown_requested(session->callbacks.user);
+        }
         if (result != Core::System::ResultStatus::Success &&
             result != Core::System::ResultStatus::ShutdownRequested) {
             ReportSessionError(session->callbacks,

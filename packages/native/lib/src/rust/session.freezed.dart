@@ -56,14 +56,15 @@ extension SessionEventPatterns on SessionEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( SessionEvent_ShaderProgress value)?  shaderProgress,TResult Function( SessionEvent_Texture value)?  texture,TResult Function( SessionEvent_StateChanged value)?  stateChanged,TResult Function( SessionEvent_Error value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( SessionEvent_ShaderProgress value)?  shaderProgress,TResult Function( SessionEvent_Texture value)?  texture,TResult Function( SessionEvent_StateChanged value)?  stateChanged,TResult Function( SessionEvent_Error value)?  error,TResult Function( SessionEvent_ShutdownRequested value)?  shutdownRequested,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case SessionEvent_ShaderProgress() when shaderProgress != null:
 return shaderProgress(_that);case SessionEvent_Texture() when texture != null:
 return texture(_that);case SessionEvent_StateChanged() when stateChanged != null:
 return stateChanged(_that);case SessionEvent_Error() when error != null:
-return error(_that);case _:
+return error(_that);case SessionEvent_ShutdownRequested() when shutdownRequested != null:
+return shutdownRequested(_that);case _:
   return orElse();
 
 }
@@ -81,14 +82,15 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( SessionEvent_ShaderProgress value)  shaderProgress,required TResult Function( SessionEvent_Texture value)  texture,required TResult Function( SessionEvent_StateChanged value)  stateChanged,required TResult Function( SessionEvent_Error value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( SessionEvent_ShaderProgress value)  shaderProgress,required TResult Function( SessionEvent_Texture value)  texture,required TResult Function( SessionEvent_StateChanged value)  stateChanged,required TResult Function( SessionEvent_Error value)  error,required TResult Function( SessionEvent_ShutdownRequested value)  shutdownRequested,}){
 final _that = this;
 switch (_that) {
 case SessionEvent_ShaderProgress():
 return shaderProgress(_that);case SessionEvent_Texture():
 return texture(_that);case SessionEvent_StateChanged():
 return stateChanged(_that);case SessionEvent_Error():
-return error(_that);}
+return error(_that);case SessionEvent_ShutdownRequested():
+return shutdownRequested(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -102,14 +104,15 @@ return error(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( SessionEvent_ShaderProgress value)?  shaderProgress,TResult? Function( SessionEvent_Texture value)?  texture,TResult? Function( SessionEvent_StateChanged value)?  stateChanged,TResult? Function( SessionEvent_Error value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( SessionEvent_ShaderProgress value)?  shaderProgress,TResult? Function( SessionEvent_Texture value)?  texture,TResult? Function( SessionEvent_StateChanged value)?  stateChanged,TResult? Function( SessionEvent_Error value)?  error,TResult? Function( SessionEvent_ShutdownRequested value)?  shutdownRequested,}){
 final _that = this;
 switch (_that) {
 case SessionEvent_ShaderProgress() when shaderProgress != null:
 return shaderProgress(_that);case SessionEvent_Texture() when texture != null:
 return texture(_that);case SessionEvent_StateChanged() when stateChanged != null:
 return stateChanged(_that);case SessionEvent_Error() when error != null:
-return error(_that);case _:
+return error(_that);case SessionEvent_ShutdownRequested() when shutdownRequested != null:
+return shutdownRequested(_that);case _:
   return null;
 
 }
@@ -126,13 +129,14 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( ShaderStage stage,  BigInt progress,  BigInt max)?  shaderProgress,TResult Function( PlatformInt64 textureId,  bool secondary)?  texture,TResult Function( SessionState state)?  stateChanged,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( ShaderStage stage,  BigInt progress,  BigInt max)?  shaderProgress,TResult Function( PlatformInt64 textureId,  bool secondary)?  texture,TResult Function( SessionState state)?  stateChanged,TResult Function( String message)?  error,TResult Function()?  shutdownRequested,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case SessionEvent_ShaderProgress() when shaderProgress != null:
 return shaderProgress(_that.stage,_that.progress,_that.max);case SessionEvent_Texture() when texture != null:
 return texture(_that.textureId,_that.secondary);case SessionEvent_StateChanged() when stateChanged != null:
 return stateChanged(_that.state);case SessionEvent_Error() when error != null:
-return error(_that.message);case _:
+return error(_that.message);case SessionEvent_ShutdownRequested() when shutdownRequested != null:
+return shutdownRequested();case _:
   return orElse();
 
 }
@@ -150,13 +154,14 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( ShaderStage stage,  BigInt progress,  BigInt max)  shaderProgress,required TResult Function( PlatformInt64 textureId,  bool secondary)  texture,required TResult Function( SessionState state)  stateChanged,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( ShaderStage stage,  BigInt progress,  BigInt max)  shaderProgress,required TResult Function( PlatformInt64 textureId,  bool secondary)  texture,required TResult Function( SessionState state)  stateChanged,required TResult Function( String message)  error,required TResult Function()  shutdownRequested,}) {final _that = this;
 switch (_that) {
 case SessionEvent_ShaderProgress():
 return shaderProgress(_that.stage,_that.progress,_that.max);case SessionEvent_Texture():
 return texture(_that.textureId,_that.secondary);case SessionEvent_StateChanged():
 return stateChanged(_that.state);case SessionEvent_Error():
-return error(_that.message);}
+return error(_that.message);case SessionEvent_ShutdownRequested():
+return shutdownRequested();}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -170,13 +175,14 @@ return error(_that.message);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( ShaderStage stage,  BigInt progress,  BigInt max)?  shaderProgress,TResult? Function( PlatformInt64 textureId,  bool secondary)?  texture,TResult? Function( SessionState state)?  stateChanged,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( ShaderStage stage,  BigInt progress,  BigInt max)?  shaderProgress,TResult? Function( PlatformInt64 textureId,  bool secondary)?  texture,TResult? Function( SessionState state)?  stateChanged,TResult? Function( String message)?  error,TResult? Function()?  shutdownRequested,}) {final _that = this;
 switch (_that) {
 case SessionEvent_ShaderProgress() when shaderProgress != null:
 return shaderProgress(_that.stage,_that.progress,_that.max);case SessionEvent_Texture() when texture != null:
 return texture(_that.textureId,_that.secondary);case SessionEvent_StateChanged() when stateChanged != null:
 return stateChanged(_that.state);case SessionEvent_Error() when error != null:
-return error(_that.message);case _:
+return error(_that.message);case SessionEvent_ShutdownRequested() when shutdownRequested != null:
+return shutdownRequested();case _:
   return null;
 
 }
@@ -461,5 +467,37 @@ as String,
 
 
 }
+
+/// @nodoc
+
+
+class SessionEvent_ShutdownRequested extends SessionEvent {
+  const SessionEvent_ShutdownRequested(): super._();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is SessionEvent_ShutdownRequested);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+    return 'SessionEvent.shutdownRequested()';
+}
+
+
+}
+
+
+
 
 // dart format on

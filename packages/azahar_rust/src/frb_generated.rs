@@ -461,10 +461,11 @@ fn wire__crate__api__session__stop_game_impl(
             };
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_persist = <bool>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, crate::error::AzaharError>((move || {
-                    let output_ok = crate::api::session::stop_game()?;
+                    let output_ok = crate::api::session::stop_game(api_persist)?;
                     std::result::Result::Ok(output_ok)
                 })())
             }
@@ -556,6 +557,10 @@ impl SseDecode for crate::error::AzaharError {
                 let mut var_field0 = <String>::sse_decode(deserializer);
                 return crate::error::AzaharError::Storage(var_field0);
             }
+            10 => {
+                let mut var_field0 = <Vec<String>>::sse_decode(deserializer);
+                return crate::error::AzaharError::StorageCommit(var_field0);
+            }
             _ => {
                 unimplemented!("");
             }
@@ -588,6 +593,18 @@ impl SseDecode for i64 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         deserializer.cursor.read_i64::<NativeEndian>().unwrap()
+    }
+}
+
+impl SseDecode for Vec<String> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<String>::sse_decode(deserializer));
+        }
+        return ans_;
     }
 }
 
@@ -647,6 +664,9 @@ impl SseDecode for crate::session::SessionEvent {
                 return crate::session::SessionEvent::Error {
                     message: var_message,
                 };
+            }
+            4 => {
+                return crate::session::SessionEvent::ShutdownRequested;
             }
             _ => {
                 unimplemented!("");
@@ -816,6 +836,9 @@ impl flutter_rust_bridge::IntoDart for crate::error::AzaharError {
             crate::error::AzaharError::Storage(field0) => {
                 [9.into_dart(), field0.into_into_dart().into_dart()].into_dart()
             }
+            crate::error::AzaharError::StorageCommit(field0) => {
+                [10.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
             _ => {
                 unimplemented!("");
             }
@@ -858,6 +881,7 @@ impl flutter_rust_bridge::IntoDart for crate::session::SessionEvent {
             crate::session::SessionEvent::Error { message } => {
                 [3.into_dart(), message.into_into_dart().into_dart()].into_dart()
             }
+            crate::session::SessionEvent::ShutdownRequested => [4.into_dart()].into_dart(),
             _ => {
                 unimplemented!("");
             }
@@ -1016,6 +1040,10 @@ impl SseEncode for crate::error::AzaharError {
                 <i32>::sse_encode(9, serializer);
                 <String>::sse_encode(field0, serializer);
             }
+            crate::error::AzaharError::StorageCommit(field0) => {
+                <i32>::sse_encode(10, serializer);
+                <Vec<String>>::sse_encode(field0, serializer);
+            }
             _ => {
                 unimplemented!("");
             }
@@ -1048,6 +1076,16 @@ impl SseEncode for i64 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         serializer.cursor.write_i64::<NativeEndian>(self).unwrap();
+    }
+}
+
+impl SseEncode for Vec<String> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <String>::sse_encode(item, serializer);
+        }
     }
 }
 
@@ -1100,6 +1138,9 @@ impl SseEncode for crate::session::SessionEvent {
             crate::session::SessionEvent::Error { message } => {
                 <i32>::sse_encode(3, serializer);
                 <String>::sse_encode(message, serializer);
+            }
+            crate::session::SessionEvent::ShutdownRequested => {
+                <i32>::sse_encode(4, serializer);
             }
             _ => {
                 unimplemented!("");

@@ -44,6 +44,7 @@ pub enum SessionEvent {
     Error {
         message: String,
     },
+    ShutdownRequested,
 }
 
 /// Size of the screen textures of a session and the engine that plays its audio.

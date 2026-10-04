@@ -182,8 +182,14 @@
     "cheatCodeEmpty": "コードを入力してください",
     "cheatErrorOnLine": "${line}行目にエラーがあります",
     "menuSectionOther": "その他",
-    "closeGame": "ゲームを終了",
-    "closeGameMessage": "現在のゲームを終了してもよろしいですか？"
+    "saveAndExit": "保存して終了",
+    "exitWithoutSaving": "保存しないで終了",
+    "exitWithoutSavingMessage": "ゲームを開始してから保存した内容はすべて破棄されます。保存しないで終了しますか？",
+    "saveFailed": "一部のファイルを保存できませんでした: ${paths}",
+    "gameEndedTitle": "ゲームが終了しました",
+    "gameEndedMessage": "ゲームを開始してから保存した内容を保存しますか？それとも破棄しますか？",
+    "save": "保存",
+    "discard": "破棄"
   },
   "applets": {
     "softwareKeyboard": "ソフトウェアキーボード",

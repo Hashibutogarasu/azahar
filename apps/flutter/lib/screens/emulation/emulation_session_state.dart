@@ -11,6 +11,7 @@ class EmulationSessionState {
     this.isTerminating = false,
     this.isClosingWindow = false,
     this.isFinished = false,
+    this.isShutdownRequested = false,
     this.topTextureId,
     this.bottomTextureId,
     this.bottomTextureSize,
@@ -26,6 +27,9 @@ class EmulationSessionState {
   final bool isClosingWindow;
 
   final bool isFinished;
+
+  /// Whether the game asked to end, so the user has to choose to save or discard its changes.
+  final bool isShutdownRequested;
   final int? topTextureId;
   final int? bottomTextureId;
   final Size? bottomTextureSize;
@@ -40,6 +44,7 @@ class EmulationSessionState {
     bool? isTerminating,
     bool? isClosingWindow,
     bool? isFinished,
+    bool? isShutdownRequested,
     int? topTextureId,
     int? bottomTextureId,
     Size? bottomTextureSize,
@@ -54,6 +59,7 @@ class EmulationSessionState {
       isTerminating: isTerminating ?? this.isTerminating,
       isClosingWindow: isClosingWindow ?? this.isClosingWindow,
       isFinished: isFinished ?? this.isFinished,
+      isShutdownRequested: isShutdownRequested ?? this.isShutdownRequested,
       topTextureId: topTextureId ?? this.topTextureId,
       bottomTextureId: bottomTextureId ?? this.bottomTextureId,
       bottomTextureSize: bottomTextureSize ?? this.bottomTextureSize,

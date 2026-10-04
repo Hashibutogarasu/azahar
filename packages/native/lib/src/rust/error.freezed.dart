@@ -56,7 +56,7 @@ extension AzaharErrorPatterns on AzaharError {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( AzaharError_SessionActive value)?  sessionActive,TResult Function( AzaharError_NoSession value)?  noSession,TResult Function( AzaharError_InvalidPath value)?  invalidPath,TResult Function( AzaharError_CreateFailed value)?  createFailed,TResult Function( AzaharError_InvalidState value)?  invalidState,TResult Function( AzaharError_Core value)?  core,TResult Function( AzaharError_InvalidAddress value)?  invalidAddress,TResult Function( AzaharError_LibraryLoad value)?  libraryLoad,TResult Function( AzaharError_Audio value)?  audio,TResult Function( AzaharError_Storage value)?  storage,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( AzaharError_SessionActive value)?  sessionActive,TResult Function( AzaharError_NoSession value)?  noSession,TResult Function( AzaharError_InvalidPath value)?  invalidPath,TResult Function( AzaharError_CreateFailed value)?  createFailed,TResult Function( AzaharError_InvalidState value)?  invalidState,TResult Function( AzaharError_Core value)?  core,TResult Function( AzaharError_InvalidAddress value)?  invalidAddress,TResult Function( AzaharError_LibraryLoad value)?  libraryLoad,TResult Function( AzaharError_Audio value)?  audio,TResult Function( AzaharError_Storage value)?  storage,TResult Function( AzaharError_StorageCommit value)?  storageCommit,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case AzaharError_SessionActive() when sessionActive != null:
@@ -69,7 +69,8 @@ return core(_that);case AzaharError_InvalidAddress() when invalidAddress != null
 return invalidAddress(_that);case AzaharError_LibraryLoad() when libraryLoad != null:
 return libraryLoad(_that);case AzaharError_Audio() when audio != null:
 return audio(_that);case AzaharError_Storage() when storage != null:
-return storage(_that);case _:
+return storage(_that);case AzaharError_StorageCommit() when storageCommit != null:
+return storageCommit(_that);case _:
   return orElse();
 
 }
@@ -87,7 +88,7 @@ return storage(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( AzaharError_SessionActive value)  sessionActive,required TResult Function( AzaharError_NoSession value)  noSession,required TResult Function( AzaharError_InvalidPath value)  invalidPath,required TResult Function( AzaharError_CreateFailed value)  createFailed,required TResult Function( AzaharError_InvalidState value)  invalidState,required TResult Function( AzaharError_Core value)  core,required TResult Function( AzaharError_InvalidAddress value)  invalidAddress,required TResult Function( AzaharError_LibraryLoad value)  libraryLoad,required TResult Function( AzaharError_Audio value)  audio,required TResult Function( AzaharError_Storage value)  storage,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( AzaharError_SessionActive value)  sessionActive,required TResult Function( AzaharError_NoSession value)  noSession,required TResult Function( AzaharError_InvalidPath value)  invalidPath,required TResult Function( AzaharError_CreateFailed value)  createFailed,required TResult Function( AzaharError_InvalidState value)  invalidState,required TResult Function( AzaharError_Core value)  core,required TResult Function( AzaharError_InvalidAddress value)  invalidAddress,required TResult Function( AzaharError_LibraryLoad value)  libraryLoad,required TResult Function( AzaharError_Audio value)  audio,required TResult Function( AzaharError_Storage value)  storage,required TResult Function( AzaharError_StorageCommit value)  storageCommit,}){
 final _that = this;
 switch (_that) {
 case AzaharError_SessionActive():
@@ -100,7 +101,8 @@ return core(_that);case AzaharError_InvalidAddress():
 return invalidAddress(_that);case AzaharError_LibraryLoad():
 return libraryLoad(_that);case AzaharError_Audio():
 return audio(_that);case AzaharError_Storage():
-return storage(_that);}
+return storage(_that);case AzaharError_StorageCommit():
+return storageCommit(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -114,7 +116,7 @@ return storage(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( AzaharError_SessionActive value)?  sessionActive,TResult? Function( AzaharError_NoSession value)?  noSession,TResult? Function( AzaharError_InvalidPath value)?  invalidPath,TResult? Function( AzaharError_CreateFailed value)?  createFailed,TResult? Function( AzaharError_InvalidState value)?  invalidState,TResult? Function( AzaharError_Core value)?  core,TResult? Function( AzaharError_InvalidAddress value)?  invalidAddress,TResult? Function( AzaharError_LibraryLoad value)?  libraryLoad,TResult? Function( AzaharError_Audio value)?  audio,TResult? Function( AzaharError_Storage value)?  storage,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( AzaharError_SessionActive value)?  sessionActive,TResult? Function( AzaharError_NoSession value)?  noSession,TResult? Function( AzaharError_InvalidPath value)?  invalidPath,TResult? Function( AzaharError_CreateFailed value)?  createFailed,TResult? Function( AzaharError_InvalidState value)?  invalidState,TResult? Function( AzaharError_Core value)?  core,TResult? Function( AzaharError_InvalidAddress value)?  invalidAddress,TResult? Function( AzaharError_LibraryLoad value)?  libraryLoad,TResult? Function( AzaharError_Audio value)?  audio,TResult? Function( AzaharError_Storage value)?  storage,TResult? Function( AzaharError_StorageCommit value)?  storageCommit,}){
 final _that = this;
 switch (_that) {
 case AzaharError_SessionActive() when sessionActive != null:
@@ -127,7 +129,8 @@ return core(_that);case AzaharError_InvalidAddress() when invalidAddress != null
 return invalidAddress(_that);case AzaharError_LibraryLoad() when libraryLoad != null:
 return libraryLoad(_that);case AzaharError_Audio() when audio != null:
 return audio(_that);case AzaharError_Storage() when storage != null:
-return storage(_that);case _:
+return storage(_that);case AzaharError_StorageCommit() when storageCommit != null:
+return storageCommit(_that);case _:
   return null;
 
 }
@@ -144,7 +147,7 @@ return storage(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  sessionActive,TResult Function()?  noSession,TResult Function()?  invalidPath,TResult Function()?  createFailed,TResult Function()?  invalidState,TResult Function( int field0)?  core,TResult Function( int address,  int len)?  invalidAddress,TResult Function( String field0)?  libraryLoad,TResult Function( String field0)?  audio,TResult Function( String field0)?  storage,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  sessionActive,TResult Function()?  noSession,TResult Function()?  invalidPath,TResult Function()?  createFailed,TResult Function()?  invalidState,TResult Function( int field0)?  core,TResult Function( int address,  int len)?  invalidAddress,TResult Function( String field0)?  libraryLoad,TResult Function( String field0)?  audio,TResult Function( String field0)?  storage,TResult Function( List<String> field0)?  storageCommit,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case AzaharError_SessionActive() when sessionActive != null:
 return sessionActive();case AzaharError_NoSession() when noSession != null:
@@ -156,7 +159,8 @@ return core(_that.field0);case AzaharError_InvalidAddress() when invalidAddress 
 return invalidAddress(_that.address,_that.len);case AzaharError_LibraryLoad() when libraryLoad != null:
 return libraryLoad(_that.field0);case AzaharError_Audio() when audio != null:
 return audio(_that.field0);case AzaharError_Storage() when storage != null:
-return storage(_that.field0);case _:
+return storage(_that.field0);case AzaharError_StorageCommit() when storageCommit != null:
+return storageCommit(_that.field0);case _:
   return orElse();
 
 }
@@ -174,7 +178,7 @@ return storage(_that.field0);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  sessionActive,required TResult Function()  noSession,required TResult Function()  invalidPath,required TResult Function()  createFailed,required TResult Function()  invalidState,required TResult Function( int field0)  core,required TResult Function( int address,  int len)  invalidAddress,required TResult Function( String field0)  libraryLoad,required TResult Function( String field0)  audio,required TResult Function( String field0)  storage,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  sessionActive,required TResult Function()  noSession,required TResult Function()  invalidPath,required TResult Function()  createFailed,required TResult Function()  invalidState,required TResult Function( int field0)  core,required TResult Function( int address,  int len)  invalidAddress,required TResult Function( String field0)  libraryLoad,required TResult Function( String field0)  audio,required TResult Function( String field0)  storage,required TResult Function( List<String> field0)  storageCommit,}) {final _that = this;
 switch (_that) {
 case AzaharError_SessionActive():
 return sessionActive();case AzaharError_NoSession():
@@ -186,7 +190,8 @@ return core(_that.field0);case AzaharError_InvalidAddress():
 return invalidAddress(_that.address,_that.len);case AzaharError_LibraryLoad():
 return libraryLoad(_that.field0);case AzaharError_Audio():
 return audio(_that.field0);case AzaharError_Storage():
-return storage(_that.field0);}
+return storage(_that.field0);case AzaharError_StorageCommit():
+return storageCommit(_that.field0);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -200,7 +205,7 @@ return storage(_that.field0);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  sessionActive,TResult? Function()?  noSession,TResult? Function()?  invalidPath,TResult? Function()?  createFailed,TResult? Function()?  invalidState,TResult? Function( int field0)?  core,TResult? Function( int address,  int len)?  invalidAddress,TResult? Function( String field0)?  libraryLoad,TResult? Function( String field0)?  audio,TResult? Function( String field0)?  storage,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  sessionActive,TResult? Function()?  noSession,TResult? Function()?  invalidPath,TResult? Function()?  createFailed,TResult? Function()?  invalidState,TResult? Function( int field0)?  core,TResult? Function( int address,  int len)?  invalidAddress,TResult? Function( String field0)?  libraryLoad,TResult? Function( String field0)?  audio,TResult? Function( String field0)?  storage,TResult? Function( List<String> field0)?  storageCommit,}) {final _that = this;
 switch (_that) {
 case AzaharError_SessionActive() when sessionActive != null:
 return sessionActive();case AzaharError_NoSession() when noSession != null:
@@ -212,7 +217,8 @@ return core(_that.field0);case AzaharError_InvalidAddress() when invalidAddress 
 return invalidAddress(_that.address,_that.len);case AzaharError_LibraryLoad() when libraryLoad != null:
 return libraryLoad(_that.field0);case AzaharError_Audio() when audio != null:
 return audio(_that.field0);case AzaharError_Storage() when storage != null:
-return storage(_that.field0);case _:
+return storage(_that.field0);case AzaharError_StorageCommit() when storageCommit != null:
+return storageCommit(_that.field0);case _:
   return null;
 
 }
@@ -716,6 +722,80 @@ class _$AzaharError_StorageCopyWithImpl<$Res>
   return _then(AzaharError_Storage(
 null == field0 ? _self.field0 : field0 // ignore: cast_nullable_to_non_nullable
 as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class AzaharError_StorageCommit extends AzaharError {
+  const AzaharError_StorageCommit( List<String> field0): _field0 = field0,super._();
+  
+
+ final  List<String> _field0;
+ List<String> get field0 {
+  if (_field0 is EqualUnmodifiableListView) return _field0;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_field0);
+}
+
+
+/// Create a copy of AzaharError
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$AzaharError_StorageCommitCopyWith<AzaharError_StorageCommit> get copyWith => _$AzaharError_StorageCommitCopyWithImpl<AzaharError_StorageCommit>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AzaharError_StorageCommit&&const DeepCollectionEquality().equals(other.field0, _field0));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_field0));
+}
+
+@override
+String toString() {
+    return 'AzaharError.storageCommit(field0: $field0)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $AzaharError_StorageCommitCopyWith<$Res> implements $AzaharErrorCopyWith<$Res> {
+  factory $AzaharError_StorageCommitCopyWith(AzaharError_StorageCommit value, $Res Function(AzaharError_StorageCommit) _then) = _$AzaharError_StorageCommitCopyWithImpl;
+@useResult
+$Res call({
+ List<String> field0
+});
+
+
+
+
+}
+/// @nodoc
+class _$AzaharError_StorageCommitCopyWithImpl<$Res>
+    implements $AzaharError_StorageCommitCopyWith<$Res> {
+  _$AzaharError_StorageCommitCopyWithImpl(this._self, this._then);
+
+  final AzaharError_StorageCommit _self;
+  final $Res Function(AzaharError_StorageCommit) _then;
+
+/// Create a copy of AzaharError
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? field0 = null,}) {
+  return _then(AzaharError_StorageCommit(
+null == field0 ? _self._field0 : field0 // ignore: cast_nullable_to_non_nullable
+as List<String>,
   ));
 }
 

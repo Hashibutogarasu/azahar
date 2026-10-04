@@ -11,6 +11,7 @@ import '../../data/games/game_title_provider.dart';
 import '../../data/settings/audio_engine_provider.dart';
 import '../../data/settings/media_volume_provider.dart';
 import '../../data/settings/sections/media_settings.dart';
+import '../../errors/app_exception.dart';
 import 'emulation_backend.dart';
 import 'emulation_screens_layout.dart';
 import 'emulation_session_state.dart';
@@ -30,6 +31,7 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
   final _mediaSession = MediaSessionService();
   bool _mediaSessionActivated = false;
   Future<void>? _nativeSessionRelease;
+  SaveFailedException? _saveFailure;
 
   bool get _treatAsMediaSession => AppServices.emulatorSettingsRepository
       .readBool(MediaSettingKeys.treatAudioAsMediaSession);
@@ -88,6 +90,9 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
           }
         },
         onError: (message) => debugPrint('Emulation error: $message'),
+        onShutdownRequested: () {
+          state = state.copyWith(isShutdownRequested: true);
+        },
       ),
     );
   }
@@ -103,7 +108,7 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
         artworkPath: game.iconPath,
       ),
       isPlaying: !state.isPaused,
-      onStop: () => unawaited(terminate()),
+      onStop: () => unawaited(terminate(save: true)),
       onPlay: () {
         if (!state.isPaused) return;
         unawaited(togglePause());
@@ -212,35 +217,50 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
     state = state.copyWith(isScreensSwapped: swapped);
   }
 
-  Future<void> terminate() async {
+  /// Stops the game and leaves the screen. With [save] the changes the game made are written to
+  /// the storage, otherwise they are discarded.
+  ///
+  /// The screen is left even when saving fails; the [SaveFailedException] is thrown afterwards
+  /// so the user is told about it.
+  Future<void> terminate({required bool save}) async {
     if (state.isTerminating) return;
     state = state.copyWith(isTerminating: true);
-    await _releaseNativeSession();
+    await _releaseNativeSession(save: save);
     state = state.copyWith(isClosingWindow: true);
     await WidgetsBinding.instance.endOfFrame;
     await WidgetsBinding.instance.endOfFrame;
     state = state.copyWith(isFinished: true);
+    final saveFailure = _saveFailure;
+    if (saveFailure != null) throw saveFailure;
   }
 
-  /// Stops the game and returns once the native session has released everything, without leaving
-  /// the screen. Used right before the application exits.
-  Future<void> stopForExit() => _releaseNativeSession();
+  /// Stops the game, saving what it changed, and returns once the native session has released
+  /// everything, without leaving the screen. Used right before the application exits.
+  Future<void> stopForExit() => _releaseNativeSession(save: true);
 
   /// Asks the application to exit. The game is stopped first, see [stopForExit].
   Future<void> _exitApplication() {
     return ServicesBinding.instance.exitApplication(AppExitType.cancelable);
   }
 
-  Future<void> _teardownNativeSession() => _releaseNativeSession();
+  Future<void> _teardownNativeSession() => _releaseNativeSession(save: true);
 
-  Future<void> _releaseNativeSession() => _nativeSessionRelease ??= _performRelease();
+  /// Releases the native session once. Only the first call decides whether the changes are
+  /// saved, since the session is gone after it.
+  Future<void> _releaseNativeSession({required bool save}) =>
+      _nativeSessionRelease ??= _performRelease(save: save);
 
-  Future<void> _performRelease() async {
+  Future<void> _performRelease({required bool save}) async {
     _mediaSessionActivated = false;
     await ref.read(masterVolumeProvider.notifier).stopNativeSync();
     await _mediaSession.deactivate();
     if (state.isLaunched) {
-      await _backend.stop();
+      try {
+        await _backend.stop(persist: save);
+      } on SaveFailedException catch (error) {
+        debugPrint('Saving the game data failed: $error');
+        _saveFailure = error;
+      }
     }
   }
 }

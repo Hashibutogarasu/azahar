@@ -3,12 +3,16 @@ import 'dart:ui';
 
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
+import '../../errors/app_exception.dart';
+import '../../i18n/translations.g.dart';
+
 /// Receives what an [EmulationBackend] reports while a game is running.
 class EmulationBackendListener {
   const EmulationBackendListener({
     required this.onTexture,
     required this.onShaderProgress,
     required this.onError,
+    required this.onShutdownRequested,
   });
 
   /// Called when a screen texture is ready to be shown.
@@ -19,6 +23,10 @@ class EmulationBackendListener {
 
   /// Called when the backend reports a failure.
   final void Function(String message) onError;
+
+  /// Called when the game asked to end. Its emulation has stopped, but the game still has to be
+  /// stopped with [EmulationBackend.stop] to save or discard what it changed.
+  final void Function() onShutdownRequested;
 }
 
 /// Starts, pauses, resumes and stops one game in a session owned by the `azahar_rust` crate.
@@ -74,6 +82,8 @@ class EmulationBackend {
         break;
       case SessionEvent_Error(:final message):
         listener.onError(message);
+      case SessionEvent_ShutdownRequested():
+        listener.onShutdownRequested();
     }
   }
 
@@ -82,11 +92,22 @@ class EmulationBackend {
   Future<void> resume() => resumeGame();
 
   /// Stops the game and returns once every native resource is released.
-  Future<void> stop() async {
+  ///
+  /// The saves, system data and titles the game changed are kept in memory while it runs. With
+  /// [persist] they are written to the storage, otherwise they are discarded. Throws a
+  /// [SaveFailedException] when some of them could not be written.
+  Future<void> stop({required bool persist}) async {
     if (!_started) return;
     _started = false;
-    await stopGame();
-    await _subscription?.cancel();
-    _subscription = null;
+    try {
+      await stopGame(persist: persist);
+    } on AzaharError_StorageCommit catch (error) {
+      throw SaveFailedException(
+        t.emulation.saveFailed(paths: error.field0.join(', ')),
+      );
+    } finally {
+      await _subscription?.cancel();
+      _subscription = null;
+    }
   }
 }

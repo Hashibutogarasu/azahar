@@ -36,8 +36,11 @@ pub fn resume_game() -> Result<(), AzaharError> {
 }
 
 /// Stops the game and returns after all of its resources have been freed.
-pub fn stop_game() -> Result<(), AzaharError> {
-    registry::stop()
+///
+/// With `persist`, the saves, system data and titles the game changed are
+/// written to the storage; otherwise the changes are discarded.
+pub fn stop_game(persist: bool) -> Result<(), AzaharError> {
+    registry::stop(persist)
 }
 
 pub fn set_volume(volume: f32) -> Result<(), AzaharError> {

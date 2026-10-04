@@ -7,7 +7,8 @@ class EmulationMenuActions {
     required this.onTogglePause,
     required this.onAdvanceFrame,
     required this.onCheats,
-    required this.onCloseGame,
+    required this.onSaveAndExit,
+    required this.onExitWithoutSaving,
   });
 
   final VoidCallback onTogglePause;
@@ -15,5 +16,10 @@ class EmulationMenuActions {
 
   /// Null while the running game is not known yet, which disables the entry.
   final VoidCallback? onCheats;
-  final VoidCallback onCloseGame;
+
+  /// Stops the game and writes what it changed to the storage.
+  final VoidCallback onSaveAndExit;
+
+  /// Stops the game and discards what it changed since it started.
+  final VoidCallback onExitWithoutSaving;
 }
