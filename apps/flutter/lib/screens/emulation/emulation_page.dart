@@ -226,6 +226,7 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
                     left: 0,
                     child: EmulationSidePanel(
                       gamePath: widget.gamePath,
+                      game: widget.game,
                       isPaused: state.isPaused,
                       actions: actions,
                     ),
