@@ -2,6 +2,8 @@
 
 use std::sync::Arc;
 
+use crate::api::audio::AudioEngine;
+#[cfg(target_os = "android")]
 use crate::audio::AudioOutput;
 use crate::error::{AzaharError, Result};
 use crate::ffi::{CallbackContext, CoreListener, SessionHandle};
@@ -44,7 +46,7 @@ pub enum SessionEvent {
     },
 }
 
-/// Size of the screen textures of a session.
+/// Size of the screen textures of a session and the engine that plays its audio.
 #[derive(Debug, Clone, Copy)]
 pub struct SessionOptions {
     pub primary_width: i32,
@@ -52,6 +54,20 @@ pub struct SessionOptions {
     pub secondary_width: i32,
     pub secondary_height: i32,
     pub dual_screen: bool,
+    pub audio_engine: AudioEngine,
+}
+
+/// Audio output opened by this crate. Only Oboe is played here; the other engines are owned by
+/// the core.
+#[cfg(not(target_os = "android"))]
+struct AudioOutput;
+
+#[cfg(not(target_os = "android"))]
+impl AudioOutput {
+    fn push(&self, _frames: &[i16]) {}
+    fn pause(&self) {}
+    fn resume(&self) {}
+    fn set_volume(&self, _volume: f32) {}
 }
 
 /// Callback receiving the events of one session.
@@ -91,15 +107,7 @@ pub struct GameSession {
 impl GameSession {
     /// Creates the session and starts emulation and shader preparation.
     pub fn start(game_path: &str, options: &SessionOptions, events: EventSink) -> Result<Self> {
-        let audio = match AudioOutput::new() {
-            Ok(audio) => Some(Arc::new(audio)),
-            Err(error) => {
-                events(SessionEvent::Error {
-                    message: error.to_string(),
-                });
-                None
-            }
-        };
+        let audio = open_audio(options.audio_engine.effective(), &events);
         let context = CallbackContext::new(Arc::new(Listener {
             events: Arc::clone(&events),
             audio: audio.clone(),
@@ -167,4 +175,30 @@ impl GameSession {
     fn notify_state(&self) {
         (self.events)(SessionEvent::StateChanged { state: self.state });
     }
+}
+
+/// Opens the audio output this crate plays for `engine`, reporting a failure as an event.
+///
+/// Returns `None` when the engine is played by the core or the output could not be opened.
+#[cfg(target_os = "android")]
+fn open_audio(engine: AudioEngine, events: &EventSink) -> Option<Arc<AudioOutput>> {
+    if engine != AudioEngine::Oboe {
+        return None;
+    }
+    match AudioOutput::new() {
+        Ok(audio) => Some(Arc::new(audio)),
+        Err(error) => {
+            events(SessionEvent::Error {
+                message: error.to_string(),
+            });
+            None
+        }
+    }
+}
+
+/// Opens the audio output this crate plays for `engine`. Every engine outside Android is played
+/// by the core, so there is never one.
+#[cfg(not(target_os = "android"))]
+fn open_audio(_engine: AudioEngine, _events: &EventSink) -> Option<Arc<AudioOutput>> {
+    None
 }

@@ -150,6 +150,27 @@ static bool HandleCoreError(Core::System::ResultStatus result, const std::string
 static std::mutex g_session_callbacks_mutex;
 static std::optional<AzaharSessionCallbacks> g_session_callbacks;
 
+/**
+ * Hands the audio to the session when it takes the frames, and plays it through OpenAL otherwise.
+ * Runs after the settings are loaded, since loading them resets the output type.
+ */
+static void ApplySessionAudioOutput() {
+    std::lock_guard lock{g_session_callbacks_mutex};
+    if (!g_session_callbacks) {
+        return;
+    }
+    if (g_session_callbacks->on_audio) {
+        Settings::values.output_type = AudioCore::SinkType::External;
+        AudioCore::SetExternalAudioHandler(
+            [callbacks = *g_session_callbacks](const s16* frames, std::size_t frame_count) {
+                callbacks.on_audio(callbacks.user, frames, frame_count);
+            });
+    } else {
+        Settings::values.output_type = AudioCore::SinkType::OpenAL;
+        AudioCore::SetExternalAudioHandler({});
+    }
+}
+
 static int32_t ToSessionShaderStage(VideoCore::LoadCallbackStage stage) {
     switch (stage) {
     case VideoCore::LoadCallbackStage::Prepare:
@@ -303,6 +324,7 @@ static Core::System::ResultStatus RunCitra(const std::string& filepath) {
     Core::System& system{Core::System::GetInstance()};
 
     Config{};
+    ApplySessionAudioOutput();
 
     const auto graphics_api = Settings::values.graphics_api.GetValue();
     switch (graphics_api) {
@@ -1243,13 +1265,6 @@ static int32_t StartSessionUnguarded(AzaharSession* session) {
         g_session_callbacks = session->callbacks;
     }
     session->previous_output_type = Settings::values.output_type.GetValue();
-    Settings::values.output_type = AudioCore::SinkType::External;
-    AudioCore::SetExternalAudioHandler(
-        [callbacks = session->callbacks](const s16* frames, std::size_t frame_count) {
-            if (callbacks.on_audio) {
-                callbacks.on_audio(callbacks.user, frames, frame_count);
-            }
-        });
 
     session->emulation_thread = std::thread([session] {
         Core::System::ResultStatus result = Core::System::ResultStatus::ErrorUnknown;

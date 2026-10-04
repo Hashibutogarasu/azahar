@@ -360,6 +360,10 @@
       "masterVolume": "Master Volume",
       "masterVolumeDescription": "Controls the app's overall output volume independently of the emulated game's own volume setting. Hardware volume buttons adjust this value.",
       "masterVolumePercent": "${value}%",
+      "audioEngine": "Audio Engine",
+      "audioEngineDescription": "Selects the engine that plays the game audio. The change takes effect the next time a game starts.",
+      "audioEngineOpenal": "OpenAL",
+      "audioEngineOboe": "Oboe",
       "treatAudioAsMediaSession": "Treat as Android Media",
       "treatAudioAsMediaSessionDescription": "Shows playback controls on the lock screen and notification like a music app, and keeps audio playing when the app is in the background instead of pausing automatically."
     },

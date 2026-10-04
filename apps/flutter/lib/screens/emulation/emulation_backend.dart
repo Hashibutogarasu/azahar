@@ -33,6 +33,7 @@ class EmulationBackend {
     required String gamePath,
     required Size topScreenSize,
     required Size bottomScreenSize,
+    required AudioEngine audioEngine,
     required EmulationBackendListener listener,
   }) async {
     _subscription = startGame(
@@ -43,6 +44,7 @@ class EmulationBackend {
         secondaryWidth: bottomScreenSize.width.round(),
         secondaryHeight: bottomScreenSize.height.round(),
         dualScreen: true,
+        audioEngine: audioEngine,
       ),
     ).listen(
       (event) => _dispatch(event, listener),

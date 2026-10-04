@@ -8,6 +8,7 @@ import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../app_services.dart';
 import '../../data/games/game_title_provider.dart';
+import '../../data/settings/audio_engine_provider.dart';
 import '../../data/settings/media_volume_provider.dart';
 import '../../data/settings/sections/media_settings.dart';
 import 'emulation_backend.dart';
@@ -61,11 +62,14 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
       (layout.bottomScreen.height * devicePixelRatio).roundToDouble(),
     );
 
+    final audioEngine = await ref.read(audioEngineProvider.notifier).read();
+
     state = state.copyWith(bottomTextureSize: bottomSize, isLaunched: true);
     await _backend.start(
       gamePath: gamePath,
       topScreenSize: topSize,
       bottomScreenSize: bottomSize,
+      audioEngine: audioEngine,
       listener: EmulationBackendListener(
         onTexture: (textureId, {required secondary}) {
           state = secondary

@@ -1179,6 +1179,15 @@ class _Translations$settings$media$ja extends Translations$settings$media$en {
   @override
   String masterVolumePercent({required Object value}) => '${value}%';
   @override
+  String get audioEngine => 'オーディオエンジン';
+  @override
+  String get audioEngineDescription =>
+      'ゲームの音声を再生するエンジンを選びます。変更は次回のゲーム起動時に反映されます。';
+  @override
+  String get audioEngineOpenal => 'OpenAL';
+  @override
+  String get audioEngineOboe => 'Oboe';
+  @override
   String get treatAudioAsMediaSession => 'Androidのメディアとして扱う';
   @override
   String get treatAudioAsMediaSessionDescription =>
@@ -2652,6 +2661,11 @@ extension on TranslationsJa {
             'エミュレートされたゲーム自体の音量設定とは独立して、アプリ全体の出力音量を調整します。ハードウェアの音量ボタンはこの値を調整します。',
           'settings.media.masterVolumePercent' =>
             ({required Object value}) => '${value}%',
+          'settings.media.audioEngine' => 'オーディオエンジン',
+          'settings.media.audioEngineDescription' =>
+            'ゲームの音声を再生するエンジンを選びます。変更は次回のゲーム起動時に反映されます。',
+          'settings.media.audioEngineOpenal' => 'OpenAL',
+          'settings.media.audioEngineOboe' => 'Oboe',
           'settings.media.treatAudioAsMediaSession' => 'Androidのメディアとして扱う',
           'settings.media.treatAudioAsMediaSessionDescription' =>
             '音楽アプリのようにロック画面と通知に再生コントロールを表示し、アプリがバックグラウンドにある間も自動的に一時停止せず音声を再生し続けます。',
@@ -2900,13 +2914,13 @@ extension on TranslationsJa {
           'settings.system.countries.newZealand' => 'ニュージーランド',
           'settings.system.countries.norway' => 'ノルウェー',
           'settings.system.countries.poland' => 'ポーランド',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.system.countries.portugal' => 'ポルトガル',
           'settings.system.countries.romania' => 'ルーマニア',
           'settings.system.countries.russia' => 'ロシア',
           'settings.system.countries.serbia' => 'セルビア',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.system.countries.slovakia' => 'スロバキア',
           'settings.system.countries.slovenia' => 'スロベニア',
           'settings.system.countries.southAfrica' => '南アフリカ',

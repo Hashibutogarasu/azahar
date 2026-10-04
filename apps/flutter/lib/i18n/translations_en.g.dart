@@ -1372,6 +1372,19 @@ class Translations$settings$media$en {
   /// en: '${value}%'
   String masterVolumePercent({required Object value}) => '${value}%';
 
+  /// en: 'Audio Engine'
+  String get audioEngine => 'Audio Engine';
+
+  /// en: 'Selects the engine that plays the game audio. The change takes effect the next time a game starts.'
+  String get audioEngineDescription =>
+      'Selects the engine that plays the game audio. The change takes effect the next time a game starts.';
+
+  /// en: 'OpenAL'
+  String get audioEngineOpenal => 'OpenAL';
+
+  /// en: 'Oboe'
+  String get audioEngineOboe => 'Oboe';
+
   /// en: 'Treat as Android Media'
   String get treatAudioAsMediaSession => 'Treat as Android Media';
 
@@ -3308,6 +3321,11 @@ extension on Translations {
             'Controls the app\'s overall output volume independently of the emulated game\'s own volume setting. Hardware volume buttons adjust this value.',
           'settings.media.masterVolumePercent' =>
             ({required Object value}) => '${value}%',
+          'settings.media.audioEngine' => 'Audio Engine',
+          'settings.media.audioEngineDescription' =>
+            'Selects the engine that plays the game audio. The change takes effect the next time a game starts.',
+          'settings.media.audioEngineOpenal' => 'OpenAL',
+          'settings.media.audioEngineOboe' => 'Oboe',
           'settings.media.treatAudioAsMediaSession' => 'Treat as Android Media',
           'settings.media.treatAudioAsMediaSessionDescription' =>
             'Shows playback controls on the lock screen and notification like a music app, and keeps audio playing when the app is in the background instead of pausing automatically.',
@@ -3571,13 +3589,13 @@ extension on Translations {
           'settings.system.countries.namibia' => 'Namibia',
           'settings.system.countries.netherlands' => 'Netherlands',
           'settings.system.countries.newZealand' => 'New Zealand',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.system.countries.norway' => 'Norway',
           'settings.system.countries.poland' => 'Poland',
           'settings.system.countries.portugal' => 'Portugal',
           'settings.system.countries.romania' => 'Romania',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.system.countries.russia' => 'Russia',
           'settings.system.countries.serbia' => 'Serbia',
           'settings.system.countries.slovakia' => 'Slovakia',

@@ -1,8 +1,9 @@
-//! Audio output owned by the session.
+//! Audio output played through Oboe on Android.
 //!
 //! The core pushes 32728 Hz signed 16 bit stereo frames through a lock-free
-//! ring buffer. A dedicated thread owns the `cpal` stream (which is not
-//! `Send`) and is joined when the [`AudioOutput`] is dropped.
+//! ring buffer. A dedicated thread owns the Oboe stream (which is not `Send`),
+//! reopens it when the device disconnects, and is joined when the
+//! [`AudioOutput`] is dropped.
 
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
@@ -10,8 +11,11 @@ use std::sync::mpsc::{self, Sender};
 use std::sync::{Arc, Mutex};
 use std::thread::JoinHandle;
 
-use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
-use cpal::{FromSample, SampleFormat, SizedSample, StreamConfig};
+use oboe::{
+    AudioOutputCallback, AudioOutputStream, AudioOutputStreamSafe, AudioStream, AudioStreamAsync,
+    AudioStreamBuilder, ContentType, DataCallbackResult, Output, PerformanceMode, SharingMode,
+    Stereo, Usage,
+};
 use ringbuf::traits::{Consumer, Observer, Producer, Split};
 use ringbuf::{HeapCons, HeapProd, HeapRb};
 
@@ -31,10 +35,15 @@ struct Shared {
 enum Control {
     Pause,
     Resume,
+    /// The stream was closed by Oboe, usually because the device disconnected. The consumer of
+    /// the ring buffer is handed back so a new stream can take it over.
+    Reopen(HeapCons<i16>),
     Stop,
 }
 
-/// Plays the audio of one session on the default output device.
+type OboeStream = AudioStreamAsync<Output, OboeCallback>;
+
+/// Plays the audio of one session through Oboe.
 pub struct AudioOutput {
     shared: Arc<Shared>,
     control: Sender<Control>,
@@ -42,9 +51,8 @@ pub struct AudioOutput {
 }
 
 impl AudioOutput {
-    /// Opens the default output device and starts playback.
+    /// Opens a low latency Oboe stream on the default output device and starts playback.
     pub fn new() -> Result<Self> {
-        prepare_platform();
         let ring = HeapRb::<i16>::new(BUFFER_FRAMES * CHANNELS);
         let (producer, consumer) = ring.split();
         let shared = Arc::new(Shared {
@@ -56,16 +64,17 @@ impl AudioOutput {
         let (control, control_rx) = mpsc::channel();
         let (ready_tx, ready_rx) = mpsc::sync_channel::<std::result::Result<(), String>>(1);
         let thread_shared = Arc::clone(&shared);
+        let thread_control = control.clone();
         let thread = std::thread::Builder::new()
             .name("azahar-audio".into())
             .spawn(move || {
-                let built = catch_unwind(AssertUnwindSafe(|| {
-                    build_stream(consumer, thread_shared)
+                let opened = catch_unwind(AssertUnwindSafe(|| {
+                    open_stream(consumer, &thread_shared, &thread_control)
                 }));
-                let stream = match built {
+                let mut stream = match opened {
                     Ok(Ok(stream)) => {
                         let _ = ready_tx.send(Ok(()));
-                        stream
+                        Some(stream)
                     }
                     Ok(Err(error)) => {
                         let _ = ready_tx.send(Err(error));
@@ -76,17 +85,32 @@ impl AudioOutput {
                         return;
                     }
                 };
+                let mut retired: Option<OboeStream> = None;
                 while let Ok(message) = control_rx.recv() {
                     match message {
                         Control::Pause => {
-                            let _ = stream.pause();
+                            if let Some(stream) = stream.as_mut() {
+                                let _ = stream.pause();
+                            }
                         }
                         Control::Resume => {
-                            let _ = stream.play();
+                            if let Some(stream) = stream.as_mut() {
+                                let _ = stream.start();
+                            }
+                        }
+                        Control::Reopen(consumer) => {
+                            retired = stream.take();
+                            stream = catch_unwind(AssertUnwindSafe(|| {
+                                open_stream(consumer, &thread_shared, &thread_control)
+                            }))
+                            .ok()
+                            .and_then(|opened| opened.ok());
                         }
                         Control::Stop => break,
                     }
                 }
+                drop(stream);
+                drop(retired);
             })
             .map_err(|error| AzaharError::Audio(error.to_string()))?;
 
@@ -155,97 +179,86 @@ fn panic_message(payload: &(dyn std::any::Any + Send)) -> String {
     "the audio backend panicked".into()
 }
 
-/// Makes the Android context known to the audio backend, which queries the audio system through
-/// it. There is nothing to prepare elsewhere.
-#[cfg(target_os = "android")]
-fn prepare_platform() {
-    use std::ffi::c_void;
-    use std::sync::Once;
-
-    unsafe extern "C" {
-        fn azahar_host_java_vm() -> *mut c_void;
-        fn azahar_host_application_context() -> *mut c_void;
-    }
-
-    static INITIALIZED: Once = Once::new();
-    INITIALIZED.call_once(|| unsafe {
-        let java_vm = azahar_host_java_vm();
-        let context = azahar_host_application_context();
-        if !java_vm.is_null() && !context.is_null() {
-            ndk_context::initialize_android_context(java_vm, context);
-        }
-    });
-}
-
-#[cfg(not(target_os = "android"))]
-fn prepare_platform() {}
-
-fn build_stream(
+/// Opens a low latency stereo float stream that reads from `consumer`, and starts it unless
+/// the session is paused.
+///
+/// The stream keeps the rate the device prefers, so Oboe stays on its low latency path, and
+/// the 3DS output is resampled to it in the data callback.
+fn open_stream(
     consumer: HeapCons<i16>,
-    shared: Arc<Shared>,
-) -> std::result::Result<cpal::Stream, String> {
-    let device = cpal::default_host()
-        .default_output_device()
-        .ok_or_else(|| "no output device".to_string())?;
-    let supported = device
-        .default_output_config()
-        .map_err(|error| error.to_string())?;
-    let format = supported.sample_format();
-    let config: StreamConfig = supported.config();
-
-    let stream = match format {
-        SampleFormat::F32 => build_typed::<f32>(&device, &config, consumer, shared),
-        SampleFormat::I16 => build_typed::<i16>(&device, &config, consumer, shared),
-        SampleFormat::U16 => build_typed::<u16>(&device, &config, consumer, shared),
-        other => Err(format!("unsupported sample format {other:?}")),
-    }?;
-    stream.play().map_err(|error| error.to_string())?;
+    shared: &Arc<Shared>,
+    control: &Sender<Control>,
+) -> std::result::Result<OboeStream, String> {
+    let callback = OboeCallback {
+        resampler: Some(Resampler::new(consumer)),
+        shared: Arc::clone(shared),
+        control: control.clone(),
+    };
+    let mut stream = AudioStreamBuilder::default()
+        .set_performance_mode(PerformanceMode::LowLatency)
+        .set_sharing_mode(SharingMode::Exclusive)
+        .set_usage(Usage::Game)
+        .set_content_type(ContentType::Music)
+        .set_f32()
+        .set_channel_count::<Stereo>()
+        .set_callback(callback)
+        .open_stream()
+        .map_err(|error| format!("failed to open the Oboe stream: {error}"))?;
+    if !shared.paused.load(Ordering::Acquire) {
+        stream
+            .start()
+            .map_err(|error| format!("failed to start the Oboe stream: {error}"))?;
+    }
     Ok(stream)
 }
 
-fn build_typed<T>(
-    device: &cpal::Device,
-    config: &StreamConfig,
-    consumer: HeapCons<i16>,
+/// Data and error callbacks of one Oboe stream.
+struct OboeCallback {
+    resampler: Option<Resampler>,
     shared: Arc<Shared>,
-) -> std::result::Result<cpal::Stream, String>
-where
-    T: SizedSample + FromSample<f32>,
-{
-    let channels = config.channels as usize;
-    let mut resampler = Resampler::new(consumer, config.sample_rate.0);
-    device
-        .build_output_stream(
-            config,
-            move |output: &mut [T], _| {
-                let paused = shared.paused.load(Ordering::Acquire);
-                let volume = f32::from_bits(shared.volume_bits.load(Ordering::Acquire));
-                for frame in output.chunks_mut(channels) {
-                    let (left, right) = if paused {
-                        (0.0, 0.0)
-                    } else {
-                        resampler.next_frame()
-                    };
-                    let (left, right) = (left * volume, right * volume);
-                    for (index, sample) in frame.iter_mut().enumerate() {
-                        let value = match (channels, index) {
-                            (1, _) => (left + right) * 0.5,
-                            (_, 0) => left,
-                            (_, 1) => right,
-                            _ => 0.0,
-                        };
-                        *sample = T::from_sample(value);
-                    }
-                }
-            },
-            |_error| {},
-            None,
-        )
-        .map_err(|error| error.to_string())
+    control: Sender<Control>,
+}
+
+impl AudioOutputCallback for OboeCallback {
+    type FrameType = (f32, Stereo);
+
+    fn on_audio_ready(
+        &mut self,
+        audio_stream: &mut dyn AudioOutputStreamSafe,
+        audio_data: &mut [(f32, f32)],
+    ) -> DataCallbackResult {
+        let paused = self.shared.paused.load(Ordering::Acquire);
+        let volume = f32::from_bits(self.shared.volume_bits.load(Ordering::Acquire));
+        let Some(resampler) = self.resampler.as_mut() else {
+            audio_data.fill((0.0, 0.0));
+            return DataCallbackResult::Continue;
+        };
+        resampler.set_device_rate(audio_stream.get_sample_rate());
+        for frame in audio_data.iter_mut() {
+            let (left, right) = if paused {
+                (0.0, 0.0)
+            } else {
+                resampler.next_frame()
+            };
+            *frame = (left * volume, right * volume);
+        }
+        DataCallbackResult::Continue
+    }
+
+    fn on_error_after_close(
+        &mut self,
+        _audio_stream: &mut dyn AudioOutputStreamSafe,
+        _error: oboe::Error,
+    ) {
+        if let Some(resampler) = self.resampler.take() {
+            let _ = self.control.send(Control::Reopen(resampler.into_consumer()));
+        }
+    }
 }
 
 struct Resampler {
     consumer: HeapCons<i16>,
+    device_rate: i32,
     step: f64,
     position: f64,
     previous: (f32, f32),
@@ -253,14 +266,28 @@ struct Resampler {
 }
 
 impl Resampler {
-    fn new(consumer: HeapCons<i16>, device_rate: u32) -> Self {
+    fn new(consumer: HeapCons<i16>) -> Self {
         Self {
             consumer,
-            step: SOURCE_SAMPLE_RATE as f64 / device_rate as f64,
+            device_rate: SOURCE_SAMPLE_RATE as i32,
+            step: 1.0,
             position: 1.0,
             previous: (0.0, 0.0),
             next: (0.0, 0.0),
         }
+    }
+
+    /// Follows the rate of the device, which is only known once the stream has opened.
+    fn set_device_rate(&mut self, device_rate: i32) {
+        if device_rate <= 0 || device_rate == self.device_rate {
+            return;
+        }
+        self.device_rate = device_rate;
+        self.step = SOURCE_SAMPLE_RATE as f64 / device_rate as f64;
+    }
+
+    fn into_consumer(self) -> HeapCons<i16> {
+        self.consumer
     }
 
     fn pop_frame(&mut self) -> (f32, f32) {

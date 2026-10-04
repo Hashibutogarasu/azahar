@@ -358,6 +358,10 @@
       "masterVolume": "マスター音量",
       "masterVolumeDescription": "エミュレートされたゲーム自体の音量設定とは独立して、アプリ全体の出力音量を調整します。ハードウェアの音量ボタンはこの値を調整します。",
       "masterVolumePercent": "${value}%",
+      "audioEngine": "オーディオエンジン",
+      "audioEngineDescription": "ゲームの音声を再生するエンジンを選びます。変更は次回のゲーム起動時に反映されます。",
+      "audioEngineOpenal": "OpenAL",
+      "audioEngineOboe": "Oboe",
       "treatAudioAsMediaSession": "Androidのメディアとして扱う",
       "treatAudioAsMediaSessionDescription": "音楽アプリのようにロック画面と通知に再生コントロールを表示し、アプリがバックグラウンドにある間も自動的に一時停止せず音声を再生し続けます。"
     },

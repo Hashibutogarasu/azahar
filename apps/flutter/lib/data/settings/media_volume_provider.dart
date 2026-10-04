@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../app_services.dart';
-import '../user/user_database.dart';
 
 final masterVolumeProvider = NotifierProvider<MasterVolumeNotifier, double>(
   MasterVolumeNotifier.new,
@@ -35,10 +34,10 @@ class MasterVolumeNotifier extends Notifier<double> {
 
   /// Persists the current volume. Callers should invoke this once a drag gesture ends, not on
   /// every intermediate value, to avoid frequent database writes.
-  Future<void> persistVolume() {
-    return AppServices.mediaSettingsRepository.write(
-      MediaSetting(id: 0, masterVolume: state),
-    );
+  Future<void> persistVolume() async {
+    final repository = AppServices.mediaSettingsRepository;
+    final settings = await repository.read();
+    await repository.write(settings.copyWith(masterVolume: state));
   }
 
   Future<void> startNativeSync() async {
