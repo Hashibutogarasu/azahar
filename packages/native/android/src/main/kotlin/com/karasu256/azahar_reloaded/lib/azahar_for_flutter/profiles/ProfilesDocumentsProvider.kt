@@ -120,6 +120,30 @@ class ProfilesDocumentsProvider : DocumentsProvider() {
         return child.size > parent.size && child.subList(0, parent.size) == parent
     }
 
+    /**
+     * Lists the documents from [parentDocumentId], or from the root of the profile when it is
+     * null, down to [childDocumentId]. The Files app needs it to open a folder inside a profile,
+     * and it can be answered from the ids alone, since each id holds the path of its document.
+     */
+    override fun findDocumentPath(
+        parentDocumentId: String?,
+        childDocumentId: String
+    ): DocumentsContract.Path {
+        val child = segments(childDocumentId)
+        if (child.isEmpty() ||
+            (parentDocumentId != null && parentDocumentId != childDocumentId &&
+                !isChildDocument(parentDocumentId, childDocumentId))
+        ) {
+            throw FileNotFoundException(childDocumentId)
+        }
+        val first = parentDocumentId?.let { segments(it).size } ?: 1
+        val path = (first..child.size).map { documentId(child.first(), child.subList(1, it)) }
+        return DocumentsContract.Path(
+            if (parentDocumentId == null) child.first() else null,
+            path
+        )
+    }
+
     override fun getDocumentType(documentId: String): String = mimeType(resolve(documentId))
 
     private fun addRow(cursor: MatrixCursor, documentId: String, document: DocumentFile) {
