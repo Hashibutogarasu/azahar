@@ -5,7 +5,6 @@
 package com.karasu256.azahar_reloaded.lib.azahar_for_flutter.channel
 
 import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
 import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.NativeLibrary
 import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.utils.SystemSaveGame
 
@@ -20,61 +19,59 @@ class SystemFilesController {
         SetSystemSetupNeeded()
     )
 
-    private inner class IsFullConsoleLinked : AzaharMethodHandler {
+    private inner class IsFullConsoleLinked : BackgroundMethodHandler() {
         override val name = "isFullConsoleLinked"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
-            result.success(NativeLibrary.isFullConsoleLinked())
-        }
+        override fun run(call: MethodCall): Any = NativeLibrary.isFullConsoleLinked()
     }
 
-    private inner class AreSystemTitlesInstalled : AzaharMethodHandler {
+    private inner class AreSystemTitlesInstalled : BackgroundMethodHandler() {
         override val name = "areSystemTitlesInstalled"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any {
             val installed = NativeLibrary.areSystemTitlesInstalled()
-            result.success(listOf(installed[0], installed[1]))
+            return listOf(installed[0], installed[1])
         }
     }
 
-    private inner class InstallSystemFiles : AzaharMethodHandler {
+    private inner class InstallSystemFiles : BackgroundMethodHandler() {
         override val name = "installSystemFiles"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any? {
             val old3ds = call.argument<Boolean>("old3ds")!!
             NativeLibrary.uninstallSystemFiles(old3ds)
-            result.success(null)
+            return null
         }
     }
 
-    private inner class UnlinkConsole : AzaharMethodHandler {
+    private inner class UnlinkConsole : BackgroundMethodHandler() {
         override val name = "unlinkConsole"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any? {
             NativeLibrary.unlinkConsole()
-            result.success(null)
+            return null
         }
     }
 
-    private inner class GetHomeMenuPath : AzaharMethodHandler {
+    private inner class GetHomeMenuPath : BackgroundMethodHandler() {
         override val name = "getHomeMenuPath"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any? {
             val region = call.argument<Int>("region")!!
-            result.success(NativeLibrary.getHomeMenuPath(region))
+            return NativeLibrary.getHomeMenuPath(region)
         }
     }
 
-    private inner class IsSystemSetupNeeded : AzaharMethodHandler {
+    private inner class IsSystemSetupNeeded : BackgroundMethodHandler() {
         override val name = "isSystemSetupNeeded"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any {
             SystemSaveGame.load()
-            result.success(SystemSaveGame.getIsSystemSetupNeeded())
+            return SystemSaveGame.getIsSystemSetupNeeded()
         }
     }
 
-    private inner class SetSystemSetupNeeded : AzaharMethodHandler {
+    private inner class SetSystemSetupNeeded : BackgroundMethodHandler() {
         override val name = "setSystemSetupNeeded"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any? {
             val needed = call.argument<Boolean>("needed")!!
             SystemSaveGame.load()
             SystemSaveGame.setSystemSetupNeeded(needed)
-            result.success(null)
+            return null
         }
     }
 }

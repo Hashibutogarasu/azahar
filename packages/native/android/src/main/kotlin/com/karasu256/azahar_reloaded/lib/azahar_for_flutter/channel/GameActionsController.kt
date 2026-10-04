@@ -12,6 +12,7 @@ import android.content.pm.ShortcutManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Icon
+import android.net.Uri
 import androidx.core.graphics.scale
 import androidx.documentfile.provider.DocumentFile
 import io.flutter.plugin.common.MethodCall
@@ -91,40 +92,37 @@ class GameActionsController(private val activity: Activity) {
      * the fixed order [app, save, updates, dlc, extra, textures, mods] — the same order as the
      * Dart-side `GameFolderKind` enum, so the two sides never need to agree on string keys.
      */
-    private inner class GetGameFolderStatus : AzaharMethodHandler {
+    private inner class GetGameFolderStatus : BackgroundMethodHandler() {
         override val name = "getGameFolderStatus"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any {
             val titleId = titleIdArgument(call)
             val path = call.argument<String>("path") ?: ""
             val dirs = getGameDirectories(titleId, path)
             val checkedDirs =
                 listOf(dirs.appDir, dirs.saveDir, dirs.updatesDir, dirs.dlcDir, dirs.extraDir)
-            Thread {
-                val checkedStatus = checkedDirs.map { dir ->
-                    CitraApplication.documentsTree.folderUriHelper(dir)?.let {
-                        DocumentFile.fromTreeUri(activity, it)?.exists()
-                    } ?: false
-                }
-                val status = checkedStatus + listOf(true, true)
-                activity.runOnUiThread { result.success(status) }
-            }.start()
+            val checkedStatus = checkedDirs.map { dir ->
+                CitraApplication.documentsTree.folderUriHelper(dir)?.let {
+                    DocumentFile.fromTreeUri(activity, it)?.exists()
+                } ?: false
+            }
+            return checkedStatus + listOf(true, true)
         }
     }
 
-    private inner class OpenGameFolder : AzaharMethodHandler {
+    private inner class OpenGameFolder : BackgroundMethodHandler() {
         override val name = "openGameFolder"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any? {
             val titleId = titleIdArgument(call)
             val path = call.argument<String>("path") ?: ""
             val folder = call.argument<String>("folder") ?: ""
             val dirs = getGameDirectories(titleId, path)
-            val dir = folderFor(dirs, folder)
-            if (dir == null) {
-                result.success(false)
-                return
-            }
+            val dir = folderFor(dirs, folder) ?: return null
             val createIfNotExists = folder == "textures" || folder == "mods"
-            val uri = CitraApplication.documentsTree.folderUriHelper(dir, createIfNotExists)
+            return CitraApplication.documentsTree.folderUriHelper(dir, createIfNotExists)
+        }
+
+        override fun deliver(value: Any?, result: MethodChannel.Result) {
+            val uri = value as? Uri
             if (uri == null) {
                 result.success(false)
                 return
@@ -139,54 +137,48 @@ class GameActionsController(private val activity: Activity) {
         }
     }
 
-    private inner class DeleteGameFolder : AzaharMethodHandler {
+    private inner class DeleteGameFolder : BackgroundMethodHandler() {
         override val name = "deleteGameFolder"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any {
             val titleId = titleIdArgument(call)
             val path = call.argument<String>("path") ?: ""
             val target = call.argument<String>("target") ?: ""
             val dirs = getGameDirectories(titleId, path)
-            val dir = uninstallTargetFor(dirs, target)
-            if (dir == null) {
-                result.success(false)
-                return
-            }
-            result.success(CitraApplication.documentsTree.deleteDocument(dir))
+            val dir = uninstallTargetFor(dirs, target) ?: return false
+            return CitraApplication.documentsTree.deleteDocument(dir)
         }
     }
 
-    private inner class DeleteShaderCache : AzaharMethodHandler {
+    private inner class DeleteShaderCache : BackgroundMethodHandler() {
         override val name = "deleteShaderCache"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any {
             val titleId = titleIdArgument(call)
             val backend = call.argument<String>("backend") ?: "vulkan"
-            Thread {
-                val tree = CitraApplication.documentsTree
-                val titleIdHex = String.format("%016X", titleId)
-                when (backend) {
-                    "opengl" -> {
-                        listOf("separable", "conventional").forEach { cacheType ->
-                            tree.deleteDocument(
-                                "shaders/opengl/precompiled/$cacheType/$titleIdHex.bin"
-                            )
-                        }
-                        tree.deleteDocument("shaders/opengl/transferable/$titleIdHex.bin")
+            val tree = CitraApplication.documentsTree
+            val titleIdHex = String.format("%016X", titleId)
+            when (backend) {
+                "opengl" -> {
+                    listOf("separable", "conventional").forEach { cacheType ->
+                        tree.deleteDocument(
+                            "shaders/opengl/precompiled/$cacheType/$titleIdHex.bin"
+                        )
                     }
-
-                    else -> {
-                        listOf("vs", "fs", "gs", "pl").forEach { cacheType ->
-                            tree.deleteDocument(
-                                "shaders/vulkan/transferable/${titleIdHex}_$cacheType.vkch"
-                            )
-                        }
-                        tree.getFilesName("shaders/vulkan/pipeline")
-                            .filterNotNull()
-                            .filter { it.startsWith(titleIdHex) }
-                            .forEach { tree.deleteDocument("shaders/vulkan/pipeline/$it") }
-                    }
+                    tree.deleteDocument("shaders/opengl/transferable/$titleIdHex.bin")
                 }
-                activity.runOnUiThread { result.success(true) }
-            }.start()
+
+                else -> {
+                    listOf("vs", "fs", "gs", "pl").forEach { cacheType ->
+                        tree.deleteDocument(
+                            "shaders/vulkan/transferable/${titleIdHex}_$cacheType.vkch"
+                        )
+                    }
+                    tree.getFilesName("shaders/vulkan/pipeline")
+                        .filterNotNull()
+                        .filter { it.startsWith(titleIdHex) }
+                        .forEach { tree.deleteDocument("shaders/vulkan/pipeline/$it") }
+                }
+            }
+            return true
         }
     }
 

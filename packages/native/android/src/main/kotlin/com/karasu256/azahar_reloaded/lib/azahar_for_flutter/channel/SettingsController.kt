@@ -36,65 +36,55 @@ class SettingsController {
         }
     }
 
-    private inner class ReadConfig : AzaharMethodHandler {
+    private inner class ReadConfig : BackgroundMethodHandler() {
         override val name = "readEmulatorConfig"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
-            result.success(EmulatorSettingsFile.read())
-        }
+        override fun run(call: MethodCall): Any = EmulatorSettingsFile.read()
     }
 
-    private inner class WriteConfig : AzaharMethodHandler {
+    private inner class WriteConfig : BackgroundMethodHandler() {
         override val name = "writeEmulatorConfig"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any? {
             @Suppress("UNCHECKED_CAST")
             val sections = call.arguments as? Map<String, Map<String, String>>
-            if (sections == null) {
-                result.error("invalid_argument", "a map of sections is required", null)
-                return
-            }
+                ?: throw IllegalArgumentException("a map of sections is required")
             EmulatorSettingsFile.write(sections)
-            result.success(null)
+            return null
         }
     }
 
-    private inner class ReloadNativeSettings : AzaharMethodHandler {
+    private inner class ReloadNativeSettings : BackgroundMethodHandler() {
         override val name = "reloadEmulatorSettings"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any? {
             NativeLibrary.reloadSettings()
-            result.success(null)
+            return null
         }
     }
 
-    private inner class ReadSystemSaveGame : AzaharMethodHandler {
+    private inner class ReadSystemSaveGame : BackgroundMethodHandler() {
         override val name = "readSystemSaveGame"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any {
             SystemSaveGame.load()
             val birthday = SystemSaveGame.getBirthday()
-            result.success(
-                mapOf(
-                    "username" to SystemSaveGame.getUsername(),
-                    "birthdayMonth" to birthday[0].toInt(),
-                    "birthdayDay" to birthday[1].toInt(),
-                    "systemLanguage" to SystemSaveGame.getSystemLanguage(),
-                    "soundOutputMode" to SystemSaveGame.getSoundOutputMode(),
-                    "countryCode" to SystemSaveGame.getCountryCode().toInt(),
-                    "playCoins" to SystemSaveGame.getPlayCoins(),
-                    "consoleId" to "0x${SystemSaveGame.getConsoleId().toULong().toString(16).uppercase()}",
-                    "mac" to SystemSaveGame.getMac()
-                )
+            return mapOf(
+                "username" to SystemSaveGame.getUsername(),
+                "birthdayMonth" to birthday[0].toInt(),
+                "birthdayDay" to birthday[1].toInt(),
+                "systemLanguage" to SystemSaveGame.getSystemLanguage(),
+                "soundOutputMode" to SystemSaveGame.getSoundOutputMode(),
+                "countryCode" to SystemSaveGame.getCountryCode().toInt(),
+                "playCoins" to SystemSaveGame.getPlayCoins(),
+                "consoleId" to "0x${SystemSaveGame.getConsoleId().toULong().toString(16).uppercase()}",
+                "mac" to SystemSaveGame.getMac()
             )
         }
     }
 
-    private inner class WriteSystemSaveGame : AzaharMethodHandler {
+    private inner class WriteSystemSaveGame : BackgroundMethodHandler() {
         override val name = "writeSystemSaveGame"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any? {
             @Suppress("UNCHECKED_CAST")
             val fields = call.arguments as? Map<String, Any?>
-            if (fields == null) {
-                result.error("invalid_argument", "a map of fields is required", null)
-                return
-            }
+                ?: throw IllegalArgumentException("a map of fields is required")
             (fields["username"] as? String)?.let { SystemSaveGame.setUsername(it) }
             val birthdayMonth = (fields["birthdayMonth"] as? Number)?.toShort()
             val birthdayDay = (fields["birthdayDay"] as? Number)?.toShort()
@@ -116,39 +106,34 @@ class SettingsController {
             }
             (fields["playCoins"] as? Number)?.let { SystemSaveGame.setPlayCoins(it.toInt()) }
             SystemSaveGame.save()
-            result.success(null)
+            return null
         }
     }
 
-    private inner class RegenerateConsoleId : AzaharMethodHandler {
+    private inner class RegenerateConsoleId : BackgroundMethodHandler() {
         override val name = "regenerateConsoleId"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any {
             SystemSaveGame.regenerateConsoleId()
             SystemSaveGame.save()
-            result.success(
-                "0x${SystemSaveGame.getConsoleId().toULong().toString(16).uppercase()}"
-            )
+            return "0x${SystemSaveGame.getConsoleId().toULong().toString(16).uppercase()}"
         }
     }
 
-    private inner class RegenerateMac : AzaharMethodHandler {
+    private inner class RegenerateMac : BackgroundMethodHandler() {
         override val name = "regenerateMac"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any {
             SystemSaveGame.regenerateMac()
             SystemSaveGame.save()
-            result.success(SystemSaveGame.getMac())
+            return SystemSaveGame.getMac()
         }
     }
 
-    private inner class GetCountryCompatibility : AzaharMethodHandler {
+    private inner class GetCountryCompatibility : BackgroundMethodHandler() {
         override val name = "getCountryCompatibility"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any {
             val region = (call.arguments as? Number)?.toInt()
-            if (region == null) {
-                result.error("invalid_argument", "a region int is required", null)
-                return
-            }
-            result.success(SystemSaveGame.getCountryCompatibility(region))
+                ?: throw IllegalArgumentException("a region int is required")
+            return SystemSaveGame.getCountryCompatibility(region)
         }
     }
 }

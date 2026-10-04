@@ -22,29 +22,23 @@ class CheatsController {
 
     private fun MethodCall.titleId(): Long? = argument<Number>("titleId")?.toLong()
 
-    private inner class LoadCheatFile : AzaharMethodHandler {
+    private inner class LoadCheatFile : BackgroundMethodHandler() {
         override val name = "loadCheatFile"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any? {
             val titleId = call.titleId()
-            if (titleId == null) {
-                result.error("invalid_argument", "titleId is required", null)
-                return
-            }
+                ?: throw IllegalArgumentException("titleId is required")
             CheatEngine.loadCheatFile(titleId)
-            result.success(null)
+            return null
         }
     }
 
-    private inner class SaveCheatFile : AzaharMethodHandler {
+    private inner class SaveCheatFile : BackgroundMethodHandler() {
         override val name = "saveCheatFile"
-        override fun execute(call: MethodCall, result: MethodChannel.Result) {
+        override fun run(call: MethodCall): Any? {
             val titleId = call.titleId()
-            if (titleId == null) {
-                result.error("invalid_argument", "titleId is required", null)
-                return
-            }
+                ?: throw IllegalArgumentException("titleId is required")
             CheatEngine.saveCheatFile(titleId)
-            result.success(null)
+            return null
         }
     }
 
