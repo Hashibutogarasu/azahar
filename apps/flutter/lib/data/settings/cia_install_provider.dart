@@ -1,15 +1,25 @@
+import 'dart:async';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app_services.dart';
 import '../../i18n/translations.g.dart';
 import '../../native/app_notification.dart';
+import '../../screens/games/games_provider.dart';
 
 final ciaInstallProvider = Provider<CiaInstallService>(
-  (ref) => CiaInstallService(),
+  (ref) => CiaInstallService(
+    onInstalled: () => ref.read(gamesProvider.notifier).rescan(),
+  ),
 );
 
 class CiaInstallService {
+  CiaInstallService({required this.onInstalled});
+
+  /// Scans the games again so that the installed titles are listed.
+  final Future<void> Function() onInstalled;
+
   Future<bool> pickAndInstall() async {
     final result = await FilePicker.pickFiles(
       type: FileType.custom,
@@ -26,6 +36,7 @@ class CiaInstallService {
         body: result.filename,
       );
     }
+    if (results.any((result) => result.success)) unawaited(onInstalled());
     return true;
   }
 }

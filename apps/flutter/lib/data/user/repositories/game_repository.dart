@@ -17,24 +17,41 @@ class GameRepository {
   final InstalledTitlesRepository _installedTitlesRepository;
 
   Future<List<model.Game>> cachedGames() async {
-    final rows = await _db.select(_db.games).get();
+    final rows = await (_db.select(
+      _db.games,
+    )..orderBy([(tbl) => OrderingTerm.asc(tbl.title)])).get();
     return rows.map(_fromRow).toList();
   }
 
+  /// Scans the games folder and the installed titles, then makes the database match them.
+  ///
+  /// Rows of games that are still found are updated in place, so the times a game was added and
+  /// last played survive the scan. Only the rows of games that are gone are removed.
   Future<List<model.Game>> rescan() async {
     final gamesDirectory = await _gamesDirectoryRepository.gamesDirectoryUri();
     final scanned = await _installedTitlesRepository.scan(gamesDirectory);
-    await _db.batch((batch) {
-      batch.deleteAll(_db.games);
-      for (final game in scanned) {
-        batch.insert(
-          _db.games,
-          _toCompanion(game),
-          mode: InsertMode.insertOrReplace,
-        );
-      }
+    await _saveScanned(scanned);
+    return [...scanned]..sort((a, b) => a.title.compareTo(b.title));
+  }
+
+  /// Makes the games table match [scanned] without losing the data kept for each game.
+  Future<void> _saveScanned(List<model.Game> scanned) {
+    final paths = scanned.map((game) => game.path).toList();
+    final now = DateTime.now();
+    return _db.transaction(() async {
+      await (_db.delete(
+        _db.games,
+      )..where((tbl) => tbl.path.isNotIn(paths))).go();
+      await _db.batch((batch) {
+        for (final game in scanned) {
+          batch.insert(
+            _db.games,
+            _toCompanion(game).copyWith(addedToLibraryTime: Value(now)),
+            onConflict: DoUpdate((_) => _toCompanion(game)),
+          );
+        }
+      });
     });
-    return scanned;
   }
 
   bool isValidExtension(model.Game game) {
