@@ -445,6 +445,19 @@ class Translations$emulation$en {
   /// en: 'Some files could not be saved: ${paths}'
   String saveFailed({required Object paths}) =>
       'Some files could not be saved: ${paths}';
+
+  /// en: 'The game has ended'
+  String get gameEndedTitle => 'The game has ended';
+
+  /// en: 'Save what the game saved since it started, or discard it?'
+  String get gameEndedMessage =>
+      'Save what the game saved since it started, or discard it?';
+
+  /// en: 'Save'
+  String get save => 'Save';
+
+  /// en: 'Discard'
+  String get discard => 'Discard';
 }
 
 // Path: applets
@@ -3143,6 +3156,11 @@ extension on Translations {
           'emulation.saveFailed' =>
             ({required Object paths}) =>
                 'Some files could not be saved: ${paths}',
+          'emulation.gameEndedTitle' => 'The game has ended',
+          'emulation.gameEndedMessage' =>
+            'Save what the game saved since it started, or discard it?',
+          'emulation.save' => 'Save',
+          'emulation.discard' => 'Discard',
           'applets.softwareKeyboard' => 'Software Keyboard',
           'applets.iForgot' => 'I Forgot',
           'applets.standardMii' => 'Standard Mii',
@@ -3594,13 +3612,13 @@ extension on Translations {
           'settings.system.countries.lithuania' => 'Lithuania',
           'settings.system.countries.luxembourg' => 'Luxembourg',
           'settings.system.countries.macedonia' => 'Macedonia',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.system.countries.malta' => 'Malta',
           'settings.system.countries.montenegro' => 'Montenegro',
           'settings.system.countries.mozambique' => 'Mozambique',
           'settings.system.countries.namibia' => 'Namibia',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.system.countries.netherlands' => 'Netherlands',
           'settings.system.countries.newZealand' => 'New Zealand',
           'settings.system.countries.norway' => 'Norway',

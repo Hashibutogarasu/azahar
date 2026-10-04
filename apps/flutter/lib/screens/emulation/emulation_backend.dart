@@ -12,6 +12,7 @@ class EmulationBackendListener {
     required this.onTexture,
     required this.onShaderProgress,
     required this.onError,
+    required this.onShutdownRequested,
   });
 
   /// Called when a screen texture is ready to be shown.
@@ -22,6 +23,10 @@ class EmulationBackendListener {
 
   /// Called when the backend reports a failure.
   final void Function(String message) onError;
+
+  /// Called when the game asked to end. Its emulation has stopped, but the game still has to be
+  /// stopped with [EmulationBackend.stop] to save or discard what it changed.
+  final void Function() onShutdownRequested;
 }
 
 /// Starts, pauses, resumes and stops one game in a session owned by the `azahar_rust` crate.
@@ -77,6 +82,8 @@ class EmulationBackend {
         break;
       case SessionEvent_Error(:final message):
         listener.onError(message);
+      case SessionEvent_ShutdownRequested():
+        listener.onShutdownRequested();
     }
   }
 

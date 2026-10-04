@@ -665,6 +665,9 @@ impl SseDecode for crate::session::SessionEvent {
                     message: var_message,
                 };
             }
+            4 => {
+                return crate::session::SessionEvent::ShutdownRequested;
+            }
             _ => {
                 unimplemented!("");
             }
@@ -878,6 +881,7 @@ impl flutter_rust_bridge::IntoDart for crate::session::SessionEvent {
             crate::session::SessionEvent::Error { message } => {
                 [3.into_dart(), message.into_into_dart().into_dart()].into_dart()
             }
+            crate::session::SessionEvent::ShutdownRequested => [4.into_dart()].into_dart(),
             _ => {
                 unimplemented!("");
             }
@@ -1134,6 +1138,9 @@ impl SseEncode for crate::session::SessionEvent {
             crate::session::SessionEvent::Error { message } => {
                 <i32>::sse_encode(3, serializer);
                 <String>::sse_encode(message, serializer);
+            }
+            crate::session::SessionEvent::ShutdownRequested => {
+                <i32>::sse_encode(4, serializer);
             }
             _ => {
                 unimplemented!("");

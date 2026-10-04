@@ -45,6 +45,11 @@ typedef struct AzaharSessionCallbacks {
   void (*on_error)(void* user, const char* message);
   /** Pushes stereo s16 frames at AZAHAR_AUDIO_SAMPLE_RATE; when NULL the core plays through OpenAL. */
   void (*on_audio)(void* user, const int16_t* frames, size_t frame_count);
+  /**
+   * Called once when the emulated program asks to shut down, after its emulation loop ended.
+   * The session still has to be destroyed; the application decides how.
+   */
+  void (*on_shutdown_requested)(void* user);
 } AzaharSessionCallbacks;
 
 #define AZAHAR_AUDIO_SAMPLE_RATE 32728

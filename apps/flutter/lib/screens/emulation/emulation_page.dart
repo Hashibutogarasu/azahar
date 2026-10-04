@@ -20,6 +20,7 @@ import 'widgets/emulation_loading_card.dart';
 import 'widgets/emulation_menu_actions.dart';
 import 'widgets/emulation_side_panel.dart';
 import 'widgets/exit_without_saving_dialog.dart';
+import 'widgets/game_ended_dialog.dart';
 import 'widgets/top_screen.dart';
 
 class EmulationPage extends ConsumerStatefulWidget {
@@ -125,6 +126,15 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
     }
   }
 
+  /// Lets the user choose to save or discard the changes once the game itself asked to end,
+  /// instead of closing the screen at once.
+  Future<void> _askToSaveAfterGameEnded() async {
+    final notifier = ref.read(emulationSessionProvider.notifier);
+    _scaffoldKey.currentState?.closeDrawer();
+    final save = await GameEndedDialog.show(context);
+    await notifier.terminate(save: save);
+  }
+
   Future<void> _openCheats() async {
     final game = widget.game;
     if (game == null) return;
@@ -184,6 +194,12 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
     ) {
       if (isFinished) Navigator.of(context).pop();
     });
+    ref.listen(
+      emulationSessionProvider.select((state) => state.isShutdownRequested),
+      (_, isShutdownRequested) {
+        if (isShutdownRequested) unawaited(_askToSaveAfterGameEnded());
+      },
+    );
     final state = ref.watch(emulationSessionProvider);
     if (state.isClosingWindow) {
       return const ColoredBox(color: Colors.black);

@@ -89,6 +89,12 @@ unsafe extern "C" fn trampoline_audio(user: *mut c_void, frames: *const i16, fra
     unsafe { context(user) }.listener.on_audio(samples);
 }
 
+unsafe extern "C" fn trampoline_shutdown_requested(user: *mut c_void) {
+    unsafe { context(user) }
+        .listener
+        .on_event(SessionEvent::ShutdownRequested);
+}
+
 type Job = Box<dyn FnOnce(&CoreLibrary) + Send>;
 
 /// The thread that owns the core library and runs every call into it.
@@ -204,6 +210,7 @@ impl SessionHandle {
                 on_texture: Some(trampoline_texture),
                 on_error: Some(trampoline_error),
                 on_audio: plays_audio.then_some(trampoline_audio as _),
+                on_shutdown_requested: Some(trampoline_shutdown_requested),
             };
             unsafe { (library.api.create)(path.as_ptr(), &raw_options, &callbacks) as usize }
         });

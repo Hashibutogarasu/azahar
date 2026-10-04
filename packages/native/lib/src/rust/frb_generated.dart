@@ -623,6 +623,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         );
       case 3:
         return SessionEvent_Error(message: dco_decode_String(raw[1]));
+      case 4:
+        return SessionEvent_ShutdownRequested();
       default:
         throw Exception("unreachable");
     }
@@ -840,6 +842,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 3:
         var var_message = sse_decode_String(deserializer);
         return SessionEvent_Error(message: var_message);
+      case 4:
+        return SessionEvent_ShutdownRequested();
       default:
         throw UnimplementedError('');
     }
@@ -1065,6 +1069,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case SessionEvent_Error(message: final message):
         sse_encode_i_32(3, serializer);
         sse_encode_String(message, serializer);
+      case SessionEvent_ShutdownRequested():
+        sse_encode_i_32(4, serializer);
     }
   }
 

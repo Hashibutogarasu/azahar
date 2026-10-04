@@ -90,6 +90,9 @@ class EmulationSessionNotifier extends Notifier<EmulationSessionState> {
           }
         },
         onError: (message) => debugPrint('Emulation error: $message'),
+        onShutdownRequested: () {
+          state = state.copyWith(isShutdownRequested: true);
+        },
       ),
     );
   }

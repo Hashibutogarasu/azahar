@@ -381,6 +381,14 @@ class _Translations$emulation$ja extends Translations$emulation$en {
       'ゲームを開始してから保存した内容はすべて破棄されます。保存しないで終了しますか？';
   @override
   String saveFailed({required Object paths}) => '一部のファイルを保存できませんでした: ${paths}';
+  @override
+  String get gameEndedTitle => 'ゲームが終了しました';
+  @override
+  String get gameEndedMessage => 'ゲームを開始してから保存した内容を保存しますか？それとも破棄しますか？';
+  @override
+  String get save => '保存';
+  @override
+  String get discard => '破棄';
 }
 
 // Path: applets
@@ -2499,6 +2507,10 @@ extension on TranslationsJa {
             'ゲームを開始してから保存した内容はすべて破棄されます。保存しないで終了しますか？',
           'emulation.saveFailed' =>
             ({required Object paths}) => '一部のファイルを保存できませんでした: ${paths}',
+          'emulation.gameEndedTitle' => 'ゲームが終了しました',
+          'emulation.gameEndedMessage' => 'ゲームを開始してから保存した内容を保存しますか？それとも破棄しますか？',
+          'emulation.save' => '保存',
+          'emulation.discard' => '破棄',
           'applets.softwareKeyboard' => 'ソフトウェアキーボード',
           'applets.iForgot' => '忘れました',
           'applets.standardMii' => '標準のMii',
@@ -2917,13 +2929,13 @@ extension on TranslationsJa {
           'settings.system.countries.macedonia' => 'マケドニア',
           'settings.system.countries.malta' => 'マルタ',
           'settings.system.countries.montenegro' => 'モンテネグロ',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.system.countries.mozambique' => 'モザンビーク',
           'settings.system.countries.namibia' => 'ナミビア',
           'settings.system.countries.netherlands' => 'オランダ',
           'settings.system.countries.newZealand' => 'ニュージーランド',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.system.countries.norway' => 'ノルウェー',
           'settings.system.countries.poland' => 'ポーランド',
           'settings.system.countries.portugal' => 'ポルトガル',

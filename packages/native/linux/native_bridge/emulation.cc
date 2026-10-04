@@ -826,6 +826,9 @@ void Session::Impl::RunEmulation() {
             if (result == Core::System::ResultStatus::Success ||
                 result == Core::System::ResultStatus::ShutdownRequested) {
                 if (result == Core::System::ResultStatus::ShutdownRequested) {
+                    if (callbacks.on_shutdown_requested) {
+                        callbacks.on_shutdown_requested();
+                    }
                     break;
                 }
                 continue;
