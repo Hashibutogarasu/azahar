@@ -101,6 +101,11 @@ std::mutex paused_mutex;
 std::mutex running_mutex;
 std::condition_variable running_cv;
 
+/// Held while the emulation thread creates the windows and loads the system, and while it shuts
+/// the system down, so that the methods the application calls from its own threads never reach a
+/// renderer or a system that is half built or half torn down.
+std::mutex core_lifecycle_mutex;
+
 /// The initialization the application did on this library, kept so it can be replayed on the
 /// library a session loads for itself.
 struct HostState {
@@ -208,6 +213,7 @@ static void LoadDiskCacheProgress(VideoCore::LoadCallbackStage stage, int progre
 static Camera::NDK::Factory* g_ndk_factory{};
 
 static void TryShutdown() {
+    std::lock_guard lifecycle{core_lifecycle_mutex};
     if (!window) {
         return;
     }
@@ -308,9 +314,18 @@ static std::optional<std::vector<Service::AC::HostApInfo>> ScanHostWifiNetworks(
     return access_points;
 }
 
-static Core::System::ResultStatus RunCitra(const std::string& filepath) {
-    // Citra core only supports a single running instance
+/**
+ * Loads [filepath] and runs it on the calling thread until it is stopped.
+ *
+ * @param reset_stop clears an earlier stop request once the previous emulation has ended. A
+ * session clears it when it starts instead, so a stop it requests while loading is kept.
+ */
+static Core::System::ResultStatus RunCitra(const std::string& filepath, bool reset_stop) {
     std::scoped_lock lock(running_mutex);
+    if (reset_stop) {
+        stop_run = false;
+        pause_emulation = false;
+    }
 
     LOG_INFO(Frontend, "Azahar starting...");
 
@@ -323,6 +338,7 @@ static Core::System::ResultStatus RunCitra(const std::string& filepath) {
 
     Core::System& system{Core::System::GetInstance()};
 
+    std::unique_lock lifecycle{core_lifecycle_mutex};
     Config{};
     ApplySessionAudioOutput();
 
@@ -411,9 +427,7 @@ static Core::System::ResultStatus RunCitra(const std::string& filepath) {
     if (load_result != Core::System::ResultStatus::Success) {
         return load_result;
     }
-
-    stop_run = false;
-    pause_emulation = false;
+    lifecycle.unlock();
 
     LoadDiskCacheProgress(VideoCore::LoadCallbackStage::Prepare, 0, 0);
 
@@ -510,6 +524,7 @@ extern "C" {
 void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_surfaceChanged(JNIEnv* env,
                                                             [[maybe_unused]] jobject obj,
                                                             jobject surf) {
+    std::lock_guard lifecycle{core_lifecycle_mutex};
     s_surf = ANativeWindow_fromSurface(env, surf);
 
     bool notify = false;
@@ -527,6 +542,7 @@ void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_
 
 void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_surfaceDestroyed([[maybe_unused]] JNIEnv* env,
                                                               [[maybe_unused]] jobject obj) {
+    std::lock_guard lifecycle{core_lifecycle_mutex};
     if (s_surf != nullptr) {
         ANativeWindow_release(s_surf);
         s_surf = nullptr;
@@ -538,6 +554,7 @@ void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_
 
 void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_surfaceChangedSecondary(
     JNIEnv* env, [[maybe_unused]] jobject obj, jobject surf) {
+    std::lock_guard lifecycle{core_lifecycle_mutex};
     s_surf_secondary = ANativeWindow_fromSurface(env, surf);
 
     bool notify = false;
@@ -555,6 +572,7 @@ void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_
 
 void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_surfaceDestroyedSecondary(
     [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject obj) {
+    std::lock_guard lifecycle{core_lifecycle_mutex};
     if (s_surf_secondary != nullptr) {
         ANativeWindow_release(s_surf_secondary);
         s_surf_secondary = nullptr;
@@ -569,7 +587,8 @@ void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_
     if (stop_run || pause_emulation) {
         return;
     }
-    if (window) {
+    std::unique_lock lifecycle{core_lifecycle_mutex, std::try_to_lock};
+    if (lifecycle.owns_lock() && window) {
         window->TryPresenting();
     }
 }
@@ -579,7 +598,8 @@ void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_
     if (stop_run || pause_emulation) {
         return;
     }
-    if (secondary_window) {
+    std::unique_lock lifecycle{core_lifecycle_mutex, std::try_to_lock};
+    if (lifecycle.owns_lock() && secondary_window) {
         secondary_window->TryPresenting();
     }
 }
@@ -624,6 +644,7 @@ void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_
 void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_updateFramebuffer([[maybe_unused]] JNIEnv* env,
                                                                [[maybe_unused]] jobject obj,
                                                                jboolean is_portrait_mode) {
+    std::lock_guard lifecycle{core_lifecycle_mutex};
     auto& system = Core::System::GetInstance();
     if (system.IsPoweredOn()) {
         system.GPU().Renderer().UpdateCurrentFramebufferLayout(is_portrait_mode);
@@ -633,6 +654,7 @@ void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_
 void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_swapScreens([[maybe_unused]] JNIEnv* env,
                                                          [[maybe_unused]] jobject obj,
                                                          jboolean swap_screens, jint rotation) {
+    std::lock_guard lifecycle{core_lifecycle_mutex};
     Settings::values.swap_screen = swap_screens;
     auto& system = Core::System::GetInstance();
     if (system.IsPoweredOn()) {
@@ -792,7 +814,12 @@ void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_
     stop_run = true;
     pause_emulation = false;
     advance_frame_requested = false;
-    window->StopPresenting();
+    {
+        std::lock_guard lifecycle{core_lifecycle_mutex};
+        if (window) {
+            window->StopPresenting();
+        }
+    }
     running_cv.notify_all();
 }
 
@@ -967,6 +994,7 @@ void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_
 
 void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_reloadSettings([[maybe_unused]] JNIEnv* env,
                                                             [[maybe_unused]] jobject obj) {
+    std::lock_guard lifecycle{core_lifecycle_mutex};
     Config{};
     Core::System& system{Core::System::GetInstance()};
 
@@ -1007,7 +1035,7 @@ void Java_com_karasu256_azahar_1reloaded_lib_azahar_1for_1flutter_NativeLibrary_
         running_cv.notify_all();
     }
 
-    const Core::System::ResultStatus result{RunCitra(path)};
+    const Core::System::ResultStatus result{RunCitra(path, true)};
     if (result != Core::System::ResultStatus::Success) {
         env->CallStaticVoidMethod(IDCache::GetNativeLibraryClass(),
                                   IDCache::GetExitEmulationActivity(), static_cast<int>(result));
@@ -1266,10 +1294,13 @@ static int32_t StartSessionUnguarded(AzaharSession* session) {
     }
     session->previous_output_type = Settings::values.output_type.GetValue();
 
+    stop_run = false;
+    pause_emulation = false;
+    advance_frame_requested = false;
     session->emulation_thread = std::thread([session] {
         Core::System::ResultStatus result = Core::System::ResultStatus::ErrorUnknown;
         try {
-            result = RunCitra(session->path);
+            result = RunCitra(session->path, false);
         } catch (const std::exception& exception) {
             ReportSessionError(session->callbacks,
                                std::string{"The emulation threw: "} + exception.what());
@@ -1375,8 +1406,11 @@ static void DestroySessionUnguarded(AzaharSession* session) {
     stop_run = true;
     pause_emulation = false;
     advance_frame_requested = false;
-    if (window) {
-        window->StopPresenting();
+    {
+        std::lock_guard lifecycle{core_lifecycle_mutex};
+        if (window) {
+            window->StopPresenting();
+        }
     }
     running_cv.notify_all();
     if (session->emulation_thread.joinable()) {

@@ -18,6 +18,7 @@
 #include <unordered_map>
 
 #include <jni.h>
+#include <pthread.h>
 
 static constexpr jint JNI_VERSION = JNI_VERSION_1_6;
 
@@ -61,8 +62,12 @@ JNIEnv* GetEnvForThread() {
     thread_local static struct OwnedEnv {
         OwnedEnv() {
             status = s_java_vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6);
-            if (status == JNI_EDETACHED)
-                s_java_vm->AttachCurrentThread(&env, nullptr);
+            if (status == JNI_EDETACHED) {
+                char name[16]{};
+                pthread_getname_np(pthread_self(), name, sizeof(name));
+                JavaVMAttachArgs args{JNI_VERSION_1_6, name, nullptr};
+                s_java_vm->AttachCurrentThread(&env, &args);
+            }
         }
 
         ~OwnedEnv() {

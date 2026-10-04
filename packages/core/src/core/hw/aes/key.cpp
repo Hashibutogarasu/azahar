@@ -3,6 +3,7 @@
 // Refer to the license.txt file included.
 
 #include <algorithm>
+#include <mutex>
 #include <optional>
 #include <sstream>
 #include <boost/iostreams/device/file_descriptor.hpp>
@@ -300,6 +301,8 @@ std::istringstream GetKeysStream() {
 }
 
 void InitKeys(bool force) {
+    static std::mutex init_mutex;
+    std::scoped_lock lock{init_mutex};
     static bool initialized = false;
     if (initialized && !force) {
         return;
