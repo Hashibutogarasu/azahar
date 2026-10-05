@@ -194,7 +194,8 @@
     "gameEndedMessage": "ゲームを開始してから保存した内容を保存しますか？それとも破棄しますか？",
     "save": "保存",
     "discard": "破棄",
-    "showVirtualGamepad": "画面上のコントローラーを表示"
+    "showVirtualGamepad": "画面上のコントローラーを表示",
+    "hideVirtualGamepad": "画面上のコントローラーを非表示"
   },
   "applets": {
     "softwareKeyboard": "ソフトウェアキーボード",

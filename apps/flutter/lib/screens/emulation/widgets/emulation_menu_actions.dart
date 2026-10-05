@@ -9,7 +9,8 @@ class EmulationMenuActions {
     required this.onCheats,
     required this.onSaveAndExit,
     required this.onExitWithoutSaving,
-    this.onShowVirtualGamepad,
+    this.isVirtualGamepadVisible,
+    this.onToggleVirtualGamepad,
   });
 
   final VoidCallback onTogglePause;
@@ -24,5 +25,7 @@ class EmulationMenuActions {
   /// Stops the game and discards what it changed since it started.
   final VoidCallback onExitWithoutSaving;
 
-  final VoidCallback? onShowVirtualGamepad;
+  final bool? isVirtualGamepadVisible;
+
+  final VoidCallback? onToggleVirtualGamepad;
 }

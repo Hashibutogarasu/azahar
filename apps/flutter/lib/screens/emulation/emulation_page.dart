@@ -48,13 +48,13 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _focusNotifier = ref.read(emulationFocusProvider.notifier);
-    Future.microtask(_focusNotifier.activate);
+    Future.microtask(() => _focusNotifier.activate(this));
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    Future.microtask(_focusNotifier.deactivate);
+    Future.microtask(() => _focusNotifier.deactivate(this));
     super.dispose();
   }
 
@@ -255,9 +255,10 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
       onCheats: widget.game == null ? null : _openCheats,
       onSaveAndExit: _saveAndExit,
       onExitWithoutSaving: _confirmExitWithoutSaving,
-      onShowVirtualGamepad: isDesktop || isVirtualGamepadVisible
-          ? null
-          : ref.read(virtualGamepadVisibleProvider.notifier).show,
+      isVirtualGamepadVisible: isDesktop ? null : isVirtualGamepadVisible,
+      onToggleVirtualGamepad: ref
+          .read(virtualGamepadVisibleProvider.notifier)
+          .toggle,
     );
     final screens = SafeArea(
       child: LayoutBuilder(

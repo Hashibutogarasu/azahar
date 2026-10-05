@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/gamepad/gamepad_hub.dart';
+import 'emulation_focus_provider.dart';
 
 /// Whether the on-screen controller of the emulation is shown.
 final virtualGamepadVisibleProvider =
@@ -8,24 +9,23 @@ final virtualGamepadVisibleProvider =
       VirtualGamepadVisibilityNotifier.new,
     );
 
-/// Hides the on-screen controller as soon as a physical controller is used, and keeps it hidden
-/// until [show] is called from the in-game menu, after which it stays shown.
+/// Hides the on-screen controller whenever a physical controller operates the running game, and
+/// lets the in-game menu show or hide it with [toggle].
 class VirtualGamepadVisibilityNotifier extends Notifier<bool> {
-  bool _shownExplicitly = false;
-
   @override
   bool build() {
-    ref.listen(gamepadInputModeProvider, (_, mode) {
-      if (mode == GamepadInputMode.controller && !_shownExplicitly) {
-        state = false;
+    ref.listen(normalizedGamepadEventsProvider, (_, next) {
+      final event = next.value;
+      if (event == null || !state) return;
+      if (event.value.abs() < GamepadInputModeNotifier.activationThreshold) {
+        return;
       }
+      if (ref.read(emulationFocusProvider).isGameFocused) state = false;
     });
     return ref.read(gamepadInputModeProvider) != GamepadInputMode.controller;
   }
 
-  /// Shows the on-screen controller again and stops hiding it on controller input.
-  void show() {
-    _shownExplicitly = true;
-    state = true;
+  void toggle() {
+    state = !state;
   }
 }

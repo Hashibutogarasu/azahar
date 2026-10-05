@@ -12,8 +12,6 @@ class GamepadNotificationBarTheme
     required this.foregroundColor,
     required this.textStyle,
     required this.height,
-    required this.margin,
-    required this.borderRadius,
     required this.displayDuration,
   });
 
@@ -22,9 +20,6 @@ class GamepadNotificationBarTheme
   final Color foregroundColor;
   final TextStyle textStyle;
   final double height;
-  final EdgeInsets margin;
-  final BorderRadius borderRadius;
-
   final Duration displayDuration;
 
   static const Color _green = Color(0xFF2E7D32);
@@ -41,22 +36,18 @@ class GamepadNotificationBarTheme
         fontWeight: FontWeight.w600,
       ),
       height: 40,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      borderRadius: BorderRadius.circular(20),
       displayDuration: const Duration(seconds: 3),
     );
   }
 
   factory GamepadNotificationBarTheme.flat(ColorScheme colorScheme) {
-    return GamepadNotificationBarTheme(
+    return const GamepadNotificationBarTheme(
       connectedBackgroundColor: _green,
       disconnectedBackgroundColor: _grey,
       foregroundColor: Colors.white,
-      textStyle: const TextStyle(color: Colors.white, fontSize: 14),
+      textStyle: TextStyle(color: Colors.white, fontSize: 14),
       height: 40,
-      margin: EdgeInsets.zero,
-      borderRadius: BorderRadius.zero,
-      displayDuration: const Duration(seconds: 3),
+      displayDuration: Duration(seconds: 3),
     );
   }
 
@@ -67,8 +58,6 @@ class GamepadNotificationBarTheme
     Color? foregroundColor,
     TextStyle? textStyle,
     double? height,
-    EdgeInsets? margin,
-    BorderRadius? borderRadius,
     Duration? displayDuration,
   }) {
     return GamepadNotificationBarTheme(
@@ -79,8 +68,6 @@ class GamepadNotificationBarTheme
       foregroundColor: foregroundColor ?? this.foregroundColor,
       textStyle: textStyle ?? this.textStyle,
       height: height ?? this.height,
-      margin: margin ?? this.margin,
-      borderRadius: borderRadius ?? this.borderRadius,
       displayDuration: displayDuration ?? this.displayDuration,
     );
   }
@@ -105,8 +92,6 @@ class GamepadNotificationBarTheme
       foregroundColor: Color.lerp(foregroundColor, other.foregroundColor, t)!,
       textStyle: TextStyle.lerp(textStyle, other.textStyle, t)!,
       height: lerpDouble(height, other.height, t)!,
-      margin: EdgeInsets.lerp(margin, other.margin, t)!,
-      borderRadius: BorderRadius.lerp(borderRadius, other.borderRadius, t)!,
       displayDuration: t < 0.5 ? displayDuration : other.displayDuration,
     );
   }

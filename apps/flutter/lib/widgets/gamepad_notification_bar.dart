@@ -11,11 +11,12 @@ import '../data/settings/animation_speed.dart';
 import '../i18n/translations.g.dart';
 import '../theme/extensions/gamepad_notification_bar_theme.dart';
 
-/// A one-line bar, styled like a snack bar, that tells a controller was connected or
-/// disconnected and hides itself after [GamepadNotificationBarTheme.displayDuration].
+/// A one-line, full-width bar, like a snack bar, that slides up from below to tell a controller
+/// was connected or disconnected and hides itself after
+/// [GamepadNotificationBarTheme.displayDuration].
 ///
-/// It takes no room while hidden and grows to its full height while shown, so the widgets below
-/// it move down instead of being covered. A newer event replaces the one being shown.
+/// It takes no room while hidden, so the widgets above it move up and down with it instead of
+/// being covered. A newer event replaces the one being shown.
 class GamepadNotificationBar extends ConsumerStatefulWidget {
   const GamepadNotificationBar({super.key});
 
@@ -60,57 +61,77 @@ class _GamepadNotificationBarState
       speed: ref.watch(advancedSettingsProvider).animationSpeed,
     );
     final type = _shownType;
-    return AnimatedSize(
-      duration: duration,
-      curve: Curves.easeInOut,
-      alignment: Alignment.topCenter,
-      child: !_visible || type == null
-          ? const SizedBox(width: double.infinity)
-          : Padding(
-              padding: theme.margin,
-              child: Material(
-                color: type == GamepadConnectionEventType.connected
-                    ? theme.connectedBackgroundColor
-                    : theme.disconnectedBackgroundColor,
-                borderRadius: theme.borderRadius,
-                child: SizedBox(
-                  height: theme.height,
-                  width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        Icon(
-                          type == GamepadConnectionEventType.connected
-                              ? Icons.sports_esports
-                              : Icons.sports_esports_outlined,
-                          color: theme.foregroundColor,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            type == GamepadConnectionEventType.connected
-                                ? context.t.gamepad.connected
-                                : context.t.gamepad.disconnected,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textStyle,
-                          ),
-                        ),
-                      ],
-                    ),
+    return ClipRect(
+      child: AnimatedSize(
+        duration: duration,
+        curve: Curves.easeOut,
+        alignment: Alignment.topCenter,
+        child: AnimatedSwitcher(
+          duration: duration,
+          transitionBuilder: (child, animation) => SlideTransition(
+            position: Tween(
+              begin: const Offset(0, 1),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          ),
+          child: !_visible || type == null
+              ? const SizedBox(width: double.infinity)
+              : _bar(context, theme, type),
+        ),
+      ),
+    );
+  }
+
+  Widget _bar(
+    BuildContext context,
+    GamepadNotificationBarTheme theme,
+    GamepadConnectionEventType type,
+  ) {
+    final connected = type == GamepadConnectionEventType.connected;
+    return ColoredBox(
+      key: ValueKey(type),
+      color: connected
+          ? theme.connectedBackgroundColor
+          : theme.disconnectedBackgroundColor,
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: theme.height,
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Icon(
+                  connected
+                      ? Icons.sports_esports
+                      : Icons.sports_esports_outlined,
+                  color: theme.foregroundColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    connected
+                        ? context.t.gamepad.connected
+                        : context.t.gamepad.disconnected,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textStyle,
                   ),
                 ),
-              ),
+              ],
             ),
+          ),
+        ),
+      ),
     );
   }
 }
 
-/// Lays out a shell as a [Column] whose first item keeps the top system inset, whose second item
-/// is the [GamepadNotificationBar], and whose last item is [child], which fills the rest without
-/// the top inset already taken by the first item.
+/// Lays out a shell as a [Column] of two items: [child], which fills the space, and below it the
+/// [GamepadNotificationBar].
 class GamepadNotificationColumn extends StatelessWidget {
   const GamepadNotificationColumn({super.key, required this.child});
 
@@ -120,15 +141,8 @@ class GamepadNotificationColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: MediaQuery.paddingOf(context).top),
+        Expanded(child: child),
         const GamepadNotificationBar(),
-        Expanded(
-          child: MediaQuery.removePadding(
-            context: context,
-            removeTop: true,
-            child: child,
-          ),
-        ),
       ],
     );
   }

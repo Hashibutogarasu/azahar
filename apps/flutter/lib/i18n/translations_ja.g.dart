@@ -410,6 +410,8 @@ class _Translations$emulation$ja extends Translations$emulation$en {
   String get discard => '破棄';
   @override
   String get showVirtualGamepad => '画面上のコントローラーを表示';
+  @override
+  String get hideVirtualGamepad => '画面上のコントローラーを非表示';
 }
 
 // Path: applets
@@ -2549,6 +2551,7 @@ extension on TranslationsJa {
           'emulation.save' => '保存',
           'emulation.discard' => '破棄',
           'emulation.showVirtualGamepad' => '画面上のコントローラーを表示',
+          'emulation.hideVirtualGamepad' => '画面上のコントローラーを非表示',
           'applets.softwareKeyboard' => 'ソフトウェアキーボード',
           'applets.iForgot' => '忘れました',
           'applets.standardMii' => '標準のMii',
@@ -2963,10 +2966,10 @@ extension on TranslationsJa {
           'settings.system.countries.lesotho' => 'レソト',
           'settings.system.countries.liechtenstein' => 'リヒテンシュタイン',
           'settings.system.countries.lithuania' => 'リトアニア',
-          'settings.system.countries.luxembourg' => 'ルクセンブルク',
           _ => null,
         } ??
         switch (path) {
+          'settings.system.countries.luxembourg' => 'ルクセンブルク',
           'settings.system.countries.macedonia' => 'マケドニア',
           'settings.system.countries.malta' => 'マルタ',
           'settings.system.countries.montenegro' => 'モンテネグロ',

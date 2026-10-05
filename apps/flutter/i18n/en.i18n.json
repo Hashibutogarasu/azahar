@@ -194,7 +194,8 @@
     "gameEndedMessage": "Save what the game saved since it started, or discard it?",
     "save": "Save",
     "discard": "Discard",
-    "showVirtualGamepad": "Show On-Screen Controller"
+    "showVirtualGamepad": "Show On-Screen Controller",
+    "hideVirtualGamepad": "Hide On-Screen Controller"
   },
   "applets": {
     "softwareKeyboard": "Software Keyboard",

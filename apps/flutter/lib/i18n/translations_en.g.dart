@@ -479,6 +479,9 @@ class Translations$emulation$en {
 
   /// en: 'Show On-Screen Controller'
   String get showVirtualGamepad => 'Show On-Screen Controller';
+
+  /// en: 'Hide On-Screen Controller'
+  String get hideVirtualGamepad => 'Hide On-Screen Controller';
 }
 
 // Path: applets
@@ -3207,6 +3210,7 @@ extension on Translations {
           'emulation.save' => 'Save',
           'emulation.discard' => 'Discard',
           'emulation.showVirtualGamepad' => 'Show On-Screen Controller',
+          'emulation.hideVirtualGamepad' => 'Hide On-Screen Controller',
           'applets.softwareKeyboard' => 'Software Keyboard',
           'applets.iForgot' => 'I Forgot',
           'applets.standardMii' => 'Standard Mii',
@@ -3654,10 +3658,10 @@ extension on Translations {
           'settings.system.countries.italy' => 'Italy',
           'settings.system.countries.latvia' => 'Latvia',
           'settings.system.countries.lesotho' => 'Lesotho',
-          'settings.system.countries.liechtenstein' => 'Liechtenstein',
           _ => null,
         } ??
         switch (path) {
+          'settings.system.countries.liechtenstein' => 'Liechtenstein',
           'settings.system.countries.lithuania' => 'Lithuania',
           'settings.system.countries.luxembourg' => 'Luxembourg',
           'settings.system.countries.macedonia' => 'Macedonia',

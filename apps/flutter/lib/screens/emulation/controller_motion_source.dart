@@ -7,7 +7,8 @@ import 'active_motion_source_provider.dart';
 import 'controller_motion_provider.dart';
 import 'emulation_focus_provider.dart';
 import 'emulation_session_provider.dart';
-import 'motion_input_source.dart';
+import 'motion/controller_motion_axis_converter.dart';
+import 'motion/motion_axis_converter.dart';
 import 'motion_scaler.dart';
 
 /// Gives the values of the motion sensors built into a game controller to the emulation while
@@ -15,8 +16,8 @@ import 'motion_scaler.dart';
 /// game. It draws nothing.
 ///
 /// A resting sample is sent when the controller stops being the source or the input leaves the
-/// game, so that no tilt is left behind. A controller is held like a device in landscape, so its
-/// axes are converted the same way.
+/// game, so that no tilt is left behind. The axes are converted by [ControllerMotionAxisConverter],
+/// since a controller has another reference frame than the device.
 class ControllerMotionSource extends ConsumerStatefulWidget {
   const ControllerMotionSource({super.key, required this.child});
 
@@ -29,7 +30,7 @@ class ControllerMotionSource extends ConsumerStatefulWidget {
 
 class _ControllerMotionSourceState
     extends ConsumerState<ControllerMotionSource> {
-  static const int _landscapeRotation = 1;
+  static const MotionAxisConverter _axes = ControllerMotionAxisConverter();
 
   late final EmulationSessionNotifier _session;
   bool _sent = false;
@@ -71,11 +72,9 @@ class _ControllerMotionSourceState
       return;
     }
     final accel = MotionScaler.accelFromSensor(
-      MotionInputSource.transformAxes(sample.accel, _landscapeRotation),
+      _axes.toConsoleAxes(sample.accel),
     );
-    final gyro = MotionScaler.gyroFromSensor(
-      MotionInputSource.transformAxes(sample.gyro, _landscapeRotation),
-    );
+    final gyro = MotionScaler.gyroFromSensor(_axes.toConsoleAxes(sample.gyro));
     _session.sendMotion(
       accel: accel,
       gyro: MotionScaler.scaleGyro(

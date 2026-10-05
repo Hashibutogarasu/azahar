@@ -36,16 +36,22 @@ final emulationFocusProvider =
 /// Keeps [emulationFocusProvider] up to date. The emulation screen marks itself shown and hidden,
 /// and the focus moves between the game and the menu.
 class EmulationFocusNotifier extends Notifier<EmulationFocusState> {
+  Object? _owner;
+
   @override
   EmulationFocusState build() => const EmulationFocusState();
 
-  /// Records that the emulation screen is shown, with input going to the game.
-  void activate() {
+  /// Records that the emulation screen [owner] is shown, with input going to the game.
+  void activate(Object owner) {
+    _owner = owner;
     state = const EmulationFocusState(isActive: true);
   }
 
-  /// Records that the emulation screen is no longer shown.
-  void deactivate() {
+  /// Records that the emulation screen [owner] is no longer shown. A screen that is no longer the
+  /// one recorded, such as one disposed after the next screen was shown, changes nothing.
+  void deactivate(Object owner) {
+    if (!identical(_owner, owner)) return;
+    _owner = null;
     state = const EmulationFocusState();
   }
 

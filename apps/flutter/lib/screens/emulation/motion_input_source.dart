@@ -8,6 +8,7 @@ import 'package:sensors_plus/sensors_plus.dart';
 import '../../app_services.dart';
 import 'active_motion_source_provider.dart';
 import 'emulation_session_provider.dart';
+import 'motion/device_motion_axis_converter.dart';
 import 'motion_scaler.dart';
 
 /// Reads the motion sensors of the device and gives their values to the emulation, in place of
@@ -24,34 +25,6 @@ class MotionInputSource extends ConsumerStatefulWidget {
   /// How often the latest sample is sent.
   static const sendPeriod = Duration(milliseconds: 16);
 
-  /// Converts a raw sensor vector, in the axes of the device, to the axes of the 3DS for a screen
-  /// [rotation] in quarter turns counter-clockwise from portrait.
-  static Vec3 transformAxes(Vec3 raw, int rotation) {
-    return switch (rotation) {
-      1 => Vec3(raw.y, raw.z, raw.x),
-      2 => Vec3(raw.x, raw.z, -raw.y),
-      3 => Vec3(-raw.y, raw.z, -raw.x),
-      _ => Vec3(-raw.x, raw.z, raw.y),
-    };
-  }
-
-  /// Works out the screen rotation from the direction of gravity, keeping [previous] while the
-  /// device lies too flat to tell.
-  @visibleForTesting
-  static int rotationFrom(
-    Vec3 rawAccel, {
-    required bool landscape,
-    required int previous,
-  }) {
-    const threshold = 3.0;
-    if (landscape) {
-      if (rawAccel.x.abs() < threshold) return previous;
-      return rawAccel.x > 0 ? 1 : 3;
-    }
-    if (rawAccel.y.abs() < threshold) return previous;
-    return rawAccel.y > 0 ? 0 : 2;
-  }
-
   @override
   ConsumerState<MotionInputSource> createState() => _MotionInputSourceState();
 }
@@ -65,7 +38,7 @@ class _MotionInputSourceState extends ConsumerState<MotionInputSource> {
   Vec3? _gravity;
   bool? _landscape;
   DateTime _settleUntil = DateTime.fromMillisecondsSinceEpoch(0);
-  int _rotation = 0;
+  final DeviceMotionAxisConverter _axes = DeviceMotionAxisConverter();
 
   static const double _gravitySmoothing = 0.1;
   static const Duration _settleDuration = Duration(seconds: 1);
@@ -134,27 +107,22 @@ class _MotionInputSourceState extends ConsumerState<MotionInputSource> {
       _settleUntil = now.add(_settleDuration);
     }
     if (!now.isBefore(_settleUntil)) return;
-    _rotation = MotionInputSource.rotationFrom(
+    _axes.rotation = DeviceMotionAxisConverter.rotationFrom(
       _gravity!,
       landscape: landscape,
-      previous: _rotation,
+      previous: _axes.rotation,
     );
   }
 
   void _onAccel(AccelerometerEvent event) {
     final raw = Vec3(event.x, event.y, event.z);
     _updateRotation(raw);
-    _accel = MotionScaler.accelFromSensor(
-      MotionInputSource.transformAxes(raw, _rotation),
-    );
+    _accel = MotionScaler.accelFromSensor(_axes.toConsoleAxes(raw));
   }
 
   void _onGyro(GyroscopeEvent event) {
     _gyro = MotionScaler.gyroFromSensor(
-      MotionInputSource.transformAxes(
-        Vec3(event.x, event.y, event.z),
-        _rotation,
-      ),
+      _axes.toConsoleAxes(Vec3(event.x, event.y, event.z)),
     );
   }
 

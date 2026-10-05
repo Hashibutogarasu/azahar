@@ -57,12 +57,14 @@ class EmulationMenuSections extends StatelessWidget {
               enabled: actions.onCheats != null,
               onTap: actions.onCheats,
             ),
-            if (actions.onShowVirtualGamepad case final onShow?)
+            if (actions.isVirtualGamepadVisible case final visible?)
               EmulationMenuItem(
-                icon: Icons.gamepad_outlined,
-                title: t.emulation.showVirtualGamepad,
+                icon: visible ? Icons.gamepad : Icons.gamepad_outlined,
+                title: visible
+                    ? t.emulation.hideVirtualGamepad
+                    : t.emulation.showVirtualGamepad,
                 iconsOnly: iconsOnly,
-                onTap: onShow,
+                onTap: actions.onToggleVirtualGamepad,
               ),
           ],
         ),

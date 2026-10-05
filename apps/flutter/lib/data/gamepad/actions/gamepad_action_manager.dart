@@ -19,7 +19,8 @@ final gamepadActionManagerProvider =
 /// the key combination bound to each of them.
 ///
 /// A held combination hides the smaller ones it contains, and a combination only counts as
-/// pressed when its last input goes down while its action is available.
+/// pressed when its last input goes down while its action is available. No action is available
+/// while something such as a key binding dialog captures the controller input.
 class GamepadActionManager extends Notifier<GamepadInputSnapshot> {
   final Set<GamepadButton> _buttons = {};
   final Map<GamepadAxis, double> _axes = {};
@@ -28,6 +29,7 @@ class GamepadActionManager extends Notifier<GamepadInputSnapshot> {
   GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   bool _tickScheduled = false;
   GamepadInputSnapshot _previous = GamepadInputSnapshot.empty;
+  int _captures = 0;
 
   @override
   GamepadInputSnapshot build() {
@@ -50,6 +52,17 @@ class GamepadActionManager extends Notifier<GamepadInputSnapshot> {
   /// Sets the navigator at the root of the app, which the actions reach through their context.
   void attach(GlobalKey<NavigatorState> navigatorKey) {
     _navigatorKey = navigatorKey;
+  }
+
+  /// Stops every action from running until [endCapture] is called as many times, releasing the
+  /// actions that are held, so that the caller gets the controller input to itself.
+  void beginCapture() {
+    _captures++;
+    _scheduleTick();
+  }
+
+  void endCapture() {
+    if (_captures > 0) _captures--;
   }
 
   void _onEvent(NormalizedGamepadEvent event) {
@@ -103,7 +116,7 @@ class GamepadActionManager extends Notifier<GamepadInputSnapshot> {
         (
           action: action,
           combo: comboOf(ref, action),
-          available: action.isAvailable(context),
+          available: _captures == 0 && action.isAvailable(context),
         ),
     ];
     final held = [

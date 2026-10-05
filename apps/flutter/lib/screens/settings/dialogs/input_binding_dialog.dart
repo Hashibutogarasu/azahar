@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamepads/gamepads.dart';
 
+import '../../../data/gamepad/actions/gamepad_action_manager.dart';
 import '../../../data/gamepad/actions/gamepad_key_combo.dart';
 import '../../../data/options/input_binding_mode.dart';
 import '../../../i18n/translations.g.dart';
@@ -10,8 +12,8 @@ import '../../../widgets/dialog_cancel_button.dart';
 
 /// Waits for controller input and pops what it binds, as [mode] describes: the raw key of the
 /// next button pressed, the key combination of everything held until it is all released, or the
-/// next stick moved.
-class InputBindingDialog extends StatefulWidget {
+/// next stick moved. While it is open, the controller input does not operate the app.
+class InputBindingDialog extends ConsumerStatefulWidget {
   const InputBindingDialog({
     super.key,
     required this.title,
@@ -33,18 +35,21 @@ class InputBindingDialog extends StatefulWidget {
   }
 
   @override
-  State<InputBindingDialog> createState() => _InputBindingDialogState();
+  ConsumerState<InputBindingDialog> createState() => _InputBindingDialogState();
 }
 
-class _InputBindingDialogState extends State<InputBindingDialog> {
+class _InputBindingDialogState extends ConsumerState<InputBindingDialog> {
   StreamSubscription<Object>? _subscription;
   final Set<GamepadButton> _buttons = {};
   final Map<GamepadAxis, double> _axes = {};
   final Set<GamepadInput> _recorded = {};
+  late final GamepadActionManager _actionManager;
 
   @override
   void initState() {
     super.initState();
+    _actionManager = ref.read(gamepadActionManagerProvider.notifier)
+      ..beginCapture();
     _subscription = switch (widget.mode) {
       InputBindingMode.rawKey =>
         Gamepads.events
@@ -58,6 +63,7 @@ class _InputBindingDialogState extends State<InputBindingDialog> {
   @override
   void dispose() {
     _subscription?.cancel();
+    _actionManager.endCapture();
     super.dispose();
   }
 
