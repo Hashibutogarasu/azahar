@@ -1083,6 +1083,16 @@ class _Translations$settings$inputBindingDialog$ja
   // Translations
   @override
   String get waitingForInput => 'コントローラーのボタンを押してください';
+  @override
+  String get waitingForComboInput => 'コントローラーのボタンかキーボードのキーを押してください';
+  @override
+  String get waitingForStickInput => 'コントローラーのスティックを倒すか、上・下・左・右のキーを順に押してください';
+  @override
+  String get pressKeyForDown => '下にするキーを押してください';
+  @override
+  String get pressKeyForLeft => '左にするキーを押してください';
+  @override
+  String get pressKeyForRight => '右にするキーを押してください';
 }
 
 // Path: settings.general
@@ -1712,6 +1722,12 @@ class _Translations$settings$gamepad$ja
   @override
   String get useArticBaseControllerDescription =>
       'Artic Baseサーバーに接続している間、設定した入力デバイスの代わりにサーバーが提供するコントロールを使用します。';
+  @override
+  String get controllerProfiles => 'コントローラープロファイル';
+  @override
+  String get addControllerProfile => 'コントローラープロファイルを追加';
+  @override
+  String get controllerProfileName => 'プロファイル名';
   @override
   String get appControls => 'アプリ操作';
   @override
@@ -2676,6 +2692,13 @@ extension on TranslationsJa {
             }) => '${title}: 値は${min}から${max}の間で指定してください。',
           'settings.inputBindingDialog.waitingForInput' =>
             'コントローラーのボタンを押してください',
+          'settings.inputBindingDialog.waitingForComboInput' =>
+            'コントローラーのボタンかキーボードのキーを押してください',
+          'settings.inputBindingDialog.waitingForStickInput' =>
+            'コントローラーのスティックを倒すか、上・下・左・右のキーを順に押してください',
+          'settings.inputBindingDialog.pressKeyForDown' => '下にするキーを押してください',
+          'settings.inputBindingDialog.pressKeyForLeft' => '左にするキーを押してください',
+          'settings.inputBindingDialog.pressKeyForRight' => '右にするキーを押してください',
           'settings.general.title' => 'プロフィール',
           'settings.general.frameLimitEnable' => '速度制限',
           'settings.general.frameLimitEnableDescription' =>
@@ -2961,14 +2984,14 @@ extension on TranslationsJa {
           'settings.system.countries.hungary' => 'ハンガリー',
           'settings.system.countries.iceland' => 'アイスランド',
           'settings.system.countries.ireland' => 'アイルランド',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.system.countries.italy' => 'イタリア',
           'settings.system.countries.latvia' => 'ラトビア',
           'settings.system.countries.lesotho' => 'レソト',
           'settings.system.countries.liechtenstein' => 'リヒテンシュタイン',
           'settings.system.countries.lithuania' => 'リトアニア',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.system.countries.luxembourg' => 'ルクセンブルク',
           'settings.system.countries.macedonia' => 'マケドニア',
           'settings.system.countries.malta' => 'マルタ',
@@ -3110,6 +3133,9 @@ extension on TranslationsJa {
             'Artic Baseサーバー接続時にArticコントローラーを使用',
           'settings.gamepad.useArticBaseControllerDescription' =>
             'Artic Baseサーバーに接続している間、設定した入力デバイスの代わりにサーバーが提供するコントロールを使用します。',
+          'settings.gamepad.controllerProfiles' => 'コントローラープロファイル',
+          'settings.gamepad.addControllerProfile' => 'コントローラープロファイルを追加',
+          'settings.gamepad.controllerProfileName' => 'プロファイル名',
           'settings.gamepad.appControls' => 'アプリ操作',
           'settings.gamepad.emulationControls' => 'エミュレーション操作',
           'settings.gamepad.actionPreviousPage' => '前のページ',

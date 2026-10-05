@@ -4699,6 +4699,17 @@ class $AppKeyBindingsTable extends AppKeyBindings
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $AppKeyBindingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _profileIdMeta = const VerificationMeta(
+    'profileId',
+  );
+  @override
+  late final GeneratedColumn<String> profileId = GeneratedColumn<String>(
+    'profile_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _actionIdMeta = const VerificationMeta(
     'actionId',
   );
@@ -4720,7 +4731,7 @@ class $AppKeyBindingsTable extends AppKeyBindings
     requiredDuringInsert: true,
   );
   @override
-  List<GeneratedColumn> get $columns => [actionId, combo];
+  List<GeneratedColumn> get $columns => [profileId, actionId, combo];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -4733,6 +4744,14 @@ class $AppKeyBindingsTable extends AppKeyBindings
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
+    if (data.containsKey('profile_id')) {
+      context.handle(
+        _profileIdMeta,
+        profileId.isAcceptableOrUnknown(data['profile_id']!, _profileIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_profileIdMeta);
+    }
     if (data.containsKey('action_id')) {
       context.handle(
         _actionIdMeta,
@@ -4753,11 +4772,15 @@ class $AppKeyBindingsTable extends AppKeyBindings
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {actionId};
+  Set<GeneratedColumn> get $primaryKey => {profileId, actionId};
   @override
   AppKeyBinding map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return AppKeyBinding(
+      profileId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}profile_id'],
+      )!,
       actionId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}action_id'],
@@ -4776,12 +4799,18 @@ class $AppKeyBindingsTable extends AppKeyBindings
 }
 
 class AppKeyBinding extends DataClass implements Insertable<AppKeyBinding> {
+  final String profileId;
   final String actionId;
   final String combo;
-  const AppKeyBinding({required this.actionId, required this.combo});
+  const AppKeyBinding({
+    required this.profileId,
+    required this.actionId,
+    required this.combo,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    map['profile_id'] = Variable<String>(profileId);
     map['action_id'] = Variable<String>(actionId);
     map['combo'] = Variable<String>(combo);
     return map;
@@ -4789,6 +4818,7 @@ class AppKeyBinding extends DataClass implements Insertable<AppKeyBinding> {
 
   AppKeyBindingsCompanion toCompanion(bool nullToAbsent) {
     return AppKeyBindingsCompanion(
+      profileId: Value(profileId),
       actionId: Value(actionId),
       combo: Value(combo),
     );
@@ -4800,6 +4830,7 @@ class AppKeyBinding extends DataClass implements Insertable<AppKeyBinding> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return AppKeyBinding(
+      profileId: serializer.fromJson<String>(json['profileId']),
       actionId: serializer.fromJson<String>(json['actionId']),
       combo: serializer.fromJson<String>(json['combo']),
     );
@@ -4808,17 +4839,24 @@ class AppKeyBinding extends DataClass implements Insertable<AppKeyBinding> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'profileId': serializer.toJson<String>(profileId),
       'actionId': serializer.toJson<String>(actionId),
       'combo': serializer.toJson<String>(combo),
     };
   }
 
-  AppKeyBinding copyWith({String? actionId, String? combo}) => AppKeyBinding(
+  AppKeyBinding copyWith({
+    String? profileId,
+    String? actionId,
+    String? combo,
+  }) => AppKeyBinding(
+    profileId: profileId ?? this.profileId,
     actionId: actionId ?? this.actionId,
     combo: combo ?? this.combo,
   );
   AppKeyBinding copyWithCompanion(AppKeyBindingsCompanion data) {
     return AppKeyBinding(
+      profileId: data.profileId.present ? data.profileId.value : this.profileId,
       actionId: data.actionId.present ? data.actionId.value : this.actionId,
       combo: data.combo.present ? data.combo.value : this.combo,
     );
@@ -4827,6 +4865,7 @@ class AppKeyBinding extends DataClass implements Insertable<AppKeyBinding> {
   @override
   String toString() {
     return (StringBuffer('AppKeyBinding(')
+          ..write('profileId: $profileId, ')
           ..write('actionId: $actionId, ')
           ..write('combo: $combo')
           ..write(')'))
@@ -4834,36 +4873,43 @@ class AppKeyBinding extends DataClass implements Insertable<AppKeyBinding> {
   }
 
   @override
-  int get hashCode => Object.hash(actionId, combo);
+  int get hashCode => Object.hash(profileId, actionId, combo);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is AppKeyBinding &&
+          other.profileId == this.profileId &&
           other.actionId == this.actionId &&
           other.combo == this.combo);
 }
 
 class AppKeyBindingsCompanion extends UpdateCompanion<AppKeyBinding> {
+  final Value<String> profileId;
   final Value<String> actionId;
   final Value<String> combo;
   final Value<int> rowid;
   const AppKeyBindingsCompanion({
+    this.profileId = const Value.absent(),
     this.actionId = const Value.absent(),
     this.combo = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   AppKeyBindingsCompanion.insert({
+    required String profileId,
     required String actionId,
     required String combo,
     this.rowid = const Value.absent(),
-  }) : actionId = Value(actionId),
+  }) : profileId = Value(profileId),
+       actionId = Value(actionId),
        combo = Value(combo);
   static Insertable<AppKeyBinding> custom({
+    Expression<String>? profileId,
     Expression<String>? actionId,
     Expression<String>? combo,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (profileId != null) 'profile_id': profileId,
       if (actionId != null) 'action_id': actionId,
       if (combo != null) 'combo': combo,
       if (rowid != null) 'rowid': rowid,
@@ -4871,11 +4917,13 @@ class AppKeyBindingsCompanion extends UpdateCompanion<AppKeyBinding> {
   }
 
   AppKeyBindingsCompanion copyWith({
+    Value<String>? profileId,
     Value<String>? actionId,
     Value<String>? combo,
     Value<int>? rowid,
   }) {
     return AppKeyBindingsCompanion(
+      profileId: profileId ?? this.profileId,
       actionId: actionId ?? this.actionId,
       combo: combo ?? this.combo,
       rowid: rowid ?? this.rowid,
@@ -4885,6 +4933,9 @@ class AppKeyBindingsCompanion extends UpdateCompanion<AppKeyBinding> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (profileId.present) {
+      map['profile_id'] = Variable<String>(profileId.value);
+    }
     if (actionId.present) {
       map['action_id'] = Variable<String>(actionId.value);
     }
@@ -4900,6 +4951,7 @@ class AppKeyBindingsCompanion extends UpdateCompanion<AppKeyBinding> {
   @override
   String toString() {
     return (StringBuffer('AppKeyBindingsCompanion(')
+          ..write('profileId: $profileId, ')
           ..write('actionId: $actionId, ')
           ..write('combo: $combo, ')
           ..write('rowid: $rowid')
@@ -4914,6 +4966,17 @@ class $EmulationKeyBindingsTable extends EmulationKeyBindings
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $EmulationKeyBindingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _profileIdMeta = const VerificationMeta(
+    'profileId',
+  );
+  @override
+  late final GeneratedColumn<String> profileId = GeneratedColumn<String>(
+    'profile_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _actionIdMeta = const VerificationMeta(
     'actionId',
   );
@@ -4935,7 +4998,7 @@ class $EmulationKeyBindingsTable extends EmulationKeyBindings
     requiredDuringInsert: true,
   );
   @override
-  List<GeneratedColumn> get $columns => [actionId, combo];
+  List<GeneratedColumn> get $columns => [profileId, actionId, combo];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -4948,6 +5011,14 @@ class $EmulationKeyBindingsTable extends EmulationKeyBindings
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
+    if (data.containsKey('profile_id')) {
+      context.handle(
+        _profileIdMeta,
+        profileId.isAcceptableOrUnknown(data['profile_id']!, _profileIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_profileIdMeta);
+    }
     if (data.containsKey('action_id')) {
       context.handle(
         _actionIdMeta,
@@ -4968,11 +5039,15 @@ class $EmulationKeyBindingsTable extends EmulationKeyBindings
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {actionId};
+  Set<GeneratedColumn> get $primaryKey => {profileId, actionId};
   @override
   EmulationKeyBinding map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return EmulationKeyBinding(
+      profileId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}profile_id'],
+      )!,
       actionId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}action_id'],
@@ -4992,12 +5067,18 @@ class $EmulationKeyBindingsTable extends EmulationKeyBindings
 
 class EmulationKeyBinding extends DataClass
     implements Insertable<EmulationKeyBinding> {
+  final String profileId;
   final String actionId;
   final String combo;
-  const EmulationKeyBinding({required this.actionId, required this.combo});
+  const EmulationKeyBinding({
+    required this.profileId,
+    required this.actionId,
+    required this.combo,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    map['profile_id'] = Variable<String>(profileId);
     map['action_id'] = Variable<String>(actionId);
     map['combo'] = Variable<String>(combo);
     return map;
@@ -5005,6 +5086,7 @@ class EmulationKeyBinding extends DataClass
 
   EmulationKeyBindingsCompanion toCompanion(bool nullToAbsent) {
     return EmulationKeyBindingsCompanion(
+      profileId: Value(profileId),
       actionId: Value(actionId),
       combo: Value(combo),
     );
@@ -5016,6 +5098,7 @@ class EmulationKeyBinding extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return EmulationKeyBinding(
+      profileId: serializer.fromJson<String>(json['profileId']),
       actionId: serializer.fromJson<String>(json['actionId']),
       combo: serializer.fromJson<String>(json['combo']),
     );
@@ -5024,18 +5107,24 @@ class EmulationKeyBinding extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'profileId': serializer.toJson<String>(profileId),
       'actionId': serializer.toJson<String>(actionId),
       'combo': serializer.toJson<String>(combo),
     };
   }
 
-  EmulationKeyBinding copyWith({String? actionId, String? combo}) =>
-      EmulationKeyBinding(
-        actionId: actionId ?? this.actionId,
-        combo: combo ?? this.combo,
-      );
+  EmulationKeyBinding copyWith({
+    String? profileId,
+    String? actionId,
+    String? combo,
+  }) => EmulationKeyBinding(
+    profileId: profileId ?? this.profileId,
+    actionId: actionId ?? this.actionId,
+    combo: combo ?? this.combo,
+  );
   EmulationKeyBinding copyWithCompanion(EmulationKeyBindingsCompanion data) {
     return EmulationKeyBinding(
+      profileId: data.profileId.present ? data.profileId.value : this.profileId,
       actionId: data.actionId.present ? data.actionId.value : this.actionId,
       combo: data.combo.present ? data.combo.value : this.combo,
     );
@@ -5044,6 +5133,7 @@ class EmulationKeyBinding extends DataClass
   @override
   String toString() {
     return (StringBuffer('EmulationKeyBinding(')
+          ..write('profileId: $profileId, ')
           ..write('actionId: $actionId, ')
           ..write('combo: $combo')
           ..write(')'))
@@ -5051,37 +5141,44 @@ class EmulationKeyBinding extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(actionId, combo);
+  int get hashCode => Object.hash(profileId, actionId, combo);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is EmulationKeyBinding &&
+          other.profileId == this.profileId &&
           other.actionId == this.actionId &&
           other.combo == this.combo);
 }
 
 class EmulationKeyBindingsCompanion
     extends UpdateCompanion<EmulationKeyBinding> {
+  final Value<String> profileId;
   final Value<String> actionId;
   final Value<String> combo;
   final Value<int> rowid;
   const EmulationKeyBindingsCompanion({
+    this.profileId = const Value.absent(),
     this.actionId = const Value.absent(),
     this.combo = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   EmulationKeyBindingsCompanion.insert({
+    required String profileId,
     required String actionId,
     required String combo,
     this.rowid = const Value.absent(),
-  }) : actionId = Value(actionId),
+  }) : profileId = Value(profileId),
+       actionId = Value(actionId),
        combo = Value(combo);
   static Insertable<EmulationKeyBinding> custom({
+    Expression<String>? profileId,
     Expression<String>? actionId,
     Expression<String>? combo,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (profileId != null) 'profile_id': profileId,
       if (actionId != null) 'action_id': actionId,
       if (combo != null) 'combo': combo,
       if (rowid != null) 'rowid': rowid,
@@ -5089,11 +5186,13 @@ class EmulationKeyBindingsCompanion
   }
 
   EmulationKeyBindingsCompanion copyWith({
+    Value<String>? profileId,
     Value<String>? actionId,
     Value<String>? combo,
     Value<int>? rowid,
   }) {
     return EmulationKeyBindingsCompanion(
+      profileId: profileId ?? this.profileId,
       actionId: actionId ?? this.actionId,
       combo: combo ?? this.combo,
       rowid: rowid ?? this.rowid,
@@ -5103,6 +5202,9 @@ class EmulationKeyBindingsCompanion
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (profileId.present) {
+      map['profile_id'] = Variable<String>(profileId.value);
+    }
     if (actionId.present) {
       map['action_id'] = Variable<String>(actionId.value);
     }
@@ -5118,8 +5220,319 @@ class EmulationKeyBindingsCompanion
   @override
   String toString() {
     return (StringBuffer('EmulationKeyBindingsCompanion(')
+          ..write('profileId: $profileId, ')
           ..write('actionId: $actionId, ')
           ..write('combo: $combo, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ControllerProfilesTable extends ControllerProfiles
+    with TableInfo<$ControllerProfilesTable, ControllerProfileRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ControllerProfilesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _cuidMeta = const VerificationMeta('cuid');
+  @override
+  late final GeneratedColumn<String> cuid = GeneratedColumn<String>(
+    'cuid',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: _newControllerProfileCuid,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isBuiltInMeta = const VerificationMeta(
+    'isBuiltIn',
+  );
+  @override
+  late final GeneratedColumn<bool> isBuiltIn = GeneratedColumn<bool>(
+    'is_built_in',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_built_in" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [cuid, name, isBuiltIn, createdAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'controller_profiles';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ControllerProfileRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('cuid')) {
+      context.handle(
+        _cuidMeta,
+        cuid.isAcceptableOrUnknown(data['cuid']!, _cuidMeta),
+      );
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('is_built_in')) {
+      context.handle(
+        _isBuiltInMeta,
+        isBuiltIn.isAcceptableOrUnknown(data['is_built_in']!, _isBuiltInMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {cuid};
+  @override
+  ControllerProfileRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ControllerProfileRow(
+      cuid: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}cuid'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      isBuiltIn: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_built_in'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ControllerProfilesTable createAlias(String alias) {
+    return $ControllerProfilesTable(attachedDatabase, alias);
+  }
+}
+
+class ControllerProfileRow extends DataClass
+    implements Insertable<ControllerProfileRow> {
+  final String cuid;
+  final String name;
+  final bool isBuiltIn;
+  final DateTime createdAt;
+  const ControllerProfileRow({
+    required this.cuid,
+    required this.name,
+    required this.isBuiltIn,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['cuid'] = Variable<String>(cuid);
+    map['name'] = Variable<String>(name);
+    map['is_built_in'] = Variable<bool>(isBuiltIn);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  ControllerProfilesCompanion toCompanion(bool nullToAbsent) {
+    return ControllerProfilesCompanion(
+      cuid: Value(cuid),
+      name: Value(name),
+      isBuiltIn: Value(isBuiltIn),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory ControllerProfileRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ControllerProfileRow(
+      cuid: serializer.fromJson<String>(json['cuid']),
+      name: serializer.fromJson<String>(json['name']),
+      isBuiltIn: serializer.fromJson<bool>(json['isBuiltIn']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'cuid': serializer.toJson<String>(cuid),
+      'name': serializer.toJson<String>(name),
+      'isBuiltIn': serializer.toJson<bool>(isBuiltIn),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  ControllerProfileRow copyWith({
+    String? cuid,
+    String? name,
+    bool? isBuiltIn,
+    DateTime? createdAt,
+  }) => ControllerProfileRow(
+    cuid: cuid ?? this.cuid,
+    name: name ?? this.name,
+    isBuiltIn: isBuiltIn ?? this.isBuiltIn,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  ControllerProfileRow copyWithCompanion(ControllerProfilesCompanion data) {
+    return ControllerProfileRow(
+      cuid: data.cuid.present ? data.cuid.value : this.cuid,
+      name: data.name.present ? data.name.value : this.name,
+      isBuiltIn: data.isBuiltIn.present ? data.isBuiltIn.value : this.isBuiltIn,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ControllerProfileRow(')
+          ..write('cuid: $cuid, ')
+          ..write('name: $name, ')
+          ..write('isBuiltIn: $isBuiltIn, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(cuid, name, isBuiltIn, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ControllerProfileRow &&
+          other.cuid == this.cuid &&
+          other.name == this.name &&
+          other.isBuiltIn == this.isBuiltIn &&
+          other.createdAt == this.createdAt);
+}
+
+class ControllerProfilesCompanion
+    extends UpdateCompanion<ControllerProfileRow> {
+  final Value<String> cuid;
+  final Value<String> name;
+  final Value<bool> isBuiltIn;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const ControllerProfilesCompanion({
+    this.cuid = const Value.absent(),
+    this.name = const Value.absent(),
+    this.isBuiltIn = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ControllerProfilesCompanion.insert({
+    this.cuid = const Value.absent(),
+    required String name,
+    this.isBuiltIn = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : name = Value(name);
+  static Insertable<ControllerProfileRow> custom({
+    Expression<String>? cuid,
+    Expression<String>? name,
+    Expression<bool>? isBuiltIn,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (cuid != null) 'cuid': cuid,
+      if (name != null) 'name': name,
+      if (isBuiltIn != null) 'is_built_in': isBuiltIn,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ControllerProfilesCompanion copyWith({
+    Value<String>? cuid,
+    Value<String>? name,
+    Value<bool>? isBuiltIn,
+    Value<DateTime>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return ControllerProfilesCompanion(
+      cuid: cuid ?? this.cuid,
+      name: name ?? this.name,
+      isBuiltIn: isBuiltIn ?? this.isBuiltIn,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (cuid.present) {
+      map['cuid'] = Variable<String>(cuid.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (isBuiltIn.present) {
+      map['is_built_in'] = Variable<bool>(isBuiltIn.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ControllerProfilesCompanion(')
+          ..write('cuid: $cuid, ')
+          ..write('name: $name, ')
+          ..write('isBuiltIn: $isBuiltIn, ')
+          ..write('createdAt: $createdAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -5156,6 +5569,8 @@ abstract class _$UserDatabase extends GeneratedDatabase {
   late final $AppKeyBindingsTable appKeyBindings = $AppKeyBindingsTable(this);
   late final $EmulationKeyBindingsTable emulationKeyBindings =
       $EmulationKeyBindingsTable(this);
+  late final $ControllerProfilesTable controllerProfiles =
+      $ControllerProfilesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5179,6 +5594,7 @@ abstract class _$UserDatabase extends GeneratedDatabase {
     featureFlags,
     appKeyBindings,
     emulationKeyBindings,
+    controllerProfiles,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -8372,12 +8788,14 @@ typedef $$FeatureFlagsTableProcessedTableManager =
     >;
 typedef $$AppKeyBindingsTableCreateCompanionBuilder =
     AppKeyBindingsCompanion Function({
+      required String profileId,
       required String actionId,
       required String combo,
       Value<int> rowid,
     });
 typedef $$AppKeyBindingsTableUpdateCompanionBuilder =
     AppKeyBindingsCompanion Function({
+      Value<String> profileId,
       Value<String> actionId,
       Value<String> combo,
       Value<int> rowid,
@@ -8392,6 +8810,11 @@ class $$AppKeyBindingsTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnFilters<String> get profileId => $composableBuilder(
+    column: $table.profileId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get actionId => $composableBuilder(
     column: $table.actionId,
     builder: (column) => ColumnFilters(column),
@@ -8412,6 +8835,11 @@ class $$AppKeyBindingsTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnOrderings<String> get profileId => $composableBuilder(
+    column: $table.profileId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get actionId => $composableBuilder(
     column: $table.actionId,
     builder: (column) => ColumnOrderings(column),
@@ -8432,6 +8860,9 @@ class $$AppKeyBindingsTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  GeneratedColumn<String> get profileId =>
+      $composableBuilder(column: $table.profileId, builder: (column) => column);
+
   GeneratedColumn<String> get actionId =>
       $composableBuilder(column: $table.actionId, builder: (column) => column);
 
@@ -8472,20 +8903,24 @@ class $$AppKeyBindingsTableTableManager
               $$AppKeyBindingsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
+                Value<String> profileId = const Value.absent(),
                 Value<String> actionId = const Value.absent(),
                 Value<String> combo = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => AppKeyBindingsCompanion(
+                profileId: profileId,
                 actionId: actionId,
                 combo: combo,
                 rowid: rowid,
               ),
           createCompanionCallback:
               ({
+                required String profileId,
                 required String actionId,
                 required String combo,
                 Value<int> rowid = const Value.absent(),
               }) => AppKeyBindingsCompanion.insert(
+                profileId: profileId,
                 actionId: actionId,
                 combo: combo,
                 rowid: rowid,
@@ -8526,12 +8961,14 @@ typedef $$AppKeyBindingsTableProcessedTableManager =
     >;
 typedef $$EmulationKeyBindingsTableCreateCompanionBuilder =
     EmulationKeyBindingsCompanion Function({
+      required String profileId,
       required String actionId,
       required String combo,
       Value<int> rowid,
     });
 typedef $$EmulationKeyBindingsTableUpdateCompanionBuilder =
     EmulationKeyBindingsCompanion Function({
+      Value<String> profileId,
       Value<String> actionId,
       Value<String> combo,
       Value<int> rowid,
@@ -8546,6 +8983,11 @@ class $$EmulationKeyBindingsTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnFilters<String> get profileId => $composableBuilder(
+    column: $table.profileId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get actionId => $composableBuilder(
     column: $table.actionId,
     builder: (column) => ColumnFilters(column),
@@ -8566,6 +9008,11 @@ class $$EmulationKeyBindingsTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnOrderings<String> get profileId => $composableBuilder(
+    column: $table.profileId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get actionId => $composableBuilder(
     column: $table.actionId,
     builder: (column) => ColumnOrderings(column),
@@ -8586,6 +9033,9 @@ class $$EmulationKeyBindingsTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  GeneratedColumn<String> get profileId =>
+      $composableBuilder(column: $table.profileId, builder: (column) => column);
+
   GeneratedColumn<String> get actionId =>
       $composableBuilder(column: $table.actionId, builder: (column) => column);
 
@@ -8636,20 +9086,24 @@ class $$EmulationKeyBindingsTableTableManager
               ),
           updateCompanionCallback:
               ({
+                Value<String> profileId = const Value.absent(),
                 Value<String> actionId = const Value.absent(),
                 Value<String> combo = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => EmulationKeyBindingsCompanion(
+                profileId: profileId,
                 actionId: actionId,
                 combo: combo,
                 rowid: rowid,
               ),
           createCompanionCallback:
               ({
+                required String profileId,
                 required String actionId,
                 required String combo,
                 Value<int> rowid = const Value.absent(),
               }) => EmulationKeyBindingsCompanion.insert(
+                profileId: profileId,
                 actionId: actionId,
                 combo: combo,
                 rowid: rowid,
@@ -8694,6 +9148,211 @@ typedef $$EmulationKeyBindingsTableProcessedTableManager =
       EmulationKeyBinding,
       PrefetchHooks Function()
     >;
+typedef $$ControllerProfilesTableCreateCompanionBuilder =
+    ControllerProfilesCompanion Function({
+      Value<String> cuid,
+      required String name,
+      Value<bool> isBuiltIn,
+      Value<DateTime> createdAt,
+      Value<int> rowid,
+    });
+typedef $$ControllerProfilesTableUpdateCompanionBuilder =
+    ControllerProfilesCompanion Function({
+      Value<String> cuid,
+      Value<String> name,
+      Value<bool> isBuiltIn,
+      Value<DateTime> createdAt,
+      Value<int> rowid,
+    });
+
+class $$ControllerProfilesTableFilterComposer
+    extends Composer<_$UserDatabase, $ControllerProfilesTable> {
+  $$ControllerProfilesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get cuid => $composableBuilder(
+    column: $table.cuid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isBuiltIn => $composableBuilder(
+    column: $table.isBuiltIn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ControllerProfilesTableOrderingComposer
+    extends Composer<_$UserDatabase, $ControllerProfilesTable> {
+  $$ControllerProfilesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get cuid => $composableBuilder(
+    column: $table.cuid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isBuiltIn => $composableBuilder(
+    column: $table.isBuiltIn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ControllerProfilesTableAnnotationComposer
+    extends Composer<_$UserDatabase, $ControllerProfilesTable> {
+  $$ControllerProfilesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get cuid =>
+      $composableBuilder(column: $table.cuid, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<bool> get isBuiltIn =>
+      $composableBuilder(column: $table.isBuiltIn, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$ControllerProfilesTableTableManager
+    extends
+        RootTableManager<
+          _$UserDatabase,
+          $ControllerProfilesTable,
+          ControllerProfileRow,
+          $$ControllerProfilesTableFilterComposer,
+          $$ControllerProfilesTableOrderingComposer,
+          $$ControllerProfilesTableAnnotationComposer,
+          $$ControllerProfilesTableCreateCompanionBuilder,
+          $$ControllerProfilesTableUpdateCompanionBuilder,
+          (
+            ControllerProfileRow,
+            BaseReferences<
+              _$UserDatabase,
+              $ControllerProfilesTable,
+              ControllerProfileRow
+            >,
+          ),
+          ControllerProfileRow,
+          PrefetchHooks Function()
+        > {
+  $$ControllerProfilesTableTableManager(
+    _$UserDatabase db,
+    $ControllerProfilesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ControllerProfilesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ControllerProfilesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ControllerProfilesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> cuid = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<bool> isBuiltIn = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ControllerProfilesCompanion(
+                cuid: cuid,
+                name: name,
+                isBuiltIn: isBuiltIn,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> cuid = const Value.absent(),
+                required String name,
+                Value<bool> isBuiltIn = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ControllerProfilesCompanion.insert(
+                cuid: cuid,
+                name: name,
+                isBuiltIn: isBuiltIn,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ControllerProfilesTable, ControllerProfileRow>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$UserDatabase,
+                    $ControllerProfilesTable,
+                    ControllerProfileRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ControllerProfilesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$UserDatabase,
+      $ControllerProfilesTable,
+      ControllerProfileRow,
+      $$ControllerProfilesTableFilterComposer,
+      $$ControllerProfilesTableOrderingComposer,
+      $$ControllerProfilesTableAnnotationComposer,
+      $$ControllerProfilesTableCreateCompanionBuilder,
+      $$ControllerProfilesTableUpdateCompanionBuilder,
+      (
+        ControllerProfileRow,
+        BaseReferences<
+          _$UserDatabase,
+          $ControllerProfilesTable,
+          ControllerProfileRow
+        >,
+      ),
+      ControllerProfileRow,
+      PrefetchHooks Function()
+    >;
 
 class $UserDatabaseManager {
   final _$UserDatabase _db;
@@ -8733,4 +9392,6 @@ class $UserDatabaseManager {
       $$AppKeyBindingsTableTableManager(_db, _db.appKeyBindings);
   $$EmulationKeyBindingsTableTableManager get emulationKeyBindings =>
       $$EmulationKeyBindingsTableTableManager(_db, _db.emulationKeyBindings);
+  $$ControllerProfilesTableTableManager get controllerProfiles =>
+      $$ControllerProfilesTableTableManager(_db, _db.controllerProfiles);
 }

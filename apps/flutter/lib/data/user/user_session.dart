@@ -7,11 +7,10 @@ import '../repositories/loadable.dart';
 import '../settings/control_bindings_value_store.dart';
 import 'repositories/accessibility_settings_repository.dart';
 import 'repositories/advanced_settings_repository.dart';
-import 'repositories/app_key_bindings_repository.dart';
 import 'repositories/artic_base_address_repository.dart';
 import 'repositories/control_bindings_repository.dart';
+import 'repositories/controller_settings_repository.dart';
 import 'repositories/debug_settings_repository.dart';
-import 'repositories/emulation_key_bindings_repository.dart';
 import 'repositories/feature_flags_repository.dart';
 import 'repositories/game_repository.dart';
 import 'repositories/input_layout_repository.dart';
@@ -44,11 +43,7 @@ class UserSession {
     controlBindingsValueStore = ControlBindingsValueStore(
       controlBindingsRepository,
     );
-    appKeyBindingsRepository = AppKeyBindingsRepository(
-      database,
-      GamepadActionRegistry.standard,
-    );
-    emulationKeyBindingsRepository = EmulationKeyBindingsRepository(
+    controllerSettingsRepository = ControllerSettingsRepository(
       database,
       GamepadActionRegistry.standard,
     );
@@ -75,8 +70,7 @@ class UserSession {
   late final GameRepository gameRepository;
   late final ControlBindingsRepository controlBindingsRepository;
   late final ControlBindingsValueStore controlBindingsValueStore;
-  late final AppKeyBindingsRepository appKeyBindingsRepository;
-  late final EmulationKeyBindingsRepository emulationKeyBindingsRepository;
+  late final ControllerSettingsRepository controllerSettingsRepository;
   late final InputLayoutRepository inputLayoutRepository;
   late final ThemeSettingsRepository themeSettingsRepository;
   late final AccessibilitySettingsRepository accessibilitySettingsRepository;
@@ -103,8 +97,7 @@ class UserSession {
 
   List<Loadable> get loadables => [
     controlBindingsValueStore,
-    appKeyBindingsRepository,
-    emulationKeyBindingsRepository,
+    controllerSettingsRepository,
     languageCodeRepository,
     legacySettingsUiRepository,
     featureFlagsRepository,

@@ -28,6 +28,7 @@ part 'tables/user_game_infos.dart';
 part 'tables/feature_flags.dart';
 part 'tables/app_key_bindings.dart';
 part 'tables/emulation_key_bindings.dart';
+part 'tables/controller_profiles.dart';
 
 /// The data of one profile: its settings, games, tags and controls.
 @DriftDatabase(
@@ -50,6 +51,7 @@ part 'tables/emulation_key_bindings.dart';
     FeatureFlags,
     AppKeyBindings,
     EmulationKeyBindings,
+    ControllerProfiles,
   ],
 )
 class UserDatabase extends _$UserDatabase {
@@ -71,7 +73,7 @@ class UserDatabase extends _$UserDatabase {
   ];
 
   @override
-  int get schemaVersion => 19;
+  int get schemaVersion => 20;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -145,6 +147,35 @@ class UserDatabase extends _$UserDatabase {
       if (from < 19) {
         await m.createTable(appKeyBindings);
         await m.createTable(emulationKeyBindings);
+      }
+      if (from < 20) {
+        await m.createTable(controllerProfiles);
+        if (from == 19) {
+          final builtIn = await into(controllerProfiles).insertReturning(
+            ControllerProfilesCompanion.insert(
+              name: '',
+              isBuiltIn: const Value(true),
+            ),
+          );
+          await m.alterTable(
+            TableMigration(
+              appKeyBindings,
+              newColumns: [appKeyBindings.profileId],
+              columnTransformer: {
+                appKeyBindings.profileId: Constant(builtIn.cuid),
+              },
+            ),
+          );
+          await m.alterTable(
+            TableMigration(
+              emulationKeyBindings,
+              newColumns: [emulationKeyBindings.profileId],
+              columnTransformer: {
+                emulationKeyBindings.profileId: Constant(builtIn.cuid),
+              },
+            ),
+          );
+        }
       }
     },
   );

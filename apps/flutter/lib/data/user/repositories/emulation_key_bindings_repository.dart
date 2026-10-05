@@ -1,55 +1,51 @@
 import 'package:drift/drift.dart';
 
 import '../../gamepad/actions/gamepad_action.dart';
+import '../../gamepad/key_binding.dart';
 import '../user_database.dart';
 import 'key_bindings_repository.dart';
 
 /// Stores the key combinations of the actions used while a game runs, in [EmulationKeyBindings].
 class EmulationKeyBindingsRepository extends KeyBindingsRepository {
-  EmulationKeyBindingsRepository(super.db, super.registry);
+  EmulationKeyBindingsRepository(super.db);
 
   @override
   GamepadActionScope get scope => GamepadActionScope.emulation;
 
-  @override
-  Future<void> insertIfAbsent(String actionId, String combo) {
-    return db
-        .into(db.emulationKeyBindings)
-        .insert(
-          EmulationKeyBindingsCompanion.insert(
-            actionId: actionId,
-            combo: combo,
-          ),
-          mode: InsertMode.insertOrIgnore,
-        );
+  EmulationKeyBindingsCompanion _row(KeyBinding binding) {
+    return EmulationKeyBindingsCompanion.insert(
+      profileId: binding.profileId,
+      actionId: binding.actionId,
+      combo: binding.combo.serialize(),
+    );
   }
 
   @override
-  Future<void> upsert(String actionId, String combo) {
+  Future<void> create(KeyBinding value) {
     return db
         .into(db.emulationKeyBindings)
-        .insertOnConflictUpdate(
-          EmulationKeyBindingsCompanion.insert(
-            actionId: actionId,
-            combo: combo,
-          ),
-        );
+        .insert(_row(value), mode: InsertMode.insertOrIgnore);
   }
 
   @override
-  Future<void> deleteExcept(Iterable<String> actionIds) {
+  Future<void> write(KeyBinding value) {
+    return db.into(db.emulationKeyBindings).insertOnConflictUpdate(_row(value));
+  }
+
+  @override
+  Future<void> delete(String profileId) {
     return (db.delete(
       db.emulationKeyBindings,
-    )..where((tbl) => tbl.actionId.isNotIn(actionIds))).go();
+    )..where((tbl) => tbl.profileId.equals(profileId))).go();
   }
 
   @override
-  Future<void> deleteAll() => db.delete(db.emulationKeyBindings).go();
+  Future<void> clear() => db.delete(db.emulationKeyBindings).go();
 
   @override
-  Stream<Map<String, String>> watchRows() {
-    return db
-        .select(db.emulationKeyBindings)
+  Stream<Map<String, String>> watchRows(String profileId) {
+    return (db.select(db.emulationKeyBindings)
+          ..where((tbl) => tbl.profileId.equals(profileId)))
         .watch()
         .map((rows) => {for (final row in rows) row.actionId: row.combo});
   }

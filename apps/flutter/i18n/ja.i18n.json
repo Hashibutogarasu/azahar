@@ -323,7 +323,12 @@
       "invalidValue": "${title}: 値は${min}から${max}の間で指定してください。"
     },
     "inputBindingDialog": {
-      "waitingForInput": "コントローラーのボタンを押してください"
+      "waitingForInput": "コントローラーのボタンを押してください",
+      "waitingForComboInput": "コントローラーのボタンかキーボードのキーを押してください",
+      "waitingForStickInput": "コントローラーのスティックを倒すか、上・下・左・右のキーを順に押してください",
+      "pressKeyForDown": "下にするキーを押してください",
+      "pressKeyForLeft": "左にするキーを押してください",
+      "pressKeyForRight": "右にするキーを押してください"
     },
     "general": {
       "title": "プロフィール",
@@ -723,6 +728,9 @@
       "miscellaneous": "その他",
       "useArticBaseController": "Artic Baseサーバー接続時にArticコントローラーを使用",
       "useArticBaseControllerDescription": "Artic Baseサーバーに接続している間、設定した入力デバイスの代わりにサーバーが提供するコントロールを使用します。",
+      "controllerProfiles": "コントローラープロファイル",
+      "addControllerProfile": "コントローラープロファイルを追加",
+      "controllerProfileName": "プロファイル名",
       "appControls": "アプリ操作",
       "emulationControls": "エミュレーション操作",
       "actionPreviousPage": "前のページ",

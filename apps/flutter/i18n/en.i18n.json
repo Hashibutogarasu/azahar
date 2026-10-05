@@ -325,7 +325,12 @@
       "invalidValue": "${title}: value must be between ${min} and ${max}."
     },
     "inputBindingDialog": {
-      "waitingForInput": "Press a button on your controller"
+      "waitingForInput": "Press a button on your controller",
+      "waitingForComboInput": "Press buttons on your controller or keys on your keyboard",
+      "waitingForStickInput": "Move a stick on your controller, or press the keys for up, down, left and right in order",
+      "pressKeyForDown": "Press the key for down",
+      "pressKeyForLeft": "Press the key for left",
+      "pressKeyForRight": "Press the key for right"
     },
     "general": {
       "title": "Profile",
@@ -725,6 +730,9 @@
       "miscellaneous": "Miscellaneous",
       "useArticBaseController": "Use Artic Controller when connected to Artic Base Server",
       "useArticBaseControllerDescription": "Use the controls provided by Artic Base Server when connected to it instead of the configured input device.",
+      "controllerProfiles": "Controller Profiles",
+      "addControllerProfile": "Add Controller Profile",
+      "controllerProfileName": "Profile Name",
       "appControls": "App Controls",
       "emulationControls": "Emulation Controls",
       "actionPreviousPage": "Previous Page",

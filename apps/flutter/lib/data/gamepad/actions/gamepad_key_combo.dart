@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gamepads/gamepads.dart';
 
@@ -13,17 +14,23 @@ enum GamepadStick {
   final GamepadAxis yAxis;
 }
 
-/// The state of every input of the connected controllers at one moment. A trigger pushed past
-/// [GamepadButtonInput.triggerThreshold] also counts as its button, since some platforms report
-/// triggers only as axes.
+/// The state of every input of the connected controllers and of the keyboard at one moment. A
+/// trigger pushed past [GamepadButtonInput.triggerThreshold] also counts as its button, since some
+/// platforms report triggers only as axes.
 class GamepadInputSnapshot {
-  const GamepadInputSnapshot({required this.buttons, required this.axes});
+  const GamepadInputSnapshot({
+    required this.buttons,
+    required this.axes,
+    this.keys = const {},
+  });
 
   static const empty = GamepadInputSnapshot(buttons: {}, axes: {});
 
   final Set<GamepadButton> buttons;
 
   final Map<GamepadAxis, double> axes;
+
+  final Set<LogicalKeyboardKey> keys;
 
   double axis(GamepadAxis axis) => axes[axis] ?? 0;
 
@@ -33,6 +40,7 @@ class GamepadInputSnapshot {
 
   bool get isIdle =>
       buttons.isEmpty &&
+      keys.isEmpty &&
       axes.values.every((value) => value.abs() < GamepadStickInput.deadZone);
 }
 
@@ -54,9 +62,28 @@ sealed class GamepadInput {
       case ['stick', final name]:
         final stick = GamepadStick.values.asNameMap()[name];
         return stick == null ? null : GamepadStickInput(stick);
+      case ['key', final id]:
+        final key = _keyFrom(id);
+        return key == null ? null : KeyboardKeyInput(key);
+      case ['keystick', final ids]:
+        final keys = [for (final id in ids.split(',')) _keyFrom(id)];
+        if (keys.length != 4 || keys.contains(null)) return null;
+        return KeyboardStickInput(
+          up: keys[0]!,
+          down: keys[1]!,
+          left: keys[2]!,
+          right: keys[3]!,
+        );
       default:
         return null;
     }
+  }
+
+  static LogicalKeyboardKey? _keyFrom(String id) {
+    final keyId = int.tryParse(id);
+    if (keyId == null) return null;
+    return LogicalKeyboardKey.findKeyByKeyId(keyId) ??
+        LogicalKeyboardKey(keyId);
   }
 
   /// Writes this input as text that [parse] reads back.
@@ -157,8 +184,45 @@ final class GamepadAxisDirectionInput extends GamepadInput {
   int get hashCode => Object.hash(GamepadAxisDirectionInput, axis, positive);
 }
 
+/// A key of the keyboard, held while it is pressed.
+final class KeyboardKeyInput extends GamepadInput {
+  const KeyboardKeyInput(this.key);
+
+  final LogicalKeyboardKey key;
+
+  @override
+  String serialize() => 'key:${key.keyId}';
+
+  @override
+  String get label => _keyLabel(key);
+
+  @override
+  bool isActive(GamepadInputSnapshot snapshot) => snapshot.keys.contains(key);
+
+  @override
+  bool operator ==(Object other) =>
+      other is KeyboardKeyInput && other.key == key;
+
+  @override
+  int get hashCode => Object.hash(KeyboardKeyInput, key);
+}
+
+String _keyLabel(LogicalKeyboardKey key) {
+  final label = key.keyLabel;
+  return label.trim().isEmpty ? key.debugName ?? '${key.keyId}' : label;
+}
+
+/// An input with a position, such as a stick, which moves an analog control of the console.
+sealed class GamepadAnalogInput extends GamepadInput {
+  const GamepadAnalogInput();
+
+  /// The position in [snapshot], with x positive to the right and y positive upwards, each from
+  /// -1.0 to 1.0.
+  Offset position(GamepadInputSnapshot snapshot);
+}
+
 /// A whole stick used as an analog input, held while it is outside the [deadZone].
-final class GamepadStickInput extends GamepadInput {
+final class GamepadStickInput extends GamepadAnalogInput {
   const GamepadStickInput(this.stick);
 
   static const double deadZone = 0.15;
@@ -175,6 +239,9 @@ final class GamepadStickInput extends GamepadInput {
   };
 
   @override
+  Offset position(GamepadInputSnapshot snapshot) => snapshot.stickValue(stick);
+
+  @override
   bool isActive(GamepadInputSnapshot snapshot) =>
       snapshot.stickValue(stick).distance >= deadZone;
 
@@ -184,6 +251,53 @@ final class GamepadStickInput extends GamepadInput {
 
   @override
   int get hashCode => Object.hash(GamepadStickInput, stick);
+}
+
+/// Four keys of the keyboard used as a stick, each pushing it all the way in its direction, and
+/// held while any of them is pressed.
+final class KeyboardStickInput extends GamepadAnalogInput {
+  const KeyboardStickInput({
+    required this.up,
+    required this.down,
+    required this.left,
+    required this.right,
+  });
+
+  final LogicalKeyboardKey up;
+  final LogicalKeyboardKey down;
+  final LogicalKeyboardKey left;
+  final LogicalKeyboardKey right;
+
+  @override
+  String serialize() =>
+      'keystick:${[up, down, left, right].map((key) => key.keyId).join(',')}';
+
+  @override
+  String get label => [up, down, left, right].map(_keyLabel).join('/');
+
+  @override
+  Offset position(GamepadInputSnapshot snapshot) {
+    double axis(LogicalKeyboardKey negative, LogicalKeyboardKey positive) =>
+        (snapshot.keys.contains(positive) ? 1.0 : 0.0) -
+        (snapshot.keys.contains(negative) ? 1.0 : 0.0);
+    final offset = Offset(axis(left, right), axis(down, up));
+    return offset.distance > 1 ? offset / offset.distance : offset;
+  }
+
+  @override
+  bool isActive(GamepadInputSnapshot snapshot) =>
+      position(snapshot) != Offset.zero;
+
+  @override
+  bool operator ==(Object other) =>
+      other is KeyboardStickInput &&
+      other.up == up &&
+      other.down == down &&
+      other.left == left &&
+      other.right == right;
+
+  @override
+  int get hashCode => Object.hash(KeyboardStickInput, up, down, left, right);
 }
 
 /// The inputs that have to be held together to trigger an action, such as L and A.
@@ -222,9 +336,9 @@ class GamepadKeyCombo {
   bool strictlyContains(GamepadKeyCombo other) =>
       other.inputs.length < inputs.length && inputs.containsAll(other.inputs);
 
-  GamepadStick? get stick {
+  GamepadAnalogInput? get analog {
     for (final input in inputs) {
-      if (input is GamepadStickInput) return input.stick;
+      if (input is GamepadAnalogInput) return input;
     }
     return null;
   }
