@@ -7,13 +7,15 @@ import '../database_files.dart';
 import '../master/repositories/games_directory_repository.dart';
 import '../profiles/profile.dart';
 import '../repositories/installed_titles_repository.dart';
+import '../settings/app_language.dart';
 import 'user_session.dart';
 
 /// Keeps the user database of the active profile open, and never more than one at a time.
 ///
 /// While the app is shown, its widgets read the open database, so opening another profile's
 /// database only takes effect on [remount]: the app is taken down first, then the open database
-/// is closed, the new one is opened, and the app is built again on it.
+/// is closed, the new one is opened, and the app is built again on it. Opening a database also
+/// shows the UI in the language stored in it.
 class UserSessions {
   UserSessions(this._gamesDirectoryRepository, this._installedTitlesRepository);
 
@@ -82,6 +84,8 @@ class UserSessions {
       _installedTitlesRepository,
     );
     await session.migrateKeys();
+    await session.languageCodeRepository.load();
+    await applyLanguageCode(session.languageCodeRepository.languageCode);
     _current = session;
     await _deleteFiles();
   }

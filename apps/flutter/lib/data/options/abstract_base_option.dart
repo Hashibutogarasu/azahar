@@ -14,6 +14,7 @@ import '../../screens/options/widgets/tiles/nested_option_widget.dart';
 import '../../screens/options/widgets/tiles/percent_option_widget.dart';
 import '../../screens/options/widgets/tiles/string_option_widget.dart';
 import 'emulator/settings/emulator_setting.dart';
+import 'input_binding_mode.dart';
 import 'option_applicable.dart';
 import 'option_readable.dart';
 import 'option_value.dart';

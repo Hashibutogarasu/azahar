@@ -4693,6 +4693,439 @@ class FeatureFlagsCompanion extends UpdateCompanion<FeatureFlagSetting> {
   }
 }
 
+class $AppKeyBindingsTable extends AppKeyBindings
+    with TableInfo<$AppKeyBindingsTable, AppKeyBinding> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AppKeyBindingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _actionIdMeta = const VerificationMeta(
+    'actionId',
+  );
+  @override
+  late final GeneratedColumn<String> actionId = GeneratedColumn<String>(
+    'action_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _comboMeta = const VerificationMeta('combo');
+  @override
+  late final GeneratedColumn<String> combo = GeneratedColumn<String>(
+    'combo',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [actionId, combo];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'app_key_bindings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AppKeyBinding> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('action_id')) {
+      context.handle(
+        _actionIdMeta,
+        actionId.isAcceptableOrUnknown(data['action_id']!, _actionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_actionIdMeta);
+    }
+    if (data.containsKey('combo')) {
+      context.handle(
+        _comboMeta,
+        combo.isAcceptableOrUnknown(data['combo']!, _comboMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_comboMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {actionId};
+  @override
+  AppKeyBinding map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AppKeyBinding(
+      actionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}action_id'],
+      )!,
+      combo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}combo'],
+      )!,
+    );
+  }
+
+  @override
+  $AppKeyBindingsTable createAlias(String alias) {
+    return $AppKeyBindingsTable(attachedDatabase, alias);
+  }
+}
+
+class AppKeyBinding extends DataClass implements Insertable<AppKeyBinding> {
+  final String actionId;
+  final String combo;
+  const AppKeyBinding({required this.actionId, required this.combo});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['action_id'] = Variable<String>(actionId);
+    map['combo'] = Variable<String>(combo);
+    return map;
+  }
+
+  AppKeyBindingsCompanion toCompanion(bool nullToAbsent) {
+    return AppKeyBindingsCompanion(
+      actionId: Value(actionId),
+      combo: Value(combo),
+    );
+  }
+
+  factory AppKeyBinding.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AppKeyBinding(
+      actionId: serializer.fromJson<String>(json['actionId']),
+      combo: serializer.fromJson<String>(json['combo']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'actionId': serializer.toJson<String>(actionId),
+      'combo': serializer.toJson<String>(combo),
+    };
+  }
+
+  AppKeyBinding copyWith({String? actionId, String? combo}) => AppKeyBinding(
+    actionId: actionId ?? this.actionId,
+    combo: combo ?? this.combo,
+  );
+  AppKeyBinding copyWithCompanion(AppKeyBindingsCompanion data) {
+    return AppKeyBinding(
+      actionId: data.actionId.present ? data.actionId.value : this.actionId,
+      combo: data.combo.present ? data.combo.value : this.combo,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AppKeyBinding(')
+          ..write('actionId: $actionId, ')
+          ..write('combo: $combo')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(actionId, combo);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AppKeyBinding &&
+          other.actionId == this.actionId &&
+          other.combo == this.combo);
+}
+
+class AppKeyBindingsCompanion extends UpdateCompanion<AppKeyBinding> {
+  final Value<String> actionId;
+  final Value<String> combo;
+  final Value<int> rowid;
+  const AppKeyBindingsCompanion({
+    this.actionId = const Value.absent(),
+    this.combo = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AppKeyBindingsCompanion.insert({
+    required String actionId,
+    required String combo,
+    this.rowid = const Value.absent(),
+  }) : actionId = Value(actionId),
+       combo = Value(combo);
+  static Insertable<AppKeyBinding> custom({
+    Expression<String>? actionId,
+    Expression<String>? combo,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (actionId != null) 'action_id': actionId,
+      if (combo != null) 'combo': combo,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AppKeyBindingsCompanion copyWith({
+    Value<String>? actionId,
+    Value<String>? combo,
+    Value<int>? rowid,
+  }) {
+    return AppKeyBindingsCompanion(
+      actionId: actionId ?? this.actionId,
+      combo: combo ?? this.combo,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (actionId.present) {
+      map['action_id'] = Variable<String>(actionId.value);
+    }
+    if (combo.present) {
+      map['combo'] = Variable<String>(combo.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AppKeyBindingsCompanion(')
+          ..write('actionId: $actionId, ')
+          ..write('combo: $combo, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $EmulationKeyBindingsTable extends EmulationKeyBindings
+    with TableInfo<$EmulationKeyBindingsTable, EmulationKeyBinding> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $EmulationKeyBindingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _actionIdMeta = const VerificationMeta(
+    'actionId',
+  );
+  @override
+  late final GeneratedColumn<String> actionId = GeneratedColumn<String>(
+    'action_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _comboMeta = const VerificationMeta('combo');
+  @override
+  late final GeneratedColumn<String> combo = GeneratedColumn<String>(
+    'combo',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [actionId, combo];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'emulation_key_bindings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<EmulationKeyBinding> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('action_id')) {
+      context.handle(
+        _actionIdMeta,
+        actionId.isAcceptableOrUnknown(data['action_id']!, _actionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_actionIdMeta);
+    }
+    if (data.containsKey('combo')) {
+      context.handle(
+        _comboMeta,
+        combo.isAcceptableOrUnknown(data['combo']!, _comboMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_comboMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {actionId};
+  @override
+  EmulationKeyBinding map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return EmulationKeyBinding(
+      actionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}action_id'],
+      )!,
+      combo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}combo'],
+      )!,
+    );
+  }
+
+  @override
+  $EmulationKeyBindingsTable createAlias(String alias) {
+    return $EmulationKeyBindingsTable(attachedDatabase, alias);
+  }
+}
+
+class EmulationKeyBinding extends DataClass
+    implements Insertable<EmulationKeyBinding> {
+  final String actionId;
+  final String combo;
+  const EmulationKeyBinding({required this.actionId, required this.combo});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['action_id'] = Variable<String>(actionId);
+    map['combo'] = Variable<String>(combo);
+    return map;
+  }
+
+  EmulationKeyBindingsCompanion toCompanion(bool nullToAbsent) {
+    return EmulationKeyBindingsCompanion(
+      actionId: Value(actionId),
+      combo: Value(combo),
+    );
+  }
+
+  factory EmulationKeyBinding.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return EmulationKeyBinding(
+      actionId: serializer.fromJson<String>(json['actionId']),
+      combo: serializer.fromJson<String>(json['combo']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'actionId': serializer.toJson<String>(actionId),
+      'combo': serializer.toJson<String>(combo),
+    };
+  }
+
+  EmulationKeyBinding copyWith({String? actionId, String? combo}) =>
+      EmulationKeyBinding(
+        actionId: actionId ?? this.actionId,
+        combo: combo ?? this.combo,
+      );
+  EmulationKeyBinding copyWithCompanion(EmulationKeyBindingsCompanion data) {
+    return EmulationKeyBinding(
+      actionId: data.actionId.present ? data.actionId.value : this.actionId,
+      combo: data.combo.present ? data.combo.value : this.combo,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('EmulationKeyBinding(')
+          ..write('actionId: $actionId, ')
+          ..write('combo: $combo')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(actionId, combo);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is EmulationKeyBinding &&
+          other.actionId == this.actionId &&
+          other.combo == this.combo);
+}
+
+class EmulationKeyBindingsCompanion
+    extends UpdateCompanion<EmulationKeyBinding> {
+  final Value<String> actionId;
+  final Value<String> combo;
+  final Value<int> rowid;
+  const EmulationKeyBindingsCompanion({
+    this.actionId = const Value.absent(),
+    this.combo = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  EmulationKeyBindingsCompanion.insert({
+    required String actionId,
+    required String combo,
+    this.rowid = const Value.absent(),
+  }) : actionId = Value(actionId),
+       combo = Value(combo);
+  static Insertable<EmulationKeyBinding> custom({
+    Expression<String>? actionId,
+    Expression<String>? combo,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (actionId != null) 'action_id': actionId,
+      if (combo != null) 'combo': combo,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  EmulationKeyBindingsCompanion copyWith({
+    Value<String>? actionId,
+    Value<String>? combo,
+    Value<int>? rowid,
+  }) {
+    return EmulationKeyBindingsCompanion(
+      actionId: actionId ?? this.actionId,
+      combo: combo ?? this.combo,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (actionId.present) {
+      map['action_id'] = Variable<String>(actionId.value);
+    }
+    if (combo.present) {
+      map['combo'] = Variable<String>(combo.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('EmulationKeyBindingsCompanion(')
+          ..write('actionId: $actionId, ')
+          ..write('combo: $combo, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$UserDatabase extends GeneratedDatabase {
   _$UserDatabase(QueryExecutor e) : super(e);
   $UserDatabaseManager get managers => $UserDatabaseManager(this);
@@ -4720,6 +5153,9 @@ abstract class _$UserDatabase extends GeneratedDatabase {
   late final $GameTagsTable gameTags = $GameTagsTable(this);
   late final $UserGameInfosTable userGameInfos = $UserGameInfosTable(this);
   late final $FeatureFlagsTable featureFlags = $FeatureFlagsTable(this);
+  late final $AppKeyBindingsTable appKeyBindings = $AppKeyBindingsTable(this);
+  late final $EmulationKeyBindingsTable emulationKeyBindings =
+      $EmulationKeyBindingsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4741,6 +5177,8 @@ abstract class _$UserDatabase extends GeneratedDatabase {
     gameTags,
     userGameInfos,
     featureFlags,
+    appKeyBindings,
+    emulationKeyBindings,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -7932,6 +8370,330 @@ typedef $$FeatureFlagsTableProcessedTableManager =
       FeatureFlagSetting,
       PrefetchHooks Function()
     >;
+typedef $$AppKeyBindingsTableCreateCompanionBuilder =
+    AppKeyBindingsCompanion Function({
+      required String actionId,
+      required String combo,
+      Value<int> rowid,
+    });
+typedef $$AppKeyBindingsTableUpdateCompanionBuilder =
+    AppKeyBindingsCompanion Function({
+      Value<String> actionId,
+      Value<String> combo,
+      Value<int> rowid,
+    });
+
+class $$AppKeyBindingsTableFilterComposer
+    extends Composer<_$UserDatabase, $AppKeyBindingsTable> {
+  $$AppKeyBindingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get actionId => $composableBuilder(
+    column: $table.actionId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get combo => $composableBuilder(
+    column: $table.combo,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$AppKeyBindingsTableOrderingComposer
+    extends Composer<_$UserDatabase, $AppKeyBindingsTable> {
+  $$AppKeyBindingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get actionId => $composableBuilder(
+    column: $table.actionId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get combo => $composableBuilder(
+    column: $table.combo,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AppKeyBindingsTableAnnotationComposer
+    extends Composer<_$UserDatabase, $AppKeyBindingsTable> {
+  $$AppKeyBindingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get actionId =>
+      $composableBuilder(column: $table.actionId, builder: (column) => column);
+
+  GeneratedColumn<String> get combo =>
+      $composableBuilder(column: $table.combo, builder: (column) => column);
+}
+
+class $$AppKeyBindingsTableTableManager
+    extends
+        RootTableManager<
+          _$UserDatabase,
+          $AppKeyBindingsTable,
+          AppKeyBinding,
+          $$AppKeyBindingsTableFilterComposer,
+          $$AppKeyBindingsTableOrderingComposer,
+          $$AppKeyBindingsTableAnnotationComposer,
+          $$AppKeyBindingsTableCreateCompanionBuilder,
+          $$AppKeyBindingsTableUpdateCompanionBuilder,
+          (
+            AppKeyBinding,
+            BaseReferences<_$UserDatabase, $AppKeyBindingsTable, AppKeyBinding>,
+          ),
+          AppKeyBinding,
+          PrefetchHooks Function()
+        > {
+  $$AppKeyBindingsTableTableManager(
+    _$UserDatabase db,
+    $AppKeyBindingsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AppKeyBindingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AppKeyBindingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AppKeyBindingsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> actionId = const Value.absent(),
+                Value<String> combo = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AppKeyBindingsCompanion(
+                actionId: actionId,
+                combo: combo,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String actionId,
+                required String combo,
+                Value<int> rowid = const Value.absent(),
+              }) => AppKeyBindingsCompanion.insert(
+                actionId: actionId,
+                combo: combo,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$AppKeyBindingsTable, AppKeyBinding>(table),
+                  BaseReferences<
+                    _$UserDatabase,
+                    $AppKeyBindingsTable,
+                    AppKeyBinding
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$AppKeyBindingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$UserDatabase,
+      $AppKeyBindingsTable,
+      AppKeyBinding,
+      $$AppKeyBindingsTableFilterComposer,
+      $$AppKeyBindingsTableOrderingComposer,
+      $$AppKeyBindingsTableAnnotationComposer,
+      $$AppKeyBindingsTableCreateCompanionBuilder,
+      $$AppKeyBindingsTableUpdateCompanionBuilder,
+      (
+        AppKeyBinding,
+        BaseReferences<_$UserDatabase, $AppKeyBindingsTable, AppKeyBinding>,
+      ),
+      AppKeyBinding,
+      PrefetchHooks Function()
+    >;
+typedef $$EmulationKeyBindingsTableCreateCompanionBuilder =
+    EmulationKeyBindingsCompanion Function({
+      required String actionId,
+      required String combo,
+      Value<int> rowid,
+    });
+typedef $$EmulationKeyBindingsTableUpdateCompanionBuilder =
+    EmulationKeyBindingsCompanion Function({
+      Value<String> actionId,
+      Value<String> combo,
+      Value<int> rowid,
+    });
+
+class $$EmulationKeyBindingsTableFilterComposer
+    extends Composer<_$UserDatabase, $EmulationKeyBindingsTable> {
+  $$EmulationKeyBindingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get actionId => $composableBuilder(
+    column: $table.actionId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get combo => $composableBuilder(
+    column: $table.combo,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$EmulationKeyBindingsTableOrderingComposer
+    extends Composer<_$UserDatabase, $EmulationKeyBindingsTable> {
+  $$EmulationKeyBindingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get actionId => $composableBuilder(
+    column: $table.actionId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get combo => $composableBuilder(
+    column: $table.combo,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$EmulationKeyBindingsTableAnnotationComposer
+    extends Composer<_$UserDatabase, $EmulationKeyBindingsTable> {
+  $$EmulationKeyBindingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get actionId =>
+      $composableBuilder(column: $table.actionId, builder: (column) => column);
+
+  GeneratedColumn<String> get combo =>
+      $composableBuilder(column: $table.combo, builder: (column) => column);
+}
+
+class $$EmulationKeyBindingsTableTableManager
+    extends
+        RootTableManager<
+          _$UserDatabase,
+          $EmulationKeyBindingsTable,
+          EmulationKeyBinding,
+          $$EmulationKeyBindingsTableFilterComposer,
+          $$EmulationKeyBindingsTableOrderingComposer,
+          $$EmulationKeyBindingsTableAnnotationComposer,
+          $$EmulationKeyBindingsTableCreateCompanionBuilder,
+          $$EmulationKeyBindingsTableUpdateCompanionBuilder,
+          (
+            EmulationKeyBinding,
+            BaseReferences<
+              _$UserDatabase,
+              $EmulationKeyBindingsTable,
+              EmulationKeyBinding
+            >,
+          ),
+          EmulationKeyBinding,
+          PrefetchHooks Function()
+        > {
+  $$EmulationKeyBindingsTableTableManager(
+    _$UserDatabase db,
+    $EmulationKeyBindingsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$EmulationKeyBindingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$EmulationKeyBindingsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$EmulationKeyBindingsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> actionId = const Value.absent(),
+                Value<String> combo = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => EmulationKeyBindingsCompanion(
+                actionId: actionId,
+                combo: combo,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String actionId,
+                required String combo,
+                Value<int> rowid = const Value.absent(),
+              }) => EmulationKeyBindingsCompanion.insert(
+                actionId: actionId,
+                combo: combo,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$EmulationKeyBindingsTable, EmulationKeyBinding>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$UserDatabase,
+                    $EmulationKeyBindingsTable,
+                    EmulationKeyBinding
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$EmulationKeyBindingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$UserDatabase,
+      $EmulationKeyBindingsTable,
+      EmulationKeyBinding,
+      $$EmulationKeyBindingsTableFilterComposer,
+      $$EmulationKeyBindingsTableOrderingComposer,
+      $$EmulationKeyBindingsTableAnnotationComposer,
+      $$EmulationKeyBindingsTableCreateCompanionBuilder,
+      $$EmulationKeyBindingsTableUpdateCompanionBuilder,
+      (
+        EmulationKeyBinding,
+        BaseReferences<
+          _$UserDatabase,
+          $EmulationKeyBindingsTable,
+          EmulationKeyBinding
+        >,
+      ),
+      EmulationKeyBinding,
+      PrefetchHooks Function()
+    >;
 
 class $UserDatabaseManager {
   final _$UserDatabase _db;
@@ -7967,4 +8729,8 @@ class $UserDatabaseManager {
       $$UserGameInfosTableTableManager(_db, _db.userGameInfos);
   $$FeatureFlagsTableTableManager get featureFlags =>
       $$FeatureFlagsTableTableManager(_db, _db.featureFlags);
+  $$AppKeyBindingsTableTableManager get appKeyBindings =>
+      $$AppKeyBindingsTableTableManager(_db, _db.appKeyBindings);
+  $$EmulationKeyBindingsTableTableManager get emulationKeyBindings =>
+      $$EmulationKeyBindingsTableTableManager(_db, _db.emulationKeyBindings);
 }

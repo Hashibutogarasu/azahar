@@ -4,6 +4,10 @@
     "cancel": "キャンセル",
     "save": "保存"
   },
+  "gamepad": {
+    "connected": "外部コントローラーが接続されました。",
+    "disconnected": "外部コントローラーが切断されました。"
+  },
   "tags": {
     "all": "すべて",
     "system": "システム",
@@ -189,7 +193,9 @@
     "gameEndedTitle": "ゲームが終了しました",
     "gameEndedMessage": "ゲームを開始してから保存した内容を保存しますか？それとも破棄しますか？",
     "save": "保存",
-    "discard": "破棄"
+    "discard": "破棄",
+    "showVirtualGamepad": "画面上のコントローラーを表示",
+    "hideVirtualGamepad": "画面上のコントローラーを非表示"
   },
   "applets": {
     "softwareKeyboard": "ソフトウェアキーボード",
@@ -689,7 +695,7 @@
       "gyroSensitivityHorizontalDescription": "ジャイロスコープの水平方向（ヨー）の感度を調整します。",
       "invertGyroHorizontal": "ジャイロの水平軸を反転",
       "invertGyroHorizontalDescription": "ジャイロスコープの水平方向（ヨー）の軸を反転します。",
-      "genericButtons": "ボタン",
+      "consoleControls": "3DS の操作",
       "buttonA": "A",
       "buttonB": "B",
       "buttonX": "X",
@@ -699,17 +705,10 @@
       "buttonHome": "HOME",
       "circlePad": "サークルパッド",
       "cStick": "Cスティック",
-      "axisVertical": "上下軸",
-      "axisHorizontal": "左右軸",
-      "dpadAxis": "十字キー（軸）",
-      "dpadAxisDescription": "コントローラーによっては十字キーを軸としてマッピングできない場合があります。その場合は十字キー（ボタン）のセクションを使用してください。",
-      "dpadButtons": "十字キー（ボタン）",
-      "dpadButtonsDescription": "十字キー（軸）のボタンマッピングで問題がある場合のみ、こちらに十字キーをマッピングしてください。",
       "buttonUp": "上",
       "buttonDown": "下",
       "buttonLeft": "左",
       "buttonRight": "右",
-      "triggers": "トリガー",
       "buttonL": "L",
       "buttonR": "R",
       "buttonZl": "ZL",
@@ -723,7 +722,22 @@
       "hotkeyQuickload": "クイックロード",
       "miscellaneous": "その他",
       "useArticBaseController": "Artic Baseサーバー接続時にArticコントローラーを使用",
-      "useArticBaseControllerDescription": "Artic Baseサーバーに接続している間、設定した入力デバイスの代わりにサーバーが提供するコントロールを使用します。"
+      "useArticBaseControllerDescription": "Artic Baseサーバーに接続している間、設定した入力デバイスの代わりにサーバーが提供するコントロールを使用します。",
+      "appControls": "アプリ操作",
+      "emulationControls": "エミュレーション操作",
+      "actionPreviousPage": "前のページ",
+      "actionNextPage": "次のページ",
+      "actionPreviousFocusRegion": "前の領域",
+      "actionNextFocusRegion": "次の領域",
+      "actionMoveFocusUp": "上へ移動",
+      "actionMoveFocusDown": "下へ移動",
+      "actionMoveFocusLeft": "左へ移動",
+      "actionMoveFocusRight": "右へ移動",
+      "actionActivate": "決定",
+      "actionCancel": "キャンセル",
+      "actionOpenContextMenu": "メニューを開く",
+      "actionToggleEmulationFocus": "ゲームとメニューの切り替え",
+      "notBound": "未設定"
     },
     "layout": {
       "title": "レイアウト",

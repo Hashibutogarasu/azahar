@@ -10,6 +10,7 @@ import '../../data/user/repositories/game_repository.dart';
 import '../../data/tags/tags_provider.dart';
 import '../../i18n/translations.g.dart';
 import '../../widgets/app_search_bar.dart';
+import '../../widgets/gamepad/gamepad_focus_region.dart';
 import 'filtered_games_provider.dart';
 import 'game_process_provider.dart';
 import 'games_provider.dart';
@@ -106,61 +107,74 @@ class _GamesListPageState extends ConsumerState<GamesListPage>
     return SafeArea(
       child: Column(
         children: [
-          AppSearchBar(
-            controller: _queryController,
-            hintText: t.games.searchHint,
-            onChanged: ref.read(gameQueryProvider.notifier).update,
-            onClear: () {
-              _queryController.clear();
-              ref.read(gameQueryProvider.notifier).update('');
-            },
-          ),
-          TagFilterBar(
-            tags: tagsState.value ?? const [],
-            selectedTagIds: selectedTagIdsState.value ?? const {},
-            enabled: tagsState.hasValue && selectedTagIdsState.hasValue,
-            onToggle: ref.read(selectedTagIdsProvider.notifier).toggle,
-            onSelectAll: ref.read(selectedTagIdsProvider.notifier).clear,
+          GamepadFocusRegion(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AppSearchBar(
+                  controller: _queryController,
+                  hintText: t.games.searchHint,
+                  onChanged: ref.read(gameQueryProvider.notifier).update,
+                  onClear: () {
+                    _queryController.clear();
+                    ref.read(gameQueryProvider.notifier).update('');
+                  },
+                ),
+                TagFilterBar(
+                  tags: tagsState.value ?? const [],
+                  selectedTagIds: selectedTagIdsState.value ?? const {},
+                  enabled: tagsState.hasValue && selectedTagIdsState.hasValue,
+                  onToggle: ref.read(selectedTagIdsProvider.notifier).toggle,
+                  onSelectAll: ref.read(selectedTagIdsProvider.notifier).clear,
+                ),
+              ],
+            ),
           ),
           Expanded(
-            child: IgnorePointer(
-              ignoring: isRunning,
-              child: AnimatedOpacity(
-                opacity: isRunning ? 0.5 : 1,
-                duration: const Duration(milliseconds: 200),
-                child: RefreshIndicator(
-                  onRefresh: ref.read(gamesProvider.notifier).rescan,
-                  child: games.isEmpty
-                      ? ListView(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(24),
-                              child: Text(
-                                hasGames
-                                    ? t.games.noMatchingGames
-                                    : t.games.emptyGamelist,
-                                textAlign: TextAlign.center,
+            child: GamepadFocusRegion(
+              child: IgnorePointer(
+                ignoring: isRunning,
+                child: AnimatedOpacity(
+                  opacity: isRunning ? 0.5 : 1,
+                  duration: const Duration(milliseconds: 200),
+                  child: RefreshIndicator(
+                    onRefresh: ref.read(gamesProvider.notifier).rescan,
+                    child: games.isEmpty
+                        ? ListView(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(24),
+                                child: Text(
+                                  hasGames
+                                      ? t.games.noMatchingGames
+                                      : t.games.emptyGamelist,
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
-                            ),
-                          ],
-                        )
-                      : ListView.builder(
-                          padding: const EdgeInsets.all(8),
-                          itemCount: games.length,
-                          itemBuilder: (context, index) {
-                            final game = games[index];
-                            return GameCard(
-                              game: game,
-                              isValidExtension: _gameRepository
-                                  .isValidExtension(game),
-                              onTap: () => ref
-                                  .read(gameProcessProvider.notifier)
-                                  .launch(context, path: game.path, game: game),
-                              onInfo: () => _showGameInfo(game),
-                              showInfoButton: isDesktop,
-                            );
-                          },
-                        ),
+                            ],
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.all(8),
+                            itemCount: games.length,
+                            itemBuilder: (context, index) {
+                              final game = games[index];
+                              return GameCard(
+                                game: game,
+                                isValidExtension: _gameRepository
+                                    .isValidExtension(game),
+                                onTap: () => ref
+                                    .read(gameProcessProvider.notifier)
+                                    .launch(
+                                      context,
+                                      path: game.path,
+                                      game: game,
+                                    ),
+                                onInfo: () => _showGameInfo(game),
+                                showInfoButton: isDesktop,
+                              );
+                            },
+                          ),
+                  ),
                 ),
               ),
             ),

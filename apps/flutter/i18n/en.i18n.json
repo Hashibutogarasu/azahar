@@ -4,6 +4,10 @@
     "cancel": "Cancel",
     "save": "Save"
   },
+  "gamepad": {
+    "connected": "An external controller was connected.",
+    "disconnected": "An external controller was disconnected."
+  },
   "tags": {
     "all": "All",
     "system": "System",
@@ -189,7 +193,9 @@
     "gameEndedTitle": "The game has ended",
     "gameEndedMessage": "Save what the game saved since it started, or discard it?",
     "save": "Save",
-    "discard": "Discard"
+    "discard": "Discard",
+    "showVirtualGamepad": "Show On-Screen Controller",
+    "hideVirtualGamepad": "Hide On-Screen Controller"
   },
   "applets": {
     "softwareKeyboard": "Software Keyboard",
@@ -691,7 +697,7 @@
       "gyroSensitivityHorizontalDescription": "Adjust the gyroscope's horizontal (yaw) sensitivity.",
       "invertGyroHorizontal": "Invert Gyro Horizontal Axis",
       "invertGyroHorizontalDescription": "Invert the gyroscope's horizontal (yaw) axis.",
-      "genericButtons": "Buttons",
+      "consoleControls": "3DS Controls",
       "buttonA": "A",
       "buttonB": "B",
       "buttonX": "X",
@@ -701,17 +707,10 @@
       "buttonHome": "HOME",
       "circlePad": "Circle Pad",
       "cStick": "C-Stick",
-      "axisVertical": "Up/Down Axis",
-      "axisHorizontal": "Left/Right Axis",
-      "dpadAxis": "D-Pad (Axis)",
-      "dpadAxisDescription": "Some controllers may not be able to map their D-pad as an axis. If that's the case, use the D-Pad (buttons) section.",
-      "dpadButtons": "D-Pad (Button)",
-      "dpadButtonsDescription": "Only map the D-pad to these if you're facing issues with the D-Pad (Axis) button mappings.",
       "buttonUp": "Up",
       "buttonDown": "Down",
       "buttonLeft": "Left",
       "buttonRight": "Right",
-      "triggers": "Triggers",
       "buttonL": "L",
       "buttonR": "R",
       "buttonZl": "ZL",
@@ -725,7 +724,22 @@
       "hotkeyQuickload": "Quickload",
       "miscellaneous": "Miscellaneous",
       "useArticBaseController": "Use Artic Controller when connected to Artic Base Server",
-      "useArticBaseControllerDescription": "Use the controls provided by Artic Base Server when connected to it instead of the configured input device."
+      "useArticBaseControllerDescription": "Use the controls provided by Artic Base Server when connected to it instead of the configured input device.",
+      "appControls": "App Controls",
+      "emulationControls": "Emulation Controls",
+      "actionPreviousPage": "Previous Page",
+      "actionNextPage": "Next Page",
+      "actionPreviousFocusRegion": "Previous Area",
+      "actionNextFocusRegion": "Next Area",
+      "actionMoveFocusUp": "Move Up",
+      "actionMoveFocusDown": "Move Down",
+      "actionMoveFocusLeft": "Move Left",
+      "actionMoveFocusRight": "Move Right",
+      "actionActivate": "Select",
+      "actionCancel": "Cancel",
+      "actionOpenContextMenu": "Open Menu",
+      "actionToggleEmulationFocus": "Switch Between Game and Menu",
+      "notBound": "Not set"
     },
     "layout": {
       "title": "Layout",

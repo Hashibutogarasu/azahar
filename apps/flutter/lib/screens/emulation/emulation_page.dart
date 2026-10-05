@@ -6,12 +6,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 
 import '../../app_services.dart';
+import '../../data/gamepad/gamepad_hub.dart';
 import '../../data/platform_provider.dart';
 import '../../data/repositories/cheat_repository.dart';
+import '../../theme/extensions/emulation_focus_frame_theme.dart';
+import 'controller_motion_source.dart';
+import 'emulation_focus_provider.dart';
 import 'emulation_screens_layout.dart';
 import 'emulation_session_provider.dart';
 import 'motion_input_source.dart';
-import 'physical_gamepad_source.dart';
+import 'virtual_gamepad_visibility_provider.dart';
 import 'widgets/bottom_screen.dart';
 import 'widgets/cheats_dialog.dart';
 import 'widgets/emulation_drawer.dart';
@@ -37,17 +41,36 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
     with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _launchRequested = false;
+  late final EmulationFocusNotifier _focusNotifier;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _focusNotifier = ref.read(emulationFocusProvider.notifier);
+    Future.microtask(() => _focusNotifier.activate(this));
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    Future.microtask(() => _focusNotifier.deactivate(this));
     super.dispose();
+  }
+
+  void _onEmulationFocusChanged(EmulationFocus focus) {
+    final scaffold = _scaffoldKey.currentState;
+    if (scaffold == null || ref.read(isDesktopPlatformProvider)) return;
+    switch (focus) {
+      case EmulationFocus.menu:
+        if (!scaffold.isDrawerOpen) scaffold.openDrawer();
+      case EmulationFocus.game:
+        if (scaffold.isDrawerOpen) scaffold.closeDrawer();
+    }
+  }
+
+  void _onDrawerChanged(bool isOpened) {
+    _focusNotifier.focus(isOpened ? EmulationFocus.menu : EmulationFocus.game);
   }
 
   @override
@@ -174,14 +197,29 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
           notifier.touchMoved(event.localPosition, layout.bottomScreen),
       onPointerUp: (_) => notifier.touchReleased(),
     );
+    final frameTheme = Theme.of(context).extension<EmulationFocusFrameTheme>()!;
+    final isFrameHighlighted =
+        ref.watch(emulationFocusProvider).isGameFocused &&
+        ref.watch(gamepadInputModeProvider) == GamepadInputMode.controller;
     return Align(
       alignment: Alignment.topCenter,
-      child: Flex(
-        direction: layout.direction,
-        mainAxisSize: MainAxisSize.min,
-        children: state.isScreensSwapped
-            ? [bottomScreen, topScreen]
-            : [topScreen, bottomScreen],
+      child: Container(
+        foregroundDecoration: isFrameHighlighted
+            ? BoxDecoration(
+                border: Border.all(
+                  color: frameTheme.focusedColor,
+                  width: frameTheme.width,
+                ),
+                borderRadius: frameTheme.borderRadius,
+              )
+            : null,
+        child: Flex(
+          direction: layout.direction,
+          mainAxisSize: MainAxisSize.min,
+          children: state.isScreensSwapped
+              ? [bottomScreen, topScreen]
+              : [topScreen, bottomScreen],
+        ),
       ),
     );
   }
@@ -195,6 +233,10 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
       if (isFinished) Navigator.of(context).pop();
     });
     ref.listen(
+      emulationFocusProvider.select((state) => state.focus),
+      (_, focus) => _onEmulationFocusChanged(focus),
+    );
+    ref.listen(
       emulationSessionProvider.select((state) => state.isShutdownRequested),
       (_, isShutdownRequested) {
         if (isShutdownRequested) unawaited(_askToSaveAfterGameEnded());
@@ -205,6 +247,7 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
       return const ColoredBox(color: Colors.black);
     }
     final isDesktop = ref.watch(isDesktopPlatformProvider);
+    final isVirtualGamepadVisible = ref.watch(virtualGamepadVisibleProvider);
     final notifier = ref.read(emulationSessionProvider.notifier);
     final actions = EmulationMenuActions(
       onTogglePause: notifier.togglePause,
@@ -212,6 +255,10 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
       onCheats: widget.game == null ? null : _openCheats,
       onSaveAndExit: _saveAndExit,
       onExitWithoutSaving: _confirmExitWithoutSaving,
+      isVirtualGamepadVisible: isDesktop ? null : isVirtualGamepadVisible,
+      onToggleVirtualGamepad: ref
+          .read(virtualGamepadVisibleProvider.notifier)
+          .toggle,
     );
     final screens = SafeArea(
       child: LayoutBuilder(
@@ -228,6 +275,7 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
         key: _scaffoldKey,
         backgroundColor: Colors.black,
         drawerEnableOpenDragGesture: false,
+        onDrawerChanged: _onDrawerChanged,
         drawer: !isDesktop && state.emulationStarted
             ? EmulationDrawer(
                 gamePath: widget.gamePath,
@@ -253,7 +301,7 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
                   ),
                 ],
               )
-            : !isDesktop && state.emulationStarted
+            : !isDesktop && state.emulationStarted && isVirtualGamepadVisible
             ? Stack(
                 children: [
                   screens,
@@ -290,8 +338,17 @@ class _EmulationPageState extends ConsumerState<EmulationPage>
           ),
       ],
     );
-    return PhysicalGamepadSource(
-      child: isDesktop ? content : MotionInputSource(child: content),
+    final dismissible = Actions(
+      actions: {
+        DismissIntent: CallbackAction<DismissIntent>(
+          onInvoke: (_) => _focusNotifier.focus(EmulationFocus.game),
+        ),
+      },
+      child: content,
     );
+    final withControllerMotion = ControllerMotionSource(child: dismissible);
+    return isDesktop
+        ? withControllerMotion
+        : MotionInputSource(child: withControllerMotion);
   }
 }

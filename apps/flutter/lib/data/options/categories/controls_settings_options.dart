@@ -2,8 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app_services.dart';
+import '../../gamepad/actions/console/console_action.dart';
+import '../../gamepad/actions/console/console_actions.dart';
+import '../../gamepad/actions/gamepad_action.dart';
+import '../../gamepad/actions/gamepad_action_registry.dart';
 import '../../settings/emulator_setting_key.dart';
 import '../abstract_base_option.dart';
+import '../input_binding_mode.dart';
+import '../key_binding_option_value.dart';
 import '../option_category.dart';
 import '../option_section.dart';
 import '../option_value.dart';
@@ -11,7 +17,8 @@ import '../store_option_values.dart';
 import '../translation_text.dart';
 
 /// The items of the gamepad settings page, which is not listed on the Options page: the controller
-/// input mode, gyro, button and axis bindings, hotkeys and the Artic Base controller.
+/// input mode, gyro, the key bindings of the registered gamepad actions, hotkeys and the Artic Base
+/// controller.
 final controlsSettingsOptionsProvider = Provider<OptionCategory>((ref) {
   final bindings = AppServices.controlBindingsValueStore;
 
@@ -24,6 +31,17 @@ final controlsSettingsOptionsProvider = Provider<OptionCategory>((ref) {
           store: bindings,
         ),
       );
+
+  final registry = ref.watch(gamepadActionRegistryProvider);
+
+  InputBindingOption actionBinding(GamepadAction action) => InputBindingOption(
+    title: action.title,
+    icon: Icons.sports_esports_outlined,
+    value: KeyBindingOptionValue(action),
+    mode: action.defaultCombo.stick == null
+        ? InputBindingMode.combo
+        : InputBindingMode.stick,
+  );
 
   return OptionCategory(
     id: 'controlsSettings',
@@ -143,69 +161,21 @@ final controlsSettingsOptionsProvider = Provider<OptionCategory>((ref) {
         ],
       ),
       OptionSection(
-        title: (t) => t.settings.gamepad.genericButtons,
+        title: (t) => t.settings.gamepad.consoleControls,
+        options: [for (final action in consoleActions) actionBinding(action)],
+      ),
+      OptionSection(
+        title: (t) => t.settings.gamepad.emulationControls,
         options: [
-          binding((t) => t.settings.gamepad.buttonA, 'button_a'),
-          binding((t) => t.settings.gamepad.buttonB, 'button_b'),
-          binding((t) => t.settings.gamepad.buttonX, 'button_x'),
-          binding((t) => t.settings.gamepad.buttonY, 'button_y'),
-          binding((t) => t.settings.gamepad.buttonSelect, 'button_select'),
-          binding((t) => t.settings.gamepad.buttonStart, 'button_start'),
-          binding((t) => t.settings.gamepad.buttonHome, 'button_home'),
+          for (final action in registry.actionsOf(GamepadActionScope.emulation))
+            if (action is! ConsoleAction) actionBinding(action),
         ],
       ),
       OptionSection(
-        title: (t) => t.settings.gamepad.circlePad,
+        title: (t) => t.settings.gamepad.appControls,
         options: [
-          binding(
-            (t) => t.settings.gamepad.axisVertical,
-            'circlepad_axis_vertical',
-          ),
-          binding(
-            (t) => t.settings.gamepad.axisHorizontal,
-            'circlepad_axis_horizontal',
-          ),
-        ],
-      ),
-      OptionSection(
-        title: (t) => t.settings.gamepad.cStick,
-        options: [
-          binding(
-            (t) => t.settings.gamepad.axisVertical,
-            'cstick_axis_vertical',
-          ),
-          binding(
-            (t) => t.settings.gamepad.axisHorizontal,
-            'cstick_axis_horizontal',
-          ),
-        ],
-      ),
-      OptionSection(
-        title: (t) => t.settings.gamepad.dpadAxis,
-        options: [
-          binding((t) => t.settings.gamepad.axisVertical, 'dpad_axis_vertical'),
-          binding(
-            (t) => t.settings.gamepad.axisHorizontal,
-            'dpad_axis_horizontal',
-          ),
-        ],
-      ),
-      OptionSection(
-        title: (t) => t.settings.gamepad.dpadButtons,
-        options: [
-          binding((t) => t.settings.gamepad.buttonUp, 'button_up'),
-          binding((t) => t.settings.gamepad.buttonDown, 'button_down'),
-          binding((t) => t.settings.gamepad.buttonLeft, 'button_left'),
-          binding((t) => t.settings.gamepad.buttonRight, 'button_right'),
-        ],
-      ),
-      OptionSection(
-        title: (t) => t.settings.gamepad.triggers,
-        options: [
-          binding((t) => t.settings.gamepad.buttonL, 'button_l'),
-          binding((t) => t.settings.gamepad.buttonR, 'button_r'),
-          binding((t) => t.settings.gamepad.buttonZl, 'button_zl'),
-          binding((t) => t.settings.gamepad.buttonZr, 'button_zr'),
+          for (final action in registry.actionsOf(GamepadActionScope.app))
+            actionBinding(action),
         ],
       ),
       OptionSection(

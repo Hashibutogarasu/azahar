@@ -23,6 +23,7 @@
 #include "common/storage.h"
 #include "native_bridge/cheats.h"
 #include "native_bridge/cia_install.h"
+#include "native_bridge/controller_motion.h"
 #include "native_bridge/emulation.h"
 #include "native_bridge/emulator_config.h"
 #include "native_bridge/game_actions.h"
@@ -800,6 +801,18 @@ FlMethodErrorResponse* HandleGamePadCancel(FlEventChannel* channel, FlValue* arg
   return nullptr;
 }
 
+FlMethodErrorResponse* HandleControllerMotionListen(FlEventChannel* channel, FlValue* args,
+                                                    gpointer user_data) {
+  ControllerMotion::SetEventChannel(channel);
+  return nullptr;
+}
+
+FlMethodErrorResponse* HandleControllerMotionCancel(FlEventChannel* channel, FlValue* args,
+                                                    gpointer user_data) {
+  ControllerMotion::SetEventChannel(nullptr);
+  return nullptr;
+}
+
 gboolean HandleWindowDeleteEvent(GtkWidget* widget, GdkEvent* event, gpointer user_data) {
   if (!Emulation::IsSessionActive()) {
     return FALSE;
@@ -828,6 +841,14 @@ void RegisterGamePadChannel(FlBinaryMessenger* messenger) {
                                        nullptr, nullptr);
 }
 
+void RegisterControllerMotionChannel(FlBinaryMessenger* messenger) {
+  g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
+  FlEventChannel* channel = fl_event_channel_new(
+      messenger, "org.citra.citra_emu/azahar_bridge/controller_motion", FL_METHOD_CODEC(codec));
+  fl_event_channel_set_stream_handlers(channel, HandleControllerMotionListen,
+                                       HandleControllerMotionCancel, nullptr, nullptr);
+}
+
 }  // namespace
 
 void azahar_for_flutter_plugin_register_with_registrar(FlPluginRegistrar* registrar) {
@@ -847,6 +868,7 @@ void azahar_for_flutter_plugin_register_with_registrar(FlPluginRegistrar* regist
   Emulation::SetTextureRegistrar(fl_engine_get_texture_registrar(fl_view_get_engine(view)));
   RegisterLogLinesChannel(messenger);
   RegisterGamePadChannel(messenger);
+  RegisterControllerMotionChannel(messenger);
   g_object_set_data(G_OBJECT(window), "bridge_channel", bridge_channel);
   g_signal_connect(window, "delete-event", G_CALLBACK(HandleWindowDeleteEvent), nullptr);
 }

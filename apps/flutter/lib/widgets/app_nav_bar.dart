@@ -146,9 +146,9 @@ class _AppNavDestination extends StatelessWidget {
       button: true,
       selected: selected,
       label: label,
-      child: GestureDetector(
+      child: InkWell(
         onTap: onTap,
-        behavior: HitTestBehavior.opaque,
+        borderRadius: theme.activeIndicatorRadius,
         child: SizedBox(
           height: theme.activeIndicatorSize.height,
           child: Center(

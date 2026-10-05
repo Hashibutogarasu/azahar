@@ -8,6 +8,7 @@ import '../../../i18n/translations.g.dart';
 import '../../../theme/extensions/game_card_theme.dart';
 import '../../../theme/extensions/glass_surface_theme.dart';
 import '../../../widgets/app_liquid_glass.dart';
+import '../../../widgets/gamepad/gamepad_intents.dart';
 import 'game_icon.dart';
 import 'game_regions_translator.dart';
 
@@ -15,8 +16,8 @@ import 'game_regions_translator.dart';
 /// [GlassSurfaceTheme] and [GameCardTheme], so this single widget renders both the Azahar and
 /// Legacy looks.
 ///
-/// [onInfo] is called by a long press on the row and by the three-dot button, which is shown when
-/// [showInfoButton] is true. The button sits beside the tappable area, not inside it.
+/// [onInfo] is called by a long press on the row, by a controller's context menu button, and by
+/// the three-dot button shown beside the tappable area when [showInfoButton] is true.
 class GameCard extends ConsumerWidget {
   const GameCard({
     super.key,
@@ -122,9 +123,19 @@ class GameCard extends ConsumerWidget {
         ],
       ),
     );
-    return Padding(
+    final info = onInfo;
+    final card = Padding(
       padding: EdgeInsets.all(outerPadding),
       child: performanceImprovements ? RepaintBoundary(child: glass) : glass,
+    );
+    if (info == null) return card;
+    return Actions(
+      actions: {
+        OpenContextMenuIntent: CallbackAction<OpenContextMenuIntent>(
+          onInvoke: (_) => info(),
+        ),
+      },
+      child: card,
     );
   }
 }

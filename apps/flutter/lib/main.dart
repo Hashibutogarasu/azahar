@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
@@ -18,6 +19,7 @@ import 'theme/app_theme.dart';
 import 'theme/no_overscroll_indicator_behavior.dart';
 import 'theme/theme_settings_provider.dart';
 import 'theme/theme_style.dart';
+import 'widgets/gamepad/gamepad_action_host.dart';
 
 final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
@@ -172,11 +174,35 @@ class AzaharApp extends ConsumerWidget {
                 scrollBehavior: const NoOverscrollIndicatorBehavior(),
                 routerConfig: _router,
                 scaffoldMessengerKey: _scaffoldMessengerKey,
+                shortcuts: _shortcutsWithoutGameButtons(),
+                builder: (context, child) => GamepadActionHost(
+                  navigatorKey: _navigatorKey,
+                  child: child ?? const SizedBox.shrink(),
+                ),
               );
             },
           );
         },
       ),
+    );
+  }
+
+  /// The default shortcuts of the platform without the ones bound to gamepad buttons, which the
+  /// gamepad actions handle instead, so that a button press does not act twice.
+  static Map<ShortcutActivator, Intent> _shortcutsWithoutGameButtons() {
+    return {
+      for (final MapEntry(:key, :value) in WidgetsApp.defaultShortcuts.entries)
+        if (!_isGameButton(key)) key: value,
+    };
+  }
+
+  static bool _isGameButton(ShortcutActivator activator) {
+    final triggers = activator.triggers;
+    if (triggers == null) return false;
+    return triggers.any(
+      (key) =>
+          key.keyId >= LogicalKeyboardKey.gameButton1.keyId &&
+          key.keyId <= LogicalKeyboardKey.gameButtonZ.keyId,
     );
   }
 

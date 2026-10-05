@@ -5,6 +5,7 @@ import '../../data/options/options_search_provider.dart';
 import '../../data/settings/settings_load_provider.dart';
 import '../../i18n/translations.g.dart';
 import '../../widgets/app_search_bar.dart';
+import '../../widgets/gamepad/gamepad_focus_region.dart';
 import 'widgets/options_home_content.dart';
 import 'widgets/options_search_results.dart';
 
@@ -54,17 +55,21 @@ class _OptionsPageState extends ConsumerState<OptionsPage> {
       child: SafeArea(
         child: Column(
           children: [
-            AppSearchBar(
-              controller: _queryController,
-              hintText: context.t.options.searchHint,
-              onChanged: ref.read(optionsSearchProvider.notifier).setQuery,
-              onClear: _handleClear,
-              onFocusChanged: _handleFocusChanged,
+            GamepadFocusRegion(
+              child: AppSearchBar(
+                controller: _queryController,
+                hintText: context.t.options.searchHint,
+                onChanged: ref.read(optionsSearchProvider.notifier).setQuery,
+                onClear: _handleClear,
+                onFocusChanged: _handleFocusChanged,
+              ),
             ),
             Expanded(
-              child: isSearching
-                  ? const OptionsSearchResults()
-                  : const OptionsHomeContent(),
+              child: GamepadFocusRegion(
+                child: isSearching
+                    ? const OptionsSearchResults()
+                    : const OptionsHomeContent(),
+              ),
             ),
           ],
         ),

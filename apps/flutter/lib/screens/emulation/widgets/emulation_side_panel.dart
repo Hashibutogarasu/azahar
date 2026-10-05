@@ -1,7 +1,9 @@
 import 'package:azahar_for_flutter/azahar_for_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../games/widgets/game_icon.dart';
+import '../emulation_focus_provider.dart';
 import 'emulation_drawer.dart';
 import 'emulation_menu_actions.dart';
 import 'emulation_menu_sections.dart';
@@ -10,7 +12,8 @@ import 'emulation_menu_sections.dart';
 /// left of the emulation screen. Expanded, it is the same [EmulationDrawer] as on mobile, with a
 /// button to collapse it. Collapsed, it is a compact strip with only the icon of the game and the
 /// icons of the menu, without the wave or the title, so it takes little room from the screens.
-class EmulationSidePanel extends StatefulWidget {
+/// It expands and takes the focus when [emulationFocusProvider] moves controller input to the menu.
+class EmulationSidePanel extends ConsumerStatefulWidget {
   const EmulationSidePanel({
     super.key,
     required this.gamePath,
@@ -25,27 +28,55 @@ class EmulationSidePanel extends StatefulWidget {
   final EmulationMenuActions actions;
 
   @override
-  State<EmulationSidePanel> createState() => _EmulationSidePanelState();
+  ConsumerState<EmulationSidePanel> createState() => _EmulationSidePanelState();
 }
 
-class _EmulationSidePanelState extends State<EmulationSidePanel> {
+class _EmulationSidePanelState extends ConsumerState<EmulationSidePanel> {
   static const double _collapsedWidth = 72;
 
+  final FocusScopeNode _scope = FocusScopeNode(
+    debugLabel: 'EmulationSidePanel',
+  );
   bool _collapsed = false;
 
   @override
+  void dispose() {
+    _scope.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChanged(EmulationFocus focus) {
+    switch (focus) {
+      case EmulationFocus.menu:
+        setState(() => _collapsed = false);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _scope.requestFocus();
+        });
+      case EmulationFocus.game:
+        _scope.unfocus();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    ref.listen(
+      emulationFocusProvider.select((state) => state.focus),
+      (_, focus) => _onFocusChanged(focus),
+    );
     final width = _collapsed ? _collapsedWidth : EmulationDrawer.width;
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeInOut,
-      width: width,
-      child: ClipRect(
-        child: OverflowBox(
-          alignment: Alignment.centerLeft,
-          minWidth: width,
-          maxWidth: width,
-          child: _collapsed ? _collapsedPanel() : _expandedPanel(),
+    return FocusScope(
+      node: _scope,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        width: width,
+        child: ClipRect(
+          child: OverflowBox(
+            alignment: Alignment.centerLeft,
+            minWidth: width,
+            maxWidth: width,
+            child: _collapsed ? _collapsedPanel() : _expandedPanel(),
+          ),
         ),
       ),
     );
