@@ -12,8 +12,7 @@ class ResetSettingsService {
     AppServices.emulatorSettingsRepository,
     AppServices.systemSaveRepository,
     AppServices.controlBindingsRepository,
-    AppServices.appKeyBindingsRepository,
-    AppServices.emulationKeyBindingsRepository,
+    AppServices.controllerSettingsRepository,
   ];
 
   Future<void> resetAll() async {

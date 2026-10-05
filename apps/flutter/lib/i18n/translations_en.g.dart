@@ -1257,6 +1257,23 @@ class Translations$settings$inputBindingDialog$en {
 
   /// en: 'Press a button on your controller'
   String get waitingForInput => 'Press a button on your controller';
+
+  /// en: 'Press buttons on your controller or keys on your keyboard'
+  String get waitingForComboInput =>
+      'Press buttons on your controller or keys on your keyboard';
+
+  /// en: 'Move a stick on your controller, or press the keys for up, down, left and right in order'
+  String get waitingForStickInput =>
+      'Move a stick on your controller, or press the keys for up, down, left and right in order';
+
+  /// en: 'Press the key for down'
+  String get pressKeyForDown => 'Press the key for down';
+
+  /// en: 'Press the key for left'
+  String get pressKeyForLeft => 'Press the key for left';
+
+  /// en: 'Press the key for right'
+  String get pressKeyForRight => 'Press the key for right';
 }
 
 // Path: settings.general
@@ -2123,6 +2140,15 @@ class Translations$settings$gamepad$en {
   /// en: 'Use the controls provided by Artic Base Server when connected to it instead of the configured input device.'
   String get useArticBaseControllerDescription =>
       'Use the controls provided by Artic Base Server when connected to it instead of the configured input device.';
+
+  /// en: 'Controller Profiles'
+  String get controllerProfiles => 'Controller Profiles';
+
+  /// en: 'Add Controller Profile'
+  String get addControllerProfile => 'Add Controller Profile';
+
+  /// en: 'Profile Name'
+  String get controllerProfileName => 'Profile Name';
 
   /// en: 'App Controls'
   String get appControls => 'App Controls';
@@ -3351,6 +3377,16 @@ extension on Translations {
             }) => '${title}: value must be between ${min} and ${max}.',
           'settings.inputBindingDialog.waitingForInput' =>
             'Press a button on your controller',
+          'settings.inputBindingDialog.waitingForComboInput' =>
+            'Press buttons on your controller or keys on your keyboard',
+          'settings.inputBindingDialog.waitingForStickInput' =>
+            'Move a stick on your controller, or press the keys for up, down, left and right in order',
+          'settings.inputBindingDialog.pressKeyForDown' =>
+            'Press the key for down',
+          'settings.inputBindingDialog.pressKeyForLeft' =>
+            'Press the key for left',
+          'settings.inputBindingDialog.pressKeyForRight' =>
+            'Press the key for right',
           'settings.general.title' => 'Profile',
           'settings.general.frameLimitEnable' => 'Limit Speed',
           'settings.general.frameLimitEnableDescription' =>
@@ -3653,14 +3689,14 @@ extension on Translations {
           'settings.system.countries.germany' => 'Germany',
           'settings.system.countries.greece' => 'Greece',
           'settings.system.countries.hungary' => 'Hungary',
+          _ => null,
+        } ??
+        switch (path) {
           'settings.system.countries.iceland' => 'Iceland',
           'settings.system.countries.ireland' => 'Ireland',
           'settings.system.countries.italy' => 'Italy',
           'settings.system.countries.latvia' => 'Latvia',
           'settings.system.countries.lesotho' => 'Lesotho',
-          _ => null,
-        } ??
-        switch (path) {
           'settings.system.countries.liechtenstein' => 'Liechtenstein',
           'settings.system.countries.lithuania' => 'Lithuania',
           'settings.system.countries.luxembourg' => 'Luxembourg',
@@ -3808,6 +3844,9 @@ extension on Translations {
             'Use Artic Controller when connected to Artic Base Server',
           'settings.gamepad.useArticBaseControllerDescription' =>
             'Use the controls provided by Artic Base Server when connected to it instead of the configured input device.',
+          'settings.gamepad.controllerProfiles' => 'Controller Profiles',
+          'settings.gamepad.addControllerProfile' => 'Add Controller Profile',
+          'settings.gamepad.controllerProfileName' => 'Profile Name',
           'settings.gamepad.appControls' => 'App Controls',
           'settings.gamepad.emulationControls' => 'Emulation Controls',
           'settings.gamepad.actionPreviousPage' => 'Previous Page',

@@ -1,4 +1,5 @@
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamepads/gamepads.dart';
@@ -15,8 +16,9 @@ final gamepadActionManagerProvider =
       GamepadActionManager.new,
     );
 
-/// Ticks the registered actions once per frame while controller input is held, with the state of
-/// the key combination bound to each of them.
+/// Ticks the registered actions once per frame while controller or keyboard input is held, with
+/// the state of the key combination bound to each of them. Keys pressed while a text field has the
+/// focus are left to the text field.
 ///
 /// A held combination hides the smaller ones it contains, and a combination only counts as
 /// pressed when its last input goes down while its action is available. No action is available
@@ -24,6 +26,7 @@ final gamepadActionManagerProvider =
 class GamepadActionManager extends Notifier<GamepadInputSnapshot> {
   final Set<GamepadButton> _buttons = {};
   final Map<GamepadAxis, double> _axes = {};
+  final Set<LogicalKeyboardKey> _keys = {};
   final Map<String, Duration> _pressedSince = {};
   final Stopwatch _clock = Stopwatch()..start();
   GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
@@ -40,6 +43,8 @@ class GamepadActionManager extends Notifier<GamepadInputSnapshot> {
     for (final scope in GamepadActionScope.values) {
       ref.listen(keyBindingsProvider(scope), (_, _) {});
     }
+    HardwareKeyboard.instance.addHandler(_onKey);
+    ref.onDispose(() => HardwareKeyboard.instance.removeHandler(_onKey));
     ref.listen(gamepadInputModeProvider, (_, mode) {
       FocusManager.instance.highlightStrategy = switch (mode) {
         GamepadInputMode.controller => FocusHighlightStrategy.alwaysTraditional,
@@ -80,6 +85,21 @@ class GamepadActionManager extends Notifier<GamepadInputSnapshot> {
     _scheduleTick();
   }
 
+  bool _onKey(KeyEvent event) {
+    switch (event) {
+      case KeyDownEvent():
+        final focused = FocusManager.instance.primaryFocus;
+        if (GamepadActionContext.isTextField(focused)) return false;
+        _keys.add(event.logicalKey);
+      case KeyUpEvent():
+        _keys.remove(event.logicalKey);
+      default:
+        return false;
+    }
+    _scheduleTick();
+    return false;
+  }
+
   GamepadInputSnapshot _snapshot() {
     final buttons = {..._buttons};
     if ((_axes[GamepadAxis.leftTrigger] ?? 0) >=
@@ -90,7 +110,11 @@ class GamepadActionManager extends Notifier<GamepadInputSnapshot> {
         GamepadButtonInput.triggerThreshold) {
       buttons.add(GamepadButton.rightTrigger);
     }
-    return GamepadInputSnapshot(buttons: buttons, axes: {..._axes});
+    return GamepadInputSnapshot(
+      buttons: buttons,
+      axes: {..._axes},
+      keys: {..._keys},
+    );
   }
 
   void _scheduleTick() {

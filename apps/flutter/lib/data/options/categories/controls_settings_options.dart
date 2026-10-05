@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app_services.dart';
+import '../../../screens/options/widgets/controller_profile_radio_list.dart';
 import '../../gamepad/actions/console/console_action.dart';
 import '../../gamepad/actions/console/console_actions.dart';
 import '../../gamepad/actions/gamepad_action.dart';
@@ -16,9 +17,10 @@ import '../option_value.dart';
 import '../store_option_values.dart';
 import '../translation_text.dart';
 
-/// The items of the gamepad settings page, which is not listed on the Options page: the controller
-/// input mode, gyro, the key bindings of the registered gamepad actions, hotkeys and the Artic Base
-/// controller.
+/// The items of the gamepad settings page, which is not listed on the Options page: switching
+/// between the controller profiles, the controller input mode, gyro, the key bindings of the
+/// registered gamepad actions in the profile in use, hotkeys and the Artic Base controller. Using
+/// them is not recorded in the history.
 final controlsSettingsOptionsProvider = Provider<OptionCategory>((ref) {
   final bindings = AppServices.controlBindingsValueStore;
 
@@ -38,7 +40,7 @@ final controlsSettingsOptionsProvider = Provider<OptionCategory>((ref) {
     title: action.title,
     icon: Icons.sports_esports_outlined,
     value: KeyBindingOptionValue(action),
-    mode: action.defaultCombo.stick == null
+    mode: action.defaultCombo.analog == null
         ? InputBindingMode.combo
         : InputBindingMode.stick,
   );
@@ -46,7 +48,18 @@ final controlsSettingsOptionsProvider = Provider<OptionCategory>((ref) {
   return OptionCategory(
     id: 'controlsSettings',
     title: (t) => t.settings.gamepad.title,
+    excludeFromHistory: true,
     sections: [
+      OptionSection(
+        title: (t) => t.settings.gamepad.controllerProfiles,
+        options: [
+          CustomWidgetOption(
+            title: (t) => t.settings.gamepad.controllerProfiles,
+            icon: Icons.sports_esports,
+            builder: (context) => const ControllerProfileRadioList(),
+          ),
+        ],
+      ),
       OptionSection(
         options: [
           EnumOption<int>(

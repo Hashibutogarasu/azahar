@@ -7,8 +7,8 @@ import '../gamepad_action.dart';
 import '../gamepad_key_combo.dart';
 import 'console_action.dart';
 
-/// Moves [axis] of the console, the Circle Pad or the C-Stick, as the stick of its combination
-/// moves, and centers it when the stick is released.
+/// Moves [axis] of the console, the Circle Pad or the C-Stick, as the stick or the four keys of its
+/// combination move it, and centers it when they are released.
 class ConsoleStickAction extends ConsoleAction {
   ConsoleStickAction({
     required this.id,
@@ -32,9 +32,9 @@ class ConsoleStickAction extends ConsoleAction {
 
   @override
   void tick(GamepadActionContext context, GamepadComboState state) {
-    final stick = state.combo.stick;
-    final position = state.isPressed && stick != null
-        ? context.stickValue(stick)
+    final analog = state.combo.analog;
+    final position = state.isPressed && analog != null
+        ? analog.position(context.snapshot)
         : Offset.zero;
     if (position == _sent) return;
     _sent = position;

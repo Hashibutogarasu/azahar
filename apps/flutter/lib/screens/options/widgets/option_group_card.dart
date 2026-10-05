@@ -11,7 +11,7 @@ import 'widget_settings_item.dart';
 
 /// A titled card of Options items. It only asks each item for its widget through `toWidget`, so
 /// the categories, the history, the pinned items and the search results all behave the same:
-/// using an item records it in the history, and pressing and holding it, or a controller's
+/// using an item records it in the history unless its category is excluded from it, and pressing and holding it, or a controller's
 /// context menu button, opens [OptionActionsSheet]. Items added, removed or moved animate through [AnimatedOptionItems].
 ///
 /// While [entries] is empty and an [emptyMessage] is given, the message is shown in place of the
@@ -60,8 +60,10 @@ class OptionGroupCard extends ConsumerWidget {
                   ),
                 },
                 child: entry.option.toWidget(
-                  onAccessed: () =>
-                      ref.read(optionHistoryProvider.notifier).record(entry.id),
+                  onAccessed: () {
+                    if (entry.category.excludeFromHistory) return;
+                    ref.read(optionHistoryProvider.notifier).record(entry.id);
+                  },
                   onLongPress: showActions,
                 ),
               );
