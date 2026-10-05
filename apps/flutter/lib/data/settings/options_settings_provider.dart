@@ -2,8 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app_services.dart';
 import '../user/user_database.dart';
-import '../../i18n/translations.g.dart';
 import '../../theme/theme_settings_provider.dart';
+import 'app_language.dart';
 import 'reset_settings_provider.dart';
 
 final optionsSettingsProvider = Provider<OptionsSettingsService>(
@@ -33,11 +33,7 @@ class OptionsSettingsService {
 
   Future<void> setLanguageCode(String? languageCode) async {
     await AppServices.languageCodeRepository.setLanguageCode(languageCode);
-    if (languageCode == null) {
-      await LocaleSettings.useDeviceLocale();
-    } else {
-      await LocaleSettings.setLocaleRaw(languageCode);
-    }
+    await applyLanguageCode(languageCode);
   }
 
   ThemeSetting get themeSettings => _ref.read(themeSettingsProvider);
