@@ -5,6 +5,7 @@
 package com.karasu256.azahar_reloaded.lib.azahar_for_flutter.utils
 
 import android.app.NotificationManager
+import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
@@ -131,7 +132,7 @@ class CiaInstallWorker(
         installProgressBuilder.setOngoing(true)
         setProgressCallback(100, 0)
         selectedFiles.forEachIndexed { i, file ->
-            val filename = getFilename(Uri.parse(file))
+            val filename = displayNameOf(file)
             installProgressBuilder.setContentText(
                 context.getString(
                     R.string.cia_install_notification_installing,
@@ -145,6 +146,20 @@ class CiaInstallWorker(
         }
         notificationManager.cancel(PROGRESS_NOTIFICATION_ID)
         return Result.success()
+    }
+
+    /**
+     * Returns the name of the file at [path] to show to the user. A content URI is asked for its
+     * display name, while a plain path, such as the copy a file picker makes in the cache, is not
+     * known to the content resolver and gives the last segment of the path instead.
+     */
+    private fun displayNameOf(path: String): String {
+        val uri = Uri.parse(path)
+        if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
+            val name = getFilename(uri)
+            if (name.isNotEmpty()) return name
+        }
+        return uri.lastPathSegment ?: path.substringAfterLast('/')
     }
 
     fun setProgressCallback(max: Int, progress: Int) {
