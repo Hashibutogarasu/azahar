@@ -5,18 +5,24 @@
 package com.karasu256.azahar_reloaded.lib.azahar_for_flutter
 
 import android.Manifest
+import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat
 import androidx.fragment.app.FragmentActivity
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.PluginRegistry
 import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.NativeLibrary
+import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.utils.CiaInstaller
+import com.karasu256.azahar_reloaded.lib.azahar_for_flutter.utils.FileUtil
 
 /**
  * Flutter plugin that exposes the Azahar native layer to Dart.
@@ -45,6 +51,7 @@ class AzaharForFlutterPlugin : FlutterPlugin, ActivityAware {
 
     private val newIntentListener = PluginRegistry.NewIntentListener { intent ->
         takeGamePath(intent)?.let { session?.requestLaunch(it) }
+        activityBinding?.activity?.let { installCiaFiles(it, intent) }
         false
     }
 
@@ -90,6 +97,7 @@ class AzaharForFlutterPlugin : FlutterPlugin, ActivityAware {
             it.pendingLaunch = takeGamePath(activity.intent)
             it.attach()
         }
+        installCiaFiles(activity, activity.intent)
     }
 
     private fun detachSession() {
@@ -120,7 +128,45 @@ class AzaharForFlutterPlugin : FlutterPlugin, ActivityAware {
         return path?.takeIf { it.isNotEmpty() }
     }
 
+    /**
+     * Installs the CIA files [intent] opens or shares, such as from the "Install application" entry
+     * of a file manager or of the share menu, and marks the intent as handled so it is not
+     * installed again when the activity is attached anew. Files whose name does not end in `.cia`
+     * are left out, since the generic binary type the entry accepts also matches other files.
+     */
+    private fun installCiaFiles(context: Context, intent: Intent?) {
+        intent ?: return
+        val uris = when (intent.action) {
+            Intent.ACTION_VIEW -> listOfNotNull(intent.data)
+            Intent.ACTION_SEND -> listOfNotNull(
+                IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
+            )
+            Intent.ACTION_SEND_MULTIPLE -> IntentCompat.getParcelableArrayListExtra(
+                intent,
+                Intent.EXTRA_STREAM,
+                Uri::class.java
+            ).orEmpty()
+            else -> return
+        }
+        intent.action = null
+        CiaInstaller.install(
+            context,
+            uris.filter { isCiaFile(it) }.map { it.toString() }
+        )
+    }
+
+    private fun isCiaFile(uri: Uri): Boolean {
+        val name = if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
+            FileUtil.getFilename(uri)
+        } else {
+            uri.lastPathSegment.orEmpty()
+        }
+        return name.endsWith(CIA_EXTENSION, ignoreCase = true)
+    }
+
     companion object {
+        private const val CIA_EXTENSION = ".cia"
+
         /** Intent extra that asks the host activity to launch the game at the given path. */
         const val EXTRA_GAME_PATH = "gamePath"
 
