@@ -1,8 +1,12 @@
 #!/bin/bash -ex
 
-# Packages the Flutter Linux bundle in apps/flutter/build/linux/x64/release/bundle.
-PACKAGE_VERSION="${GITHUB_REF_TYPE:+$GITHUB_REF_NAME}"
-PACKAGE_VERSION="${PACKAGE_VERSION#v}"
+# Packages the Flutter Linux bundle in apps/flutter/build/linux/x64/release/bundle. The package
+# version is the tag being built, or 0.0.0 with the commit for a branch or a pull request, whose
+# ref names such as "76/merge" are not valid Debian versions.
+PACKAGE_VERSION=""
+if [ "${GITHUB_REF_TYPE:-}" = "tag" ]; then
+    PACKAGE_VERSION="${GITHUB_REF_NAME#v}"
+fi
 PACKAGE_VERSION="${PACKAGE_VERSION:-0.0.0-$(git rev-parse --short HEAD)}"
 
 root=build/deb
